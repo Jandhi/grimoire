@@ -1,0 +1,6 @@
+{
+    "name" : "japanese_wall",
+    "theme" : "japanese",
+    "priority" : 0,
+    "edges" : ["open", "receded_wall_right", "closed", "receded_wall_left"]
+}
