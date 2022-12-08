@@ -1,6 +1,0 @@
-{
-    "receded_wall_right" : ["receded_wall_left"],
-    "receded_wall_left" : ["receded_wall_right"],
-    "open" : ["open", "closed"],
-    "closed" : ["closed"]
-}
