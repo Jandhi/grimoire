@@ -13,4 +13,20 @@ def hash(seed : int, pos : int) -> int:
     noise = noise ^ (noise << 8)
     noise = noise * BITNOISE3
     noise = noise ^ (noise >> 8)
-    return noise
+
+    # mask to reduce size of integer
+    # otherwise python will start making larger and larger sizes
+    noise = noise & 0xFFFFFFF 
+    
+    return noise 
+
+# hashes together a seed with any amount of arguments
+def recursive_hash(seed : int, *args : int):
+    for arg in args:
+        seed = hash(seed, arg)
+    
+    return seed
+
+# hashes a string based on a seed
+def hash_string(seed, string : str) -> int:
+    return recursive_hash(seed, *(ord(letter) for letter in string))
