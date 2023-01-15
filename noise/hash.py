@@ -16,7 +16,7 @@ def hash(seed : int, pos : int) -> int:
 
     # mask to reduce size of integer
     # otherwise python will start making larger and larger sizes
-    noise = noise & 0xFFFFFFF 
+    noise = noise & 0xFFFFFFFF 
     
     return noise 
 
