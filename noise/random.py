@@ -29,3 +29,15 @@ def odds(seed : int, successes : int, failures : int) -> bool:
 # randomly determines value based on successes to total chance
 def chance(seed : int, successes : int, total : int) -> bool:
     return randint(seed, total) < successes
+
+# returns a shuffled copy of the list
+def shuffle(seed : int, items : list) -> list:
+    copied_list = items.copy()
+    new_list = []
+
+    while len(copied_list) > 0:
+        length = len(copied_list)
+        index = randint(hash(seed, length), length)
+        new_list.append(copied_list.pop(index))
+    
+    return new_list
