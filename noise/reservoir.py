@@ -1,7 +1,7 @@
 from noise.rng import RNG
 
 # Class created to randomly choose an item based on weight, while not having to store all the items
-# This is good for tasks where we dynamically generate a lot of items
+# This is good for tasks where we dynamically generate a lot of items 
 # Each time an item is added, it has a chance to be the chosen item based on its weight
 # After all items are added, item() will return the chosen item
 class Reservoir:
