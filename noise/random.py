@@ -1,9 +1,9 @@
 # returns a random integer 0 <= n < max
-def randint(seed : int, max : int):
+def randint(seed : int, max : int) -> int:
     return seed % max
 
 # returns a random integer min <= n < max
-def randrange(seed : int, min : int, max : int):
+def randrange(seed : int, min : int, max : int) -> int:
     return min + (seed % (max - min))
 
 # returns a random item in a list
@@ -21,3 +21,11 @@ def choose_weighted(seed : int, items : dict[any,int]):
         
         if count > index:
             return item
+
+# randomly determines value based on ratio of successes to failures
+def odds(seed : int, successes : int, failures : int) -> bool:
+    return randint(seed, successes + failures) < successes
+
+# randomly determines value based on successes to total chance
+def chance(seed : int, successes : int, total : int) -> bool:
+    return randint(seed, total) < successes

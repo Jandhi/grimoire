@@ -20,3 +20,9 @@ class Seed:
     
     def choose_weighted(self, items : dict[any, int]):
         return choose_weighted(self.value(), items)
+    
+    def odds(self, successes : int, failures : int) -> bool:
+        return randint(self.value(), successes + failures) < successes
+
+    def chance(self, successes : int, total : int) -> bool:
+        return randint(self.value(), total) < successes
