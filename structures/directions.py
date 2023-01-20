@@ -13,8 +13,8 @@ south = z_plus
 west = x_minus
 up = y_plus
 down = y_minus
-
 cardinal = (north, east , south, west)
+
 opposites = {
     x_plus : x_minus,
     x_minus : x_plus,
@@ -23,7 +23,6 @@ opposites = {
     z_plus : z_minus,
     z_minus : z_plus
 }
-
 def opposite(direction):
     opposites[direction]
 
