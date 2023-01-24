@@ -20,13 +20,17 @@ interface = Interface(x_mid, 4, z_mid, buffering=True, caching=True)
 nbt_asset = NBTAsset.new(
     name     = 'test',
     type     = 'wall',
-    filepath = 'assets/walls/wall.nbt',
-    origin   = (1, 0, 1)
+    filepath = 'assets/walls/medieval/medieval_stone_wall_door.nbt',
+    origin   = (0, 0, 0)
 )
 
 build_nbt(
     interface = interface, 
     asset = nbt_asset,
+    transformation=Transformation(
+        mirror=(True, False, False),
+        #diagonal_mirror=True,
+    ),
 )
 
 interface.sendBlocks()

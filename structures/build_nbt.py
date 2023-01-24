@@ -13,8 +13,10 @@ def build_nbt(
     ):
     structure = convert_nbt(asset.filepath)
 
+    transformed_palette = [transformation.apply(block) for block in structure.palette]
+
     for (pos, palette_index) in structure.blocks.items():
-        block = structure.palette[palette_index]
+        block = transformed_palette[palette_index]
 
         if block.name == 'minecraft:air' and not place_air:
             continue
@@ -25,8 +27,6 @@ def build_nbt(
             asset=asset,
             transformation=transformation,
         )
-
-        # TODO add block rotation
 
         interface.placeBlock(x, y, z, str(block)) 
 
@@ -43,15 +43,16 @@ def transform_point(
         return sub_tuples((x, y, z), (origin_x, origin_y, origin_z))
 
     # mirroring
+    # for now we will not mirror the origin 
     if transformation.mirror[0]: # x mirror
         x = structure.width - 1 - x
-        origin_x = structure.width - 1 - origin_x
+        # origin_x = structure.width - 1 - origin_x
     if transformation.mirror[1]: # y mirror
         y = structure.height - 1 - y
-        origin_y = structure.height - 1 - origin_y
+        # origin_y = structure.height - 1 - origin_y
     if transformation.mirror[2]: # z mirror
         z = structure.depth - 1 - z
-        origin_z = structure.depth - 1 - origin_z
+        # origin_z = structure.depth - 1 - origin_z
 
     # origin offset
     x, y, z = sub_tuples((x, y, z), (origin_x, origin_y, origin_z))

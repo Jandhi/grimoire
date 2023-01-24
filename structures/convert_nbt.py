@@ -53,4 +53,6 @@ def __read_properties(tag) -> dict:
         pname = str(property)
         properties[pname] = str(tag['Properties'][pname])
 
+        print(pname, properties[pname])
+
     return properties
