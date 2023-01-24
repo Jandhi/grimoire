@@ -3,13 +3,13 @@ import sys
 sys.path[0] = sys.path[0].removesuffix('\\data\\tests')
 
 # Actual file
-from data.load_jsons import load_jsons, load_jsons_as_objects
+from data.load_jsons import load_jsons, load_objects
 
 class Test:
     field : str
 
 print(load_jsons('data/tests'))
 
-test : Test = load_jsons_as_objects('data/tests', Test)[0]
+test : Test = load_objects('data/tests', Test)[0]
 
 print(test.field)
