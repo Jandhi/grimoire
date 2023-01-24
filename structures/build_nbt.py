@@ -26,6 +26,8 @@ def build_nbt(
             transformation=transformation,
         )
 
+        # TODO add block rotation
+
         interface.placeBlock(x, y, z, str(block)) 
 
 def transform_point(
