@@ -1,4 +1,4 @@
-from building.convert_nbt import convert_nbt
+from structures.convert_nbt import convert_nbt
 from gdpc.interface import Interface
 
 def build_nbt(interface : Interface, filename : str):

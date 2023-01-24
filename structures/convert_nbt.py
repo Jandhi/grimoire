@@ -1,6 +1,6 @@
 from nbt import nbt
-from building.structure import Structure
-from building.block import Block
+from structures.structure import Structure
+from structures.block import Block
 
 # Converts an nbt file into a more legible python dictionary
 # TODO Entities cannot be read in yet
