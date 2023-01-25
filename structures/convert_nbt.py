@@ -27,8 +27,8 @@ def convert_nbt(filename : str) -> Structure:
 
 def __read_blocks_and_dimensions(tag) -> dict:
     blocks = {}
-    minima = [0, 0, 0]
-    maxima = [0, 0, 0]
+    minimums = [0, 0, 0]
+    maximums = [0, 0, 0]
 
     for block in tag:
         x, y, z = (int(i.valuestr()) for i in block['pos'])
@@ -37,12 +37,12 @@ def __read_blocks_and_dimensions(tag) -> dict:
         blocks[(x, y, z)] = int(state.valuestr())
 
         for val, index in ((x, 0), (y, 1), (z, 2)):
-            if val < minima[index]:
-                minima[index] = val
-            if val > maxima[index]:
-                maxima[index] = val
+            if val < minimums[index]:
+                minimums[index] = val
+            if val > maximums[index]:
+                maximums[index] = val
 
-    dimensions = (maxima[i] - minima[i] for i in range(3))
+    dimensions = (maximums[i] - minimums[i] for i in range(3))
 
     return blocks, dimensions
 
