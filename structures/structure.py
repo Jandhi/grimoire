@@ -1,5 +1,7 @@
 from structures.block import Block
 
+# A class derived from an NBT file, data describing something built in minecraft
+# Used to actually construct NBT structures
 class Structure:
     def __init__(self, 
         blocks : dict[tuple[int, int, int], int], 

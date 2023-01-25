@@ -1,7 +1,10 @@
 from structures.block import Block
 from structures.directions import x_plus, x_minus, y_plus, y_minus, z_plus, z_minus, from_text, to_text, directions
+from structures.structure import Structure
+from structures.nbt_asset import NBTAsset
+from utils.tuples import sub_tuples, add_tuples
 
-# Transformation dictionaries
+#region Transformation dictionaries
 x_mirror = {
     x_plus : x_minus,
     x_minus : x_plus,
@@ -38,8 +41,10 @@ diagonal_mirror = {
     'x' : 'z',
     'z' : 'x',
 }
+#endregion
 
-# Class
+# Class to house tranformations of structures, including mirroring and offsets
+# Rotation is only supported by switching the x/z axis, in other words diagonal_mirror
 class Transformation:
     def __init__(self,
         offset : tuple[int, int, int] = None,
@@ -51,7 +56,7 @@ class Transformation:
         self.diagonal_mirror = diagonal_mirror
     
     # Expects text to be in targets
-    def apply_to_text(self, text : str):
+    def apply_to_text(self, text : str) -> str:
         direction = from_text(text)
 
         # For each dimensinos
@@ -64,7 +69,10 @@ class Transformation:
         
         return to_text(direction)
 
-    def apply(self, block : Block):
+    def apply_to_palette(self, palette : list[Block]) -> list[Block]:
+        return [self.apply_to_block(block) for block in palette]
+
+    def apply_to_block(self, block : Block) -> Block:
         name = block.name
         properties = {}
 
@@ -86,3 +94,36 @@ class Transformation:
                 properties[pname] = pvalue
 
         return Block(name, properties)
+
+    def apply_to_point(
+        self,
+        point : tuple[int, int, int],
+        structure : Structure,
+        asset : NBTAsset, 
+    ) -> tuple[int, int, int]:
+        x, y, z = point
+        origin_x, origin_y, origin_z = asset.origin
+
+        # mirroring
+        # for now we will not mirror the origin 
+        if self.mirror[0]: # x mirror
+            x = structure.width - 1 - x
+            # origin_x = structure.width - 1 - origin_x
+        if self.mirror[1]: # y mirror
+            y = structure.height - 1 - y
+            # origin_y = structure.height - 1 - origin_y
+        if self.mirror[2]: # z mirror
+            z = structure.depth - 1 - z
+            # origin_z = structure.depth - 1 - origin_z
+
+        # origin offset
+        x, y, z = sub_tuples((x, y, z), (origin_x, origin_y, origin_z))
+
+        # rotation(ish)
+        if self.diagonal_mirror:
+            x, z = z, x
+
+        # translation
+        x, y, z = add_tuples((x, y, z), self.offset)
+
+        return x, y, z

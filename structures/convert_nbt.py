@@ -2,7 +2,7 @@ from nbt import nbt
 from structures.structure import Structure
 from structures.block import Block
 
-# Converts an nbt file into a more legible python dictionary
+# Converts an nbt file into a more legible Structure object
 # TODO Entities cannot be read in yet
 def convert_nbt(filename : str) -> Structure:
     file = nbt.NBTFile(filename)
