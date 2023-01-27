@@ -14,6 +14,7 @@ west = x_minus
 up = y_plus
 down = y_minus
 cardinal = (north, east , south, west)
+directions = (north, east, south, west, up, down)
 
 opposites = {
     x_plus : x_minus,
@@ -24,7 +25,7 @@ opposites = {
     z_minus : z_plus
 }
 def opposite(direction):
-    opposites[direction]
+    return opposites[direction]
 
 vectors = {
     x_plus  : (1, 0, 0),
@@ -35,9 +36,9 @@ vectors = {
     z_minus : (0, 0, -1)
 }
 def vector(direction):
-    vectors[direction]
+    return vectors[direction]
 
-text = {
+text_dict = {
     north : 'north',
     east  : 'east',
     south : 'south',
@@ -46,7 +47,18 @@ text = {
     down  : 'down',
 }
 def to_text(direction):
-    text[direction]
+    return text_dict[direction]
+
+from_text_dict = {
+    'north' : north,
+    'east'  : east,
+    'south' : south,
+    'west'  : west,
+    'up'    : up,
+    'down'  : down,
+}
+def from_text(text : str):
+    return from_text_dict[text]
 
 forwards = {
     north : north,

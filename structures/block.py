@@ -1,5 +1,5 @@
 class Block:
-    def __init__(self, name, properties) -> None:
+    def __init__(self, name : str, properties : dict[str, str]) -> None:
         self.name = name
         self.properties = properties
     
@@ -15,3 +15,6 @@ class Block:
             string = f'{string}[{properties_string[1:]}]'
         
         return string
+
+    def copy(self):
+        return Block(self.name, self.properties.copy())

@@ -1,5 +1,9 @@
 from utils.tuples import sub_tuples, add_tuples, map_tuples
 
+# Class to work with grids for buildings
+# Local coordinates are block coordinates relative to origin of house
+# World coordinates are coordinates relative to world or interface origin
+# Grid coordinates are cell coordinates, with dimensinos according to the dimensions given
 class Grid:
     def __init__(self, 
             dimensions : tuple[int, int, int] = (5, 7, 5), 
