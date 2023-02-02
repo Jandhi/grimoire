@@ -6,7 +6,7 @@ from utils.tuples import sub_tuples, add_tuples, map_tuples
 # Grid coordinates are cell coordinates, with dimensinos according to the dimensions given
 class Grid:
     def __init__(self, 
-            dimensions : tuple[int, int, int] = (5, 7, 5), 
+            dimensions : tuple[int, int, int] = (7, 5, 7), 
             origin     : tuple[int, int, int] = (0, 0, 0),
             ) -> None:
         self.width, self.height, self.depth = dimensions

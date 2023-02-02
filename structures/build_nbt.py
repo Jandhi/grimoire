@@ -5,7 +5,7 @@ from structures.transformation import Transformation
 from gdpc.interface import Interface
 from utils.tuples import add_tuples, sub_tuples
 
-# Constructs an NBTAsset given an interface and transformatoin
+# Constructs an NBTAsset given an interface and transformation
 def build_nbt(
         interface : Interface, 
         asset : NBTAsset, 
@@ -15,7 +15,7 @@ def build_nbt(
     structure = convert_nbt(asset.filepath)
     transformation = transformation or Transformation() # construct default value
 
-    transformed_palette =  transformation.apply_to_palette(structure.palette)
+    transformed_palette = transformation.apply_to_palette(structure.palette)
 
     for (pos, palette_index) in structure.blocks.items():
         block = transformed_palette[palette_index]
@@ -26,8 +26,7 @@ def build_nbt(
         x, y, z = transformation.apply_to_point(
             point=pos,
             structure=structure,
-            asset=asset,
-            transformation=transformation,
+            asset=asset
         )
 
         interface.placeBlock(x, y, z, str(block)) 
