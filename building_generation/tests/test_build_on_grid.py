@@ -12,14 +12,16 @@ from data.load_jsons import load_objects
 interface = Interface(0, 4, 0, buffering=True, caching=True)
 grid = Grid()
 walls = load_objects('assets/walls', Wall)
-wall = walls[1]
+wall = walls[0]
 
 build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'x_minus')
 build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'x_plus')
 build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'z_minus')
 build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'z_plus')
 
-build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'z_minus')
+build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'x_plus')
+build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'x_minus')
 build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'z_plus')
+build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'z_minus')
 
 interface.sendBlocks()

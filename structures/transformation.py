@@ -80,7 +80,7 @@ class Transformation:
             direction_names = [to_text(direction) for direction in directions]
             
             if pname in direction_names:
-                properties[self.__apply_to_text(pname)] = pvalue
+                properties[self.apply_to_text(pname)] = pvalue
             elif pvalue in direction_names:
                 properties[pname] = self.apply_to_text(pvalue)
             # For axes
@@ -102,23 +102,40 @@ class Transformation:
         asset : NBTAsset, 
     ) -> tuple[int, int, int]:
 
-        # We start with origin offset
-        x, y, z = sub_tuples(point, asset.origin)
+        x, y, z = point
 
         # mirroring
         # for now we will not mirror the origin 
         if self.mirror[0]: # x mirror
-            x = structure.width - 1 - x
-        if self.mirror[1]: # y mirror
-            y = structure.height - 1 - y
+            x = -1 * x
         if self.mirror[2]: # z mirror
-            z = structure.depth - 1 - z
+            z = -1 * z
         
         # rotation(ish)
         if self.diagonal_mirror:
             x, z = z, x
 
+        # Shift according to origin
+        origin = self.apply_to_origin(asset.origin)
+        x, y, z = sub_tuples((x, y, z), origin)
+
         # translation
         x, y, z = add_tuples((x, y, z), self.offset)
 
         return x, y, z
+    
+    def apply_to_origin(
+        self,
+        point : tuple[int, int, int]
+    ) -> tuple[int, int, int]:
+        origin = point
+
+        if self.mirror[0]: # x mirror
+            origin = (-1 * origin[0], origin[1], origin[2])
+        if self.mirror[2]: # z mirror
+            origin = (origin[0], origin[1], -1 * origin[2])
+
+        if self.diagonal_mirror:
+            origin = (origin[2], origin[1], origin[0])
+
+        return origin

@@ -4,4 +4,4 @@ class Wall(NBTAsset):
     facing : str
 
     def on_construct(self):
-        return super().on_construct()
+        super().on_construct()

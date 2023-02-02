@@ -28,13 +28,13 @@ def build_wall_on_grid(
 
     if left[wall.facing] == facing:
         build_nbt(interface, wall, Transformation(
-            offset=add_tuples((0, 1, grid.depth), local_coords),
+            offset=add_tuples((0, 1, grid.depth - 1), local_coords),
             diagonal_mirror=True,
             mirror=(True, False, False),
         ))
 
     if opposites[wall.facing] == facing:
         build_nbt(interface, wall, Transformation(
-            offset=add_tuples((grid.width, 1, 0), local_coords),
+            offset=add_tuples((grid.width - 1, 1, 0), local_coords),
             mirror=(True, False, False)
         ))
