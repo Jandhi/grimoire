@@ -1,7 +1,7 @@
 from structures.nbt_asset import NBTAsset
 
 class Wall(NBTAsset):
-    facing_direction : str
+    facing : str
 
-    def construct(self):
-        return super().construct()
+    def on_construct(self):
+        return super().on_construct()

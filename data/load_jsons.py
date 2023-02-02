@@ -26,9 +26,9 @@ def load_objects(directory_path : str, cls : type) -> list[any]:
 def construct_object(json_data : dict, cls : type):
     obj : NBTAsset = cls()
 
-    for key, val in json.items():
+    for key, val in json_data.items():
         obj.__setattr__(key, val)
 
-    obj.construct()
+    obj.on_construct()
     
     return obj

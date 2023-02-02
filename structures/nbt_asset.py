@@ -5,9 +5,11 @@ class NBTAsset:
     type : str
     filepath : str
     origin : tuple[int, int, int]
+    do_not_replace : list[str] # blocks that should not be swapped by palette swapper
 
-    def construct(self): # Called after fields are loaded in
+    def on_construct(self): # Called after fields are loaded in
         self.origin = tuple(self.origin) # convert list to tuple
+        self.do_not_replace = self.do_not_replace or [] 
 
     @classmethod
     def new(cls, name, type, filepath, origin):

@@ -101,24 +101,19 @@ class Transformation:
         structure : Structure,
         asset : NBTAsset, 
     ) -> tuple[int, int, int]:
-        x, y, z = point
-        origin_x, origin_y, origin_z = asset.origin
+
+        # We start with origin offset
+        x, y, z = sub_tuples(point, asset.origin)
 
         # mirroring
         # for now we will not mirror the origin 
         if self.mirror[0]: # x mirror
             x = structure.width - 1 - x
-            # origin_x = structure.width - 1 - origin_x
         if self.mirror[1]: # y mirror
             y = structure.height - 1 - y
-            # origin_y = structure.height - 1 - origin_y
         if self.mirror[2]: # z mirror
             z = structure.depth - 1 - z
-            # origin_z = structure.depth - 1 - origin_z
-
-        # origin offset
-        x, y, z = sub_tuples((x, y, z), (origin_x, origin_y, origin_z))
-
+        
         # rotation(ish)
         if self.diagonal_mirror:
             x, z = z, x
