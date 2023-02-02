@@ -9,7 +9,10 @@ class NBTAsset:
 
     def on_construct(self): # Called after fields are loaded in
         self.origin = tuple(self.origin) # convert list to tuple
-        self.do_not_replace = self.do_not_replace or [] 
+        
+        if not hasattr(self, 'do_not_replace'):
+            setattr(self, 'do_not_replace', [])
+        
 
     @classmethod
     def new(cls, name, type, filepath, origin):
