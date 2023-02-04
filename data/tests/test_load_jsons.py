@@ -5,12 +5,16 @@ sys.path[0] = sys.path[0].removesuffix('\\data\\tests')
 # Actual file
 from data.load_jsons import load_jsons, load_objects
 from structures.nbt.nbt_asset import NBTAsset
-from data.load_nbts import load_nbts
+from data.load_assets import load_assets
 from building_generation.walls import wall
 
 class Test(NBTAsset):
     pass
 
-load_nbts('data/tests')
+class SubTest(Test):
+    pass
 
-assert(len(Test.all()) == 1)
+load_assets('data/tests')
+
+assert(len(Test.all()) == 2)
+assert(len(SubTest.all()) == 1)

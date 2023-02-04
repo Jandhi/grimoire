@@ -1,7 +1,6 @@
 import os
 import json
 from glob import glob
-from structures.nbt.nbt_asset import NBTAsset, NBTAssetError
 
 def load_jsons(directory_path : str) -> list[dict]:
     names = glob(directory_path + '/**/*.json', recursive=True) # glob allows us to get the subfolders too
