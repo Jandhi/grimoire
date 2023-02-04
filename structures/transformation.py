@@ -1,7 +1,7 @@
 from structures.block import Block
 from structures.directions import x_plus, x_minus, y_plus, y_minus, z_plus, z_minus, from_text, to_text, directions
 from structures.structure import Structure
-from structures.nbt_asset import NBTAsset
+from structures.nbt.nbt_asset import NBTAsset
 from utils.tuples import sub_tuples, add_tuples
 
 #region Transformation dictionaries

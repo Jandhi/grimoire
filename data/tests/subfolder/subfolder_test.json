@@ -1,3 +1,7 @@
 {
-    "this is another field" : "here is the value"
+    "name" : "test_name",
+    "filepath" : "bapity boopity",
+    "type" : "test",
+    "this is another field" : "here is the value",
+    "origin": [0, 0, 0]
 }

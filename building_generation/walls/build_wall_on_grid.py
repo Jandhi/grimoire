@@ -1,6 +1,6 @@
 from gdpc.interface import Interface
-from building_generation.wall import Wall
-from structures.build_nbt import build_nbt
+from building_generation.walls.wall import Wall
+from structures.nbt.build_nbt import build_nbt
 from structures.transformation import Transformation
 from structures.grid import Grid
 from structures.directions import right, left, opposites

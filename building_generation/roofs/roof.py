@@ -1,4 +1,4 @@
-from structures.nbt_asset import NBTAsset
+from structures.nbt.nbt_asset import NBTAsset
 
 class Roof(NBTAsset):
     shape : list[tuple[int, int, int]]
