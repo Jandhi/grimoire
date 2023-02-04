@@ -10,28 +10,29 @@ class AssetMeta(type):
             subclass.types.append(subclass)
             subclass.assets_by_type_name['asset'] = []
         else:
-            register_nbt_subclass(subclass)            
+            register_asset_subclass(subclass)            
 
         return subclass
 
 BASE_TYPES_CLASS_NAMES = ('Asset', 'NBTAsset')
 BASE_TYPE_NAMES = ('asset', 'nbtasset')
 
-def register_nbt_subclass(cls):
+def register_asset_subclass(cls):
     Asset.types.append(cls)
-
-    # See NBTAsset.type_name 
+    
+    # Type name must be distinct from parent
     if cls.type_name == cls.__bases__[0].type_name:
         cls.type_name = camel_to_snake_case(cls.__name__)
 
     cls.parent_types = []
     for type in inspect.getmro(cls)[1:-1]:
-        cls.parent_types.append(type)
+        if type.type_name not in BASE_TYPE_NAMES:
+            cls.parent_types.append(type)
             
 
     Asset.assets_by_type_name[cls.type_name] = []
 
-# Error used for loading in NBT assets
+# Error used for loading in assets
 class AssetError(ValueError):
     def __init__(self, message : str) -> None:
         self.message =  message
@@ -66,13 +67,13 @@ def asset_defaults(**kwargs):
 class Asset(metaclass=AssetMeta):
     type_name = 'asset'
 
-    # Used to store loaded NBTS by type
+    # Used to store loaded assets by type
     assets_by_type_name : dict[str, list] = {}
 
-    # Tracks all types of NBT assets
+    # Tracks all types of assets
     types : list[type] = []
 
-    # Tracks all parent types of this NBT asset, not including NBTAsset itself
+    # Tracks all parent types of this asset, not including Asset or NBTAsset
     parent_types : list[type] = []
 
     # Object Fields
