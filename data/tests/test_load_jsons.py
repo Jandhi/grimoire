@@ -16,5 +16,6 @@ class SubTest(Test):
 
 load_assets('data/tests')
 
+# you should see one error and two warnings about fields not being annotated
 assert(len(Test.all()) == 2)
 assert(len(SubTest.all()) == 1)

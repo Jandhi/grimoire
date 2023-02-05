@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 gdpc = "*"
 nbt = "*"
+colored = "*"
 
 [dev-packages]
 

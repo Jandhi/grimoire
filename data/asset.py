@@ -1,5 +1,6 @@
 from utils.strings import camel_to_snake_case
 import inspect
+from data.asset_validation_state import AssetValidationState
 
 # Metaclass that registers NBTAsset subtypes
 class AssetMeta(type):
@@ -45,7 +46,7 @@ def asset_defaults(**kwargs):
     def modify_class(cls):
         old_validate = cls.validate
 
-        def new_validate(ref):
+        def new_validate(ref) -> AssetValidationState:
             for field_name, field_value in kwargs.items():
                 value = field_value
 
@@ -55,7 +56,7 @@ def asset_defaults(**kwargs):
                 if not hasattr(ref, field_name):
                     setattr(ref, field_name, value)
 
-            old_validate(ref)
+            return old_validate(ref)
 
         cls.validate = new_validate
 
@@ -81,14 +82,25 @@ class Asset(metaclass=AssetMeta):
     type : str
 
     # Called after fields are loaded in 
-    # This function
-    def validate(self):
+    # This function ensures all required fields are there
+    def validate(self) -> AssetValidationState:
+        state = AssetValidationState()
+        annotated_fields = set()
+
         for tp in inspect.getmro(type(self))[:-1]:
             for field_name in tp.__annotations__:
+                annotated_fields.add(field_name)
                 if not hasattr(self, field_name):
-                    raise AssetError(f'Required field "{field_name}" ({tp.__annotations__[field_name].__name__}) not present in {self}')
+                    field_type = tp.__annotations__[field_name].__name__
+                    state.missing_args.append((field_name, field_type))
+                    
+        for field in self.__dict__:
+            if field not in annotated_fields:
+                state.surplus_args.append((field, type(field).__name__))
+        
+        return state
     
-    def on_construct(self): # Called after fields are validated
+    def on_construct(self) -> None: # Called after fields are validated
         self.origin = tuple(self.origin) # convert list to tuple
 
     # Adds object to global pool of objects
@@ -119,18 +131,33 @@ class Asset(metaclass=AssetMeta):
     def all(cls):
         return Asset.assets_by_type_name[cls.type_name]
 
-    # Call this to properly create an asset
+    # This is used to create an asset without raising an exception on failure
+    # IMPORTANT: This can return None when the asset created is invalid. It will NOT throw an error.
     @classmethod
-    def construct(cls, add_to_pool = True, **kwargs):
+    def construct_unsafe(cls, add_to_pool = True, **kwargs) -> tuple[any, AssetValidationState]:
         obj = cls()
 
         for key, val in kwargs.items():
             obj.__setattr__(key, val)
         
-        obj.validate()
+        state = obj.validate()
+
+        if state.is_invalid():
+            return None, state
+
         obj.on_construct()
 
         if add_to_pool:
             obj.add_to_pool()
 
-        return obj
+        return obj, state
+
+    # Call this to properly create an asset
+    @classmethod
+    def construct(cls, add_to_pool = True, **kwargs) -> any:
+        asset, state = cls.construct_unsafe(add_to_pool, **kwargs)
+
+        if state.is_invalid():
+            raise AssetError(f'Asset is missing the following arguments: {[state.missing_args]}')
+        
+        return asset

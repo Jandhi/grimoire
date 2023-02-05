@@ -1,7 +1,9 @@
-from data.asset import Asset, AssetError
+from data.asset import Asset
+from data.asset_validation_state import AssetValidationState
 from glob import glob
 from utils.strings import camel_to_snake_case
 import json
+from colored import fg, attr
 
 # Ensure you are loading all NBTAsset types here
 from building_generation.walls.wall import Wall
@@ -23,9 +25,11 @@ def load_assets(root_directory) -> None:
 
             cls = Asset.find_type(data['type'])
             
-            try:
-                obj = cls.construct(**data)
-            except AssetError as error:
-                
-                print(f'Error while loading {path}. {error}')
-            
+            obj, validation_state = cls.construct_unsafe(**data)
+            validation_state : AssetValidationState
+
+            if validation_state.is_invalid():
+                print(f'{fg("red")}Error{attr(0)} while loading {fg("light_blue")}{path}{attr(0)}. Object is missing the following fields: {validation_state.missing_args}. It will be ignored.')
+                continue
+
+            print(f'{fg("yellow")}Warning{attr(0)} while loading {fg("light_blue")}{path}{attr(0)}. Object has non-annotated fields: {validation_state.surplus_args}')
