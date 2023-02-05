@@ -4,8 +4,8 @@ sys.path[0] = sys.path[0].removesuffix('\\structures\\tests')
 
 # Actual file
 from gdpc.interface import requestPlayerArea, Interface
-from structures.build_nbt import build_nbt
-from structures.nbt_asset import NBTAsset
+from structures.nbt.build_nbt import build_nbt
+from structures.nbt.nbt_asset import NBTAsset
 from structures.transformation import Transformation
 
 area = requestPlayerArea()

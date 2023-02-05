@@ -1,5 +1,5 @@
-from structures.convert_nbt import convert_nbt
-from structures.nbt_asset import NBTAsset
+from structures.nbt.convert_nbt import convert_nbt
+from structures.nbt.nbt_asset import NBTAsset
 from structures.structure import Structure
 from structures.transformation import Transformation
 from gdpc.interface import Interface

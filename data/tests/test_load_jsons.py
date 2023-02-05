@@ -4,12 +4,18 @@ sys.path[0] = sys.path[0].removesuffix('\\data\\tests')
 
 # Actual file
 from data.load_jsons import load_jsons, load_objects
+from structures.nbt.nbt_asset import NBTAsset
+from data.load_assets import load_assets
+from building_generation.walls import wall
 
-class Test:
-    field : str
+class Test(NBTAsset):
+    pass
 
-print(load_jsons('data/tests'))
+class SubTest(Test):
+    pass
 
-test : Test = load_objects('data/tests', Test)[0]
+load_assets('data/tests')
 
-print(test.field)
+# you should see one error and two warnings about fields not being annotated
+assert(len(Test.all()) == 2)
+assert(len(SubTest.all()) == 1)
