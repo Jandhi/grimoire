@@ -8,6 +8,7 @@ from utils.tuples import add_tuples
 from building_generation.walls.wall import Wall
 from data.asset import default_subtype
 
+# NBT class for walls
 @default_subtype(Wall)
 class WallNBT(NBTAsset, Wall):
     type_name = 'wall_nbt'

@@ -3,6 +3,7 @@ from data.asset import Asset
 from gdpc.interface import Interface
 from structures.grid import Grid
 
+# Abstract class for walls
 class Wall(Asset):
     def build(
         self, 
