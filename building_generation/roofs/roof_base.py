@@ -3,7 +3,7 @@ from gdpc.interface import Interface
 from structures.grid import Grid
 from structures.directions import x_minus
 
-# Abstract base class for roofs, includiung roof nbts and roof blueprints
+# Abstract base class for roofs, including roof nbts and roof blueprints
 @asset_defaults(facing=x_minus)
 class RoofBase(Asset):
     shape : list[tuple[int, int, int]]
