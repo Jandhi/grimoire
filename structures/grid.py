@@ -46,10 +46,10 @@ class Grid:
         return self.local_to_grid(self.world_to_local(coordinates))
 
     # helper function to build things on grid
-    def build(self, interface : Interface, asset : NBTAsset, grid_coordinate : tuple[int, int, int], facing : str = x_minus):
+    def build(self, interface : Interface, asset : NBTAsset, grid_coordinate : tuple[int, int, int], facing : str = None):
         local_coords = self.grid_to_local(grid_coordinate)
 
-        if asset.facing == facing:
+        if facing is None or asset.facing == facing:
             build_nbt(interface, asset, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
             ))
