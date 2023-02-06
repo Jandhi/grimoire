@@ -1,11 +1,14 @@
-from structures.nbt.nbt_asset import NBTAsset
+from data.asset import Asset
+from data.asset import Asset
 from gdpc.interface import Interface
-from structures.nbt.build_nbt import build_nbt
-from structures.transformation import Transformation
 from structures.grid import Grid
-from structures.directions import right, left, opposites
-from utils.tuples import add_tuples
 
-class Wall(NBTAsset):
-    facing : str
+class Wall(Asset):
+    def build(
+        self, 
+        interface: Interface, 
+        grid: Grid, 
+        grid_coordinate: tuple[int, int, int], 
+        facing: str = None):
+            pass
        

@@ -6,7 +6,8 @@ sys.path[0] = sys.path[0].removesuffix('\\building_generation\\tests')
 from gdpc.interface import Interface
 from structures.grid import Grid
 from building_generation.walls.wall import Wall
-from building_generation.roofs.roof_nbt import Roof
+from building_generation.roofs.roof import Roof
+
 from data.load_assets import load_assets
 from structures.directions import cardinal
 
@@ -24,6 +25,7 @@ for direction in cardinal:
 
 # ROOF
 roof : Roof = Roof.find('japanese_roof_flat_brick_single')
-grid.build(interface, roof, (0, 2, 0))
+roof.build(interface, grid, (0, 2, 0))
+
 
 interface.sendBlocks()

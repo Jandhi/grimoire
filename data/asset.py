@@ -48,6 +48,14 @@ def asset_defaults(**kwargs):
 
     return register_defaults
 
+# Default subtypes allow loading for abstract types like 'roofs' to default to a subclass
+def default_subtype(other_cls):
+    def register_subtype(cls):
+        Asset.default_subtype[other_cls.type_name] = cls.type_name
+        return cls
+
+    return register_subtype
+
 # Base Class for all assets loaded from json files
 class Asset(metaclass=AssetMeta):
     type_name = 'asset'
@@ -60,6 +68,9 @@ class Asset(metaclass=AssetMeta):
 
     # Tracks all types of assets
     types : list[type] = []
+
+    # See is_default_subtype_for above
+    default_subtype = {}
 
     # Tracks all parent types of this asset, not including Asset or NBTAsset
     parent_types : list[type] = []
@@ -122,7 +133,10 @@ class Asset(metaclass=AssetMeta):
         return obj
 
     @classmethod
-    def find_type(cls, name):
+    def get_construction_type(cls, name):
+        if name in Asset.default_subtype:
+            return cls.get_construction_type(Asset.default_subtype[name])
+
         for tp in Asset.types:
             if tp.type_name == name:
                 return tp

@@ -5,11 +5,9 @@ from utils.strings import camel_to_snake_case
 import json
 from colored import fg, attr
 
-# Ensure you are loading all NBTAsset types here
-from building_generation.walls.wall import Wall
-from building_generation.roofs.roof_base import RoofBase
-from building_generation.roofs.roof_component import RoofComponent
-from building_generation.roofs.roof_nbt import Roof
+# Loading in the NBT type files is important for the default substitution
+from building_generation.walls.wall_nbt import WallNBT 
+from building_generation.roofs.roof_nbt import RoofNBT
 
 # Loads all nbt assets from the assets folder
 def load_assets(root_directory) -> None:
@@ -24,7 +22,8 @@ def load_assets(root_directory) -> None:
                 print(f'{fg("red")}Error{attr(0)}: could not load {path}. No type given.')
                 continue
 
-            cls = Asset.find_type(data['type'])
+            cls = Asset.get_construction_type(data['type'])
+            data['type'] = cls.type_name
             
             obj, validation_state = cls.construct_unsafe(**data)
             validation_state : AssetValidationState

@@ -5,7 +5,7 @@ from structures.directions import x_minus
 
 # Abstract base class for roofs, including roof nbts and roof blueprints
 @asset_defaults(facing=x_minus)
-class RoofBase(Asset):
+class Roof(Asset):
     shape : list[tuple[int, int, int]]
     facing : str
 
@@ -18,5 +18,5 @@ class RoofBase(Asset):
         interface : Interface, 
         grid : Grid,
         grid_coordinate : tuple[int, int, int],
-        facing : str):
+        facing : str = None):
         pass
