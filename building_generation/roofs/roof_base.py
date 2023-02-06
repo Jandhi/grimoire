@@ -12,3 +12,11 @@ class RoofBase(Asset):
     def on_construct(self):
         super().on_construct()
         self.shape = [tuple(item) for item in self.shape]
+
+    # Abstract
+    def build(self,
+        interface : Interface, 
+        grid : Grid,
+        grid_coordinate : tuple[int, int, int],
+        facing : str):
+        pass
