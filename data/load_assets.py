@@ -5,12 +5,12 @@ from utils.strings import camel_to_snake_case
 import json
 from colored import fg, attr
 
-# Loading in the NBT type files is important for the default substitution
-from building_generation.walls.wall_nbt import WallNBT 
-from building_generation.roofs.roof_nbt import RoofNBT
+from data.load_types import load_types
 
 # Loads all nbt assets from the assets folder
 def load_assets(root_directory) -> None:
+    load_types()
+
     names : list[str] = glob(root_directory + '/**/*.json', recursive=True) # glob allows us to get the subfolders too
 
     for name in names:
