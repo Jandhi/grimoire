@@ -41,28 +41,12 @@ class AssetError(ValueError):
 # Decorator that allows for defaults to be set for certain values before validate is called
 # Try to make them pass-by-value types. I'll copy lists and dicts, but you'll have problems otherwise.
 def asset_defaults(**kwargs):
-
-    # Outer function binds the arguments for the inner function
-    def modify_class(cls):
-        old_validate = cls.validate
-
-        def new_validate(ref) -> AssetValidationState:
-            for field_name, field_value in kwargs.items():
-                value = field_value
-
-                if isinstance(value, list) or isinstance(value, dict):
-                    value = value.copy()
-
-                if not hasattr(ref, field_name):
-                    setattr(ref, field_name, value)
-
-            return old_validate(ref)
-
-        cls.validate = new_validate
-
+    # Inner function adds defaults
+    def register_defaults(cls):
+        Asset.defaults[cls.type_name] = kwargs
         return cls
 
-    return modify_class
+    return register_defaults
 
 # Base Class for all assets loaded from json files
 class Asset(metaclass=AssetMeta):
@@ -70,6 +54,9 @@ class Asset(metaclass=AssetMeta):
 
     # Used to store loaded assets by type
     assets_by_type_name : dict[str, list] = {}
+
+    # Defaults by type
+    defaults : dict[str, dict[str, any]] = {}
 
     # Tracks all types of assets
     types : list[type] = []
@@ -99,6 +86,20 @@ class Asset(metaclass=AssetMeta):
                 state.surplus_args.append((field, type(field).__name__))
         
         return state
+
+    def set_defaults(self) -> None:
+        for tp in inspect.getmro(type(self))[:-1]:
+            if tp.type_name not in Asset.defaults:
+                continue
+
+            for field_name, field_value in Asset.defaults[tp.type_name].items():
+                value = field_value
+
+                if isinstance(value, list) or isinstance(value, dict):
+                    value = value.copy()
+
+                if not hasattr(self, field_name):
+                    setattr(self, field_name, value)
     
     def on_construct(self) -> None: # Called after fields are validated
         self.origin = tuple(self.origin) # convert list to tuple
@@ -131,6 +132,13 @@ class Asset(metaclass=AssetMeta):
     def all(cls):
         return Asset.assets_by_type_name[cls.type_name]
 
+    # Returns asset with specified name
+    @classmethod
+    def find(cls, name):
+        for asset in cls.all():
+            if asset.name == name:
+                return asset
+
     # This is used to create an asset without raising an exception on failure
     # IMPORTANT: This can return None when the asset created is invalid. It will NOT throw an error.
     @classmethod
@@ -139,7 +147,9 @@ class Asset(metaclass=AssetMeta):
 
         for key, val in kwargs.items():
             obj.__setattr__(key, val)
-        
+
+        obj.set_defaults()
+
         state = obj.validate()
 
         if state.is_invalid():

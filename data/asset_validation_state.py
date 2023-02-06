@@ -5,3 +5,9 @@ class AssetValidationState:
 
     def is_invalid(self):
         return len(self.missing_args) > 0
+
+    def combine(self, other):
+        return AssetValidationState(
+            missing_args = self.missing_args + other.missing_args,
+            surplus_args = self.surplus_args + other.surplus_args
+        )

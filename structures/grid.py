@@ -1,4 +1,13 @@
 from utils.tuples import sub_tuples, add_tuples, map_tuples
+from structures.transformation import Transformation
+from structures.nbt.build_nbt import build_nbt
+from structures.directions import left, right, opposites, x_minus
+from structures.nbt.build_nbt import build_nbt
+from structures.transformation import Transformation
+from utils.tuples import add_tuples
+from gdpc.interface import Interface
+from structures.nbt.nbt_asset import NBTAsset
+
 
 # Class to work with grids for buildings
 # Local coordinates are block coordinates relative to origin of house
@@ -35,3 +44,31 @@ class Grid:
 
     def world_to_grid(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
         return self.local_to_grid(self.world_to_local(coordinates))
+
+    # helper function to build things on grid
+    def build(self, interface : Interface, asset : NBTAsset, grid_coordinate : tuple[int, int, int], facing : str = x_minus):
+        local_coords = self.grid_to_local(grid_coordinate)
+
+        if asset.facing == facing:
+            build_nbt(interface, asset, Transformation(
+                offset=add_tuples((0, 0, 0), local_coords),
+            ))
+        
+        if right[asset.facing] == facing:
+            build_nbt(interface, asset, Transformation(
+                offset=add_tuples((0, 0, 0), local_coords),
+                diagonal_mirror=True
+            ))
+
+        if left[asset.facing] == facing:
+            build_nbt(interface, asset, Transformation(
+                offset=add_tuples((0, 0, self.depth - 1), local_coords),
+                diagonal_mirror=True,
+                mirror=(True, False, False),
+            ))
+
+        if opposites[asset.facing] == facing:
+            build_nbt(interface, asset, Transformation(
+                offset=add_tuples((self.width - 1, 0, 0), local_coords),
+                mirror=(True, False, False)
+            ))

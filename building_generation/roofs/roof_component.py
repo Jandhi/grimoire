@@ -11,4 +11,3 @@ class RoofComponent(NBTAsset):
 
     def on_construct(self):
         super().on_construct()
-        self.shape = [tuple(*item) for item in self.shape]
