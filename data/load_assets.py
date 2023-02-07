@@ -5,13 +5,12 @@ from utils.strings import camel_to_snake_case
 import json
 from colored import fg, attr
 
-# Ensure you are loading all NBTAsset types here
-from building_generation.walls.wall import Wall
-from building_generation.roofs.roof import Roof
-from building_generation.roofs.roof_component import RoofComponent
+from data.load_types import load_types
 
 # Loads all nbt assets from the assets folder
 def load_assets(root_directory) -> None:
+    load_types()
+
     names : list[str] = glob(root_directory + '/**/*.json', recursive=True) # glob allows us to get the subfolders too
 
     for name in names:
@@ -20,16 +19,18 @@ def load_assets(root_directory) -> None:
             data = json.load(file)
 
             if 'type' not in data:
-                print(f'Could not load {path}. No type given.')
+                print(f'{fg("red")}Error{attr(0)}: could not load {path}. No type given.')
                 continue
 
-            cls = Asset.find_type(data['type'])
+            cls = Asset.get_construction_type(data['type'])
+            data['type'] = cls.type_name
             
             obj, validation_state = cls.construct_unsafe(**data)
             validation_state : AssetValidationState
 
             if validation_state.is_invalid():
-                print(f'{fg("red")}Error{attr(0)} while loading {fg("light_blue")}{path}{attr(0)}. Object is missing the following fields: {validation_state.missing_args}. It will be ignored.')
+                print(f'{fg("red")}Error{attr(0)}: while loading {fg("light_blue")}{path}{attr(0)}. Object is missing the following fields: {validation_state.missing_args}. It will be ignored.')
                 continue
 
-            print(f'{fg("yellow")}Warning{attr(0)} while loading {fg("light_blue")}{path}{attr(0)}. Object has non-annotated fields: {validation_state.surplus_args}')
+            if len(validation_state.surplus_args) > 0:
+                print(f'{fg("yellow")}Warning{attr(0)}: while loading {fg("light_blue")}{path}{attr(0)}. Object has non-annotated fields: {validation_state.surplus_args}')

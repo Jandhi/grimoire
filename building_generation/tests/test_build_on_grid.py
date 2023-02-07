@@ -6,22 +6,26 @@ sys.path[0] = sys.path[0].removesuffix('\\building_generation\\tests')
 from gdpc.interface import Interface
 from structures.grid import Grid
 from building_generation.walls.wall import Wall
-from building_generation.walls.build_wall_on_grid import build_wall_on_grid
+from building_generation.roofs.roof import Roof
+
 from data.load_assets import load_assets
+from structures.directions import cardinal
 
-interface = Interface(0, 4, 0, buffering=True, caching=True)
+interface = Interface(0, 3, 0, buffering=True, caching=True)
 grid = Grid()
-walls = load_assets('assets')
-wall = Wall.all()[0]
+load_assets('assets')
 
-build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'x_minus')
-build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'x_plus')
-build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'z_minus')
-build_wall_on_grid(interface, grid, (0, 0, 0), wall, 'z_plus')
+# WALLS
+lower_wall : Wall = Wall.find('japanese_wall_bottom_plain')
+upper_wall : Wall = Wall.find('japanese_wall_upper_traps')
 
-build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'x_plus')
-build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'x_minus')
-build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'z_plus')
-build_wall_on_grid(interface, grid, (0, 1, 0), wall, 'z_minus')
+for direction in cardinal:
+    grid.build(interface, lower_wall, (0, 0, 0), direction)
+    grid.build(interface, upper_wall, (0, 1, 0), direction)
+
+# ROOF
+roof : Roof = Roof.find('japanese_roof_flat_brick_single')
+roof.build(interface, grid, (0, 2, 0))
+
 
 interface.sendBlocks()

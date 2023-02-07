@@ -1,0 +1,7 @@
+{
+    "name" : "japanese_wall_upper_traps",
+    "type" : "wall",
+    "filepath" : "assets/walls/japanese/japanese_wall_upper_traps.nbt",
+    "origin" : [0, -1, 0],
+    "facing" : "x_minus"
+}
