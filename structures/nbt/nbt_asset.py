@@ -13,3 +13,8 @@ class NBTAsset(Asset):
     origin : tuple[int, int, int]
     do_not_replace : list[str] # blocks that should not be swapped by palette swapper
     replace : dict[str, str]   # blocks that must be swapped out
+
+    def on_construct(self) -> None:
+        super().on_construct()
+
+        self.origin = tuple(self.origin) # convert list to tuple

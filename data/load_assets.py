@@ -6,6 +6,7 @@ import json
 from colored import fg, attr
 
 from data.load_types import load_types
+from data.link_assets import link_assets
 
 # Loads all nbt assets from the assets folder
 def load_assets(root_directory) -> None:
@@ -34,3 +35,5 @@ def load_assets(root_directory) -> None:
 
             if len(validation_state.surplus_args) > 0:
                 print(f'{fg("yellow")}Warning{attr(0)}: while loading {fg("light_blue")}{path}{attr(0)}. Object has non-annotated fields: {validation_state.surplus_args}')
+
+    link_assets()

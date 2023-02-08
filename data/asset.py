@@ -67,7 +67,7 @@ class Asset(metaclass=AssetMeta):
     defaults : dict[str, dict[str, any]] = {}
 
     # Tracks all types of assets
-    types : list[type] = []
+    types : list[AssetMeta] = []
 
     # See is_default_subtype_for above
     default_subtype = {}
@@ -79,22 +79,21 @@ class Asset(metaclass=AssetMeta):
     name : str
     type : str
 
+    
+
     # Called after fields are loaded in 
     # This function ensures all required fields are there
     def validate(self) -> AssetValidationState:
         state = AssetValidationState()
-        annotated_fields = set()
+        annotations = type(self).get_annotations()
 
-        for tp in inspect.getmro(type(self))[:-1]:
-            for field_name in tp.__annotations__:
-                annotated_fields.add(field_name)
-                if not hasattr(self, field_name):
-                    field_type = tp.__annotations__[field_name].__name__
-                    state.missing_args.append((field_name, field_type))
+        for field_name, field_type in annotations.items():
+            if not hasattr(self, field_name):
+                state.missing_args.append((field_name, str(field_type)))
                     
         for field in self.__dict__:
-            if field not in annotated_fields:
-                state.surplus_args.append((field, type(field).__name__))
+            if field not in annotations:
+                state.surplus_args.append((field, str(type(field))))
         
         return state
 
@@ -113,7 +112,7 @@ class Asset(metaclass=AssetMeta):
                     setattr(self, field_name, value)
     
     def on_construct(self) -> None: # Called after fields are validated
-        self.origin = tuple(self.origin) # convert list to tuple
+        pass
 
     # Adds object to global pool of objects
     def add_to_pool(self) -> None:
@@ -185,3 +184,13 @@ class Asset(metaclass=AssetMeta):
             raise AssetError(f'Asset is missing the following arguments: {[state.missing_args]}')
         
         return asset
+    
+    @classmethod
+    def get_annotations(cls) -> dict[str, str]:
+        annotations = {}
+
+        for tp in inspect.getmro(cls)[:-1]:
+            for field_name in tp.__annotations__:
+                annotations[field_name] = tp.__annotations__[field_name]
+
+        return annotations

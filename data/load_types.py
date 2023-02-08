@@ -10,3 +10,7 @@ def load_types():
     from building_generation.roofs.roof import Roof
     from building_generation.roofs.roof_nbt import RoofNBT
     from building_generation.roofs.roof_blueprint import RoofBlueprint
+
+    # STYLES
+    from style.style import Style
+    from style.substyle import Substyle

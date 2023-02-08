@@ -1,0 +1,2 @@
+class Palette:
+    pass
