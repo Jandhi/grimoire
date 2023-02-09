@@ -14,3 +14,6 @@ def load_types():
     # STYLES
     from style.style import Style
     from style.substyle import Substyle
+
+    # ROOMS
+    from building_generation.rooms.room import Room

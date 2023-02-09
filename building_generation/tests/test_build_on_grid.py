@@ -7,6 +7,7 @@ from gdpc.interface import Interface
 from structures.grid import Grid
 from building_generation.walls.wall import Wall
 from building_generation.roofs.roof import Roof
+from building_generation.rooms.room import Room
 
 from data.load_assets import load_assets
 from structures.directions import cardinal
@@ -29,7 +30,7 @@ styles = {
         'roof'   : 'viking_roof_stone_accent_single'
     }
 }
-style = styles['viking']
+style = styles['japanese']
 
 # WALLS
 lower_wall : Wall = Wall.find(style['lower'])
@@ -42,5 +43,9 @@ for direction in cardinal:
 # ROOF
 roof : Roof = Roof.find(style['roof'])
 roof.build(interface, grid, (0, 2, 0))
+
+# ROOM
+room : Room = Room.find('kitchen_no_window_small')
+grid.build(interface, room, (0, 0, 0))
 
 interface.sendBlocks()

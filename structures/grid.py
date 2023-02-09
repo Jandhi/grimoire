@@ -49,26 +49,26 @@ class Grid:
     def build(self, interface : Interface, asset : NBTAsset, grid_coordinate : tuple[int, int, int], facing : str = None):
         local_coords = self.grid_to_local(grid_coordinate)
 
-        if facing is None or asset.facing == facing:
-            build_nbt(interface, asset, Transformation(
+        if facing is None or not hasattr(asset, 'facing') or asset.facing == facing:
+            return build_nbt(interface, asset, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
             ))
         
         if right[asset.facing] == facing:
-            build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
                 diagonal_mirror=True
             ))
 
         if left[asset.facing] == facing:
-            build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, Transformation(
                 offset=add_tuples((0, 0, self.depth - 1), local_coords),
                 diagonal_mirror=True,
                 mirror=(True, False, False),
             ))
 
         if opposites[asset.facing] == facing:
-            build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, Transformation(
                 offset=add_tuples((self.width - 1, 0, 0), local_coords),
                 mirror=(True, False, False)
             ))
