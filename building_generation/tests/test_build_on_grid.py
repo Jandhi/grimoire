@@ -13,6 +13,7 @@ from data.load_assets import load_assets
 from structures.directions import cardinal
 
 from style.style import Style
+from palette.palette import Palette
 
 interface = Interface(0, 3, 0, buffering=True, caching=True)
 grid = Grid()
@@ -30,22 +31,25 @@ styles = {
         'roof'   : 'viking_roof_stone_accent_single'
     }
 }
-style = styles['japanese']
+style = styles['viking']
+
+# PALETTE
+palette : Palette = Palette.find('acacia_palette')
 
 # WALLS
 lower_wall : Wall = Wall.find(style['lower'])
 upper_wall : Wall = Wall.find(style['upper'])
 
 for direction in cardinal:
-    grid.build(interface, lower_wall, (0, 0, 0), direction)
-    grid.build(interface, upper_wall, (0, 1, 0), direction)
+    grid.build(interface, lower_wall, palette, (0, 0, 0), direction)
+    grid.build(interface, upper_wall, palette, (0, 1, 0), direction)
 
 # ROOF
 roof : Roof = Roof.find(style['roof'])
-roof.build(interface, grid, (0, 2, 0))
+roof.build(interface, palette, grid, (0, 2, 0))
 
 # ROOM
 room : Room = Room.find('kitchen_no_window_small')
-grid.build(interface, room, (0, 0, 0))
+grid.build(interface, room, palette, (0, 0, 0))
 
 interface.sendBlocks()

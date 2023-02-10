@@ -3,5 +3,6 @@
     "type" : "wall",
     "filepath" : "assets/walls/viking/viking_wall_upper_logs_window.nbt",
     "origin" : [0, -1, 0],
-    "facing" : "x_minus"
+    "facing" : "x_minus",
+    "palette" : "viking_palette"
 }

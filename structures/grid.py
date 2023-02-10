@@ -7,6 +7,7 @@ from structures.transformation import Transformation
 from utils.tuples import add_tuples
 from gdpc.interface import Interface
 from structures.nbt.nbt_asset import NBTAsset
+from palette.palette import Palette
 
 
 # Class to work with grids for buildings
@@ -46,29 +47,29 @@ class Grid:
         return self.local_to_grid(self.world_to_local(coordinates))
 
     # helper function to build things on grid
-    def build(self, interface : Interface, asset : NBTAsset, grid_coordinate : tuple[int, int, int], facing : str = None):
+    def build(self, interface : Interface, asset : NBTAsset, palette: Palette, grid_coordinate : tuple[int, int, int], facing : str = None):
         local_coords = self.grid_to_local(grid_coordinate)
 
         if facing is None or not hasattr(asset, 'facing') or asset.facing == facing:
-            return build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, palette, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
             ))
         
         if right[asset.facing] == facing:
-            return build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, palette, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
                 diagonal_mirror=True
             ))
 
         if left[asset.facing] == facing:
-            return build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, palette, Transformation(
                 offset=add_tuples((0, 0, self.depth - 1), local_coords),
                 diagonal_mirror=True,
                 mirror=(True, False, False),
             ))
 
         if opposites[asset.facing] == facing:
-            return build_nbt(interface, asset, Transformation(
+            return build_nbt(interface, asset, palette, Transformation(
                 offset=add_tuples((self.width - 1, 0, 0), local_coords),
                 mirror=(True, False, False)
             ))

@@ -17,3 +17,6 @@ def load_types():
 
     # ROOMS
     from building_generation.rooms.room import Room
+
+    # PALETTES
+    from palette.palette import Palette

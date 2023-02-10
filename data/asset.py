@@ -121,16 +121,6 @@ class Asset(metaclass=AssetMeta):
 
     # -------------
     # CLASS METHODS
-
-    @classmethod
-    def new(cls, name, type, filepath, origin):
-        obj = Asset()
-        obj.name = name
-        obj.type = type
-        obj.filepath = filepath
-        obj.origin = origin
-        return obj
-
     @classmethod
     def get_construction_type(cls, name):
         if name in Asset.default_subtype:
@@ -178,6 +168,9 @@ class Asset(metaclass=AssetMeta):
     # Call this to properly create an asset
     @classmethod
     def construct(cls, add_to_pool = True, **kwargs) -> any:
+        if 'type' not in kwargs:
+            kwargs['type'] = cls.type_name
+
         asset, state = cls.construct_unsafe(add_to_pool, **kwargs)
 
         if state.is_invalid():
