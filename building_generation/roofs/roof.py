@@ -1,5 +1,5 @@
 from data.asset import Asset, asset_defaults
-from gdpc.interface import Interface
+from gdpc.editor import Editor
 from structures.grid import Grid
 from structures.directions import x_minus
 from palette.palette import Palette
@@ -17,7 +17,7 @@ class Roof(Asset):
     # Abstract
     def build(
         self, 
-        interface: Interface, 
+        editor: Editor, 
         palette :  Palette,
         grid: Grid, 
         grid_coordinate: tuple[int, int, int], 

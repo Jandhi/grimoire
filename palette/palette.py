@@ -1,6 +1,5 @@
 from data.asset import Asset, asset_defaults
 
-
 @asset_defaults(
     primary_wood = 'oak',
     secondary_wood = 'spruce',

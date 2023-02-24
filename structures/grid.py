@@ -5,14 +5,15 @@ from structures.directions import left, right, opposites, x_minus
 from structures.nbt.build_nbt import build_nbt
 from structures.transformation import Transformation
 from utils.tuples import add_tuples
-from gdpc.interface import Interface
+from gdpc.editor import Editor
+from gdpc.nbt_tools import nbt
 from structures.nbt.nbt_asset import NBTAsset
 from palette.palette import Palette
 
 
 # Class to work with grids for buildings
 # Local coordinates are block coordinates relative to origin of house
-# World coordinates are coordinates relative to world or interface origin
+# World coordinates are coordinates relative to world or editor origin
 # Grid coordinates are cell coordinates, with dimensinos according to the dimensions given
 class Grid:
     def __init__(self, 
@@ -47,29 +48,29 @@ class Grid:
         return self.local_to_grid(self.world_to_local(coordinates))
 
     # helper function to build things on grid
-    def build(self, interface : Interface, asset : NBTAsset, palette: Palette, grid_coordinate : tuple[int, int, int], facing : str = None):
+    def build(self, editor : Editor, asset : NBTAsset, palette: Palette, grid_coordinate : tuple[int, int, int], facing : str = None):
         local_coords = self.grid_to_local(grid_coordinate)
 
         if facing is None or not hasattr(asset, 'facing') or asset.facing == facing:
-            return build_nbt(interface, asset, palette, Transformation(
+            return build_nbt(editor, asset, palette, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
             ))
         
         if right[asset.facing] == facing:
-            return build_nbt(interface, asset, palette, Transformation(
+            return build_nbt(editor, asset, palette, Transformation(
                 offset=add_tuples((0, 0, 0), local_coords),
                 diagonal_mirror=True
             ))
 
         if left[asset.facing] == facing:
-            return build_nbt(interface, asset, palette, Transformation(
+            return build_nbt(editor, asset, palette, Transformation(
                 offset=add_tuples((0, 0, self.depth - 1), local_coords),
                 diagonal_mirror=True,
                 mirror=(True, False, False),
             ))
 
         if opposites[asset.facing] == facing:
-            return build_nbt(interface, asset, palette, Transformation(
+            return build_nbt(editor, asset, palette, Transformation(
                 offset=add_tuples((self.width - 1, 0, 0), local_coords),
                 mirror=(True, False, False)
             ))

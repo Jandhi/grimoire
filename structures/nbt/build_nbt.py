@@ -2,14 +2,15 @@ from structures.nbt.convert_nbt import convert_nbt
 from structures.nbt.nbt_asset import NBTAsset
 from structures.structure import Structure
 from structures.transformation import Transformation
-from gdpc.interface import Interface
+from gdpc.editor import Editor
+from gdpc.block import Block
 from utils.tuples import add_tuples, sub_tuples
 from palette.palette import Palette
 from palette.palette_swap import palette_swap
 
-# Constructs an NBTAsset given an interface and transformation
+# Constructs an NBTAsset given an editor and transformation
 def build_nbt(
-        interface : Interface, 
+        editor : Editor, 
         asset : NBTAsset,
         palette : Palette,
         transformation : Transformation = None,
@@ -38,5 +39,5 @@ def build_nbt(
             asset=asset
         )
 
-        interface.placeBlock(x, y, z, str(block)) 
+        editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block()) 
 
