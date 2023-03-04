@@ -60,6 +60,17 @@ tuples = {
 def tuple_dir(direction):
     return tuples[direction]
 
+tuples = {
+    x_plus  : [1, 0, 0],
+    x_minus : [-1, 0, 0],
+    y_plus  : [0, 1, 0],
+    y_minus : [0, -1, 0],
+    z_plus  : [0, 0, 1],
+    z_minus : [0, 0, -1]
+}
+def tuple_dir(direction):
+    return tuples[direction]
+
 text_dict = {
     north : 'north',
     east  : 'east',
