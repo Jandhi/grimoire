@@ -49,6 +49,17 @@ def get_ivec2(direction : direction) -> ivec2:
 def get_ivec3(direction : direction) -> ivec3:
     return ivec3(*vector(direction))
 
+tuples = {
+    x_plus  : [1, 0, 0],
+    x_minus : [-1, 0, 0],
+    y_plus  : [0, 1, 0],
+    y_minus : [0, -1, 0],
+    z_plus  : [0, 0, 1],
+    z_minus : [0, 0, -1]
+}
+def tuple_dir(direction):
+    return tuples[direction]
+
 text_dict = {
     north : 'north',
     east  : 'east',
@@ -89,4 +100,5 @@ left = {
     south: east,
     east: north
 }
+
 backwards = opposites
