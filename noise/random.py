@@ -8,7 +8,7 @@ def randrange(seed : int, min : int, max : int) -> int:
 
 # returns a random item in a list
 def choose(seed : int, items : list):
-    return items[len(items) % seed]
+    return items[seed % len(items)]
 
 # returns a random item from a dictionary of weights
 def choose_weighted(seed : int, items : dict[any,int]):

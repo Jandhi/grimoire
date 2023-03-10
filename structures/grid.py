@@ -9,7 +9,7 @@ from gdpc.editor import Editor
 from gdpc.nbt_tools import nbt
 from structures.nbt.nbt_asset import NBTAsset
 from palette.palette import Palette
-
+from structures.types import vec3
 
 # Class to work with grids for buildings
 # Local coordinates are block coordinates relative to origin of house
@@ -17,38 +17,38 @@ from palette.palette import Palette
 # Grid coordinates are cell coordinates, with dimensinos according to the dimensions given
 class Grid:
     def __init__(self, 
-            dimensions : tuple[int, int, int] = (7, 5, 7), 
-            origin     : tuple[int, int, int] = (0, 0, 0),
+            dimensions : vec3 = (7, 5, 7), 
+            origin     : vec3 = (0, 0, 0),
             ) -> None:
         self.width, self.height, self.depth = dimensions
         self.origin = origin
 
-    def dimensions(self) -> tuple[int, int, int]:
+    def dimensions(self) -> vec3:
         return self.width, self.height, self.depth
 
     # Coordinates functions
     
-    def grid_to_local(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
+    def grid_to_local(self, coordinates : vec3) -> vec3:
         return map_tuples(lambda coordinate, dimension : coordinate * (dimension - 1), coordinates, self.dimensions())
 
-    def grid_to_world(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
+    def grid_to_world(self, coordinates : vec3) -> vec3:
         return self.local_to_world(self.grid_to_local(coordinates))
 
-    def local_to_world(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
+    def local_to_world(self, coordinates : vec3) -> vec3:
         return add_tuples(coordinates, self.origin)
 
     # If on the boundary of two tiles, it will prefer the right one
-    def local_to_grid(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
+    def local_to_grid(self, coordinates : vec3) -> vec3:
         return map_tuples(lambda coordinate, dimension : coordinate // (dimension - 1), coordinates, self.dimensions())
     
-    def world_to_local(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
+    def world_to_local(self, coordinates : vec3) -> vec3:
         return sub_tuples(coordinates, self.origin)
 
-    def world_to_grid(self, coordinates : tuple[int, int, int]) -> tuple[int, int, int]:
+    def world_to_grid(self, coordinates : vec3) -> vec3:
         return self.local_to_grid(self.world_to_local(coordinates))
 
     # helper function to build things on grid
-    def build(self, editor : Editor, asset : NBTAsset, palette: Palette, grid_coordinate : tuple[int, int, int], facing : str = None):
+    def build(self, editor : Editor, asset : NBTAsset, palette: Palette, grid_coordinate : vec3, facing : str = None):
         local_coords = self.grid_to_local(grid_coordinate)
 
         if facing is None or not hasattr(asset, 'facing') or asset.facing == facing:

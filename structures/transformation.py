@@ -3,6 +3,7 @@ from structures.directions import x_plus, x_minus, y_plus, y_minus, z_plus, z_mi
 from structures.structure import Structure
 from structures.nbt.nbt_asset import NBTAsset
 from utils.tuples import sub_tuples, add_tuples
+from structures.types import vec3
 
 #region Transformation dictionaries
 x_mirror = {
@@ -47,7 +48,7 @@ diagonal_mirror = {
 # Rotation is only supported by switching the x/z axis, in other words diagonal_mirror
 class Transformation:
     def __init__(self,
-        offset : tuple[int, int, int] = None,
+        offset : vec3 = None,
         mirror : tuple[bool, bool, bool] = None,
         diagonal_mirror : bool = False,
     ) -> None:
@@ -97,10 +98,10 @@ class Transformation:
 
     def apply_to_point(
         self,
-        point : tuple[int, int, int],
+        point : vec3,
         structure : Structure,
         asset : NBTAsset, 
-    ) -> tuple[int, int, int]:
+    ) -> vec3:
 
         x, y, z = point
 
@@ -126,8 +127,8 @@ class Transformation:
     
     def apply_to_origin(
         self,
-        point : tuple[int, int, int]
-    ) -> tuple[int, int, int]:
+        point : vec3
+    ) -> vec3:
         origin = point
 
         if self.mirror[0]: # x mirror

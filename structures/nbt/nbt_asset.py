@@ -1,5 +1,6 @@
 from data.asset import Asset, asset_defaults
 from palette.palette import Palette
+from structures.types import vec3
 
 # Base class with metadata for an NBT file
 # We will be subclassing this for different types of structures, e.g. walls and rooms
@@ -16,7 +17,7 @@ class NBTAsset(Asset):
     type_name = 'nbtasset' 
 
     filepath : str
-    origin : tuple[int, int, int]
+    origin : vec3
     
     # DEFAULTS
     palette : Palette 

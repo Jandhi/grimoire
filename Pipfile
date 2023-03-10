@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-gdpc = "*"
+gdpc = {git = "https://github.com/avdstaaij/gdpc"}
 nbt = "*"
 colored = "*"
 
