@@ -1,0 +1,12 @@
+{
+    "name" : "basic_brick_roof",
+    "type" : "roof",
+    "components" : {
+        "corner" : "basic_brick_roof_corner",
+        "side" : "basic_brick_roof_side",
+        "inner" : "basic_brick_roof_inner",
+        "upper_corner" : "basic_brick_roof_upper_corner",
+        "upper_inner" : "basic_brick_roof_upper_inner",
+        "upper_side" : "basic_brick_roof_upper_side"
+    } 
+}

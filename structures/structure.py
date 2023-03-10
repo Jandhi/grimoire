@@ -1,12 +1,13 @@
 from structures.block import Block
+from structures.types import vec3
 
 # A class derived from an NBT file, data describing something built in minecraft
 # Used to actually construct NBT structures
 class Structure:
     def __init__(self, 
-        blocks : dict[tuple[int, int, int], int], 
+        blocks : dict[vec3, int], 
         palette : list[Block],
-        dimensions : tuple[int, int, int],
+        dimensions : vec3,
     ) -> None:
         self.blocks = blocks
         self.palette = palette

@@ -1,3 +1,5 @@
+from gdpc.block import Block as GDPCBlock
+
 class Block:
     def __init__(self, name : str, properties : dict[str, str]) -> None:
         self.name = name
@@ -18,3 +20,6 @@ class Block:
 
     def copy(self):
         return Block(self.name, self.properties.copy())
+    
+    def to_gdpc_block(self) -> GDPCBlock:
+        return GDPCBlock(id = self.name, states = self.properties)

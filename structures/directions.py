@@ -1,3 +1,8 @@
+from structures.types import vec3
+from gdpc.vector_tools import ivec2, ivec3
+
+direction = str
+
 # By Axis
 x_plus  = 'x_plus'
 x_minus = 'x_minus'
@@ -13,7 +18,8 @@ south = z_plus
 west = x_minus
 up = y_plus
 down = y_minus
-cardinal = (north, east , south, west)
+cardinal = (north, east, south, west)
+
 directions = (north, east, south, west, up, down)
 
 opposites = {
@@ -35,8 +41,13 @@ vectors = {
     z_plus  : (0, 0, 1),
     z_minus : (0, 0, -1)
 }
-def vector(direction):
+def vector(direction : direction) -> vec3:
     return vectors[direction]
+def get_ivec2(direction : direction) -> ivec2:
+    tup = vector(direction)
+    return ivec2(tup[0], tup[2])
+def get_ivec3(direction : direction) -> ivec3:
+    return ivec3(*vector(direction))
 
 text_dict = {
     north : 'north',

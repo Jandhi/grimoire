@@ -9,6 +9,8 @@ def convert_nbt(filename : str) -> Structure:
     blocks, dimensions = __read_blocks_and_dimensions(file['blocks'])
     palette = []
 
+    __read_entities(file['entities'])
+
     for tag in file['palette']:
         name = ''
         properties = {}
@@ -24,6 +26,15 @@ def convert_nbt(filename : str) -> Structure:
         )
     
     return Structure(blocks, palette, dimensions)
+
+def __read_entities(tag):
+    for entity in tag:
+        print(entity)
+
+        nbt = entity['nbt']
+
+        print(nbt)
+
 
 def __read_blocks_and_dimensions(tag) -> dict:
     blocks = {}

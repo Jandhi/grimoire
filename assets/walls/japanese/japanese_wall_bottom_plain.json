@@ -3,5 +3,6 @@
     "type" : "wall",
     "filepath" : "assets/walls/japanese/japanese_wall_bottom_plain.nbt",
     "origin" : [1, -1, 0],
-    "facing" : "x_minus"
+    "facing" : "x_minus",
+    "palette" : "japanese_palette"
 }
