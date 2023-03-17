@@ -1,28 +1,37 @@
 from noise.rng import RNG
 from districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from gdpc import WorldSlice
 from structures.directions import cardinal, get_ivec2
+from gdpc import WorldSlice
+from districts.adjacency import establish_adjacency
+from districts.merging_districts import merge_down
 
-TARGET_DISTRICT_AMT = 50
+# from districts.adjacency import establish_adjacency, get_neighbours
+
+TARGET_POINTS_GENERATED = 24
+TARGET_DISTRICT_AMT = 10
 OUTER_POINTS_MIN_DISTANCE = 10
 INNER_POINTS_MIN_DISTANCE = 5
 RETRIES = 100
 INNER_DISTRICTS_AMOUNT_RATIO = 0.5
 INNER_DISTRICTS_TARGET_AREA = 0.3 # The ratio of area where inner districts spawn
 
-def generate_districts(build_rect : Rect, world_slice : WorldSlice) -> tuple[list[District], list[list[District]]]:
-    districts = spawn_districts(seed=7, build_rect=build_rect)
+def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) -> tuple[list[District], list[list[District]]]:
+    districts = spawn_districts(seed, build_rect=build_rect)
     district_map : list[list[District]] = [[None for y in range(build_rect.size.y)] for x in range(build_rect.size.x)]
 
     for district in districts:
         origin = district.origin
         district_map[origin.x][origin.y] = district
 
-    bubble_out(districts, world_slice, districts, district_map)
+    bubble_out(world_slice, districts, district_map)
+    
+    establish_adjacency(world_slice, districts, district_map)
+    merge_down(districts, district_map, TARGET_DISTRICT_AMT)
+
     return (districts, district_map)
 
-def bubble_out(build_rect : Rect, world_slice : WorldSlice, districts : list[District], district_map : list[list[District]]):
+def bubble_out(world_slice : WorldSlice, districts : list[District], district_map : list[list[District]]):
     queue = [district.origin for district in districts]
     visited = {district.origin for district in districts}
 
@@ -43,7 +52,7 @@ def bubble_out(build_rect : Rect, world_slice : WorldSlice, districts : list[Dis
             queue.append(neighbour)
             add_point_to_district(point, district)
     
-
+# Returns the neighbours of a point on the surface based on walkability
 def get_neighbours(point : ivec2, world_slice : WorldSlice) -> list[ivec2]:
     neighbours = []
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
@@ -63,12 +72,11 @@ def get_neighbours(point : ivec2, world_slice : WorldSlice) -> list[ivec2]:
 
     return neighbours
     
-
 def spawn_districts(seed : int, build_rect : Rect) -> list[District]:
     districts = []
 
-    inner_district_num = int(INNER_DISTRICTS_AMOUNT_RATIO * float(TARGET_DISTRICT_AMT))
-    outer_district_num = TARGET_DISTRICT_AMT - inner_district_num
+    inner_district_num = int(INNER_DISTRICTS_AMOUNT_RATIO * float(TARGET_POINTS_GENERATED))
+    outer_district_num = TARGET_POINTS_GENERATED - inner_district_num
 
     # The inner length ratio r is the proportion of the sides of an area the inner region occupies
     # The inner district's x spans from (1 - r) / 2 * x to 1 - (1 - r) / 2 * x
@@ -92,14 +100,15 @@ def spawn_districts(seed : int, build_rect : Rect) -> list[District]:
     print(f'Attempting to generate {inner_district_num} inner districts and {outer_district_num} outer districts')
     rng = RNG(seed, 'get_origins')
 
-    points : list[ivec2] = []
 
-    generate_inner_district_points(inner_district_num, rng, inner_rect, points)
-    generate_outer_district_points(outer_district_num, rng, build_rect, outer_ratio, inner_rect, points)
+    inner_points = generate_inner_district_points(inner_district_num, rng, inner_rect)
+    outer_points = generate_outer_district_points(outer_district_num, rng, build_rect, outer_ratio, inner_rect)
 
-    return [District(point) for point in points]
+    return [District(origin=pt, is_urban=True) for pt in inner_points] + [District(origin=pt, is_urban=False) for pt in outer_points]
 
-def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_rect: Rect, points : list[ivec2]):
+def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_rect: Rect) -> list[ivec2]:
+    points = []
+    
     for i in range(inner_district_num):
         trials = 0
 
@@ -118,8 +127,12 @@ def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_re
             if all(distance(other_point, trial_point) >= INNER_POINTS_MIN_DISTANCE for other_point in points):
                 points.append(trial_point) # success!
                 break
+    
+    return points
 
-def generate_outer_district_points(outer_district_num : int, rng : RNG, build_rect: Rect, outer_ratio : float, inner_rect : Rect, points : list[ivec2]):
+def generate_outer_district_points(outer_district_num : int, rng : RNG, build_rect: Rect, outer_ratio : float, inner_rect : Rect) -> list[ivec2]:
+    points = []
+    
     for i in range(outer_district_num):
         trials = 0
 
@@ -141,3 +154,5 @@ def generate_outer_district_points(outer_district_num : int, rng : RNG, build_re
             if all(distance(other_point, trial_point) >= OUTER_POINTS_MIN_DISTANCE for other_point in points):
                 points.append(trial_point) # success!
                 break
+    
+    return points
