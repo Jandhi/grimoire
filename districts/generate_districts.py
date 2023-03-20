@@ -1,7 +1,7 @@
 from noise.rng import RNG
 from districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from structures.directions import cardinal, get_ivec2
+from structures.directions import cardinal, get_ivec3
 from gdpc import WorldSlice
 from districts.adjacency import establish_adjacency
 from districts.merging_districts import merge_down
@@ -17,12 +17,12 @@ INNER_DISTRICTS_AMOUNT_RATIO = 0.5
 INNER_DISTRICTS_TARGET_AREA = 0.3 # The ratio of area where inner districts spawn
 
 def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) -> tuple[list[District], list[list[District]]]:
-    districts = spawn_districts(seed, build_rect=build_rect)
-    district_map : list[list[District]] = [[None for y in range(build_rect.size.y)] for x in range(build_rect.size.x)]
+    districts = spawn_districts(seed, build_rect, world_slice)
+    district_map : list[list[District]] = [[None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
 
     for district in districts:
         origin = district.origin
-        district_map[origin.x][origin.y] = district
+        district_map[origin.x][origin.z] = district
 
     bubble_out(world_slice, districts, district_map)
     
@@ -35,14 +35,13 @@ def bubble_out(world_slice : WorldSlice, districts : list[District], district_ma
     queue = [district.origin for district in districts]
     visited = {district.origin for district in districts}
 
-    def add_point_to_district(point : ivec2, district : District):
-        district_map[neighbour.x][neighbour.y] = district
-        coord = ivec3(neighbour.x, world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.y], neighbour.y)
-        district.add_block(coord)
+    def add_point_to_district(point : ivec3, district : District):
+        district_map[point.x][point.z] = district
+        district.add_point(point)
 
     while len(queue) > 0:
         point = queue.pop(0)
-        district = district_map[point.x][point.y]
+        district = district_map[point.x][point.z]
 
         for neighbour in get_neighbours(point, world_slice):
             if neighbour in visited:
@@ -50,29 +49,30 @@ def bubble_out(world_slice : WorldSlice, districts : list[District], district_ma
 
             visited.add(neighbour)
             queue.append(neighbour)
-            add_point_to_district(point, district)
+            add_point_to_district(neighbour, district)
     
 # Returns the neighbours of a point on the surface based on walkability
-def get_neighbours(point : ivec2, world_slice : WorldSlice) -> list[ivec2]:
+def get_neighbours(point : ivec3, world_slice : WorldSlice) -> list[ivec2]:
     neighbours = []
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
     
     for direction in cardinal:
-        delta = get_ivec2(direction)
+        delta = get_ivec3(direction)
         neighbour = point + delta
 
-        if neighbour.x < 0 or neighbour.y < 0 or neighbour.x >= len(height_map) or neighbour.y >= len(height_map[0]):
+        if neighbour.x < 0 or neighbour.z < 0 or neighbour.x >= len(height_map) or neighbour.z >= len(height_map[0]):
             # out of bounds
             continue
 
-        if abs(height_map[point.x][point.y] - height_map[neighbour.x][neighbour.y]) > 1:
+        neighbour.y = height_map[neighbour.x][neighbour.z]
+        if abs(point.y - neighbour.y) > 1:
             continue
         else:
             neighbours.append(neighbour)
 
     return neighbours
     
-def spawn_districts(seed : int, build_rect : Rect) -> list[District]:
+def spawn_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) -> list[District]:
     districts = []
 
     inner_district_num = int(INNER_DISTRICTS_AMOUNT_RATIO * float(TARGET_POINTS_GENERATED))
@@ -101,12 +101,12 @@ def spawn_districts(seed : int, build_rect : Rect) -> list[District]:
     rng = RNG(seed, 'get_origins')
 
 
-    inner_points = generate_inner_district_points(inner_district_num, rng, inner_rect)
-    outer_points = generate_outer_district_points(outer_district_num, rng, build_rect, outer_ratio, inner_rect)
+    inner_points = generate_inner_district_points(inner_district_num, rng, inner_rect, world_slice)
+    outer_points = generate_outer_district_points(outer_district_num, rng, build_rect, outer_ratio, inner_rect, world_slice)
 
     return [District(origin=pt, is_urban=True) for pt in inner_points] + [District(origin=pt, is_urban=False) for pt in outer_points]
 
-def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_rect: Rect) -> list[ivec2]:
+def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_rect: Rect, world_slice : WorldSlice) -> list[ivec3]:
     points = []
     
     for i in range(inner_district_num):
@@ -119,9 +119,13 @@ def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_re
                 print(f'Failed to place inner point {i}, retries exceeded')
                 break
 
-            trial_point = ivec2(
-                x = rng.randint(int(inner_rect.size.x)) + inner_rect.offset.x,
-                y = rng.randint(int(inner_rect.size.y)) + inner_rect.offset.y,
+            x = rng.randint(int(inner_rect.size.x)) + inner_rect.offset.x
+            z = rng.randint(int(inner_rect.size.y)) + inner_rect.offset.y
+
+            trial_point = ivec3(
+                x,
+                world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z],
+                z,
             )
 
             if all(distance(other_point, trial_point) >= INNER_POINTS_MIN_DISTANCE for other_point in points):
@@ -130,7 +134,7 @@ def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_re
     
     return points
 
-def generate_outer_district_points(outer_district_num : int, rng : RNG, build_rect: Rect, outer_ratio : float, inner_rect : Rect) -> list[ivec2]:
+def generate_outer_district_points(outer_district_num : int, rng : RNG, build_rect: Rect, outer_ratio : float, inner_rect : Rect, world_slice : WorldSlice) -> list[ivec3]:
     points = []
     
     for i in range(outer_district_num):
@@ -143,9 +147,13 @@ def generate_outer_district_points(outer_district_num : int, rng : RNG, build_re
                 print(f'Failed to place outer point {i}, retries exceeded')
                 break
 
-            trial_point = ivec2(
-                x = rng.randint(int(build_rect.size.x)),
-                y = rng.randint(int(build_rect.size.y)),
+            x = rng.randint(int(build_rect.size.x))
+            z = rng.randint(int(build_rect.size.y))
+
+            trial_point = ivec3(
+                x,
+                world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z],
+                z
             )
 
             if inner_rect.contains(trial_point):

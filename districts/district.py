@@ -3,29 +3,34 @@ from gdpc.vector_tools import ivec2, ivec3
 class District:
     id_counter = 0
     id : int
-    average : ivec2
-    origin : ivec2
+    points : set[ivec3]
+    points_2d : set[ivec2]
+    origin : ivec3
     sum : ivec3
     area : int
-    adjacency : dict[any,int]
-    edges : set[ivec2]
+    adjacency : dict[any, int]
+    edges : set[ivec3]
     adjacencies_total : int
     is_urban : bool
 
-    def __init__(self, origin : ivec2, is_urban : bool) -> None:
+    def __init__(self, origin : ivec3, is_urban : bool) -> None:
         self.id = District.id_counter
         District.id_counter += 1
         
         self.origin = origin
         self.sum = ivec3(0, 0, 0)
-        self.area = 0
+        self.area = 1
         self.adjacency = {}
+        self.points = {origin}
+        self.points_2d = {(origin.x, origin.y)}
         self.edges = set()
         self.adjacencies_total = 0
         self.is_urban = is_urban
 
-    def add_block(self, block_coord : ivec3):
-        self.sum += block_coord
+    def add_point(self, point : ivec3):
+        self.points.add(point)
+        self.points_2d.add(ivec2(point.x, point.z))
+        self.sum += point
         self.area += 1
 
     def add_adjacency(self, district):
@@ -49,3 +54,10 @@ class District:
     
     def __repr__(self) -> str:
         return f'district {self.id}'
+    
+    def average(self) -> ivec3:
+        return ivec3(
+            self.sum.x // self.area,
+            self.sum.y // self.area,
+            self.sum.z // self.area,
+        )

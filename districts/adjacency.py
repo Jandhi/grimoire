@@ -15,7 +15,7 @@ def establish_adjacency(world_slice : WorldSlice, districts : list[District], di
 
             district = district_map[x][z]
             is_edge = False
-            height = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
 
             if x == 0 or z == 0: # label edge districts as non-urban
                 district.is_urban = False
@@ -27,7 +27,7 @@ def establish_adjacency(world_slice : WorldSlice, districts : list[District], di
 
                 point_height = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
 
-                if abs(height - point_height) > 1: # impassable, not neighbours
+                if abs(y - point_height) > 1: # impassable, not neighbours
                     continue
 
                 point_district = district_map[point.x][point.y]
@@ -46,7 +46,7 @@ def establish_adjacency(world_slice : WorldSlice, districts : list[District], di
                 point_district.add_adjacency(district)
             
             if is_edge:
-                district.edges.add(ivec2(x, z))
+                district.edges.add(ivec3(x, y, z))
 
 
 
