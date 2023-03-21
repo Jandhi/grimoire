@@ -23,24 +23,17 @@ colors = [
     'black'
 ]
 
-urban_districts_blocks = [
-    'polished_andesite',
-    'polished_granite',
-    'polished_diorite',
-    'polished_deepslate',
-    'nether_bricks',
-    'stone_bricks',
-    'red_nether_bricks',
-    'polished_blackstone',
-]
-rural_districts_blocks = [
-    'grass_block',
-    'dirt',
-    'podzol',
-    'sand',
-    'mycelium',
-]
-
 def get_color(district, districts):
-    blocks = colors #urban_districts_blocks if district.is_urban else rural_districts_blocks
+    blocks = colors 
     return blocks[districts.index(district) % len(blocks)] + '_wool'
+
+def get_color_differentiated(district, districts, is_water):
+    blocks = colors 
+    suffix = '_terracotta'
+
+    if is_water:
+        suffix = '_stained_glass'
+    elif district.is_urban:
+        suffix = '_wool'
+    
+    return blocks[districts.index(district) % len(blocks)] + suffix

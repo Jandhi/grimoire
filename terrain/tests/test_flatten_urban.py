@@ -4,10 +4,12 @@ sys.path[0] = sys.path[0].removesuffix('\\terrain\\tests')
 
 # Actual file
 from gdpc import Editor, Block
-from gdpc.vector_tools import ivec2
+from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from districts.tests.place_colors import get_color, place_relative_to_ground
+from districts.tests.place_colors import get_color_differentiated, place_relative_to_ground
+from districts.tests.draw_districts import draw_districts
 from terrain.flatten import flatten
+from terrain.water_map import get_water_map
 
 SEED = 36322
 
@@ -23,27 +25,19 @@ print("World slice loaded!")
 
 player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 
-districts, district_map = generate_districts(SEED, build_rect, world_slice)
+water_map = get_water_map(world_slice)
+districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 
 for district in districts:
     if not district.is_urban:
         continue
 
-    flatten(district, world_slice, editor)
+    flatten(district, district_map, world_slice, editor)
+
+
+editor.flushBuffer() # this is needed to reload the world slice properly
 
 print('Reloading worldSlice')
 world_slice = editor.loadWorldSlice(build_rect)
 
-for x in range(build_rect.size.x):
-    for z in range(build_rect.size.y):
-        district = district_map[x][z]
-
-        if district is None:
-            continue
-        
-        block = get_color(district, districts)
-
-        place_relative_to_ground(x, 0, z, block, world_slice, editor)
-
-        if ivec2(x, z) in district.edges:
-            place_relative_to_ground(x, 1, z, 'glass', world_slice, editor)
+draw_districts(build_rect, district_map, water_map, world_slice, editor)

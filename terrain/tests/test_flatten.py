@@ -24,6 +24,8 @@ x0, z0 = 0, 0
 y0 = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x0][z0]
 district = District(ivec3(x0, z0, y0), True)
 
+district_map = [[district for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
+
 for x in range(build_rect.size.x):
     for z in range(build_rect.size.y):
         if (x, z) == (x0, z0):
@@ -32,4 +34,4 @@ for x in range(build_rect.size.x):
         y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
         district.add_point(ivec3(x, y, z))
 
-flatten(district, world_slice, editor)
+flatten(district, district_map, world_slice, editor)

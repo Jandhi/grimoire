@@ -16,7 +16,7 @@ RETRIES = 100
 INNER_DISTRICTS_AMOUNT_RATIO = 0.5
 INNER_DISTRICTS_TARGET_AREA = 0.3 # The ratio of area where inner districts spawn
 
-def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) -> tuple[list[District], list[list[District]]]:
+def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, water_map : list[list[bool]]) -> tuple[list[District], list[list[District]]]:
     districts = spawn_districts(seed, build_rect, world_slice)
     district_map : list[list[District]] = [[None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
 
@@ -24,21 +24,23 @@ def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) 
         origin = district.origin
         district_map[origin.x][origin.z] = district
 
-    bubble_out(world_slice, districts, district_map)
+    bubble_out(world_slice, districts, district_map, water_map)
     
     establish_adjacency(world_slice, districts, district_map)
     merge_down(districts, district_map, TARGET_DISTRICT_AMT)
 
     return (districts, district_map)
 
-def bubble_out(world_slice : WorldSlice, districts : list[District], district_map : list[list[District]]):
+def bubble_out(world_slice : WorldSlice, districts : list[District], district_map : list[list[District]], water_map : list[list[bool]]):
     queue = [district.origin for district in districts]
+    water_queue = []
     visited = {district.origin for district in districts}
 
     def add_point_to_district(point : ivec3, district : District):
         district_map[point.x][point.z] = district
         district.add_point(point)
 
+    # first pass normal queue
     while len(queue) > 0:
         point = queue.pop(0)
         district = district_map[point.x][point.z]
@@ -48,11 +50,28 @@ def bubble_out(world_slice : WorldSlice, districts : list[District], district_ma
                 continue
 
             visited.add(neighbour)
-            queue.append(neighbour)
+            add_point_to_district(neighbour, district)
+            
+            if water_map[neighbour.x][neighbour.z]:
+                water_queue.append(neighbour)
+            else:
+                queue.append(neighbour)
+    
+    # second pass water queue
+    while len(water_queue) > 0:
+        point = water_queue.pop(0)
+        district = district_map[point.x][point.z]
+
+        for neighbour in get_neighbours(point, world_slice):
+            if neighbour in visited:
+                continue
+
+            visited.add(neighbour)
+            water_queue.append(neighbour)
             add_point_to_district(neighbour, district)
     
 # Returns the neighbours of a point on the surface based on walkability
-def get_neighbours(point : ivec3, world_slice : WorldSlice) -> list[ivec2]:
+def get_neighbours(point : ivec3, world_slice : WorldSlice) -> list[ivec3]:
     neighbours = []
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
     
@@ -73,8 +92,6 @@ def get_neighbours(point : ivec3, world_slice : WorldSlice) -> list[ivec2]:
     return neighbours
     
 def spawn_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) -> list[District]:
-    districts = []
-
     inner_district_num = int(INNER_DISTRICTS_AMOUNT_RATIO * float(TARGET_POINTS_GENERATED))
     outer_district_num = TARGET_POINTS_GENERATED - inner_district_num
 

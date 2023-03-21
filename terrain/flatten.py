@@ -2,17 +2,18 @@ from districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3
 
-def flatten(district : District, world_slice : WorldSlice, editor : Editor):
+def flatten(district : District, district_map : list[list[District]], world_slice : WorldSlice, editor : Editor):
     print(f'Flattening {district}')
     updated_heights = dict()
 
     for x, y, z in district.points:
         key = x, z
 
-        if ivec2(x, z) not in district.points_2d: # this should never happen but it happened once? not sure why
-            continue
+        district_at_point = district_map[x][z]
 
-        updated_heights[key] = (average_neighbour_height(x, z, district, world_slice))
+        # we only want to consider points that are in the district or in adjacent districts
+        if district_at_point == district or (district_at_point in district.adjacency and district.adjacency[district_at_point] > 0):
+            updated_heights[key] = (average_neighbour_height(x, z, district, world_slice))
 
     for key in updated_heights:
         y = updated_heights[key]
