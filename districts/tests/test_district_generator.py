@@ -6,7 +6,6 @@ sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from districts.tests.place_colors import get_color_differentiated, place_relative_to_ground
 from terrain.water_map import get_water_map
 from districts.tests.draw_districts import draw_districts
 
@@ -27,9 +26,7 @@ player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 water_map = get_water_map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 
-
-
-draw_districts(build_rect, district_map, water_map, world_slice, editor)
+draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)
 
 for district in districts:
     x = district.origin.x

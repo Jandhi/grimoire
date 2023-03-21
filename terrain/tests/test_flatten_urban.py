@@ -40,4 +40,4 @@ editor.flushBuffer() # this is needed to reload the world slice properly
 print('Reloading worldSlice')
 world_slice = editor.loadWorldSlice(build_rect)
 
-draw_districts(build_rect, district_map, water_map, world_slice, editor)
+draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)

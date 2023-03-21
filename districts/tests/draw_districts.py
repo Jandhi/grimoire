@@ -1,4 +1,7 @@
-def draw_districts(build_rect, district_map, water_map, world_slice, editor):
+from gdpc.vector_tools import ivec3
+from districts.tests.place_colors import get_color_differentiated, place_relative_to_ground
+
+def draw_districts(districts, build_rect, district_map, water_map, world_slice, editor):
     for x in range(build_rect.size.x):
         for z in range(build_rect.size.y):
             district = district_map[x][z]
