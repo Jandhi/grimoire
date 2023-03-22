@@ -95,9 +95,13 @@ def spawn_districts(seed : int, build_rect : Rect) -> list[District]:
     points : list[ivec2] = []
 
     generate_inner_district_points(inner_district_num, rng, inner_rect, points)
+    for point in points:
+        districts.append(District(point, True))
+    points : list[ivec2] = []
     generate_outer_district_points(outer_district_num, rng, build_rect, outer_ratio, inner_rect, points)
-
-    return [District(point) for point in points]
+    for point in points:
+        districts.append(District(point, False))
+    return districts
 
 def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_rect: Rect, points : list[ivec2]):
     for i in range(inner_district_num):
