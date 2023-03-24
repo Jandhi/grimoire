@@ -8,7 +8,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
 from districts.tests.place_colors import get_color_differentiated, place_relative_to_ground
 from districts.tests.draw_districts import draw_districts
-from terrain.flatten import smooth
+from terrain.smooth import smooth
 from terrain.water_map import get_water_map
 
 SEED = 36322
