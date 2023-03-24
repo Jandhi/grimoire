@@ -2,7 +2,7 @@ from districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3
 
-def flatten(district : District, district_map : list[list[District]], world_slice : WorldSlice, editor : Editor, water_map : list[list[bool]]):
+def smooth(district : District, district_map : list[list[District]], world_slice : WorldSlice, editor : Editor, water_map : list[list[bool]]):
     print(f'Flattening {district}')
     updated_heights = dict()
 

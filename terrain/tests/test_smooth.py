@@ -6,7 +6,7 @@ sys.path[0] = sys.path[0].removesuffix('\\terrain\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
 from districts.district import District
-from terrain.flatten import flatten
+from terrain.flatten import smooth
 from terrain.water_map import get_water_map
 
 SEED = 36322
@@ -36,4 +36,4 @@ for x in range(build_rect.size.x):
         y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
         district.add_point(ivec3(x, y, z))
 
-flatten(district, district_map, world_slice, editor, water_map)
+smooth(district, district_map, world_slice, editor, water_map)
