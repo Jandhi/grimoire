@@ -2,7 +2,7 @@ from districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3
 
-def flatten(district : District, district_map : list[list[District]], world_slice : WorldSlice, editor : Editor):
+def flatten(district : District, district_map : list[list[District]], world_slice : WorldSlice, editor : Editor, water_map : list[list[bool]]):
     print(f'Flattening {district}')
     updated_heights = dict()
 
@@ -10,6 +10,10 @@ def flatten(district : District, district_map : list[list[District]], world_slic
         key = x, z
 
         district_at_point = district_map[x][z]
+
+        # we don't want to flatten water tiles
+        if water_map[x][z]:
+            continue
 
         # we only want to consider points that are in the district or in adjacent districts
         if district_at_point == district or (district_at_point in district.adjacency and district.adjacency[district_at_point] > 0):

@@ -32,7 +32,7 @@ for district in districts:
     if not district.is_urban:
         continue
 
-    flatten(district, district_map, world_slice, editor)
+    flatten(district, district_map, world_slice, editor, water_map)
 
 
 editor.flushBuffer() # this is needed to reload the world slice properly
