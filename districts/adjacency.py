@@ -1,10 +1,10 @@
 from gdpc import WorldSlice
 from districts.district import District
-from structures.directions import cardinal, get_ivec2
+from structures.directions import cardinal, get_ivec2, get_ivec3
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3, Box
 
 # Tells the districts what neighbours they have and why
-def establish_adjacency(world_slice : WorldSlice, districts : list[District], district_map : list[list[District]]):
+def establish_adjacency(world_slice : WorldSlice, district_map : list[list[District]]):
     build_box = world_slice.box
     rect = Rect((0, 0), (build_box.size.x, build_box.size.z)) # rect of build area, with (0, 0) as corner
     for x in range(build_box.size.x):
@@ -14,7 +14,6 @@ def establish_adjacency(world_slice : WorldSlice, districts : list[District], di
                 continue
 
             district = district_map[x][z]
-            is_edge = False
             y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
 
             if x == 0 or z == 0: # label edge districts as non-urban
@@ -37,17 +36,30 @@ def establish_adjacency(world_slice : WorldSlice, districts : list[District], di
                     continue 
 
                 if point_district == None:
-                    is_edge = True
                     district.adjacencies_total += 1 # log an empty adjacency
                     continue
 
-                is_edge = True
                 district.add_adjacency(point_district)
                 point_district.add_adjacency(district)
+
+    find_edges(world_slice, district_map)
+
+def find_edges(world_slice : WorldSlice, district_map : list[list[District]]):
+    build_box = world_slice.box
+    rect = Rect((0, 0), (build_box.size.x, build_box.size.z)) # rect of build area, with (0, 0) as corner
+    for x in range(rect.size.x):
+        for z in range(rect.size.y):
+            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            point = ivec3(x, y, z)
+            district = district_map[x][z]
             
-            if is_edge:
-                district.edges.add(ivec3(x, y, z))
+            if district == None:
+                continue
 
+            for direction in cardinal:
+                neighbour = point + get_ivec3(direction)
 
-
-
+                if neighbour.x < 0 or neighbour.z < 0 or neighbour.x >= rect.size.x or neighbour.z >= rect.size.y:
+                    district.edges.add(point)
+                elif district_map[neighbour.x][neighbour.z] != district:
+                    district.edges.add(point)
