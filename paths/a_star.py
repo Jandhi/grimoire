@@ -1,13 +1,37 @@
 from heapq import heapify, heappop, heappush
+from gdpc import Editor, Block
 
 # get_neighbours takes state
 # get_cost takes prev_cost and path
 
 def a_star(start, end, get_neighbours, get_cost) -> list:
-    first_path = ([start], 0)
-    paths = [first_path]
+    first_path = [start]
+    paths = [(get_cost(0, first_path), first_path)]
+    visited = set()
+    counter = 0
 
     while len(paths) > 0:
-        curr_path, curr_cost = heappop(paths)
+        counter += 1
+        if counter % 10000 == 0:
+            print(f'counter at {counter}')
 
-        
+        curr_cost, curr_path = heappop(paths)
+
+        endpoint = curr_path[-1]
+
+        visited.add(endpoint)
+
+        for neighbour in get_neighbours(endpoint):
+            if neighbour in visited:
+                continue
+
+            if neighbour == end:
+                return curr_path + [neighbour]
+
+            new_path = curr_path + [neighbour]
+            cost = get_cost(curr_cost, new_path)
+
+            heappush(paths, (cost, new_path))
+
+    # no dice
+    return None

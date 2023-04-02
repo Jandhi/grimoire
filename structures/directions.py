@@ -1,4 +1,5 @@
 from structures.types import vec3
+from utils.tuples import add_tuples
 from gdpc.vector_tools import ivec2, ivec3
 
 direction = str
@@ -19,6 +20,13 @@ west = x_minus
 up = y_plus
 down = y_minus
 cardinal = (north, east, south, west)
+
+# Compound Directions
+northeast = north + ' and ' + east
+northwest = north + ' and ' + west
+southwest = south + ' and ' + west
+southeast = south + ' and ' + east
+all_8 = (north, east, south, west, northeast, northwest, southwest, southeast)
 
 directions = (north, east, south, west, up, down)
 
@@ -41,6 +49,15 @@ vectors = {
     z_plus  : (0, 0, 1),
     z_minus : (0, 0, -1)
 }
+
+for dir1, dir2, compound in (
+    (north, east, northeast),
+    (north, west, northwest),
+    (south, west, southwest),
+    (south, east, southeast),
+):
+    vectors[compound] = add_tuples(vectors[dir1], vectors[dir2])
+
 def vector(direction : direction) -> vec3:
     return vectors[direction]
 def get_ivec2(direction : direction) -> ivec2:
