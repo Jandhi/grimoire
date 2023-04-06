@@ -4,6 +4,9 @@ from gdpc import Editor, Block
 # get_neighbours takes state
 # get_cost takes prev_cost and path
 
+COUNTER_LIMIT = 1000000
+COUNTER_LIMIT_EXCEEDED = 'counter limit exceeded'
+
 def a_star(start, end, get_neighbours, get_cost) -> list:
     first_path = [start]
     paths = [(get_cost(0, first_path), first_path)]
@@ -14,6 +17,9 @@ def a_star(start, end, get_neighbours, get_cost) -> list:
         counter += 1
         if counter % 10000 == 0:
             print(f'counter at {counter}')
+
+        if counter > COUNTER_LIMIT:
+            return COUNTER_LIMIT_EXCEEDED
 
         curr_cost, curr_path = heappop(paths)
 
