@@ -1,6 +1,6 @@
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from gdpc import WorldSlice
-from structures.directions import cardinal, get_ivec2
+from structures.directions import cardinal, get_ivec2, get_ivec3
 
 #finds the neighbours points of a point in a set
 def get_neighbours_in_set(point : ivec2, set : list[ivec2]) -> list[ivec2]:
@@ -11,6 +11,19 @@ def get_neighbours_in_set(point : ivec2, set : list[ivec2]) -> list[ivec2]:
         neighbour = point + delta
 
         if neighbour in set:
+            neighbours.append(neighbour)
+
+    return neighbours
+
+#finds the neighbours points of a point not in a set
+def get_neighbours_not_in_set(point : ivec2, set : list[ivec2]) -> list[ivec2]:
+    neighbours = []
+    
+    for direction in cardinal:
+        delta = get_ivec2(direction)
+        neighbour = point + delta
+
+        if neighbour not in set:
             neighbours.append(neighbour)
 
     return neighbours
@@ -26,3 +39,11 @@ def get_outer_points(points : list[ivec2], world_slice : WorldSlice): # -> list[
             outer_points_dict[point] = True
         
     return outer_points, outer_points_dict
+
+
+#returns true if the line formed by the two points is 'straight' (on the minecraft plane)
+def is_straight_ivec2(previous, next, length):
+    vec_line = previous - next
+    if (abs(vec_line.x) == length and vec_line.y == 0) or (abs(vec_line.y) == length and vec_line.x == 0) or (abs(vec_line.x) == length and abs(vec_line.x) == abs(vec_line.y)):
+        return True
+    return False
