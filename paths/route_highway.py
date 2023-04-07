@@ -6,7 +6,7 @@ from utils.bounds import is_in_bounds
 
 HEURISTIC_WEIGHT = 3
 
-def find_highway_points(points : list[ivec3]) -> list[ivec3]:
+def fill_out_highway(points : list[ivec3]) -> list[ivec3]:
     full_points = []
 
     point_a = points.pop()
@@ -76,7 +76,7 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
         base_length_cost = 2 # added as length of path increases
 
         if water_map[last.x][last.z]:
-            base_length_cost += 50 # WATER COST. Making this big means water gets avoided when possible.
+            base_length_cost += 30 # WATER COST. Making this big means water gets avoided when possible.
 
         y_diff_penalty = abs(path[-1].y - path[-2].y) * 2
 

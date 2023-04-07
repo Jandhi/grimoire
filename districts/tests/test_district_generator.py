@@ -21,8 +21,6 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
-player_pos = ivec2(area.size.x // 2, area.size.z // 2)
-
 water_map = get_water_map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 

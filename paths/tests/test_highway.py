@@ -5,10 +5,12 @@ sys.path[0] = sys.path[0].removesuffix('\\paths\\tests')
 # Actual file
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
-from paths.highway import route_highway, find_highway_points
+from paths.route_highway import route_highway, fill_out_highway
+from paths.build_highway import build_highway
 from terrain.water_map import get_water_map
 from terrain.set_height import set_height
 from structures.directions import cardinal, get_ivec3, up
+from structures.building_map import get_initial_building_map
 from utils.bounds import is_in_bounds
 
 SEED = 36322
@@ -24,6 +26,7 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 water_map = get_water_map(world_slice)
+building_map = get_initial_building_map(world_slice)
 
 start_x, start_z = 0, 0
 start_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][start_x][start_z]
@@ -39,22 +42,5 @@ editor.placeBlock(start, Block('minecraft:glowstone'))
 editor.placeBlock(end, Block('minecraft:glowstone'))
 
 highway = route_highway(start, end, world_slice, water_map, editor)
-highway = find_highway_points(highway)
-
-for point in highway:
-    editor.placeBlock(point - get_ivec3(up), Block('red_wool'))
-    editor.placeBlock(point, Block('air'))
-    editor.placeBlock(point + get_ivec3(up), Block('air'))
-    editor.placeBlock(point + get_ivec3(up) * 2, Block('air'))
-
-    for direction in cardinal:
-        neighbour = point + get_ivec3(direction)
-
-        if not is_in_bounds(neighbour, world_slice):
-            continue
-
-        editor.placeBlock(neighbour - get_ivec3(up), Block('cobblestone'))
-        editor.placeBlock(neighbour, Block('air'))
-        editor.placeBlock(neighbour + get_ivec3(up), Block('air'))
-        editor.placeBlock(neighbour + get_ivec3(up) * 2, Block('air'))
-
+highway = fill_out_highway(highway)
+build_highway(highway, editor, world_slice, water_map, building_map)
