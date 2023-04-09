@@ -75,12 +75,15 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
         path_cost = prev_cost - prev_heuristic
         base_length_cost = 2 # added as length of path increases
 
+        height_diff = abs(last.y - world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][last.x][last.z])
+        height_cost = height_diff * 5
+
         if water_map[last.x][last.z]:
             base_length_cost += 30 # WATER COST. Making this big means water gets avoided when possible.
 
         y_diff_penalty = abs(path[-1].y - path[-2].y) * 2
 
-        return path_cost + base_length_cost + y_diff_penalty + distance(path[-2], last) + HEURISTIC_WEIGHT * distance(last, end)
+        return path_cost + height_cost + base_length_cost + y_diff_penalty + distance(path[-2], last) + HEURISTIC_WEIGHT * distance(last, end)
     
     # prefer 4 out neighbours, but will accept 2 out
     def get_neighbours(point : ivec3):
@@ -93,7 +96,14 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
             neighbour = point + direction_vector * 4
 
             if is_in_bounds(neighbour, world_slice):
-                neighbour.y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.z]
+                actual_neighbour_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.z]
+                
+                if point.y < actual_neighbour_y - 2:
+                    neighbour.y = point.y + 2
+                elif point.y > actual_neighbour_y + 2:
+                    neighbour.y = point.y - 2
+                else:
+                    neighbour.y = actual_neighbour_y
 
                 if abs(point.y - neighbour.y) <= 2:
                     neighbours.append(neighbour)

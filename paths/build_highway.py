@@ -62,11 +62,11 @@ def get_block(point : ivec2, final_point_heights : dict[ivec2, int]) -> Block:
         if final_point_heights[point + dv] == y + 1 and final_point_heights[point - dv] == y - 1:
             return Block('cobblestone_stairs', {'facing' : to_text(direction)})
         
-    if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(y_in_dir[direction] < y for direction in y_in_dir):
-        return Block('cobblestone_slab')
-    
     if all(y_in_dir[direction] < y for direction in y_in_dir):
         final_point_heights[point] -= 1
         return get_block(point, final_point_heights)
+        
+    if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(y_in_dir[direction] < y for direction in y_in_dir):
+        return Block('cobblestone_slab')
     
     return Block('cobblestone')
