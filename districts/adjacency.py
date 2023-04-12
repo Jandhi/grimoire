@@ -1,6 +1,6 @@
 from gdpc import WorldSlice
 from districts.district import District
-from structures.directions import cardinal, get_ivec2, get_ivec3
+from structures.directions import cardinal, get_ivec2, vector
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3, Box
 
 # Tells the districts what neighbours they have and why
@@ -57,7 +57,7 @@ def find_edges(world_slice : WorldSlice, district_map : list[list[District]]):
                 continue
 
             for direction in cardinal:
-                neighbour = point + get_ivec3(direction)
+                neighbour = point + vector(direction)
 
                 if neighbour.x < 0 or neighbour.z < 0 or neighbour.x >= rect.size.x or neighbour.z >= rect.size.y:
                     district.edges.add(point)

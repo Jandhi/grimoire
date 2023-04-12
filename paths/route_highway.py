@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec3, distance
 from gdpc import WorldSlice, Editor
-from structures.directions import all_8, get_ivec3
+from structures.directions import all_8, vector
 from paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
 from utils.bounds import is_in_bounds
 
@@ -90,7 +90,7 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
         neighbours = []
         
         for direction in all_8:
-            direction_vector = get_ivec3(direction)
+            direction_vector = vector(direction)
 
             # First consider 4 out
             neighbour = point + direction_vector * 4
