@@ -1,9 +1,10 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\building_generation\\tests')
+sys.path[0] = sys.path[0].removesuffix('\\buildings\\tests')
 
 # Actual file
 from gdpc.editor import Editor
+from gdpc.vector_tools import ivec3
 from structures.grid import Grid
 from buildings.walls.wall import Wall
 from buildings.roofs.roof import Roof
@@ -41,8 +42,8 @@ lower_wall : Wall = Wall.find(style['lower'])
 upper_wall : Wall = Wall.find(style['upper'])
 
 for direction in cardinal:
-    grid.build(editor, lower_wall, palette, (0, 0, 0), direction)
-    grid.build(editor, upper_wall, palette, (0, 1, 0), direction)
+    grid.build(editor, lower_wall, palette, ivec3(0, 0, 0), direction)
+    grid.build(editor, upper_wall, palette, ivec3(0, 1, 0), direction)
 
 # ROOF
 roof : Roof = Roof.find(style['roof'])
@@ -50,4 +51,4 @@ roof : Roof = Roof.find(style['roof'])
 
 # ROOM
 room : Room = Room.find('kitchen_no_window_small')
-grid.build(editor, room, palette, (0, 0, 0))
+grid.build(editor, room, palette, ivec3(0, 0, 0))

@@ -1,5 +1,4 @@
 from buildings.building_plan import BuildingPlan
-from structures.types import vec3
 from structures.directions import cardinal
 from buildings.cell import Cell
 from buildings.roofs.roof_component import SIDE, CORNER, INNER

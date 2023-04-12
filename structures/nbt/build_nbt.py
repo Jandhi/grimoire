@@ -4,7 +4,6 @@ from structures.structure import Structure
 from structures.transformation import Transformation
 from gdpc.editor import Editor
 from gdpc.block import Block
-from utils.tuples import add_tuples, sub_tuples
 from palette.palette import Palette
 from palette.palette_swap import palette_swap
 
