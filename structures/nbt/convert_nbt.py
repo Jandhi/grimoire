@@ -1,6 +1,7 @@
 from nbt import nbt
 from structures.structure import Structure
 from structures.block import Block
+from gdpc.vector_tools import ivec3
 
 # Converts an nbt file into a more legible Structure object
 # TODO Entities cannot be read in yet
@@ -45,7 +46,7 @@ def __read_blocks_and_dimensions(tag) -> dict:
         x, y, z = (int(i.valuestr()) for i in block['pos'])
         state = block['state']
         
-        blocks[(x, y, z)] = int(state.valuestr())
+        blocks[ivec3(x, y, z)] = int(state.valuestr())
 
         for val, index in ((x, 0), (y, 1), (z, 2)):
             if val < minimums[index]:
@@ -53,7 +54,7 @@ def __read_blocks_and_dimensions(tag) -> dict:
             if val > maximums[index]:
                 maximums[index] = val
 
-    dimensions = (maximums[i] - minimums[i] for i in range(3))
+    dimensions = ivec3(*(maximums[i] - minimums[i] for i in range(3)))
 
     return blocks, dimensions
 
