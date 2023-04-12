@@ -26,7 +26,7 @@ def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, 
 
     bubble_out(world_slice, districts, district_map, water_map)
     
-    establish_adjacency(world_slice, districts, district_map)
+    establish_adjacency(world_slice, district_map)
     merge_down(districts, district_map, TARGET_DISTRICT_AMT)
 
     return (districts, district_map)

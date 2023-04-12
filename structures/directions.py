@@ -1,4 +1,4 @@
-from structures.types import vec3
+
 from gdpc.vector_tools import ivec2, ivec3
 
 direction = str
@@ -20,6 +20,13 @@ up = y_plus
 down = y_minus
 cardinal = (north, east, south, west)
 
+# Compound Directions
+northeast = north + ' and ' + east
+northwest = north + ' and ' + west
+southwest = south + ' and ' + west
+southeast = south + ' and ' + east
+all_8 = (north, east, south, west, northeast, northwest, southwest, southeast)
+
 directions = (north, east, south, west, up, down)
 
 opposites = {
@@ -34,20 +41,27 @@ def opposite(direction):
     return opposites[direction]
 
 vectors = {
-    x_plus  : (1, 0, 0),
-    x_minus : (-1, 0, 0),
-    y_plus  : (0, 1, 0),
-    y_minus : (0, -1, 0),
-    z_plus  : (0, 0, 1),
-    z_minus : (0, 0, -1)
+    x_plus  : ivec3(1, 0, 0),
+    x_minus : ivec3(-1, 0, 0),
+    y_plus  : ivec3(0, 1, 0),
+    y_minus : ivec3(0, -1, 0),
+    z_plus  : ivec3(0, 0, 1),
+    z_minus : ivec3(0, 0, -1)
 }
-def vector(direction : direction) -> vec3:
+
+for dir1, dir2, compound in (
+    (north, east, northeast),
+    (north, west, northwest),
+    (south, west, southwest),
+    (south, east, southeast),
+):
+    vectors[compound] = vectors[dir1] + vectors[dir2]
+
+def vector(direction : direction) -> ivec3:
     return vectors[direction]
 def get_ivec2(direction : direction) -> ivec2:
     tup = vector(direction)
     return ivec2(tup[0], tup[2])
-def get_ivec3(direction : direction) -> ivec3:
-    return ivec3(*vector(direction))
 
 text_dict = {
     north : 'north',

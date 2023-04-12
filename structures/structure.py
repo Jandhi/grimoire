@@ -1,13 +1,13 @@
 from structures.block import Block
-from structures.types import vec3
+from gdpc.vector_tools import ivec3
 
 # A class derived from an NBT file, data describing something built in minecraft
 # Used to actually construct NBT structures
 class Structure:
     def __init__(self, 
-        blocks : dict[vec3, int], 
+        blocks : dict[ivec3, int], 
         palette : list[Block],
-        dimensions : vec3,
+        dimensions : ivec3,
     ) -> None:
         self.blocks = blocks
         self.palette = palette

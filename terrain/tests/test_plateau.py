@@ -6,7 +6,8 @@ sys.path[0] = sys.path[0].removesuffix('\\terrain\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
 from districts.district import District
-from terrain.flatten import flatten
+from terrain.plateau import plateau
+from terrain.water_map import get_water_map
 
 SEED = 36322
 
@@ -23,6 +24,7 @@ print("World slice loaded!")
 x0, z0 = 0, 0
 y0 = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x0][z0]
 district = District(ivec3(x0, z0, y0), True)
+water_map = get_water_map(world_slice)
 
 district_map = [[district for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
 
@@ -34,4 +36,4 @@ for x in range(build_rect.size.x):
         y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
         district.add_point(ivec3(x, y, z))
 
-flatten(district, district_map, world_slice, editor)
+plateau(district, district_map, world_slice, editor, water_map)

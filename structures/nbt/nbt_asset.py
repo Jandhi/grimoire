@@ -1,6 +1,6 @@
 from data.asset import Asset, asset_defaults
 from palette.palette import Palette
-from structures.types import vec3
+from gdpc.vector_tools import ivec3
 
 # Base class with metadata for an NBT file
 # We will be subclassing this for different types of structures, e.g. walls and rooms
@@ -17,7 +17,7 @@ class NBTAsset(Asset):
     type_name = 'nbtasset' 
 
     filepath : str
-    origin : vec3
+    origin : ivec3
     
     # DEFAULTS
     palette : Palette 
@@ -28,4 +28,4 @@ class NBTAsset(Asset):
     def on_construct(self) -> None:
         super().on_construct()
 
-        self.origin = tuple(self.origin) # convert list to tuple
+        self.origin = ivec3(*self.origin) # convert list to tuple

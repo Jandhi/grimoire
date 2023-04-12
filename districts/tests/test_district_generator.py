@@ -7,6 +7,8 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
 from terrain.water_map import get_water_map
+from paths.route_highway import route_highway, fill_out_highway
+from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts
 
 SEED = 36322
@@ -20,8 +22,6 @@ print("Loading world slice...")
 build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
-
-player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 
 water_map = get_water_map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
