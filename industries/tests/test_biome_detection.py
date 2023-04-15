@@ -3,10 +3,9 @@ sys.path[0] = sys.path[0].removesuffix('\\industries\\tests')
 
 from gdpc import Editor
 from gdpc.vector_tools import ivec2, ivec3
-from gdpc.world_slice import getBiome
-from districts.tests.place_colors import get_color_differentiated, place_relative_to_ground
+from gdpc.world_slice import WorldSlice
 
-def detect_biome(districts, build_rect, district_map, water_map, world_slice, editor):
+def detect_biome():
     editor = Editor(buffering=True, caching=True)
 
     area = editor.getBuildArea()
@@ -17,8 +16,12 @@ def detect_biome(districts, build_rect, district_map, water_map, world_slice, ed
     world_slice = editor.loadWorldSlice(build_rect)
     print("World slice loaded!")    # I imagine this is unnecessary, but leaving it in for now
 
+    x = area.size.x // 2
+    z = area.size.z // 2
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
-    player_pos = ivec3(area.size.x // 2, y, area.size.z // 2)
+    player_pos = ivec3(x, y, z)
 
-    print(getBiome(player_pos)) 
+    print(WorldSlice.getBiome(world_slice, player_pos)) 
     # Placeholder until the gruntwork of 'biome -> primary industry -> secondary industry' web is written
+
+detect_biome()
