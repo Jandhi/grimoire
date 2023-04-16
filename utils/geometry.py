@@ -42,7 +42,7 @@ def get_outer_points(points : list[ivec2], world_slice : WorldSlice): # -> list[
 
 
 #returns true if the line formed by the two points is 'straight' (on the minecraft plane)
-def is_straight_ivec2(previous, next, length):
+def is_straight_ivec2(previous : ivec2, next : ivec2, length : int):
     vec_line = previous - next
     if (abs(vec_line.x) == length and vec_line.y == 0) or (abs(vec_line.y) == length and vec_line.x == 0) or (abs(vec_line.x) == length and abs(vec_line.x) == abs(vec_line.y)):
         return True
@@ -50,14 +50,14 @@ def is_straight_ivec2(previous, next, length):
 
 
 #returns true if the line formed by the two points is 'straight' (on the minecraft plane)
-def is_straight_not_diagonal_ivec2(previous, next, length):
+def is_straight_not_diagonal_ivec2(previous : ivec2, next : ivec2, length : int):
     vec_line = previous - next
     if (abs(vec_line.x) == length and vec_line.y == 0) or (abs(vec_line.y) == length and vec_line.x == 0):
         return True
     return False
 
 #returns true if all of points neighbours (including diagonal) are in dict
-def is_point_surrounded_dict(point, dict):
+def is_point_surrounded_dict(point : ivec2, dict):
     neighbours = [ivec2(x, z) for x in range(point.x -1, point.x + 2) for z in range(point.y -1, point.y + 2)]
     for neighbour in neighbours:
         if dict.get(neighbour) == None:

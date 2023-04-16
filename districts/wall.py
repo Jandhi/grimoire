@@ -10,7 +10,7 @@ from structures.nbt.build_nbt import build_nbt
 from structures.nbt.nbt_asset import NBTAsset
 from structures.transformation import Transformation
 
-def find_wall_neighbour(current, wall_dict, ordered_wall_dict):
+def find_wall_neighbour(current : ivec2, wall_dict : dict, ordered_wall_dict : dict):
     for check in [ivec2(-1,0),ivec2(0,-1),ivec2(-1,-1),ivec2(-1,1),ivec2(1,-1),ivec2(1,0),ivec2(0,1),ivec2(1,1)]: #prefers to go right
         if current == None: #error case
             return None 
@@ -53,7 +53,7 @@ def build_wall(wall_points: list[ivec2], wall_dict: dict, editor : Editor, world
     elif wall_type == 'standard':
         build_wall_standard(wall_points, wall_dict, editor, world_slice, rng)
 
-def build_wall_palisade(wall_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map, rng):
+def build_wall_palisade(wall_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG):
     #TODO cleanup the wall_points here to match the format mostly in the other build wall functions, then readress the build gate and can make it cleaner
     new_wall_points = []
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
@@ -84,7 +84,7 @@ def build_wall_palisade(wall_points: list[ivec2], editor : Editor, world_slice :
     add_gates(unordered_wall_points, editor, world_slice, True, None, True)
 
 
-def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map):
+def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict):
 
     wall_points = add_wall_points_height(wall_points, wall_dict, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -138,7 +138,7 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
     add_gates(wall_points, editor, world_slice, True, None)
 
 
-def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map, rng):
+def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG):
 
     wall_points = add_wall_points_height(wall_points, wall_dict, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -229,7 +229,7 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
     add_gates(wall_points, editor, world_slice, False, inner_wall_dict)
 
 #adds direction to the wall points to know which way we need to build walkways
-def add_wall_points_directionality(wall_points, wall_dict, inner_points):
+def add_wall_points_directionality(wall_points : list[ivec3], wall_dict : dict, inner_points : list[ivec2]):
     enhanced_wall_points = []
     for point in wall_points:  
         enhanced_point = [point, [], None]
@@ -244,8 +244,8 @@ def add_wall_points_directionality(wall_points, wall_dict, inner_points):
     return enhanced_wall_points
 
 WALL_HEIGHT = 10 #max height of wall
-def add_wall_points_height(wall_points, wall_dict, world_slice):
-    #print(wall_points)
+def add_wall_points_height(wall_points : list[ivec2], world_slice : WorldSlice):
+
     height_wall_points = []
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
     current_height = height_map[wall_points[0].x,wall_points[0].y]
@@ -273,13 +273,13 @@ def add_wall_points_height(wall_points, wall_dict, world_slice):
                     current_height -= 1
         new_point = ivec3(point.x, current_height + WALL_HEIGHT,point.y)
         height_wall_points.append(new_point)
-    #print(height_wall_points)
+
     return height_wall_points
 
 RANGE = 3 #range for walkway flattening
 NEIGHBOURS = [(x, z) for x in range(-RANGE, RANGE + 1) for z in range(-RANGE, RANGE + 1)]
 
-def flatten_walkway(walkway_list, walkway_dict, editor):
+def flatten_walkway(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor):
 
     for point in walkway_list:
         walkway_dict[point] = (average_neighbour_height(point.x, point.y, walkway_dict))
@@ -317,7 +317,7 @@ def flatten_walkway(walkway_list, walkway_dict, editor):
 
     return walkway_dict
 
-def average_neighbour_height(x : int, z : int, walkway_dict) -> int:
+def average_neighbour_height(x : int, z : int, walkway_dict : dict) -> int:
     height_sum = 0
     total_weight = 0
 
@@ -337,7 +337,7 @@ def average_neighbour_height(x : int, z : int, walkway_dict) -> int:
 
 WATER_CHECK = 5 #the water the distance the wall will build across
 #water checking
-def check_water(wall_points, water_map):
+def check_water(wall_points : list, water_map : dict):
     buildable = False #bool, if true, set to water_wall, water otherwise
     long_water = True #assume water start
     for i,wall_pt in enumerate(wall_points):
@@ -369,13 +369,13 @@ def check_water(wall_points, water_map):
 
     return wall_points
 
-def fill_water(pt : ivec2, editor, height_map, world_slice):
+def fill_water(pt : ivec2, editor : Editor, height_map : dict, world_slice : WorldSlice):
     height = height_map[pt.x, pt.y] - 1
     while is_water(ivec3(pt.x, height, pt.y), world_slice) and height != 0:
         editor.placeBlock((pt.x,height,pt.y), Block('minecraft:mossy_stone_bricks'))
         height = height - 1
 
-def add_towers(walkway_list, walkway_dict, editor, rng):
+def add_towers(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor, rng : RNG):
     distance_to_next_tower = 80 #minimum
     tower_possible = randrange(rng.value(), 0, distance_to_next_tower/2) #counter if 0, allow a tower to be built
     tower = NBTAsset.construct(
@@ -414,7 +414,7 @@ def add_towers(walkway_list, walkway_dict, editor, rng):
         else:
             tower_possible -=1
 
-def add_gates(wall_list, editor, world_slice, is_thin, inner_wall_dict, palisade=False):
+def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_thin : bool, inner_wall_dict : dict, palisade : bool = False):
     distance_to_next_gate = 30 #minimum
     gate_possible = 0 #counter if 0, allow a tower to be built
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
