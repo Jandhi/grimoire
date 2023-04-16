@@ -135,6 +135,6 @@ class Transformation:
             origin = ivec3(origin.x, origin.y, -1 * origin.z)
 
         if self.diagonal_mirror:
-            origin = (origin.z, origin.y, origin.x)
+            origin = ivec3(origin.z, origin.y, origin.x)
 
         return origin

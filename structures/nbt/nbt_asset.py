@@ -5,7 +5,7 @@ from gdpc.vector_tools import ivec3
 # Base class with metadata for an NBT file
 # We will be subclassing this for different types of structures, e.g. walls and rooms
 @asset_defaults(
-    palette = 'default_palette',
+    palette = None,
     do_not_replace = [], 
     replace = [], 
     do_not_place = []
