@@ -1,3 +1,7 @@
+# Allows code to be run in root directory
+import sys
+sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
+
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2
 from districts.generate_districts import generate_districts
@@ -8,7 +12,7 @@ from noise.rng import RNG
 from noise.random import choose_weighted
 from districts.tests.draw_districts import draw_districts
 
-SEED = 1
+SEED = 2
 
 editor = Editor(buffering=True, caching=True)
 
@@ -20,7 +24,6 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
-player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 
 water_map = get_water_map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
@@ -45,6 +48,13 @@ test_blocks = {
     'gravel' : 1
 }
 
+test_blocks_dirt = {
+    'rooted_dirt': 3,
+    'dirt' : 4,
+    'podzol' : 2,
+    'coarse_dirt' : 3,
+}
+
 inner_points = []
 
 for x in range(build_rect.size.x):
@@ -61,9 +71,11 @@ wall_points = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
 
-build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map)
-#build_wall_palisade(wall_points, editor, world_slice, water_map, rng)
+#uncomment one of these to test one of the three wall types
 
-#replace_ground(inner_points, test_blocks, rng, water_map)
+#build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map, rng)
+build_wall_palisade(wall_points, editor, world_slice, water_map, rng)
+#build_wall_standard(wall_points, wall_dict, inner_points, editor, world_slice, water_map)
 
-    #setbuildarea ~ 0 ~ ~256 255 ~256
+#can use either test_blocks for more urban or test_blocks_dirt for dirty ground
+replace_ground(inner_points, test_blocks_dirt, rng, water_map)

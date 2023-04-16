@@ -12,7 +12,7 @@ from palette.palette_swap import palette_swap
 def build_nbt(
         editor : Editor, 
         asset : NBTAsset,
-        palette : Palette,
+        palette : Palette = None,
         transformation : Transformation = None,
         place_air : bool = False,
     ):
@@ -30,8 +30,9 @@ def build_nbt(
         if block.name == 'minecraft:air' and not place_air:
             continue
 
-        block = block.copy() # I do this to avoid doubly swapping palettes
-        block.name = palette_swap(block.name, asset.palette, palette)
+        if asset.palette:
+            block = block.copy() # I do this to avoid doubly swapping palettes
+            block.name = palette_swap(block.name, asset.palette, palette)
 
         x, y, z = transformation.apply_to_point(
             point=pos,
