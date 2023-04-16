@@ -11,7 +11,7 @@ from palette.palette_swap import palette_swap
 def build_nbt(
         editor : Editor, 
         asset : NBTAsset,
-        palette : Palette,
+        palette : Palette = None,
         transformation : Transformation = None,
         place_air : bool = False,
     ):

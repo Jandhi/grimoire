@@ -101,6 +101,27 @@ left = {
     north: west,
     west: south,
     south: east,
-    east: north
+    east: north,
 }
+
 backwards = opposites
+
+from_ivec2_dict = {
+    ivec2(0,-1) : north,
+    ivec2(0,1) : south,
+    ivec2(1,0) : east,
+    ivec2(-1,0) : west,
+}
+
+def ivec2_to_dir(iv2 : ivec2):
+    return from_ivec2_dict[iv2]
+
+from_ivec3_dict = {
+    ivec3(0,0,-1) : north,
+    ivec3(0,0,1) : south,
+    ivec3(1,0,0) : east,
+    ivec3(-1,0,0) : west,
+}
+
+def ivec3_to_dir(iv3 : ivec3):
+    return from_ivec3_dict[iv3]

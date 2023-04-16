@@ -1,0 +1,6 @@
+{
+    "name" : "basic_tower",
+    "type" : "tower",
+    "filepath" : "assets/city_wall/towers/basic_tower.nbt",
+    "origin" : [3, 1, 3]
+}
