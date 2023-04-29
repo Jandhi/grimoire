@@ -8,7 +8,7 @@ from gdpc.vector_tools import ivec3
     palette = None,
     do_not_replace = [], 
     replace = [], 
-    do_not_place = []
+    do_not_place = [],
 )
 class NBTAsset(Asset):
     # The identifier for the jsons to know what NBTAsset this is
@@ -20,7 +20,7 @@ class NBTAsset(Asset):
     origin : ivec3
     
     # DEFAULTS
-    palette : Palette 
+    palette : Palette
     do_not_replace : list[str] # blocks that should not be swapped by palette swapper
     replace : dict[str, str]   # blocks that must be swapped out
     do_not_place : list[str]   # blocks that shouldn't be placed at all

@@ -1,0 +1,11 @@
+{
+    "name" : "japanese_wall_upper_traps_opened",
+    "type" : "wall",
+    "filepath" : "assets/walls/japanese/japanese_wall_upper_traps_opened.nbt",
+    "origin" : [1, -1, 0],
+    "facing" : "x_minus",
+    "do_not_replace" : ["oak_trapdoor"],
+    "palette" : "japanese_palette",
+    "positions" : ["upper"],
+    "weight" : 20
+}

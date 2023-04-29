@@ -11,4 +11,3 @@ from data.asset import default_subtype
 class WallNBT(NBTAsset, Wall):
     type_name = 'wall_nbt'
     facing : str
-       

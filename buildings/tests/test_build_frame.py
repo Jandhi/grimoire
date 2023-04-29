@@ -16,12 +16,9 @@ from noise.rng import RNG
 from buildings.walls.wall import Wall
 from palette.palette import Palette
 from buildings.build_floor import build_floor
-from buildings.roofs.roof_component import RoofComponent
-from buildings.roofs.build_roof import build_roof
-from buildings.clear_interiors import clear_interiors
 from buildings.tests.random_shape import random_shape
 
-SEED = 654
+SEED = 243
 
 editor = Editor(buffering=True, caching=True)
 
@@ -37,30 +34,13 @@ load_assets('assets')
 
 shape = random_shape(SEED)
 
-palette = Palette.find('viking_palette') # Palette.find('japanese_palette')
+palette = Palette.find('japanese_palette')
 plan = BuildingPlan(shape, grid, palette)
 
-build_roof(plan, editor, [
-    RoofComponent.find('viking_roof_stone_accent_outer_corner'),
-    RoofComponent.find('viking_roof_stone_accent_inner_corner'),
-    RoofComponent.find('viking_roof_stone_accent_side'),
-    #RoofComponent.find('japanese_roof_flat_brick_outer_corner'),
-    #RoofComponent.find('japanese_roof_flat_brick_inner_corner'),
-    #RoofComponent.find('japanese_roof_flat_brick_side'),
-], SEED)
-
-clear_interiors(plan, editor)
 build_floor(plan, editor)
 
-walls = [
-    Wall.find('viking_wall_lower_stone_base_window'),
-    Wall.find('viking_wall_upper_logs_window'),
-
-    #Wall.find('japanese_wall_bottom_plain'),
-    #Wall.find('japanese_wall_single_plain'),
-    #Wall.find('japanese_wall_upper_traps'),
-    #Wall.find('japanese_wall_upper_traps_opened'),
-]
-
-build_walls(plan, editor, walls, RNG(SEED, 'build_walls'))
-
+build_walls(plan, editor, [
+    Wall.find('japanese_wall_bottom_plain'),
+    Wall.find('japanese_wall_single_plain'),
+    Wall.find('japanese_wall_upper_traps'),
+], RNG(SEED, 'build_walls'))

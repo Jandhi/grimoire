@@ -15,21 +15,19 @@ from gdpc.vector_tools import ivec3
 # Grid coordinates are cell coordinates, with dimensinos according to the dimensions given
 class Grid:
     def __init__(self, 
-            dimensions : ivec3 = (7, 5, 7), 
-            origin     : ivec3 = (0, 0, 0),
+            dimensions : ivec3 = ivec3(7, 5, 7), 
+            origin     : ivec3 = ivec3(0, 0, 0),
             ) -> None:
         self.width, self.height, self.depth = dimensions
+        self.dimensions = dimensions
         self.origin = origin
-
-    def dimensions(self) -> ivec3:
-        return ivec3(self.width, self.height, self.depth)
 
     # Coordinates functions
     def grid_to_local(self, coordinates : ivec3) -> ivec3:
         return ivec3(
-            x = coordinates.x * (self.dimensions().x - 1),
-            y = coordinates.y * (self.dimensions().y - 1),
-            z = coordinates.z * (self.dimensions().z - 1),
+            x = coordinates.x * (self.dimensions.x - 1),
+            y = coordinates.y * (self.dimensions.y - 1),
+            z = coordinates.z * (self.dimensions.z - 1),
         )
 
     def grid_to_world(self, coordinates : ivec3) -> ivec3:
@@ -41,9 +39,9 @@ class Grid:
     # If on the boundary of two tiles, it will prefer the right one
     def local_to_grid(self, coordinates : ivec3) -> ivec3:
         return ivec3(
-            x = coordinates.x // (self.dimensions().x - 1),
-            y = coordinates.y // (self.dimensions().y - 1),
-            z = coordinates.z // (self.dimensions().z - 1),
+            x = coordinates.x // (self.dimensions.x - 1),
+            y = coordinates.y // (self.dimensions.y - 1),
+            z = coordinates.z // (self.dimensions.z - 1),
         )
     
     def world_to_local(self, coordinates : ivec3) -> ivec3:
@@ -54,28 +52,28 @@ class Grid:
 
     # helper function to build things on grid
     def build(self, editor : Editor, asset : NBTAsset, palette: Palette, grid_coordinate : ivec3, facing : str = None):
-        local_coords = self.grid_to_local(grid_coordinate)
+        coords = self.grid_to_local(grid_coordinate) + self.origin
 
         if facing is None or not hasattr(asset, 'facing') or asset.facing == facing:
             return build_nbt(editor, asset, palette, Transformation(
-                offset = local_coords + ivec3(0, 0, 0),
+                offset = coords + ivec3(0, 0, 0),
             ))
         
         if right[asset.facing] == facing:
             return build_nbt(editor, asset, palette, Transformation(
-                offset=local_coords + ivec3(0, 0, 0),
-                diagonal_mirror=True
+                offset=coords + ivec3(0, 0, 0),
+                diagonal_mirror=True,
             ))
 
         if left[asset.facing] == facing:
             return build_nbt(editor, asset, palette, Transformation(
-                offset=local_coords + ivec3(0, 0, self.depth - 1),
+                offset=coords + ivec3(0, 0, self.depth - 1),
                 diagonal_mirror=True,
                 mirror=(True, False, False),
             ))
 
         if opposites[asset.facing] == facing:
             return build_nbt(editor, asset, palette, Transformation(
-                offset=local_coords + ivec3(self.width - 1, 0, 0),
+                offset=coords + ivec3(self.width - 1, 0, 0),
                 mirror=(True, False, False)
             ))

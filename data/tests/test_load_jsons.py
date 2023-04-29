@@ -6,7 +6,6 @@ sys.path[0] = sys.path[0].removesuffix('\\data\\tests')
 from data.load_jsons import load_jsons, load_objects
 from structures.nbt.nbt_asset import NBTAsset
 from data.load_assets import load_assets
-from building_generation.walls import wall_nbt
 
 class Test(NBTAsset):
     pass
