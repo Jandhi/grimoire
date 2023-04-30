@@ -93,6 +93,9 @@ def merge(parent : District, child : District, districts : list[District], ident
     parent.area  += child.area
     parent.edges |= child.edges # set addition
 
+    parent.points |= child.points
+    parent.points_2d |= child.points_2d
+
     # merge child's neighborus to parent
     for district, adjacency_count in child.adjacency.items():
         if district == parent:

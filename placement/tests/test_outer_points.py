@@ -1,6 +1,6 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
+sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
 
 # Actual file
 from gdpc import Editor, Block
@@ -10,6 +10,7 @@ from terrain.water_map import get_water_map
 from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts
+from sets.find_outer_points import find_outer_and_inner_points
 
 SEED = 752
 
@@ -34,3 +35,8 @@ for district in districts:
 
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
     editor.placeBlock((x, y, z), Block('sea_lantern'))
+
+    outer, inner = find_outer_and_inner_points(district.points_2d, 2)
+
+    for pt in outer:
+        editor.placeBlock(ivec3(pt.x, world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][pt.x][pt.y], pt.y), Block('cobblestone'))

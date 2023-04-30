@@ -19,13 +19,15 @@ class District:
         
         self.origin = origin
         self.sum = ivec3(0, 0, 0)
-        self.area = 1
+        self.area = 0
         self.adjacency = {}
-        self.points = {origin}
-        self.points_2d = {(origin.x, origin.y)}
-        self.edges = set()
+        self.points    = set()
+        self.points_2d = set()
+        self.edges     = set()
         self.adjacencies_total = 0
         self.is_urban = is_urban
+
+        self.add_point(origin)
 
     def add_point(self, point : ivec3):
         self.points.add(point)

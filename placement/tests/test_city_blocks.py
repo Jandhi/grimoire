@@ -1,6 +1,6 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
+sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
 
 # Actual file
 from gdpc import Editor, Block
@@ -10,6 +10,7 @@ from terrain.water_map import get_water_map
 from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts
+from placement.city_blocks import add_city_blocks
 
 SEED = 752
 
@@ -34,3 +35,5 @@ for district in districts:
 
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
     editor.placeBlock((x, y, z), Block('sea_lantern'))
+
+add_city_blocks(editor, districts, world_slice)

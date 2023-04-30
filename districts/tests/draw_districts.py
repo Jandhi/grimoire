@@ -14,4 +14,5 @@ def draw_districts(districts, build_rect, district_map, water_map, world_slice, 
 
             y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
             if ivec3(x, y, z) in district.edges:
-                place_relative_to_ground(x, 1, z, 'glass', world_slice, editor)
+                place_relative_to_ground(x, -1, z, block, world_slice, editor)
+                place_relative_to_ground(x, 0, z, 'glass', world_slice, editor)
