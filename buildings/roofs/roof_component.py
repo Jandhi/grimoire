@@ -13,7 +13,8 @@ UPPER_INNER = "upper_inner"
 
 @asset_defaults(facing=x_minus)
 class RoofComponent(NBTAsset):
-    component_type : str
+    shape : str
+    facing : str
 
     def on_construct(self):
         super().on_construct()

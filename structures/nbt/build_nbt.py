@@ -14,6 +14,7 @@ def build_nbt(
         palette : Palette = None,
         transformation : Transformation = None,
         place_air : bool = False,
+        allow_non_solid_replacement : bool = False,
     ):
     structure = convert_nbt(asset.filepath)
     transformation = transformation or Transformation() # construct default value
@@ -39,5 +40,15 @@ def build_nbt(
             asset=asset
         )
 
+        # Doesn't allow non-solid blocks to replace blocks
+        if (not allow_non_solid_replacement) and any(blocktype in block.name for blocktype in ('stairs', 'slab', 'walls', 'fence')):
+            curr_block = editor.getBlock(position=(x, y, z))
+
+            if curr_block.id != 'minecraft:air':
+                continue
+
+        if block.name == 'minecraft:barrier':
+            block.name = 'minecraft:air'
+        
         editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block()) 
 
