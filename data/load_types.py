@@ -2,21 +2,20 @@
 
 def load_types():
     # WALLS
-    from building_generation.walls.wall import Wall
-    from building_generation.walls.wall_nbt import WallNBT 
-    from building_generation.walls.wall_blueprint import WallBlueprint 
+    from buildings.walls.wall import Wall
+    from buildings.walls.wall_nbt import WallNBT 
+    from buildings.walls.wall_blueprint import WallBlueprint 
 
     # ROOFS
-    from building_generation.roofs.roof import Roof
-    from building_generation.roofs.roof_nbt import RoofNBT
-    from building_generation.roofs.roof_blueprint import RoofBlueprint
+    from buildings.roofs.roof import Roof
+    from buildings.roofs.roof_component import RoofComponent
 
     # STYLES
     from style.style import Style
     from style.substyle import Substyle
 
     # ROOMS
-    from building_generation.rooms.room import Room
+    from buildings.rooms.room import Room
 
     # PALETTES
     from palette.palette import Palette

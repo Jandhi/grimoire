@@ -24,6 +24,11 @@ def load_assets(root_directory) -> None:
                 continue
 
             cls = Asset.get_construction_type(data['type'])
+
+            if cls is None:
+                print(f"Could not find class {data['type']}")
+                continue
+
             data['type'] = cls.type_name
             
             obj, validation_state = cls.construct_unsafe(**data)

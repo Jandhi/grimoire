@@ -18,4 +18,4 @@ class RNG(Seed):
         return val
 
     def value(self) -> int:
-        return next()
+        return self.next()

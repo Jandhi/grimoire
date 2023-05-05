@@ -4,5 +4,6 @@
     "filepath" : "assets/walls/viking/viking_wall_lower_stone_base_window.nbt",
     "origin" : [2, -1, 0],
     "facing" : "x_minus",
-    "palette" : "viking_palette"
+    "palette" : "viking_palette",
+    "positions" : ["lower"]
 }

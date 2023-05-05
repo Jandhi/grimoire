@@ -4,7 +4,6 @@ from structures.structure import Structure
 from structures.transformation import Transformation
 from gdpc.editor import Editor
 from gdpc.block import Block
-from utils.tuples import add_tuples, sub_tuples
 from palette.palette import Palette
 from palette.palette_swap import palette_swap
 
@@ -12,9 +11,10 @@ from palette.palette_swap import palette_swap
 def build_nbt(
         editor : Editor, 
         asset : NBTAsset,
-        palette : Palette,
+        palette : Palette = None,
         transformation : Transformation = None,
         place_air : bool = False,
+        allow_non_solid_replacement : bool = False,
     ):
     structure = convert_nbt(asset.filepath)
     transformation = transformation or Transformation() # construct default value
@@ -30,8 +30,9 @@ def build_nbt(
         if block.name == 'minecraft:air' and not place_air:
             continue
 
-        block = block.copy() # I do this to avoid doubly swapping palettes
-        block.name = palette_swap(block.name, asset.palette, palette)
+        if asset.palette:
+            block = block.copy() # I do this to avoid doubly swapping palettes
+            block.name = palette_swap(block.name, asset.palette, palette)
 
         x, y, z = transformation.apply_to_point(
             point=pos,
@@ -39,5 +40,15 @@ def build_nbt(
             asset=asset
         )
 
+        # Doesn't allow non-solid blocks to replace blocks
+        if (not allow_non_solid_replacement) and any(blocktype in block.name for blocktype in ('stairs', 'slab', 'walls', 'fence')):
+            curr_block = editor.getBlock(position=(x, y, z))
+
+            if curr_block.id != 'minecraft:air':
+                continue
+
+        if block.name == 'minecraft:barrier':
+            block.name = 'minecraft:air'
+        
         editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block()) 
 
