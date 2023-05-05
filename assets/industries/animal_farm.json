@@ -1,0 +1,5 @@
+{
+    "name" : "animal_farm",
+    "type" : "primary_industry",
+    "required_tags" : ["common_animal_spawners"]
+}

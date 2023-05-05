@@ -234,5 +234,52 @@ jungle = {
     'bamboo_jungle' : (bt.ROUGHNESS_MID, bt.TEMPERATURE_HIGH, bt.ACQUATIC_NONE)
 }
 
+common_animal_spawners = {}
+for biome in all_biomes:
+    if biome in desert:
+        continue
+    if biome in badlands:
+        continue
+    if biome in shore:
+        continue
+    if biome in snowy:
+        continue
+    if biome in aquatic:
+        continue
+    if biome == "mushroom_fields":
+        continue
+    common_animal_spawners.update( {biome : all_biomes[biome]} )
+
+horse_spawners = {
+    'plains' : (bt.ROUGHNESS_LOW, bt.TEMPERATURE_MID, bt.ACQUATIC_NONE), 
+    'sunflower_plains' : (bt.ROUGHNESS_LOW, bt.TEMPERATURE_MID, bt.ACQUATIC_NONE), 
+    'savanna' : (bt.ROUGHNESS_MID, bt.TEMPERATURE_HIGH, bt.ACQUATIC_SMALL_BODY), 
+    'savanna_plateau' : (bt.ROUGHNESS_MID, bt.TEMPERATURE_HIGH, bt.ACQUATIC_SMALL_BODY),
+    'windswept_savanna' : (bt.ROUGHNESS_HIGH, bt.TEMPERATURE_HIGH, bt.ACQUATIC_SMALL_BODY)
+}
+
+tag_map = {
+    "all_biomes" : all_biomes,
+    "plains" : plains,
+    "snowy" : snowy,
+    "cold" : cold,
+    "desert" : desert,
+    "swamp" : swamp,
+    "badlands" : badlands,
+    "ocean" : ocean,
+    "aquatic" : aquatic,
+    "shore" : shore,
+    "forest" : forest,
+    "rocky" : rocky,
+    "oak" : oak,
+    "birch" : birch,
+    "spruce" : spruce,
+    "dark_oak" : dark_oak,
+    "acacia" : acacia,
+    "jungle" : jungle,
+    "horse_spawners" : horse_spawners,
+    "common_animal_spawners" : common_animal_spawners
+}
+
 if __name__ == "__main__":
     print(all_biomes)

@@ -1,42 +1,49 @@
+import sys
+sys.path[0] = sys.path[0].removesuffix('\\industries')
+
 import random
-import biomes
 from data.asset import Asset, asset_defaults
 from gdpc.editor import Editor
 from districts.district import District
+from industry import biomes
 
-@asset_defaults()
 class Industry(Asset):
     buildings : str
 
+@asset_defaults(
+    parent_industries = None
+)
 class PrimaryIndustry(Industry):
-    req_biome_tags : list[str]
+    required_tags : list[str]
 
+@asset_defaults(
+    required_tags = None
+)
 class SecondaryIndustry(Industry):
-    req_industries : list[str]
+    parent_industries : list[str]
 
-def get_district_biome_tags(district, num_points = 3):
+def get_district_biomes(district, num_points = 3):
     biomes_in_district = []
     for point in random.sample(list(district.points_2d), num_points):
         biomes_in_district.append(Editor.getBiome(point))
-    biomes_in_district = set(biomes_in_district)
-    return [biomes.all_biomes[biome] for biome in biomes_in_district]
+    return list(set(biomes_in_district))
 
-def find_primary_industries(tags : list[str]):
+def get_primary_industries(district_biomes : list[str]):
     eligibile_primary_industries = []
     for industry in PrimaryIndustry.all():
         industry : PrimaryIndustry
                 
-        if any((tag not in tags for tag in industry.req_biome_tags)):
+        if any((biome in district_biomes for biome in biomes.tag_map[industry.required_tags])):
             continue
         eligibile_primary_industries.append(industry)
     return eligibile_primary_industries
 
-def find_secondary_industries(industries : list[str]):
+def find_secondary_industries(district_primary_industries : list[str]):
     eligible_secondary_industries = []
     for industry in SecondaryIndustry.all():
         industry : SecondaryIndustry
 
-        if any((primary not in industries for primary in industry.req_industries)):
+        if any((primary not in district_primary_industries for primary in industry.parent_industries)):
             continue
         eligible_secondary_industries.append(industry)
     return eligible_secondary_industries
