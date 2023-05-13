@@ -36,4 +36,4 @@ for district in districts:
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, districts, world_slice)
+add_city_blocks(editor, districts, district_map, world_slice, SEED)

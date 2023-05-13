@@ -10,6 +10,10 @@ def randrange(seed : int, min : int, max : int) -> int:
 def choose(seed : int, items : list):
     return items[seed % len(items)]
 
+# pops a random item from a list
+def pop(seed : int, items : list):
+    return items.pop(seed % len(items))
+
 # returns a random item from a dictionary of weights
 def choose_weighted(seed : int, items : dict[any,int]):
     total = sum(items.values())
@@ -37,7 +41,7 @@ def shuffle(seed : int, items : list) -> list:
 
     while len(copied_list) > 0:
         length = len(copied_list)
-        index = randint(hash(seed, length), length)
+        index = randint(hash(seed), length)
         new_list.append(copied_list.pop(index))
     
     return new_list

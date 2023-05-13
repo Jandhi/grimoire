@@ -18,6 +18,9 @@ class Seed:
     def choose(self, items : list):
         return choose(self.value(), items)
     
+    def pop(self, items : list):
+        return pop(self.value(), items)
+    
     def choose_weighted(self, items : dict[any, int]):
         return choose_weighted(self.value(), items)
     
