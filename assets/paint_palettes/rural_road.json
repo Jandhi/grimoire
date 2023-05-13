@@ -1,0 +1,8 @@
+{
+    "name" : "rural_road",
+    "type" : "paint_palette",
+    "palette" : {
+        "rooted_dirt": 3,"dirt" : 4,"coarse_dirt" : 3,"packed_mud" : 5
+    },
+    "smooth" : "False"
+}

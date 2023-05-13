@@ -1,0 +1,48 @@
+{
+    "name" : "birch_forest",
+    "type" : "forest",
+    "tree_dict" : {
+        "mega_birch": 1,
+        "large_birch": 3,
+        "medium_birch": 4
+    },
+    "tree_palette" : {
+        "mega_birch" : {
+            "wood" : {
+                "birch_wood" : 5,
+                "stripped_birch_wood" : 2,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 5
+            }
+        },
+        "large_birch" : {
+            "wood" : {
+                "birch_wood" : 5,
+                "stripped_birch_wood" : 2,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 5
+            }
+        },
+        "medium_birch" : {
+            "wood" : {
+                "birch_wood" : 5,
+                "stripped_birch_wood" : 2,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 5
+            }
+        }
+    },
+    "tree_density" : 5
+}

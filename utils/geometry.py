@@ -1,6 +1,6 @@
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from gdpc import WorldSlice
-from structures.directions import cardinal, get_ivec2, get_ivec3
+from structures.directions import cardinal, get_ivec2
 
 #finds the neighbours points of a point in a set
 def get_neighbours_in_set(point : ivec2, set : list[ivec2]) -> list[ivec2]:
