@@ -1,0 +1,14 @@
+{
+    "name" : "potato",
+    "type" : "paint_palette",
+    "palette" : {
+        "potatoes[age=1]" : 1,
+        "potatoes[age=2]" : 1,
+        "potatoes[age=3]" : 1,
+        "potatoes[age=4]" : 1,
+        "potatoes[age=5]" : 1,
+        "potatoes[age=6]" : 1,
+        "potatoes[age=7]" : 5
+    },
+    "smooth" : "False"
+}

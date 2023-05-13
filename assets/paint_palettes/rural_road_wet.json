@@ -1,0 +1,13 @@
+{
+    "name" : "rural_road_wet",
+    "type" : "paint_palette",
+    "palette" : {
+        "brown_concrete_powder": 5,
+        "podzol" : 7,
+        "brown_concrete" : 2,
+        "farmland" : 1,
+        "brown_terracotta" : 2,
+        "brown_wool" : 2
+    },
+    "smooth" : "False"
+}

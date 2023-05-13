@@ -1,0 +1,14 @@
+{
+    "name" : "carrot",
+    "type" : "paint_palette",
+    "palette" : {
+        "carrots[age=1]" : 1,
+        "carrots[age=2]" : 1,
+        "carrots[age=3]" : 1,
+        "carrots[age=4]" : 1,
+        "carrots[age=5]" : 1,
+        "carrots[age=6]" : 1,
+        "carrots[age=7]" : 5
+    },
+    "smooth" : "False"
+}

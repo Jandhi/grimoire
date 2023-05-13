@@ -15,6 +15,7 @@ from districts.tests.draw_districts import draw_districts
 SEED = 2
 
 editor = Editor(buffering=True, caching=True)
+#editor.doBlockUpdates(value = False)
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)

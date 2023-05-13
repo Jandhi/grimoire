@@ -37,7 +37,7 @@ def shuffle(seed : int, items : list) -> list:
 
     while len(copied_list) > 0:
         length = len(copied_list)
-        index = randint(hash(seed, length), length)
+        index = randint(hash(seed), length)
         new_list.append(copied_list.pop(index))
     
     return new_list

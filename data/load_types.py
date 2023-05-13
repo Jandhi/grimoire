@@ -19,3 +19,9 @@ def load_types():
 
     # PALETTES
     from palette.palette import Palette
+
+    # PAINT PALETTES
+    from districts.paint_palette import PaintPalette
+
+    # FORESTS
+    from terrain.forest import Forest

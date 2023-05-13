@@ -1,0 +1,9 @@
+{
+    "name" : "wheat",
+    "type" : "paint_palette",
+    "palette" : {
+        "wheat[age=6]" : 1,
+        "wheat[age=7]" : 1
+    },
+    "smooth" : "False"
+}

@@ -1,0 +1,123 @@
+{
+    "name" : "mixed_forest",
+    "type" : "forest",
+    "tree_dict" : {
+        "mega_birch": 2,
+        "large_birch": 3,
+        "medium_birch": 5,
+        "mega_pine": 1,
+        "large_pine": 3,
+        "medium_pine": 1,
+        "mega_oak": 2,
+        "large_oak": 7,
+        "medium_oak": 10
+    },
+    "tree_palette" : {
+        "mega_birch" : {
+            "wood" : {
+                "birch_wood" : 5,
+                "stripped_birch_wood" : 2,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 5
+            }
+        },
+        "large_birch" : {
+            "wood" : {
+                "birch_wood" : 5,
+                "stripped_birch_wood" : 2,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 5
+            }
+        },
+        "medium_birch" : {
+            "wood" : {
+                "birch_wood" : 5,
+                "stripped_birch_wood" : 2,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 5
+            }
+        },
+        "mega_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 2
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 1
+            }
+        },
+        "large_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 2
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 1
+            }
+        },
+        "medium_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 2
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 1
+            }
+        },
+        "mega_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 1,
+                "oak_leaves[persistent=true]" : 5            
+            }
+        },
+        "large_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 1,
+                "oak_leaves[persistent=true]" : 5   
+            }
+        },
+        "medium_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 2,
+                "birch_leaves[persistent=true]" : 1,
+                "oak_leaves[persistent=true]" : 5   
+            }
+        }
+    },
+    "tree_density" : 7
+}

@@ -3,7 +3,7 @@ from noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from gdpc import WorldSlice
-from structures.directions import north, east, west, south, get_ivec2, directions, left, right, to_text, ivec2_to_dir, get_ivec3, cardinal, opposite, ivec3_to_dir
+from structures.directions import north, east, west, south, get_ivec2, directions, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
 from utils.geometry import get_neighbours_in_set, is_straight_ivec2, is_point_surrounded_dict, is_straight_not_diagonal_ivec2
 from utils.misc import is_water
 from structures.nbt.build_nbt import build_nbt
@@ -119,14 +119,14 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
                     if prev_h == h - 1 and next_h == h - 1:
                         height_modifier = -1
                 if right[dir] in wall_point[1]: # add corner bits for walkway
-                    for new_pt in (point + get_ivec3(dir) + get_ivec3(right[dir]), point + get_ivec3(dir) + get_ivec3(right[dir]) * 2,point + get_ivec3(dir) *2 + get_ivec3(right[dir])):
+                    for new_pt in (point + vector(dir) + vector(right[dir]), point + vector(dir) + vector(right[dir]) * 2,point + vector(dir) *2 + vector(right[dir])):
                         if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                             break
                         if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
                             walkway_list.append(ivec2(new_pt.x, new_pt.z))
                             walkway_dict[ivec2(new_pt.x, new_pt.z)] = new_pt.y + height_modifier
                 for x in range(1, 4):
-                    new_pt = point + get_ivec3(dir) * x
+                    new_pt = point + vector(dir) * x
                     if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                         break
                     if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
@@ -180,7 +180,7 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
                     if prev_h == h - 1 and next_h == h - 1:
                         height_modifier = -1
                 if right[dir] in wall_point[1]: # add corner bits for walkway
-                    for new_pt in (point + get_ivec3(dir) + get_ivec3(right[dir]), point + get_ivec3(dir) + get_ivec3(right[dir]) * 2,point + get_ivec3(dir) *2 + get_ivec3(right[dir])):
+                    for new_pt in (point + vector(dir) + vector(right[dir]), point + vector(dir) + vector(right[dir]) * 2,point + vector(dir) *2 + vector(right[dir])):
                         if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                             break
                         if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
@@ -193,11 +193,11 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
                                 fill_water(ivec2(new_pt.x, new_pt.z), editor, height_map, world_slice)
                         
                     #inner wall
-                    for wall_pt in (point + get_ivec3(dir)*2 + get_ivec3(right[dir])*2, point + get_ivec3(dir) + get_ivec3(right[dir]) * 3,point + get_ivec3(dir) *3 + get_ivec3(right[dir])):
+                    for wall_pt in (point + vector(dir)*2 + vector(right[dir])*2, point + vector(dir) + vector(right[dir]) * 3,point + vector(dir) *3 + vector(right[dir])):
                         if wall_dict.get(ivec2(wall_pt.x, wall_pt.z)) != True and walkway_dict.get(ivec2(wall_pt.x, wall_pt.z)) == None:
                             inner_wall_list.append(ivec3(wall_pt.x,point.y,wall_pt.z))
                 for x in range(1, 4):
-                    new_pt = point + get_ivec3(dir) * x
+                    new_pt = point + vector(dir) * x
                     if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                         break
                     if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
@@ -205,7 +205,7 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
                         walkway_dict[ivec2(new_pt.x, new_pt.z)] = new_pt.y + height_modifier
                         #inner wall
                         if x == 3:
-                            wall_pt = point + get_ivec3(dir) * 4
+                            wall_pt = point + vector(dir) * 4
                             if wall_dict.get(ivec2(wall_pt.x, wall_pt.z)) != True and walkway_dict.get(ivec2(wall_pt.x, wall_pt.z)) == None:
                                 inner_wall_list.append(ivec3(wall_pt.x,point.y,wall_pt.z))
                     if fill_in:
@@ -485,7 +485,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
                 if i<len(wall_list) - 7 and is_straight_not_diagonal_ivec2(ivec2(point.x,point.z), ivec2(wall_list[i+6][0].x, wall_list[i+6][0].z), 6) and abs(point.y - wall_list[i+6][0].y) <= 1:
                     if is_thin:
                         middle_point = wall_list[i+3][0]
-                        dir = get_ivec3(wall_list[i+3][1][0])
+                        dir = vector(wall_list[i+3][1][0])
                         if ivec3_to_dir(dir) in (north, south):
                             neighbours = [ivec2(x, z) for x in range(middle_point.x -3, middle_point.x + 4) for z in range(middle_point.z -1, middle_point.z + 2)]
                         else: 
@@ -510,7 +510,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
                             ),
                         )
                     else:
-                        dir = get_ivec3(wall_list[i+3][1][0])
+                        dir = vector(wall_list[i+3][1][0])
                         middle_point = wall_list[i+3][0] + dir * 2
                         #checking inner wall, if it is not where it is expected to be, not a valid gate location
                         
