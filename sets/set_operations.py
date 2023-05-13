@@ -1,5 +1,6 @@
 from gdpc.vector_tools import ivec2, distance2
 from math import atan, pi
+from structures.directions import cardinal, get_ivec2, left, right
 
 def midpoint(points : set[ivec2]) -> ivec2:
     return sum(points) / len(points)
@@ -58,3 +59,39 @@ def split(points : set[ivec2]) -> tuple[set[ivec2], set[ivec2]]:
             best_split = split
 
     return best_split
+
+def find_edges(points : set[ivec2]) -> set[ivec2]:
+    edges = set()
+    
+    for point in points:
+        for direction in cardinal:
+            neighbour = point + get_ivec2(direction)
+
+            if neighbour not in points:
+                edges.add(point)
+                break
+    
+    return edges
+
+def find_outer_direction(point : ivec2, points : set[ivec2], first_wins_ties = True) -> str:
+    best_dir = None
+    best_dir_score = 0
+
+    for direction in cardinal:
+        score = 0
+        vector = get_ivec2(direction)
+        left_vector = get_ivec2(left[direction])
+        right_vector = get_ivec2(right[direction])
+
+        for base_vec in (ivec2(0, 0), left_vector, right_vector):
+            for dist in range(5):
+                pt = point + base_vec + dist * vector
+
+                if pt not in points:
+                    score += 1
+        
+        if score > best_dir_score or (not first_wins_ties and score == best_dir_score):
+            best_dir = direction
+            best_dir_score = score
+
+    return best_dir

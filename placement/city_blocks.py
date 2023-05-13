@@ -1,17 +1,18 @@
 from districts.district import District
 from gdpc import Editor, Block, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3, distance2
-from sets.set_operations import split, calculate_stretch
+from sets.set_operations import split, calculate_stretch, find_edges, find_outer_direction
 from sets.find_outer_points import find_outer_and_inner_points
 from noise.rng import RNG
-from structures.directions import cardinal, get_ivec2
+from structures.directions import cardinal, get_ivec2, to_text
 from utils.bounds import is_in_bounds2d
+from utils.vectors import point_3d
 
 MAXIMUM_SIZE = 2000
 
 UNSPLITTABLE_SIZE = 100 
 MAXIMUM_STRETCH_RATIO = 5
-EDGE_THICKNESS = 2
+EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 500
 
 def block_is_admissible(points : set[ivec2]) -> bool:
@@ -93,8 +94,16 @@ def bubble_out(bubbles : list[ivec2], district_map : list[list[District]], world
     
     return blocks, block_map
 
-def find_directions(block : set[ivec2]) -> dict[ivec2, str]:
-    pass
+def place_buildings(editor : Editor, block : set[ivec2], district_map : list[list[District]], world_slice : WorldSlice, seed : int):
+    edges = find_edges(block)
+
+    rng = RNG(seed, 'place_buildings')
+
+    for edge in edges:
+        build_dir = find_outer_direction(edge, block, rng.chance(1, 2))
+
+        editor.placeBlock(point_3d(edge, world_slice), Block('cobblestone_stairs', {'facing' : to_text(build_dir)}))
+
 
 def add_city_blocks(editor : Editor, districts : list[District], district_map : list[list[District]], world_slice : WorldSlice, seed : int):
     rng = RNG(seed, 'add_city_blocks')
@@ -107,3 +116,7 @@ def add_city_blocks(editor : Editor, districts : list[District], district_map : 
 
         for point in outer:
             editor.placeBlock(ivec3(point.x, world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y], point.y), Block('cobblestone'))
+        
+        place_buildings(editor, inner, district_map, world_slice, seed)
+
+        
