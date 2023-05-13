@@ -1,0 +1,8 @@
+{
+    "name" : "farmland",
+    "type" : "paint_palette",
+    "palette" : {
+        "farmland[moisture=7]": 1
+    },
+    "smooth" : "False"
+}

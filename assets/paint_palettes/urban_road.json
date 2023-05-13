@@ -1,0 +1,10 @@
+{
+    "name" : "urban_road",
+    "type" : "paint_palette",
+    "palette" : {
+        "slabs" : {"stone_slab": 3,"cobblestone_slab" : 2,"stone_brick_slab" : 8,"andesite_slab" : 4},
+        "blocks" : {"stone": 3,"cobblestone" : 2,"stone_bricks" : 8,"andesite" : 3,"gravel" : 1},
+        "stairs" : {"stone_stairs": 3,"cobblestone_stairs" : 2,"stone_brick_stairs" : 8,"andesite_stairs" : 4}
+    },
+    "smooth" : "True"
+}

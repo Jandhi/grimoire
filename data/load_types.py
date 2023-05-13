@@ -22,3 +22,9 @@ def load_types():
 
     # BUILDING SHAPE
     from buildings.building_shape import BuildingShape
+    
+    # PAINT PALETTES
+    from districts.paint_palette import PaintPalette
+
+    # FORESTS
+    from terrain.forest import Forest
