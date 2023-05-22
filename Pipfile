@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 gdpc = {git = "https://github.com/avdstaaij/gdpc"}
-nbt = "*"
 colored = "*"
+nbtlib = "*"
 
 [dev-packages]
 

@@ -25,3 +25,6 @@ def load_types():
 
     # FORESTS
     from terrain.forest import Forest
+
+    # ASSET STRUCTURE
+    from structures.asset_structure import AssetStructure
