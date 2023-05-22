@@ -13,6 +13,7 @@ from structures.asset_structure import AssetStructure
 from gdpc.vector_tools import ivec3
 from terrain.water_map import get_water_map
 from terrain.build_map import get_build_map
+from structures.well import Well
 
 SEED = 2
 
@@ -29,9 +30,10 @@ water_map = get_water_map(world_slice)
 build_map = get_build_map(world_slice)
 
 load_assets('assets')
-
-test : AssetStructure = AssetStructure.find('chariot_statue')
 y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][0][0]
+"""
+test : AssetStructure = AssetStructure.find('chariot_statue')
+
 build_nbt(
     editor = editor, 
     asset = test,
@@ -42,3 +44,9 @@ build_nbt(
         #diagonal_mirror=True,
     ),
 )
+"""
+
+
+#well
+test_well = Well(ivec3(area.middle.x,y,area.middle.z))
+test_well.build(editor)
