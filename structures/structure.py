@@ -5,7 +5,7 @@ from gdpc.vector_tools import ivec3
 # Used to actually construct NBT structures
 class Structure:
     def __init__(self, 
-        blocks : dict[ivec3, int], 
+        blocks : dict[ivec3: [int, str]], 
         palette : list[Block],
         dimensions : ivec3,
     ) -> None:
