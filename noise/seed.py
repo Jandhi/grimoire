@@ -23,6 +23,9 @@ class Seed:
     
     def choose_weighted(self, items : dict[any, int]):
         return choose_weighted(self.value(), items)
+
+    def pop_weighted(self, items : dict[any, int]):
+        return pop_weighted(self.value(), items)
     
     def odds(self, successes : int, failures : int) -> bool:
         return odds(self.value(), successes, failures)

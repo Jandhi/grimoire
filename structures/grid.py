@@ -7,7 +7,8 @@ from gdpc.editor import Editor
 from gdpc.nbt_tools import nbt
 from structures.nbt.nbt_asset import NBTAsset
 from palette.palette import Palette
-from gdpc.vector_tools import ivec3
+from gdpc.vector_tools import ivec3, ivec2
+from collections.abc import Iterator 
 
 # Class to work with grids for buildings
 # Local coordinates are block coordinates relative to origin of house
@@ -77,3 +78,16 @@ class Grid:
                 offset=coords + ivec3(self.width - 1, 0, 0),
                 mirror=(True, False, False)
             ))
+    
+    def get_points_at(self, point : ivec3) -> Iterator[ivec3]:
+        for x in range(self.dimensions.x):
+            for y in range(self.dimensions.y):
+                for z in range(self.dimensions.z):
+                    yield ivec3(x, y, z) + self.grid_to_world(point)
+
+    def get_points_at_2d(self, point : ivec2) -> Iterator[ivec2]:
+        dx, _, dz = self.grid_to_world(ivec3(point.x, 0, point.y))
+
+        for x in range(self.dimensions.x):
+            for z in range(self.dimensions.z):
+                yield ivec2(x, z) + ivec2(dx, dz)

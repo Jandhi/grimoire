@@ -1,0 +1,8 @@
+{
+    "name" : "well",
+    "type" : "asset_structure",
+    "filepath" : "assets/structures/well.nbt",
+    "origin" : [2, 3, 2],
+    "size" : "small",
+    "facing" : "east"
+}

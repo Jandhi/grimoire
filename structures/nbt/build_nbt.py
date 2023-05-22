@@ -21,7 +21,9 @@ def build_nbt(
 
     transformed_palette = transformation.apply_to_palette(structure.palette)
 
-    for (pos, palette_index) in structure.blocks.items():
+    for (pos, palette_index_and_nbt) in structure.blocks.items():
+        palette_index = palette_index_and_nbt[0]
+        nbt = palette_index_and_nbt[1]
         block = transformed_palette[palette_index]
 
         if block.name in asset.do_not_place or block.name.removeprefix('minecraft:') in asset.do_not_place:
@@ -50,5 +52,5 @@ def build_nbt(
         if block.name == 'minecraft:barrier':
             block.name = 'minecraft:air'
         
-        editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block()) 
+        editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block(nbt)) 
 

@@ -7,7 +7,7 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
 from districts.district import District
 from terrain.plateau import plateau
-from terrain.water_map import get_water_map
+from maps.water_map import get_water_map
 
 SEED = 36322
 

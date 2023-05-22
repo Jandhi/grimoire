@@ -1,5 +1,6 @@
 {
-    "name" : "japanese_palette",
+    "name" : "japanese_dark",
+    "tags" : ["japanese"], 
     "type" : "palette",
     "primary_wood" : "dark_oak",
     "secondary_wood" : "spruce",

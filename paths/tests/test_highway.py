@@ -7,10 +7,10 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
-from terrain.water_map import get_water_map
+from maps.water_map import get_water_map
 from terrain.set_height import set_height
 from structures.directions import cardinal, vector, up
-from structures.building_map import get_initial_building_map
+from maps.building_map import get_building_map
 from utils.bounds import is_in_bounds
 
 SEED = 36322
@@ -26,7 +26,7 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 water_map = get_water_map(world_slice)
-building_map = get_initial_building_map(world_slice)
+building_map = get_building_map(world_slice)
 
 start_x, start_z = 0, 0
 start_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][start_x][start_z]

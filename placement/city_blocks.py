@@ -6,7 +6,11 @@ from sets.find_outer_points import find_outer_and_inner_points
 from noise.rng import RNG
 from structures.directions import cardinal, get_ivec2, to_text
 from utils.bounds import is_in_bounds2d
-from utils.vectors import point_3d
+from utils.vectors import point_3d, y_ivec3
+from maps.map import Map
+from maps.building_map import CITY_WALL, CITY_ROAD
+from placement.building_placement import place_building
+from districts.tests.place_colors import colors
 
 MAXIMUM_SIZE = 2000
 
@@ -30,10 +34,13 @@ def block_is_admissible(points : set[ivec2]) -> bool:
     
     return True
 
-def generate_bubbles(rng : RNG, districts : list[District], desired_block_size = 1000, minimum_point_distance = 10) -> list[ivec2]:
+def generate_bubbles(rng : RNG, districts : list[District], map : Map, desired_block_size = 1200, minimum_point_distance = 15) -> list[ivec2]:
     points = []
 
     for district in districts:
+        if not district.is_urban:
+            continue
+
         desired_point_amount = district.area // desired_block_size
         district_points_generated = 0
         trials = 0
@@ -42,9 +49,12 @@ def generate_bubbles(rng : RNG, districts : list[District], desired_block_size =
 
         while trials < max_trials and district_points_generated < desired_point_amount:
             trials += 1
-            point = rng.pop(district_points)
+            point = rng.pop(district_points) # choose random point in district
 
             if any(distance2(point, other) < minimum_point_distance for other in points):
+                continue
+
+            if map.buildings[point.x][point.y] == CITY_WALL:
                 continue
             
             district_points_generated += 1
@@ -52,71 +62,111 @@ def generate_bubbles(rng : RNG, districts : list[District], desired_block_size =
     
     return points
 
-def bubble_out(bubbles : list[ivec2], district_map : list[list[District]], world_slice : WorldSlice) -> tuple[list[set[ivec2]], list[list[set[ivec2]]]]:
-    block_map = [[None for _ in range(len(district_map[0]))] for _ in range(len(district_map))]
-    blocks = [set() for bubble in bubbles]
+def bubble_out(bubbles : list[ivec2], map : Map) -> tuple[list[set[ivec2]], list[list[int]], dict[int, dict[int, int]]]:
+    block_index_map = [[None for _ in range(len(map.districts[0]))] for _ in range(len(map.districts))]
+    blocks = [set() for _ in bubbles]
+    num_blocks = len(blocks)
+    block_adjacency = {
+        block : {0 for _ in range(num_blocks)} for _ in range(num_blocks)
+    }
 
     for i, bubble in enumerate(bubbles):
         blocks[i].add(bubble)
-        block_map[bubble.x][bubble.y] = blocks[i]
+        block_index_map[bubble.x][bubble.y] = i
 
     queue = [bubble for bubble in bubbles]
 
-    def is_urban(vec : ivec2):
-        district = district_map[vec.x][vec.y]
+    def is_eligible(vec : ivec2):
+        district = map.districts[vec.x][vec.y]
+
+        if map.buildings[vec.x][vec.y] == CITY_WALL:
+            return False
+
         return district != None and district.is_urban
 
     while len(queue) > 0:
         point = queue.pop(0)
-        block = block_map[point.x][point.y]
+        block_index = block_index_map[point.x][point.y]
+        block = blocks[block_index]
 
         for direction in cardinal:
             neighbour = point + get_ivec2(direction)
 
-            if not is_in_bounds2d(neighbour, world_slice):
+            if not is_in_bounds2d(neighbour, map.world):
                 continue
 
-            point_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
-            neighbour_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.y]
+            point_y = map.world.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
+            neighbour_y = map.world.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.y]
 
             if abs(point_y - neighbour_y) > 1:
                 continue
 
-            if block_map[neighbour.x][neighbour.y] != None:
+            neighbour_block_index = block_index_map[neighbour.x][neighbour.y]
+            if neighbour_block_index != None:
+                block_adjacency[block_index][neighbour_block_index] += 1
+                block_adjacency[neighbour_block_index][block_index] += 1
+
+            if not is_eligible(neighbour):
                 continue
 
-            if not is_urban(neighbour):
-                continue
-
-            block_map[neighbour.x][neighbour.y] = block
+            block_index_map[neighbour.x][neighbour.y] = block
             block.add(neighbour)
             queue.append(neighbour)
     
-    return blocks, block_map
+    return blocks, block_index_map
 
-def place_buildings(editor : Editor, block : set[ivec2], district_map : list[list[District]], world_slice : WorldSlice, seed : int):
+def merge_small_blocks(blocks : list[set[ivec2]], block_map : list[list[int]], block_adjacency : dict[int, dict[int, int]]):
+    for block in blocks:
+        
+        if len(block) > 100: 
+            continue
+
+def place_buildings(editor : Editor, block : set[ivec2], map : Map, rng : RNG, is_debug = False):
     edges = find_edges(block)
-
-    rng = RNG(seed, 'place_buildings')
 
     for edge in edges:
         build_dir = find_outer_direction(edge, block, rng.chance(1, 2))
 
-        editor.placeBlock(point_3d(edge, world_slice), Block('cobblestone_stairs', {'facing' : to_text(build_dir)}))
+        if is_debug:
+            editor.placeBlock(point_3d(edge, map.world) + y_ivec3(-1), Block('cobblestone_stairs', {'facing' : to_text(build_dir)}))
+        
+        place_building(editor, edge, map, build_dir, rng)
 
-
-def add_city_blocks(editor : Editor, districts : list[District], district_map : list[list[District]], world_slice : WorldSlice, seed : int):
+def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed : int, is_debug=False):
     rng = RNG(seed, 'add_city_blocks')
 
-    bubbles = generate_bubbles(rng, districts)
-    blocks, block_map = bubble_out(bubbles, district_map, world_slice)
+    urban_area : set[ivec2] = set()
+    for district in districts:
+        if district.is_urban:
+            urban_area |= district.points_2d
 
-    for block in blocks:
+    outer_urban_area, inner_urban_area = find_outer_and_inner_points(urban_area, 3)
+
+    for point in outer_urban_area:
+        map.buildings[point.x][point.y] = CITY_WALL
+
+    bubbles = generate_bubbles(rng, districts, map)
+    blocks, block_map, block_adjacency = bubble_out(bubbles, map)
+    blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
+
+
+    inners = []
+
+    for i, block in enumerate(blocks):
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:
-            editor.placeBlock(ivec3(point.x, world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y], point.y), Block('cobblestone'))
-        
-        place_buildings(editor, inner, district_map, world_slice, seed)
+            map.buildings[point.x][point.y] = CITY_ROAD
+
+        if is_debug:
+            for point in outer | outer_urban_area:
+                editor.placeBlock(ivec3(point.x, map.world.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y] - 1, point.y), Block('cobblestone'))
+
+        block_rng = RNG(seed, f'block {i}')
+        inners.append(inner)
+
+    # Has to be done after all inners are found
+    for i, block in enumerate(blocks):
+        place_buildings(editor, inners[i], map, block_rng, is_debug)
 
         

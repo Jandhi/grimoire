@@ -5,7 +5,7 @@
     "origin" : [1, -1, 0],
     "facing" : "x_minus",
     "do_not_replace" : ["oak_trapdoor"],
-    "palette" : "japanese_palette",
+    "palette" : "japanese_dark",
     "positions" : ["upper"],
     "weight" : 20
 }

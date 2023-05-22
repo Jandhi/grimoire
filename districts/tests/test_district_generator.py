@@ -6,7 +6,7 @@ sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from terrain.water_map import get_water_map
+from maps.water_map import get_water_map
 from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts

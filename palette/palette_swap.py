@@ -1,8 +1,10 @@
 from palette.palette import Palette
 
+plurals = ['brick', 'plank']
+
 def palette_swap(block_name : str, input_palette : Palette, output_palette : Palette):
     replacements = {
-        getattr(input_palette, key) : getattr(output_palette, key) for key in input_palette.__dict__
+        getattr(input_palette, key) : getattr(output_palette, key) for key in input_palette.fields
     }
     
     for target, result in replacements.items():
@@ -13,13 +15,14 @@ def palette_swap(block_name : str, input_palette : Palette, output_palette : Pal
 
             new_val = block_name.replace(target, result)
 
-            # remove bricks plural for standalone bricks
-            if target.endswith('brick') and block_name.endswith('bricks') and not result.endswith('brick'):
-                new_val = new_val.removesuffix('s') 
+            for plural in plurals:
+                # remove plural for combo bricks
+                if target.endswith(plural) and block_name.endswith(f'{plural}s') and not result.endswith({plural}):
+                    new_val = new_val.removesuffix('s') 
 
-            # No block ends in 'brick', they end in 'bricks' on their own
-            if new_val.endswith('brick'):
-                new_val = f'{new_val}s'
+                # No block ends in a plural without s
+                if new_val.endswith(plural):
+                    new_val = f'{new_val}s'
 
             return new_val
 

@@ -21,5 +21,7 @@ class Block:
     def copy(self):
         return Block(self.name, self.properties.copy())
     
-    def to_gdpc_block(self) -> GDPCBlock:
+    def to_gdpc_block(self, data) -> GDPCBlock:
+        if data != None:
+            return GDPCBlock(id = self.name, states = self.properties, data = data)
         return GDPCBlock(id = self.name, states = self.properties)

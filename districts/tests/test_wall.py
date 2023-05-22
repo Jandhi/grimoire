@@ -7,7 +7,7 @@ from gdpc.vector_tools import ivec2
 from districts.generate_districts import generate_districts
 from utils.geometry import get_outer_points
 from districts.wall import build_wall_palisade, order_wall_points, build_wall_standard, build_wall_standard_with_inner
-from terrain.water_map import get_water_map
+from maps.water_map import get_water_map
 from noise.rng import RNG
 from noise.random import choose_weighted
 from districts.tests.draw_districts import draw_districts

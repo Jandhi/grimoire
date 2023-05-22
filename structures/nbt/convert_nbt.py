@@ -1,4 +1,4 @@
-from nbt import nbt
+from nbtlib import nbt, serialize_tag
 from structures.structure import Structure
 from structures.block import Block
 from gdpc.vector_tools import ivec3
@@ -6,7 +6,7 @@ from gdpc.vector_tools import ivec3
 # Converts an nbt file into a more legible Structure object
 # TODO Entities cannot be read in yet
 def convert_nbt(filename : str) -> Structure:
-    file = nbt.NBTFile(filename)
+    file = nbt.load(filename)
     blocks, dimensions = __read_blocks_and_dimensions(file['blocks'])
     palette = []
 
@@ -43,10 +43,14 @@ def __read_blocks_and_dimensions(tag) -> dict:
     maximums = [0, 0, 0]
 
     for block in tag:
-        x, y, z = (int(i.valuestr()) for i in block['pos'])
+        x, y, z = (int(i) for i in block['pos'])
         state = block['state']
+        try:
+            nbt = serialize_tag(block['nbt'])
+        except:
+            nbt = None
         
-        blocks[ivec3(x, y, z)] = int(state.valuestr())
+        blocks[ivec3(x, y, z)] = [int(state), nbt]
 
         for val, index in ((x, 0), (y, 1), (z, 2)):
             if val < minimums[index]:

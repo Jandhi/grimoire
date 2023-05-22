@@ -5,8 +5,8 @@ sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from terrain.water_map import get_water_map
-from terrain.build_map import get_build_map
+from maps.water_map import get_water_map
+from maps.build_map import get_build_map
 from noise.rng import RNG
 from noise.random import choose_weighted
 from districts.tests.draw_districts import draw_districts
