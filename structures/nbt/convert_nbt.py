@@ -2,10 +2,8 @@ from nbtlib import nbt, serialize_tag
 from structures.structure import Structure
 from structures.block import Block
 from gdpc.vector_tools import ivec3
-from re import sub
 
 # Converts an nbt file into a more legible Structure object
-# TODO Entities cannot be read in yet
 def convert_nbt(filename : str) -> Structure:
     file = nbt.load(filename)
     blocks, dimensions = __read_blocks_and_dimensions(file['blocks'])
@@ -36,7 +34,6 @@ def __read_entities(tag):
             #removing uuid so minecraft can populate this itself when summoning entity, error occurs when summoning two entities with same uuid
             entity['nbt'].pop('UUID') 
             nbt = serialize_tag(entity['nbt'])
-            print(nbt)
         except:
             nbt = None
         entities[ivec3(x, y, z)] = [id, nbt]

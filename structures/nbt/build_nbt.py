@@ -64,8 +64,6 @@ def build_nbt(
             structure=structure,
             asset=asset
         )
-        print(id)
         summon_entity_command = f'summon {id} {x} {y} {z} {nbt}'
-        print(summon_entity_command)
         editor.runCommand(summon_entity_command, position=ivec3(x, y, z))
 
