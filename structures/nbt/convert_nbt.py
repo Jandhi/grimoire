@@ -29,7 +29,7 @@ def __read_entities(tag):
     entities = {}
     for entity in tag:
         id = entity['nbt']['id']
-        x, y, z = (float(i) for i in entity['pos']) #can use block pos instead
+        x, y, z = (int(i) for i in entity['blockPos'])
         try:
             #removing uuid so minecraft can populate this itself when summoning entity, error occurs when summoning two entities with same uuid
             entity['nbt'].pop('UUID') 
