@@ -14,6 +14,7 @@ from gdpc.vector_tools import ivec3
 from terrain.water_map import get_water_map
 from terrain.build_map import get_build_map
 from structures.well import Well
+from structures.market.market import Market, Small_Market
 
 SEED = 2
 
@@ -33,7 +34,7 @@ load_assets('assets')
 y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][0][0]
 
 test : AssetStructure = AssetStructure.find('well')
-
+'''
 build_nbt(
     editor = editor, 
     asset = test,
@@ -44,9 +45,13 @@ build_nbt(
         #diagonal_mirror=True,
     ),
 )
-
+'''
 
 
 #well
 #test_well = Well(ivec3(area.middle.x,y,area.middle.z))
 #test_well.build(editor)
+
+#market
+test_market = Market(ivec3(area.middle.x,y,area.middle.z))
+test_market.build(editor)
