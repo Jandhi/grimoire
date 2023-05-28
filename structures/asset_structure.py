@@ -1,5 +1,6 @@
 from structures.nbt.nbt_asset import NBTAsset
+from gdpc.vector_tools import ivec3
 
 class AssetStructure(NBTAsset):
-    size: str #small = 7x7, medium = 13x17, large = 25x34
+    size: ivec3 #size of the structure to be used when placing
     facing: str = None #east/west/south/north
