@@ -11,11 +11,14 @@ from maps.water_map import get_water_map
 from noise.rng import RNG
 from noise.random import choose_weighted
 from districts.tests.draw_districts import draw_districts
+from palette.palette import Palette
+from data.load_assets import load_assets
 
 SEED = 2
 
 editor = Editor(buffering=True, caching=True)
 #editor.doBlockUpdates(value = False)
+load_assets('assets')
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
@@ -35,10 +38,10 @@ def place_at_ground(x, z, block_name):
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
     editor.placeBlock((x, y - 1, z), Block(block_name))
 
-def replace_ground(points: list[ivec2], block_dict: dict[any,int], rng, water_map):
+def replace_ground(points: list[ivec2], block_dict: dict[any,int], rng : RNG, water_map):
     for point in points:
         if water_map[point.x][point.y] == False:
-            block = choose_weighted(rng.value(), block_dict)
+            block = rng.choose_weighted(block_dict)
             place_at_ground(point.x, point.y, block)
 
 test_blocks = {
@@ -71,12 +74,13 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
+palette = Palette.find('japanese_dark_blackstone')
 
 #uncomment one of these to test one of the three wall types
 
-#build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map, rng)
-build_wall_palisade(wall_points, editor, world_slice, water_map, rng)
-#build_wall_standard(wall_points, wall_dict, inner_points, editor, world_slice, water_map)
+build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map, rng, palette)
+#build_wall_palisade(wall_points, editor, world_slice, water_map, rng, palette)
+#build_wall_standard(wall_points, wall_dict, inner_points, editor, world_slice, water_map, palette)
 
 #can use either test_blocks for more urban or test_blocks_dirt for dirty ground
 replace_ground(inner_points, test_blocks_dirt, rng, water_map)

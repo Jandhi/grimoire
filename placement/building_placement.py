@@ -15,6 +15,7 @@ from buildings.walls.build_walls import build_walls
 from buildings.clear_interiors import clear_interiors
 from noise.rng import RNG
 from utils.vectors import y_ivec3
+from palette.palette_swap import fix_block_name
 
 offsets = {
     z_minus : [ivec2(0, 0), ivec2(-1, 0)],
@@ -31,8 +32,9 @@ door_points = {
 }
 
 WATER_THRESHOLD = 0.4 # above this threshold a house cannot be built
+MAX_AVG_HEIGHT_DIFF = 4 
 
-def place_building(editor : Editor, point : ivec2, map : Map, outside_direction : str, rng : RNG, urban_only = True):
+def place_building(editor : Editor, start_point : ivec2, map : Map, outside_direction : str, rng : RNG, urban_only = True):
     my_offsets = offsets[outside_direction]
 
     shapes : list[BuildingShape] = BuildingShape.all()
@@ -52,7 +54,7 @@ def place_building(editor : Editor, point : ivec2, map : Map, outside_direction 
 
         for offset in my_offsets:
             grid = Grid()
-            origin = point + ivec2(offset.x * (grid.dimensions.x), offset.y * (grid.dimensions.z))
+            origin = start_point + ivec2(offset.x * (grid.dimensions.x), offset.y * (grid.dimensions.z))
 
             # We have to find the proper height for the door to be at ground level
             door_point = ivec2(*door_points[outside_direction])
@@ -70,6 +72,7 @@ def place_building(editor : Editor, point : ivec2, map : Map, outside_direction 
             points = list(shape.get_points_2d(grid))
             is_free = True
             water_amt = 0
+            total_height_diff = 0
 
             for point in points:
                 # water check
@@ -86,7 +89,13 @@ def place_building(editor : Editor, point : ivec2, map : Map, outside_direction 
                     is_free = False
                     break
 
+                total_height_diff += abs(grid.origin.y - map.height_at(point))
+
             if WATER_THRESHOLD <= water_amt / len(points):
+                is_free = False
+
+            avg_height_diff = total_height_diff / len(points)
+            if avg_height_diff >= MAX_AVG_HEIGHT_DIFF:
                 is_free = False
 
             if not is_free:
@@ -122,12 +131,18 @@ def nearest_road(start_point : ivec2, map : Map) -> ivec2:
     return None
 
 def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : Map):
-    palette = Palette.find('japanese_dark')
+    district = map.districts[grid.origin.x][grid.origin.z]
+    palette : Palette = rng.choose(district.palettes)
+    
     plan = BuildingPlan(shape.points, grid, palette)
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
     for point in shape.get_points_2d(grid):
         map.buildings[point.x][point.y] = plan
+
+    # Clear the area
+    for point in shape.get_points(grid):
+        editor.placeBlock(point, Block('air'))
 
     build_roof(plan, editor, [
         RoofComponent.find('japanese_roof_flat_brick_outer_corner'),
@@ -146,3 +161,10 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
     ]
 
     build_walls(plan, editor, walls, rng)
+
+    for point in shape.get_points_2d(grid):
+        world_height = map.height_at(point)
+        grid_height = grid.origin.y
+
+        for y_coord in range(world_height, grid_height):
+            editor.placeBlock(ivec3(point.x, y_coord, point.y), Block(fix_block_name(palette.primary_stone)))

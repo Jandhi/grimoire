@@ -9,6 +9,8 @@ from utils.misc import is_water
 from structures.nbt.build_nbt import build_nbt
 from structures.nbt.nbt_asset import NBTAsset
 from structures.transformation import Transformation
+from palette.palette import Palette
+from palette.palette_swap import fix_block_name
 
 def find_wall_neighbour(current : ivec2, wall_dict : dict, ordered_wall_dict : dict):
     for check in [ivec2(-1,0),ivec2(0,-1),ivec2(-1,-1),ivec2(-1,1),ivec2(1,-1),ivec2(1,0),ivec2(0,1),ivec2(1,1)]: #prefers to go right
@@ -53,7 +55,9 @@ def build_wall(wall_points: list[ivec2], wall_dict: dict, editor : Editor, world
     elif wall_type == 'standard':
         build_wall_standard(wall_points, wall_dict, editor, world_slice, rng)
 
-def build_wall_palisade(wall_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG):
+def build_wall_palisade(wall_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG, palette : Palette):
+    wood = palette.secondary_wood
+    
     #TODO cleanup the wall_points here to match the format mostly in the other build wall functions, then readress the build gate and can make it cleaner
     new_wall_points = []
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
@@ -78,13 +82,13 @@ def build_wall_palisade(wall_points: list[ivec2], editor : Editor, world_slice :
             for y in range(point[1], point[1] + point[3]):
                 #interface.placeBlock(point[0],y,point[2], 'minecraft:stone_bricks')
             #interface.placeBlock(point[0],point[1] + point[3], point[2], 'minecraft:stone_brick_wall')
-                editor.placeBlock((point[0],y,point[2]), Block('minecraft:oak_log'))
-            editor.placeBlock((point[0],point[1] + point[3], point[2]), Block('minecraft:oak_fence'))
+                editor.placeBlock((point[0],y,point[2]), Block(f'minecraft:{wood}_log'))
+            editor.placeBlock((point[0],point[1] + point[3], point[2]), Block(f'minecraft:{wood}_fence'))
 
-    add_gates(unordered_wall_points, editor, world_slice, True, None, True)
+    add_gates(unordered_wall_points, editor, world_slice, True, None, True, palette=palette)
 
 
-def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict):
+def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, palette : Palette):
 
     wall_points = add_wall_points_height(wall_points, wall_dict, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -96,6 +100,10 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
     walkway_list = [] #idea is to get this list and then get the new inner points of hte wall, how do I get height to those
     walkway_dict: dict() = {}
 
+    # blocks
+    stone = palette.primary_stone
+    full_block = fix_block_name(f'{stone}')
+    stairs = fix_block_name(f'{stone}_stairs')
 
     for i,wall_point in enumerate(wall_points):
         point = wall_point[0]
@@ -106,10 +114,10 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                editor.placeBlock((point.x,y,point.z), Block('minecraft:stone_bricks'))
+                editor.placeBlock((point.x,y,point.z), Block(full_block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
-            editor.placeBlock((point.x,point.y + 1, point.z), Block(f'minecraft:stone_brick_stairs[facing={to_text(right[previous_dir])}]'))
+            editor.placeBlock((point.x,point.y + 1, point.z), Block(f'{stairs}[facing={to_text(right[previous_dir])}]'))
             for dir in wall_point[1]:
                 height_modifier = 0 #used in one case to alter height of walkway
                 if i != 0 and i != len(wall_points) - 1:
@@ -133,14 +141,14 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
                         walkway_list.append(ivec2(new_pt.x, new_pt.z))
                         walkway_dict[ivec2(new_pt.x, new_pt.z)] = new_pt.y + height_modifier
 
-    flatten_walkway(walkway_list, walkway_dict, editor)
+    flatten_walkway(walkway_list, walkway_dict, editor, palett=palette)
 
-    add_gates(wall_points, editor, world_slice, True, None)
+    add_gates(wall_points, editor, world_slice, True, None, palette=palette)
 
 
-def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG):
+def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG, palette : Palette):
 
-    wall_points = add_wall_points_height(wall_points, wall_dict, world_slice)
+    wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
@@ -152,6 +160,11 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
 
     inner_wall_list = []
     inner_wall_dict: dict() = {}
+
+    # blocks
+    stone = palette.primary_stone
+    full_block = fix_block_name(f'{stone}')
+    stairs = fix_block_name(f'{stone}_stairs')
 
     for i,wall_point in enumerate(wall_points):
         point = wall_point[0]
@@ -167,10 +180,10 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                editor.placeBlock((point.x,y,point.z), Block('minecraft:stone_bricks'))
+                editor.placeBlock((point.x,y,point.z), Block(full_block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
-            editor.placeBlock((point.x,point.y + 1, point.z), Block(f'minecraft:stone_brick_stairs[facing={to_text(right[previous_dir])}]'))
+            editor.placeBlock((point.x,point.y + 1, point.z), Block(f'{stairs}[facing={to_text(right[previous_dir])}]'))
             for dir in wall_point[1]:
                 height_modifier = 0 #used in one case to alter height of walkway
                 if i != 0 and i != len(wall_points) - 1:
@@ -188,7 +201,7 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
                             walkway_dict[ivec2(new_pt.x, new_pt.z)] = new_pt.y + height_modifier
                         if fill_in:
                             for y in range(height_map[new_pt.x, new_pt.z], point.y):
-                                editor.placeBlock((new_pt.x,y,new_pt.z), Block('minecraft:stone_bricks'))
+                                editor.placeBlock((new_pt.x,y,new_pt.z), Block(full_block))
                             if water_map[new_pt.x][new_pt.z] == True:
                                 fill_water(ivec2(new_pt.x, new_pt.z), editor, height_map, world_slice)
                         
@@ -210,7 +223,7 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
                                 inner_wall_list.append(ivec3(wall_pt.x,point.y,wall_pt.z))
                     if fill_in:
                         for y in range(height_map[new_pt.x, new_pt.z], point.y):
-                            editor.placeBlock((new_pt.x,y,new_pt.z), Block('minecraft:stone_bricks'))
+                            editor.placeBlock((new_pt.x,y,new_pt.z), Block(full_block))
                         if water_map[new_pt.x][new_pt.z] == True:
                             fill_water(ivec2(new_pt.x, new_pt.z), editor, height_map, world_slice)
                         
@@ -219,14 +232,14 @@ def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, i
         if walkway_dict.get(ivec2(pt.x, pt.z)) == None: #check again since walkway was not completed as inner wall was being added
             inner_wall_dict[ivec2(pt.x, pt.z)] = True #can put something else here if needed
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
-                editor.placeBlock((pt.x,y,pt.z), Block('minecraft:stone_bricks'))
+                editor.placeBlock((pt.x,y,pt.z), Block(full_block))
             if water_map[pt.x][pt.z] == True: #behaviour is to place inner wall into water til floor
                 fill_water(ivec2(pt.x, pt.z), editor, height_map, world_slice)
 
 
-    walkway_dict = flatten_walkway(walkway_list, walkway_dict, editor)
-    add_towers(walkway_list, walkway_dict, editor, rng)
-    add_gates(wall_points, editor, world_slice, False, inner_wall_dict)
+    walkway_dict = flatten_walkway(walkway_list, walkway_dict, editor, palette=palette)
+    add_towers(walkway_list, walkway_dict, editor, rng, palette)
+    add_gates(wall_points, editor, world_slice, False, inner_wall_dict, palette=palette)
 
 #adds direction to the wall points to know which way we need to build walkways
 def add_wall_points_directionality(wall_points : list[ivec3], wall_dict : dict, inner_points : list[ivec2]):
@@ -279,7 +292,8 @@ def add_wall_points_height(wall_points : list[ivec2], world_slice : WorldSlice):
 RANGE = 3 #range for walkway flattening
 NEIGHBOURS = [(x, z) for x in range(-RANGE, RANGE + 1) for z in range(-RANGE, RANGE + 1)]
 
-def flatten_walkway(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor):
+def flatten_walkway(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor, palette : Palette):
+    wood = palette.secondary_wood
 
     for point in walkway_list:
         walkway_dict[point] = (average_neighbour_height(point.x, point.y, walkway_dict))
@@ -288,16 +302,16 @@ def flatten_walkway(walkway_list : list[ivec2], walkway_dict : dict, editor : Ed
     for key in walkway_dict:
         height = walkway_dict[key]
         if height % 1 <= 0.25:
-            editor.placeBlock((key.x,round(height),key.y), Block('minecraft:oak_slab'))
+            editor.placeBlock((key.x,round(height),key.y), Block(f'minecraft:{wood}_slab'))
             walkway_dict[key] = round(height)
         elif 0.25 < height % 1 <= 0.5:
-            editor.placeBlock((key.x,round(height),key.y), Block('minecraft:oak_slab[type=top]'))
+            editor.placeBlock((key.x,round(height),key.y), Block(f'minecraft:{wood}_slab[type=top]'))
             walkway_dict[key] = round(height)+0.49
         elif 0.5 < height % 1 <= 0.75:
-            editor.placeBlock((key.x,round(height)-1,key.y), Block('minecraft:oak_slab[type=top]'))
+            editor.placeBlock((key.x,round(height)-1,key.y), Block(f'minecraft:{wood}_slab[type=top]'))
             walkway_dict[key] = round(height)-0.51
         else:
-            editor.placeBlock((key.x,round(height),key.y), Block('minecraft:oak_slab'))
+            editor.placeBlock((key.x,round(height),key.y), Block(f'minecraft:{wood}_slab'))
             walkway_dict[key] = round(height)
 
     #2nd pass to add stairs based on first pass changes
@@ -310,10 +324,10 @@ def flatten_walkway(walkway_list : list[ivec2], walkway_dict : dict, editor : Ed
                 continue
             elif height % 1 ==0: # bottom slab
                 if walkway_dict.get(neighbour) - height >= 1:
-                    editor.placeBlock((key.x,round(height), key.y), Block(f'minecraft:oak_stairs[facing={to_text(direction)}]'))
+                    editor.placeBlock((key.x,round(height), key.y), Block(f'minecraft:{wood}_stairs[facing={to_text(direction)}]'))
             else: #top slab
                 if walkway_dict.get(neighbour) - height <= -1:
-                    editor.placeBlock((key.x,round(height), key.y), Block(f'minecraft:oak_stairs[facing={to_text(opposite(direction))}]'))
+                    editor.placeBlock((key.x,round(height), key.y), Block(f'minecraft:{wood}_stairs[facing={to_text(opposite(direction))}]'))
 
     return walkway_dict
 
@@ -375,7 +389,7 @@ def fill_water(pt : ivec2, editor : Editor, height_map : dict, world_slice : Wor
         editor.placeBlock((pt.x,height,pt.y), Block('minecraft:mossy_stone_bricks'))
         height = height - 1
 
-def add_towers(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor, rng : RNG):
+def add_towers(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor, rng : RNG, palette : Palette):
     distance_to_next_tower = 80 #minimum
     tower_possible = randrange(rng.value(), 0, distance_to_next_tower/2) #counter if 0, allow a tower to be built
     tower = NBTAsset.construct(
@@ -383,8 +397,12 @@ def add_towers(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor,
         type     = 'tower',
         filepath = 'assets/city_wall/towers/basic_tower.nbt',
         origin   = (3, 1, 3),
-        palette = None
+        palette = Palette.find('wall_palette')
     )
+
+    # blocks
+    stone = palette.primary_stone
+    full_block = fix_block_name(f'{stone}')
     
     for point in walkway_list:
         if tower_possible == 0:
@@ -397,7 +415,7 @@ def add_towers(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor,
                 for neighbour in neighbours:
                     for height in range(point_height - 1, point_height + 6):
                         if height == point_height + 5 or walkway_dict.get(neighbour) == None:
-                            editor.placeBlock((neighbour.x,height,neighbour.y), Block('minecraft:stone_bricks'))
+                            editor.placeBlock((neighbour.x,height,neighbour.y), Block(full_block))
 
                 #build tower
                 build_nbt(
@@ -408,13 +426,14 @@ def add_towers(walkway_list : list[ivec2], walkway_dict : dict, editor : Editor,
                         mirror=(True, False, False),
                         #diagonal_mirror=True,
                     ),
+                    palette=palette
                 )
             #else:
             #    print("actually it isnt")
         else:
             tower_possible -=1
 
-def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_thin : bool, inner_wall_dict : dict, palisade : bool = False):
+def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_thin : bool, inner_wall_dict : dict, palette : Palette, palisade : bool = False):
     distance_to_next_gate = 30 #minimum
     gate_possible = 0 #counter if 0, allow a tower to be built
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
@@ -424,7 +443,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
         type     = 'gate',
         filepath = 'assets/city_wall/gates/basic_wide_gate.nbt',
         origin   = (3, 1, 3),
-        palette = None
+        palette = Palette.find('wall_palette')
     )
 
     basic_thin_gate = NBTAsset.construct(
@@ -432,7 +451,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
         type     = 'gate',
         filepath = 'assets/city_wall/gates/basic_thin_gate.nbt',
         origin   = (1, 1, 3),
-        palette = None
+        palette = Palette.find('wall_palette')
     )
 
     basic_palisade_gate = NBTAsset.construct(
@@ -440,7 +459,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
         type     = 'gate',
         filepath = 'assets/city_wall/gates/basic_palisade_gate.nbt',
         origin   = (1, 1, 2),
-        palette = None
+        palette = Palette.find('wall_palette')
     )
 
     for i,wall_point in enumerate(wall_list):
@@ -476,6 +495,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
                             mirror=(True, False, False),
                             diagonal_mirror=diagonal_mirror,
                         ),
+                        palette=palette,
                     )
             else:
                 gate_possible -=1
@@ -508,6 +528,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
                                 mirror=(True, False, False),
                                 diagonal_mirror=diagonal_mirror,
                             ),
+                            palette=palette
                         )
                     else:
                         dir = vector(wall_list[i+3][1][0])
@@ -539,6 +560,7 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
                                         mirror=(True, False, False),
                                         diagonal_mirror=diagonal_mirror,
                                     ),
+                                    palette=palette
                                 )
             else:
                 gate_possible -=1

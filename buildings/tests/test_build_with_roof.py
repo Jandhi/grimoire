@@ -37,7 +37,7 @@ load_assets('assets')
 
 shape = random_shape(SEED)
 
-palette = Palette.find('viking_palette') # Palette.find('japanese_dark')
+palette = Palette.find('viking_palette') # Palette.find('japanese_dark_blackstone')
 plan = BuildingPlan(shape, grid, palette)
 
 build_roof(plan, editor, [

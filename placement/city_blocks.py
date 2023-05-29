@@ -11,6 +11,7 @@ from maps.map import Map
 from maps.building_map import CITY_WALL, CITY_ROAD
 from placement.building_placement import place_building
 from districts.tests.place_colors import colors
+from palette.palette import Palette
 
 MAXIMUM_SIZE = 2000
 
@@ -18,6 +19,7 @@ UNSPLITTABLE_SIZE = 100
 MAXIMUM_STRETCH_RATIO = 5
 EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 500
+MINIMUM_BLOCK_SZE = 100
 
 def block_is_admissible(points : set[ivec2]) -> bool:
     # We will automatically pass this as it should not be split again
@@ -67,7 +69,7 @@ def bubble_out(bubbles : list[ivec2], map : Map) -> tuple[list[set[ivec2]], list
     blocks = [set() for _ in bubbles]
     num_blocks = len(blocks)
     block_adjacency = {
-        block : {0 for _ in range(num_blocks)} for _ in range(num_blocks)
+        block : {other : 0 for other in range(num_blocks)} for block in range(num_blocks)
     }
 
     for i, bubble in enumerate(bubbles):
@@ -81,13 +83,16 @@ def bubble_out(bubbles : list[ivec2], map : Map) -> tuple[list[set[ivec2]], list
 
         if map.buildings[vec.x][vec.y] == CITY_WALL:
             return False
+        
+        if map.water[vec.x][vec.y]:
+            return False
 
         return district != None and district.is_urban
 
     while len(queue) > 0:
         point = queue.pop(0)
         block_index = block_index_map[point.x][point.y]
-        block = blocks[block_index]
+        block : set[ivec3] = blocks[block_index]
 
         for direction in cardinal:
             neighbour = point + get_ivec2(direction)
@@ -105,21 +110,43 @@ def bubble_out(bubbles : list[ivec2], map : Map) -> tuple[list[set[ivec2]], list
             if neighbour_block_index != None:
                 block_adjacency[block_index][neighbour_block_index] += 1
                 block_adjacency[neighbour_block_index][block_index] += 1
+                continue
 
             if not is_eligible(neighbour):
                 continue
 
-            block_index_map[neighbour.x][neighbour.y] = block
+            block_index_map[neighbour.x][neighbour.y] = block_index
             block.add(neighbour)
             queue.append(neighbour)
     
-    return blocks, block_index_map
+    return blocks, block_index_map, block_adjacency
 
-def merge_small_blocks(blocks : list[set[ivec2]], block_map : list[list[int]], block_adjacency : dict[int, dict[int, int]]):
-    for block in blocks:
+def merge_small_blocks(blocks : list[set[ivec2]], block_map : list[list[int]], block_adjacency : dict[int, dict[int, int]]):    
+    for index, block in enumerate(blocks):
         
-        if len(block) > 100: 
+        if len(block) > MINIMUM_BLOCK_SZE: 
             continue
+        
+        best_neighbour = None
+        best_index = 0
+        best_adjacency = -1
+
+        for other_index, adjacency in block_adjacency[index].items():
+            if adjacency > best_adjacency:
+                best_neighbour = blocks[other_index]
+                best_index = other_index
+        
+        # couldn't find someone to merge with
+        if best_neighbour is None:
+            continue
+
+        for point in block:
+            best_neighbour.add(point)
+            block_map[point.x][point.y] = best_index
+
+        block.clear()
+
+    return blocks, block_map
 
 def place_buildings(editor : Editor, block : set[ivec2], map : Map, rng : RNG, is_debug = False):
     edges = find_edges(block)
@@ -147,8 +174,7 @@ def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed
 
     bubbles = generate_bubbles(rng, districts, map)
     blocks, block_map, block_adjacency = bubble_out(bubbles, map)
-    blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
-
+    # blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
 
     inners = []
 
