@@ -134,7 +134,7 @@ class Asset(metaclass=AssetMeta):
     # Returns all instances of a type
     @classmethod
     def all(cls):
-        return Asset.assets_by_type_name[cls.type_name]
+        return Asset.assets_by_type_name[cls.type_name].copy()
 
     # Returns asset with specified name
     @classmethod

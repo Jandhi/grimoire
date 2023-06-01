@@ -20,6 +20,9 @@ def load_types():
     # PALETTES
     from palette.palette import Palette
 
+    # BUILDING SHAPE
+    from buildings.building_shape import BuildingShape
+    
     # PAINT PALETTES
     from districts.paint_palette import PaintPalette
 

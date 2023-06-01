@@ -2,6 +2,7 @@ from districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3
 from terrain.set_height import set_height
+from utils.bounds import is_in_bounds2d
 
 def smooth(district : District, district_map : list[list[District]], world_slice : WorldSlice, editor : Editor, water_map : list[list[bool]]):
     print(f'Smoothing {district}')
@@ -29,6 +30,9 @@ def average_neighbour_height(x : int, z : int, world_slice : WorldSlice) -> int:
     total_weight = 0
 
     for dx, dz in NEIGHBOURS:
+        if not is_in_bounds2d(ivec2(x + dx, z + dz), world_slice):
+            continue
+
         distance = abs(dx) + abs(dz)
         weight = 0.8 ** distance
         height = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x + dx][z + dz]

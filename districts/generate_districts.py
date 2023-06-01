@@ -8,7 +8,7 @@ from districts.merging_districts import merge_down
 
 # from districts.adjacency import establish_adjacency, get_neighbours
 
-TARGET_POINTS_GENERATED = 24
+TARGET_POINTS_GENERATED = 36
 TARGET_DISTRICT_AMT = 10
 OUTER_POINTS_MIN_DISTANCE = 10
 INNER_POINTS_MIN_DISTANCE = 5

@@ -47,4 +47,8 @@ def build_wall(cell : Cell, direction : Direction, editor : Editor, walls : list
     wall : Wall = rng.choose_weighted(weighted_walls)
     grid : Grid = cell.plan.grid
 
+    if wall is None:
+        print('Could not find suitable wall, skipped')
+        return
+
     grid.build(editor, wall, cell.plan.palette, cell.position, direction)

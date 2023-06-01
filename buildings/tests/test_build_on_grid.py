@@ -35,7 +35,7 @@ styles = {
 style = styles['viking']
 
 # PALETTE
-palette : Palette = Palette.find('japanese_palette')
+palette : Palette = Palette.find('japanese_dark_blackstone')
 
 # WALLS
 lower_wall : Wall = Wall.find(style['lower'])

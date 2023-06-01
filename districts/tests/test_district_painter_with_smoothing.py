@@ -6,8 +6,8 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
 from terrain.smooth_edges import smooth_edges
-from terrain.water_map import get_water_map
-from terrain.build_map import get_build_map
+from maps.water_map import get_water_map
+from maps.build_map import get_build_map
 from terrain.plateau import plateau
 from noise.rng import RNG
 from noise.random import choose_weighted

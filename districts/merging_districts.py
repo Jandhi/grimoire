@@ -65,7 +65,7 @@ def get_best_merge_candidate(district : District, options : list[District]) -> D
             best = option
             best_score = score
 
-    output = f'Considering options for {district}: '
+    output = f'\tConsidering options for {district}: '
     for candidate, score in candidate_scores.items():
         output += f'({candidate}: {score}) '
     print(output)
@@ -85,13 +85,16 @@ def get_adjusted_area(district :  District) -> int:
 # NOTE: this will create outdated edges (between parent and child). 
 # Edges should be scanned for again after the merging process.
 def merge(parent : District, child : District, districts : list[District], identities : dict[District, District]):
-    print(f'Merging {child} into {parent}')
+    print(f'\tMerging {child} into {parent}')
 
     districts.remove(child)
     identities[child] = parent
 
     parent.area  += child.area
     parent.edges |= child.edges # set addition
+
+    parent.points |= child.points
+    parent.points_2d |= child.points_2d
 
     # merge child's neighborus to parent
     for district, adjacency_count in child.adjacency.items():

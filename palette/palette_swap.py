@@ -1,8 +1,10 @@
 from palette.palette import Palette
 
+plurals = ['brick', 'plank', 'tile']
+
 def palette_swap(block_name : str, input_palette : Palette, output_palette : Palette):
     replacements = {
-        getattr(input_palette, key) : getattr(output_palette, key) for key in input_palette.__dict__
+        getattr(input_palette, key) : getattr(output_palette, key) for key in input_palette.fields
     }
     
     for target, result in replacements.items():
@@ -13,14 +15,38 @@ def palette_swap(block_name : str, input_palette : Palette, output_palette : Pal
 
             new_val = block_name.replace(target, result)
 
-            # remove bricks plural for standalone bricks
-            if target.endswith('brick') and block_name.endswith('bricks') and not result.endswith('brick'):
-                new_val = new_val.removesuffix('s') 
+            for plural in plurals:
+                # remove plural for combo bricks
+                if target.endswith(plural) and block_name.endswith(f'{plural}s') and not result.endswith(f'{plural}'):
+                    new_val = new_val.removesuffix('s') 
 
-            # No block ends in 'brick', they end in 'bricks' on their own
-            if new_val.endswith('brick'):
-                new_val = f'{new_val}s'
+                # No block ends in a plural without s
+                if new_val.endswith(plural):
+                    new_val = f'{new_val}s'
+
+                # plank is not used in between words
+                if 'plank_' in new_val:
+                    new_val = new_val.replace('plank_', '')
 
             return new_val
+        
+    # plank is not used in between words
+    if 'plank_' in block_name:
+        block_name = block_name.replace('plank_', '')
 
     return block_name
+
+# This is used to make a block name consistent with the annoying inconsistencies minecraft has
+def fix_block_name(name : str) -> str:
+    for plural in plurals:
+        if name.endswith(plural):
+            return f'{name}s'
+    
+    if 'plank_' in name:
+        return name.replace('plank_', '')
+
+    for plural in plurals:
+        if plural + 's' in name and not name.endswith(plural + 's'):
+            return name.replace(plural + 's', plural)
+        
+    return name

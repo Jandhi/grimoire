@@ -1,4 +1,5 @@
 from gdpc.vector_tools import ivec2, ivec3
+from palette.palette import Palette
 
 class District:
     id_counter = 0
@@ -13,19 +14,24 @@ class District:
     adjacencies_total : int
     is_urban : bool
 
+    palettes : list[Palette]
+
     def __init__(self, origin : ivec3, is_urban : bool) -> None:
         self.id = District.id_counter
         District.id_counter += 1
         
         self.origin = origin
         self.sum = ivec3(0, 0, 0)
-        self.area = 1
+        self.area = 0
         self.adjacency = {}
-        self.points = {origin}
-        self.points_2d = {(origin.x, origin.y)}
-        self.edges = set()
+        self.points    = set()
+        self.points_2d = set()
+        self.edges     = set()
         self.adjacencies_total = 0
         self.is_urban = is_urban
+        self.palettes = []
+
+        self.add_point(origin)
 
     def add_point(self, point : ivec3):
         self.points.add(point)

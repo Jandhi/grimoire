@@ -4,7 +4,7 @@ from structures.grid import Grid
 from gdpc.vector_tools import ivec3
 from buildings.roofs.roof_component import RoofComponent, CORNER, INNER, SIDE
 from structures.directions import north, south, east, west, left, right, opposites, x_minus, up
-from utils.vectors import y_vec
+from utils.vectors import y_ivec3
 from structures.nbt.build_nbt import build_nbt
 from structures.transformation import Transformation
 from noise.rng import RNG
@@ -29,7 +29,7 @@ def build_roof(plan : BuildingPlan, editor : Editor, roofComponents : list[RoofC
         if cell.has_neighbour(up):
             continue
 
-        coords = grid.grid_to_local(cell.position + y_vec(1)) + grid.origin
+        coords = grid.grid_to_local(cell.position + y_ivec3(1)) + grid.origin
         transform_vecs = {
             north : ivec3(0, 0, 0), # northwest
             east: ivec3(grid.width - 1, 0, 0), # northeast

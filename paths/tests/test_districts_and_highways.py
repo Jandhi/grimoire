@@ -6,11 +6,11 @@ sys.path[0] = sys.path[0].removesuffix('\\paths\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from terrain.water_map import get_water_map
+from maps.water_map import get_water_map
 from districts.tests.draw_districts import draw_districts
 from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
-from structures.building_map import get_initial_building_map
+from maps.building_map import get_building_map
 from terrain.plateau import plateau
 from terrain.smooth_edges import smooth_edges
 
@@ -29,7 +29,7 @@ print("World slice loaded!")
 player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 
 water_map = get_water_map(world_slice)
-building_map = get_initial_building_map(world_slice)
+building_map = get_building_map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 
 print('starting plateauing')

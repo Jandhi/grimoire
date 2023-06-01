@@ -7,7 +7,7 @@ from gdpc import Editor, Block, WorldSlice
 from gdpc.vector_tools import ivec3, ivec2
 from structures.grid import Grid
 from data.load_assets import load_assets
-from utils.vectors import x_vec, y_vec, z_vec
+from utils.vectors import x_ivec3, y_ivec3, z_ivec3
 from buildings.building_plan import BuildingPlan
 from buildings.cell import Cell
 from buildings.tests.frame import place_frame
@@ -37,7 +37,7 @@ load_assets('assets')
 
 shape = random_shape(SEED)
 
-palette = Palette.find('viking_palette') # Palette.find('japanese_palette')
+palette = Palette.find('viking_palette') # Palette.find('japanese_dark_blackstone')
 plan = BuildingPlan(shape, grid, palette)
 
 build_roof(plan, editor, [

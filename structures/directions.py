@@ -125,3 +125,24 @@ from_ivec3_dict = {
 
 def ivec3_to_dir(iv3 : ivec3):
     return from_ivec3_dict[iv3]
+
+x_mirror = {
+    x_plus : x_minus,
+    x_minus : x_plus,
+    z_plus : z_plus,
+    z_minus : z_minus,
+}
+
+z_mirror = {
+    x_plus : x_plus,
+    x_minus : x_minus,
+    z_plus : z_minus,
+    z_minus : z_plus,
+}
+
+x_z_flip = {
+    x_plus : z_plus,
+    x_minus : z_minus,
+    z_plus : x_plus,
+    z_minus : x_minus,
+}

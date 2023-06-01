@@ -1,0 +1,8 @@
+{
+    "name" : "small_tower",
+    "type" : "building_shape",
+    "points" : [
+        [0, 0, 0],
+        [0, 1, 0]
+    ]
+} 
