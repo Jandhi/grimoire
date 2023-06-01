@@ -6,6 +6,7 @@ from gdpc.editor import Editor
 from gdpc.block import Block
 from palette.palette import Palette
 from palette.palette_swap import palette_swap
+from gdpc.vector_tools import ivec3
 
 # Constructs an NBTAsset given an editor and transformation
 def build_nbt(
@@ -53,4 +54,16 @@ def build_nbt(
             block.name = 'minecraft:air'
         
         editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block(nbt)) 
+
+    for (pos, entity) in structure.entities.items():
+        id = entity[0]
+        nbt = entity[1]
+        
+        x, y, z = transformation.apply_to_point(
+            point=pos,
+            structure=structure,
+            asset=asset
+        )
+        summon_entity_command = f'summon {id} {x} {y} {z} {nbt}'
+        editor.runCommand(summon_entity_command, position=ivec3(x, y, z))
 
