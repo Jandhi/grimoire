@@ -1,4 +1,4 @@
-from structures.market.stall import Stall
+from structures.market.stall import *
 from gdpc import Editor, Block
 from random import seed
 from random import randint
@@ -40,7 +40,7 @@ class StallGenerator():
             # reseting changes
             stall.set_origin((x0, y0, z0))
             stall.set_direction(opposite(stall.direction))
-        if stall.goods!='none':
+        if stall.goods!=None:
             self.generate_goods(stall, editor)
     
     def get_direction(self, direction):
@@ -95,7 +95,7 @@ class StallGenerator():
     def generate_counter(self, stall, editor):
         x0, y0, z0 = stall.get_origin()
         (swap, l0, l_dir, d0, d_dir) = self.setup_direction(stall)
-        if stall.counter == 'basic':
+        if stall.counter == BASIC:
             for a in range(l0+(1)*l_dir,l0+(stall.length-1)*l_dir, l_dir):
                 if swap:
                     editor.placeBlock((x0, y0, a), Block('minecraft:oak_planks'))
@@ -103,7 +103,7 @@ class StallGenerator():
                 else: 
                     editor.placeBlock((a, y0, z0), Block('minecraft:oak_planks'))
                     stall.add_counter_space((a,y0+1,z0))
-        elif stall.counter == 'half_stair':
+        elif stall.counter == HALF_STAIR:
             if stall.length%2==0:
                 for a in range(l0+(1)*l_dir,l0+(stall.length-1)*l_dir, l_dir):
                     if (a-l0)%2==0 and a<=stall.length-2:
@@ -143,7 +143,7 @@ class StallGenerator():
                         else:
                             editor.placeBlock((a, y0, z0), Block(f'minecraft:oak_stairs[facing={to_text(opposite(stall.direction))}, half=top]'))
                             stall.add_counter_space((a,y0+1,z0))
-        elif stall.counter == 'stair':
+        elif stall.counter == STAIR:
             for a in range(l0+(1)*l_dir,l0+(stall.length-1)*l_dir, l_dir):
                 if swap:
                     editor.placeBlock((x0, y0, a), Block(f'minecraft:oak_stairs[facing={to_text(opposite(stall.direction))}, half=top]'))
@@ -151,7 +151,7 @@ class StallGenerator():
                 else:
                     editor.placeBlock((a, y0, z0), Block(f'minecraft:oak_stairs[facing={to_text(opposite(stall.direction))}, half=top]'))
                     stall.add_counter_space((a,y0+1,z0))
-        elif stall.counter == 'slab':
+        elif stall.counter == SLAB:
             for a in range(l0+(1)*l_dir,l0+(stall.length-1)*l_dir, l_dir):
                 if swap:
                     editor.placeBlock((x0, y0, a), Block('minecraft:oak_slab[type=top]'))
@@ -159,7 +159,7 @@ class StallGenerator():
                 else:
                     editor.placeBlock((a, y0, z0), Block('minecraft:oak_slab[type=top]'))
                     stall.add_counter_space((a,y0+1,z0))
-        elif stall.counter == 'half_slab':
+        elif stall.counter == HALF_SLAB:
             if stall.length%2==0:
                 for a in range(l0+(1)*l_dir,l0+(stall.length-1)*l_dir, l_dir):
                     if (a-l0)%2==0 and a<=stall.length-2:
@@ -199,7 +199,7 @@ class StallGenerator():
                         else:
                             editor.placeBlock((a, y0, z0), Block('minecraft:oak_slab[type=top]'))
                             stall.add_counter_space((a,y0+1,z0))
-        elif stall.counter == 'stair_slab':
+        elif stall.counter == STAIR_SLAB:
             if stall.length%2==0:
                 for a in range(l0+(1)*l_dir,l0+(stall.length-1)*l_dir, l_dir):
                     if (a-l0)%2==0 and a<=stall.length-2:
@@ -243,9 +243,9 @@ class StallGenerator():
     def generate_side(self, stall, editor):
         x0, y0, z0 = stall.get_origin()
         (swap, l0, l_dir, d0, d_dir) = self.setup_direction(stall)
-        if stall.side == 'none':
+        if stall.side == None:
             return
-        elif stall.side == 'basic': 
+        elif stall.side == BASIC: 
             for a in range(d0+1*d_dir,d0+(stall.depth-1)*d_dir, d_dir):
                 if swap:
                     editor.placeBlock((a, y0, z0), Block('minecraft:oak_planks'))
@@ -257,7 +257,7 @@ class StallGenerator():
                     editor.placeBlock((x0+(stall.length-1)*l_dir, y0, a), Block('minecraft:oak_planks'))
                     stall.add_counter_space((x0,y0+1,a))
                     stall.add_counter_space((x0+(stall.length-1)*l_dir,y0+1,a))
-        elif stall.side == 'fence': 
+        elif stall.side == FENCE: 
             for a in range(d0+1*d_dir,d0+(stall.depth-1)*d_dir, d_dir):
                 if swap:
                     editor.placeBlock((a, y0, z0), Block(f'minecraft:oak_fence[{to_text(opposite(stall.direction))}=true,{to_text(stall.direction)}=true]'))
@@ -265,7 +265,7 @@ class StallGenerator():
                 else:
                     editor.placeBlock((x0, y0, a), Block(f'minecraft:oak_fence[{to_text(opposite(stall.direction))}=true,{to_text(stall.direction)}=true]'))
                     editor.placeBlock((x0+(stall.length-1)*l_dir, y0, a), Block(f'minecraft:oak_fence[{to_text(opposite(stall.direction))}=true,{to_text(stall.direction)}=true]'))
-        elif stall.side == 'fence_gate': 
+        elif stall.side == FENCE_GATE: 
             for a in range(d0+1*d_dir,d0+(stall.depth-1)*d_dir, d_dir):
                 if swap:
                     editor.placeBlock((a, y0, z0), Block(f'minecraft:oak_fence_gate[facing={to_text(right[stall.direction])}]'))
@@ -273,7 +273,7 @@ class StallGenerator():
                 else:
                     editor.placeBlock((x0, y0, a), Block(f'minecraft:oak_fence_gate[facing={to_text(right[stall.direction])}]'))
                     editor.placeBlock((x0+(stall.length-1)*l_dir, y0, a), Block(f'minecraft:oak_fence_gate[facing={to_text(right[stall.direction])}]'))
-        elif stall.side == 'trapdoor':
+        elif stall.side == TRAPDOOR:
             for a in range(d0+1*d_dir,d0+(stall.depth-1)*d_dir, d_dir):
                 if swap:
                     editor.placeBlock((a, y0, z0), Block(f'minecraft:oak_trapdoor[facing={to_text(opposite(stall.direction))}, half=top]'))
@@ -281,7 +281,7 @@ class StallGenerator():
                 else: 
                     editor.placeBlock((x0, y0, a), Block(f'minecraft:oak_trapdoor[facing={to_text(opposite(stall.direction))}, half=top]'))
                     editor.placeBlock((x0+(stall.length-1)*l_dir, y0, a), Block(f'minecraft:oak_trapdoor[facing={to_text(stall.direction)}, half=top]'))
-        elif stall.side == 'stair': 
+        elif stall.side == STAIR: 
             for a in range(d0+1*d_dir,d0+(stall.depth-1)*d_dir, d_dir):
                 if swap:
                     editor.placeBlock((a, y0, z0), Block(f'minecraft:oak_stairs[facing={to_text(right[stall.direction])}, half=top]'))
@@ -293,7 +293,7 @@ class StallGenerator():
                     editor.placeBlock((x0+(stall.length-1)*l_dir, y0, a), Block(f'minecraft:oak_stairs[facing={to_text(left[stall.direction])}, half=top]'))
                     stall.add_counter_space((x0,y0+1,a))
                     stall.add_counter_space((x0+(stall.length-1)*l_dir,y0+1,a))
-        elif stall.side == 'slab': 
+        elif stall.side == SLAB: 
             for a in range(d0+1*d_dir,d0+(stall.depth-1)*d_dir, d_dir):
                 if swap:
                     editor.placeBlock((a, y0, z0), Block('minecraft:oak_slab[type=top]'))
@@ -309,7 +309,7 @@ class StallGenerator():
     def generate_roof(self, stall, editor):
         x0, y0, z0 = stall.get_origin()
         (swap, l0, l_dir, d0, d_dir) = self.setup_direction(stall)
-        if stall.roof == 'basic':
+        if stall.roof == BASIC:
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 for b in range(d0,d0+stall.depth*d_dir, d_dir):
                     if (a-l0)%2==0:
@@ -322,7 +322,7 @@ class StallGenerator():
                             editor.placeBlock((b, y0+stall.height-1, a), Block(stall.palette['market_wool_2']))
                         else:
                             editor.placeBlock((a, y0+stall.height-1, b), Block(stall.palette['market_wool_2']))
-        elif stall.roof == 'back_down':
+        elif stall.roof == BACK_DOWN:
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 for b in range(d0,d0+stall.depth*d_dir, d_dir):
                     if (a-l0)%2==0:
@@ -347,7 +347,7 @@ class StallGenerator():
                                 editor.placeBlock((b, y0+stall.height-1, a), Block(stall.palette['market_wool_2']))
                             else:
                                 editor.placeBlock((a, y0+stall.height-1, b), Block(stall.palette['market_wool_2']))
-        elif stall.roof == 'sides_down':
+        elif stall.roof == SIDES_DOWN:
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 for b in range(d0,d0+stall.depth*d_dir, d_dir):
                     if (a-l0)%2==0:
@@ -372,7 +372,7 @@ class StallGenerator():
                                 editor.placeBlock((b, y0+stall.height-1, a), Block(stall.palette['market_wool_2']))
                             else:
                                 editor.placeBlock((a, y0+stall.height-1, b), Block(stall.palette['market_wool_2']))
-        elif stall.roof == 'front_down':
+        elif stall.roof == FRONT_DOWN:
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 for b in range(d0,d0+stall.depth*d_dir, d_dir):
                     if (a-l0)%2==0:
@@ -397,7 +397,7 @@ class StallGenerator():
                                 editor.placeBlock((b, y0+stall.height-1, a), Block(stall.palette['market_wool_2']))
                             else:
                                 editor.placeBlock((a, y0+stall.height-1, b), Block(stall.palette['market_wool_2']))
-        elif stall.roof == 'front_back_down':
+        elif stall.roof == FRONT_BACK_DOWN:
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 for b in range(d0,d0+stall.depth*d_dir, d_dir):
                     if (a-l0)%2==0:
@@ -427,9 +427,9 @@ class StallGenerator():
     def generate_overhang(self, stall, editor):
         x0, y0, z0 = stall.get_origin()
         (swap, l0, l_dir, d0, d_dir) = self.setup_direction(stall)
-        if stall.overhang == 'none':
+        if stall.overhang == None:
             return
-        elif stall.overhang == 'trapdoor':
+        elif stall.overhang == TRAPDOOR:
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 if stall.roof == 'front_back_down' or stall.roof == 'front_down' or (stall.roof == 'sides_down' and (a == l0 or a == l0+(stall.length-1)*l_dir)):
                     if swap:
@@ -441,7 +441,7 @@ class StallGenerator():
                         editor.placeBlock((x0-1*d_dir, y0+stall.height-1, a), Block(f'minecraft:oak_trapdoor[facing={to_text(stall.direction)}]'))
                     else:
                         editor.placeBlock((a, y0+stall.height-1, z0-1*d_dir), Block(f'minecraft:oak_trapdoor[facing={to_text(stall.direction)}]'))
-        elif stall.overhang == 'banner':
+        elif stall.overhang == BANNER:
             banner1 = stall.palette['market_banner_1']
             banner2 = stall.palette['market_banner_2']
             for a in range(l0,l0+stall.length*l_dir, l_dir):
@@ -467,7 +467,7 @@ class StallGenerator():
                             editor.placeBlock((x0-1*d_dir, y0+stall.height-1, a), Block(f'{banner1}[facing={to_text(stall.direction)}]'))
                         else:
                             editor.placeBlock((a, y0+stall.height-1, z0-1*d_dir), Block(f'{banner2}[facing={to_text(stall.direction)}]'))
-        elif stall.overhang == 'campfire':
+        elif stall.overhang == CAMPFIRE:
             campfire_block = 'campfire[lit=false]'
             for a in range(l0,l0+stall.length*l_dir, l_dir):
                 if stall.roof == 'front_back_down' or stall.roof == 'front_down' or (stall.roof == 'sides_down' and (a == l0 or a == l0+(stall.length-1)*l_dir)):

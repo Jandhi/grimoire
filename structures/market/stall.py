@@ -2,11 +2,27 @@ from structures.directions import Direction
 from random import seed
 from random import randint
 from structures.market.goods import *
+RANDOM = 'random'
+BASIC = 'basic'
+TRAPDOOR = 'trapdoor'
+FENCE_GATE = 'fence_gate'
+HALF_STAIR = 'half_stair'
+STAIR = 'stair'
+HALF_SLAB = 'half_slab'
+SLAB = 'slab'
+STAIR_SLAB = 'stair_slab'
+CAMPFIRE = 'campfire'
+FENCE = 'fence'
+BANNER = 'banner'
+BACK_DOWN = 'back_down'
+SIDES_DOWN = 'sides_down'
+FRONT_DOWN = 'front_down'
+FRONT_BACK_DOWN = 'front_back_down'
 
 class Stall:
 
     #p1 and p2 are the starting and end points of the rectangle that forms the road
-    def __init__(self, origin, counter: str = 'basic', side: str = 'basic', roof: str = 'basic', overhang: str = 'none', direction: Direction = 'z_minus', length: int=5, depth: int = 4, height: int = 5) -> None:
+    def __init__(self, origin, counter: str = BASIC, side: str = BASIC, roof: str = BASIC, overhang: str = None, direction: Direction = 'z_minus', length: int=5, depth: int = 4, height: int = 5) -> None:
         self.origin = origin
         self.overhang = overhang
         self.counter = counter
@@ -21,16 +37,16 @@ class Stall:
         self.floor_space = [] #list of points where there is space to put items on a floor
         self.palette : dict = {}
 
-        if self.counter == 'random':
+        if self.counter == RANDOM:
             self.randomize_stall()
 
-        if self.side == 'none' or self.side == 'trapdoor' or self.side == 'fence_gate':
+        if self.side == None or self.side == TRAPDOOR or self.side == FENCE_GATE:
             seed()
             chance_of_back_counter = randint(1,5)
             if chance_of_back_counter < 5:
                 self.back_counter = True
 
-        self.goods = 'none'
+        self.goods = None
         self.set_random_goods()
 
         self.randomize_colour()
@@ -108,56 +124,56 @@ class Stall:
         seed()
         a = randint(1,6)
         if a == 1:
-            self.counter = 'basic'
+            self.counter = BASIC
         elif a == 2:
-            self.counter = 'half_stair'
+            self.counter = HALF_STAIR
         elif a == 3:
-            self.counter = 'stair'
+            self.counter = STAIR
         elif a == 4:
-            self.counter = 'half_slab'
+            self.counter = HALF_SLAB
         elif a == 5:
-            self.counter = 'stair_slab'
+            self.counter = STAIR_SLAB
         elif a == 6:
-            self.counter = 'slab'
+            self.counter = SLAB
 
         seed()
         a = randint(1,6)
         if a == 1:
-            self.side = 'basic'
+            self.side = BASIC
         elif a == 2:
-            self.side = 'fence'
+            self.side = FENCE
         elif a == 3:
-            self.side = 'fence_gate'
+            self.side = FENCE_GATE
         elif a == 4:
-            self.side = 'trapdoor'
+            self.side = TRAPDOOR
         elif a == 5:
-            self.side = 'stair'
+            self.side = STAIR
         elif a == 6:
-            self.side = 'slab'
+            self.side = SLAB
 
         seed()
         a = randint(1,6)
         if a == 1:
-            self.roof = 'basic'
+            self.roof = BASIC
         elif a == 2:
-            self.roof = 'back_down'
+            self.roof = BACK_DOWN
         elif a == 3:
-            self.roof = 'sides_down'
+            self.roof = SIDES_DOWN
         elif a == 4:
-            self.roof = 'front_down'
+            self.roof = FRONT_DOWN
         elif a == 5:
-            self.roof = 'front_back_down'
+            self.roof = FRONT_BACK_DOWN
 
         seed()
         a = randint(1,4)
         if a == 1:
-            self.overhang = 'none'
+            self.overhang = None
         elif a == 2:
-            self.overhang = 'trapdoor'
+            self.overhang = TRAPDOOR
         elif a == 3:
-            self.overhang = 'banner'
+            self.overhang = BANNER
         elif a == 4:
-            self.overhang = 'campfire'
+            self.overhang = CAMPFIRE
         
     def randomize_colour(self):
         seed()
