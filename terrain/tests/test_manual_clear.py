@@ -6,7 +6,7 @@ sys.path[0] = sys.path[0].removesuffix('\\terrain\\tests')
 from gdpc import Editor, Block
 from terrain.logger import manual_clear
 
-editor = Editor(buffering=True, caching=True, multithreading=True, multithreadingWorkers=4)
+editor = Editor(buffering=True, caching=True)
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)

@@ -67,15 +67,9 @@ def log_trees(editor, build_rect, world_slice):
 
 def manual_clear(editor, build_rect, world_slice):
     tile_drops_off = f'gamerule doTileDrops false'
-    tile_drops_off = f'gamerule doTileDrops false'
     editor.runCommand(tile_drops_off)
 
     increase_tick_speed = f'gamerule randomTickSpeed 4096'
     editor.runCommand(increase_tick_speed)
 
     log_stems(editor, build_rect, world_slice)
-
-    time.sleep(10)
-
-    no_tick_speed = f'gamerule randomTickSpeed 0'
-    editor.runCommand(no_tick_speed)
