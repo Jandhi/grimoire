@@ -11,3 +11,5 @@ class Palette(Asset):
     secondary_wood : str
     primary_stone : str
     primary_stone_accent : str
+
+    fields = ['primary_wood', 'secondary_wood', 'primary_stone', 'primary_stone_accent']

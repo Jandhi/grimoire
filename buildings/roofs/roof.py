@@ -4,5 +4,14 @@ from structures.grid import Grid
 from structures.directions import x_minus
 from palette.palette import Palette
 
+# Roof Component Types
+SIDE = "side"
+CORNER = "corner"
+INNER = "inner" # inner corner
+
+UPPER_SIDE = "upper_side"
+UPPER_CORNER = "upper_corner"
+UPPER_INNER = "upper_inner"
+
 class Roof(Asset):
-    components : dict[str, str] # components by component_type
+    pass

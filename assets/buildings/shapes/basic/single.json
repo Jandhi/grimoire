@@ -1,0 +1,7 @@
+{
+    "name" : "single",
+    "type" : "building_shape",
+    "points" : [
+        [0, 0, 0]
+    ]
+} 

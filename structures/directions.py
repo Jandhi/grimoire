@@ -1,7 +1,7 @@
-from structures.types import vec3
+
 from gdpc.vector_tools import ivec2, ivec3
 
-direction = str
+Direction = str
 
 # By Axis
 x_plus  = 'x_plus'
@@ -20,6 +20,13 @@ up = y_plus
 down = y_minus
 cardinal = (north, east, south, west)
 
+# Compound Directions
+northeast = north + ' and ' + east
+northwest = north + ' and ' + west
+southwest = south + ' and ' + west
+southeast = south + ' and ' + east
+all_8 = (north, east, south, west, northeast, northwest, southwest, southeast)
+
 directions = (north, east, south, west, up, down)
 
 opposites = {
@@ -34,20 +41,27 @@ def opposite(direction):
     return opposites[direction]
 
 vectors = {
-    x_plus  : (1, 0, 0),
-    x_minus : (-1, 0, 0),
-    y_plus  : (0, 1, 0),
-    y_minus : (0, -1, 0),
-    z_plus  : (0, 0, 1),
-    z_minus : (0, 0, -1)
+    x_plus  : ivec3(1, 0, 0),
+    x_minus : ivec3(-1, 0, 0),
+    y_plus  : ivec3(0, 1, 0),
+    y_minus : ivec3(0, -1, 0),
+    z_plus  : ivec3(0, 0, 1),
+    z_minus : ivec3(0, 0, -1)
 }
-def vector(direction : direction) -> vec3:
+
+for dir1, dir2, compound in (
+    (north, east, northeast),
+    (north, west, northwest),
+    (south, west, southwest),
+    (south, east, southeast),
+):
+    vectors[compound] = vectors[dir1] + vectors[dir2]
+
+def vector(direction : Direction) -> ivec3:
     return vectors[direction]
-def get_ivec2(direction : direction) -> ivec2:
+def get_ivec2(direction : Direction) -> ivec2:
     tup = vector(direction)
     return ivec2(tup[0], tup[2])
-def get_ivec3(direction : direction) -> ivec3:
-    return ivec3(*vector(direction))
 
 text_dict = {
     north : 'north',
@@ -87,6 +101,48 @@ left = {
     north: west,
     west: south,
     south: east,
-    east: north
+    east: north,
 }
+
 backwards = opposites
+
+from_ivec2_dict = {
+    ivec2(0,-1) : north,
+    ivec2(0,1) : south,
+    ivec2(1,0) : east,
+    ivec2(-1,0) : west,
+}
+
+def ivec2_to_dir(iv2 : ivec2):
+    return from_ivec2_dict[iv2]
+
+from_ivec3_dict = {
+    ivec3(0,0,-1) : north,
+    ivec3(0,0,1) : south,
+    ivec3(1,0,0) : east,
+    ivec3(-1,0,0) : west,
+}
+
+def ivec3_to_dir(iv3 : ivec3):
+    return from_ivec3_dict[iv3]
+
+x_mirror = {
+    x_plus : x_minus,
+    x_minus : x_plus,
+    z_plus : z_plus,
+    z_minus : z_minus,
+}
+
+z_mirror = {
+    x_plus : x_plus,
+    x_minus : x_minus,
+    z_plus : z_minus,
+    z_minus : z_plus,
+}
+
+x_z_flip = {
+    x_plus : z_plus,
+    x_minus : z_minus,
+    z_plus : x_plus,
+    z_minus : x_minus,
+}

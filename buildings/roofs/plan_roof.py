@@ -1,5 +1,4 @@
 from buildings.building_plan import BuildingPlan
-from structures.types import vec3
 from structures.directions import cardinal
 from buildings.cell import Cell
 from buildings.roofs.roof_component import SIDE, CORNER, INNER
@@ -8,7 +7,7 @@ def plan_roof(plan : BuildingPlan):
     plan.shape.sort(key = lambda point : point[1])
 
     for pt in plan.shape:
-        plan_roof_at_cell(plan, plan.cells[pt])
+        plan_roof_at_cell(plan, plan.cell_map[pt])
 
 def plan_roof_at_cell(plan : BuildingPlan, cell : Cell):
     up, right, down, left = (cell.has_neighbour(direction) for direction in cardinal)

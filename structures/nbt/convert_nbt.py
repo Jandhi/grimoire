@@ -1,15 +1,14 @@
-from nbt import nbt
+from nbtlib import nbt, serialize_tag
 from structures.structure import Structure
 from structures.block import Block
+from gdpc.vector_tools import ivec3
 
 # Converts an nbt file into a more legible Structure object
-# TODO Entities cannot be read in yet
 def convert_nbt(filename : str) -> Structure:
-    file = nbt.NBTFile(filename)
+    file = nbt.load(filename)
     blocks, dimensions = __read_blocks_and_dimensions(file['blocks'])
+    entities = __read_entities(file['entities'])
     palette = []
-
-    __read_entities(file['entities'])
 
     for tag in file['palette']:
         name = ''
@@ -24,16 +23,21 @@ def convert_nbt(filename : str) -> Structure:
         palette.append(
             Block(name, properties)
         )
-    
-    return Structure(blocks, palette, dimensions)
+    return Structure(blocks, entities, palette, dimensions)
 
 def __read_entities(tag):
+    entities = {}
     for entity in tag:
-        print(entity)
-
-        nbt = entity['nbt']
-
-        print(nbt)
+        id = entity['nbt']['id']
+        x, y, z = (int(i) for i in entity['blockPos'])
+        try:
+            #removing uuid so minecraft can populate this itself when summoning entity, error occurs when summoning two entities with same uuid
+            entity['nbt'].pop('UUID') 
+            nbt = serialize_tag(entity['nbt'])
+        except:
+            nbt = None
+        entities[ivec3(x, y, z)] = [id, nbt]
+    return entities
 
 
 def __read_blocks_and_dimensions(tag) -> dict:
@@ -42,10 +46,14 @@ def __read_blocks_and_dimensions(tag) -> dict:
     maximums = [0, 0, 0]
 
     for block in tag:
-        x, y, z = (int(i.valuestr()) for i in block['pos'])
+        x, y, z = (int(i) for i in block['pos'])
         state = block['state']
+        try:
+            nbt = serialize_tag(block['nbt'])
+        except:
+            nbt = None
         
-        blocks[(x, y, z)] = int(state.valuestr())
+        blocks[ivec3(x, y, z)] = [int(state), nbt]
 
         for val, index in ((x, 0), (y, 1), (z, 2)):
             if val < minimums[index]:
@@ -53,7 +61,7 @@ def __read_blocks_and_dimensions(tag) -> dict:
             if val > maximums[index]:
                 maximums[index] = val
 
-    dimensions = (maximums[i] - minimums[i] for i in range(3))
+    dimensions = ivec3(*(maximums[i] - minimums[i] for i in range(3)))
 
     return blocks, dimensions
 

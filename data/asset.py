@@ -79,7 +79,8 @@ class Asset(metaclass=AssetMeta):
     name : str
     type : str
 
-    
+    tags : list[str] # additional information for building 
+    weight : int
 
     # Called after fields are loaded in 
     # This function ensures all required fields are there
@@ -133,7 +134,7 @@ class Asset(metaclass=AssetMeta):
     # Returns all instances of a type
     @classmethod
     def all(cls):
-        return Asset.assets_by_type_name[cls.type_name]
+        return Asset.assets_by_type_name[cls.type_name].copy()
 
     # Returns asset with specified name
     @classmethod
@@ -187,3 +188,17 @@ class Asset(metaclass=AssetMeta):
                 annotations[field_name] = tp.__annotations__[field_name]
 
         return annotations
+    
+Asset.defaults['asset'] = {
+    'tags' : [],
+    'weight' : 100,
+}
+
+def find_asset(name : str, type : str):
+    for assetType in Asset.types:
+        if assetType.type_name == type:
+            for asset in Asset.assets_by_type_name[type]:
+                if asset.name == name:
+                    return asset
+            
+            return None

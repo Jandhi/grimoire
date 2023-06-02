@@ -1,14 +1,14 @@
 from noise.rng import RNG
 from districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from structures.directions import cardinal, get_ivec3
+from structures.directions import cardinal, vector
 from gdpc import WorldSlice
 from districts.adjacency import establish_adjacency
 from districts.merging_districts import merge_down
 
 # from districts.adjacency import establish_adjacency, get_neighbours
 
-TARGET_POINTS_GENERATED = 24
+TARGET_POINTS_GENERATED = 36
 TARGET_DISTRICT_AMT = 10
 OUTER_POINTS_MIN_DISTANCE = 10
 INNER_POINTS_MIN_DISTANCE = 5
@@ -26,7 +26,7 @@ def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, 
 
     bubble_out(world_slice, districts, district_map, water_map)
     
-    establish_adjacency(world_slice, districts, district_map)
+    establish_adjacency(world_slice, district_map)
     merge_down(districts, district_map, TARGET_DISTRICT_AMT)
 
     return (districts, district_map)
@@ -76,7 +76,7 @@ def get_neighbours(point : ivec3, world_slice : WorldSlice) -> list[ivec3]:
     height_map = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES']
     
     for direction in cardinal:
-        delta = get_ivec3(direction)
+        delta = vector(direction)
         neighbour = point + delta
 
         if neighbour.x < 0 or neighbour.z < 0 or neighbour.x >= len(height_map) or neighbour.z >= len(height_map[0]):

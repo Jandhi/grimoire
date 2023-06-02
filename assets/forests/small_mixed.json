@@ -1,0 +1,74 @@
+{
+    "name" : "small_mixed",
+    "type" : "forest",
+    "tree_dict" : {
+        "small_pine": 2,
+        "small_hedge": 1,
+        "small_birch": 3,
+        "small_oak": 4,
+        "small_jungle": 3
+    },
+    "tree_palette" : {
+        "small_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 3
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 3
+            }
+        },
+        "small_hedge" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "mangrove_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1
+            }
+        },
+        "small_birch" : {
+            "wood" : {
+                "birch_wood" : 3,
+                "stripped_birch_wood" : 1,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1,
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 3
+            }
+        },
+        "small_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1,
+                "stripped_oak_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 3,
+                "acacia_leaves[persistent=true]" : 1,
+                "azalea_leaves[persistent=true]" : 1
+            }
+        },
+        "small_jungle" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1,
+                "mangrove_wood" : 2
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 3,
+                "mangrove_leaves[persistent=true]" : 1,
+                "azalea_leaves[persistent=true]" : 1
+            }
+        }
+    },
+    "tree_density" : 4
+}

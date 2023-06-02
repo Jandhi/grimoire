@@ -1,0 +1,48 @@
+{
+    "name" : "pine_forest",
+    "type" : "forest",
+    "tree_dict" : {
+        "mega_pine": 1,
+        "large_pine": 3,
+        "medium_pine": 4
+    },
+    "tree_palette" : {
+        "mega_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 3
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 3
+            }
+        },
+        "large_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 3
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 3
+            }
+        },
+        "medium_pine" : {
+            "wood" : {
+                "oak_wood" : 1,
+                "stripped_spruce_wood" : 1,
+                "spruce_wood" : 3
+            },
+            "leaves" : {
+                "acacia_leaves[persistent=true]" : 1,
+                "birch_leaves[persistent=true]" : 1,
+                "spruce_leaves[persistent=true]" : 3
+            }
+        }
+    },
+    "tree_density" : 6
+}

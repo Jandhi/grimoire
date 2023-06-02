@@ -1,0 +1,39 @@
+{
+    "name" : "oak_forest",
+    "type" : "forest",
+    "tree_dict" : {
+        "mega_oak": 1,
+        "large_oak": 3,
+        "medium_oak": 4
+    },
+    "tree_palette" : {
+        "mega_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1
+            }
+        },
+        "large_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1
+            }
+        },
+        "medium_oak" : {
+            "wood" : {
+                "oak_wood" : 3,
+                "stripped_spruce_wood" : 1
+            },
+            "leaves" : {
+                "oak_leaves[persistent=true]" : 1
+            }
+        }
+    },
+    "tree_density" : 8
+}

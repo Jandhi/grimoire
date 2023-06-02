@@ -2,8 +2,7 @@ from structures.block import Block
 from structures.directions import x_plus, x_minus, y_plus, y_minus, z_plus, z_minus, from_text, to_text, directions
 from structures.structure import Structure
 from structures.nbt.nbt_asset import NBTAsset
-from utils.tuples import sub_tuples, add_tuples
-from structures.types import vec3
+from gdpc.vector_tools import ivec3
 
 #region Transformation dictionaries
 x_mirror = {
@@ -48,11 +47,11 @@ diagonal_mirror = {
 # Rotation is only supported by switching the x/z axis, in other words diagonal_mirror
 class Transformation:
     def __init__(self,
-        offset : vec3 = None,
+        offset : ivec3 = None,
         mirror : tuple[bool, bool, bool] = None,
         diagonal_mirror : bool = False,
     ) -> None:
-        self.offset = offset or (0, 0, 0)
+        self.offset = offset or ivec3(0, 0, 0)
         self.mirror = mirror or (False, False, False)
         self.diagonal_mirror = diagonal_mirror
     
@@ -98,45 +97,44 @@ class Transformation:
 
     def apply_to_point(
         self,
-        point : vec3,
+        point : ivec3,
         structure : Structure,
         asset : NBTAsset, 
-    ) -> vec3:
-
-        x, y, z = point
+    ) -> ivec3:
+        point = ivec3(*point) # copy point
 
         # mirroring
         # for now we will not mirror the origin 
         if self.mirror[0]: # x mirror
-            x = -1 * x
+            point.x = -1 * point.x
         if self.mirror[2]: # z mirror
-            z = -1 * z
+            point.z = -1 * point.z
         
         # rotation(ish)
         if self.diagonal_mirror:
-            x, z = z, x
+            point = ivec3(point.z, point.y, point.x)
 
         # Shift according to origin
         origin = self.apply_to_origin(asset.origin)
-        x, y, z = sub_tuples((x, y, z), origin)
+        point -= origin
 
         # translation
-        x, y, z = add_tuples((x, y, z), self.offset)
+        point += self.offset
 
-        return x, y, z
+        return point
     
     def apply_to_origin(
         self,
-        point : vec3
-    ) -> vec3:
-        origin = point
+        point : ivec3
+    ) -> ivec3:
+        origin = ivec3(*point)
 
         if self.mirror[0]: # x mirror
-            origin = (-1 * origin[0], origin[1], origin[2])
+            origin = ivec3(-1 * origin.x, origin.y, origin.z)
         if self.mirror[2]: # z mirror
-            origin = (origin[0], origin[1], -1 * origin[2])
+            origin = ivec3(origin.x, origin.y, -1 * origin.z)
 
         if self.diagonal_mirror:
-            origin = (origin[2], origin[1], origin[0])
+            origin = ivec3(origin.z, origin.y, origin.x)
 
         return origin
