@@ -130,9 +130,6 @@ def is_corner(cell_to_check):
     
     return test in corner_combinations, test
 
-    
-
-
 
 cells_with_rooms = []
 
@@ -301,10 +298,7 @@ def build_one_by_one(num_levels):
         grid.build(editor, lower_room, palette, cell)
         grid.build(editor, upper_room, palette, cell + get_ivec3(up))
 
-
-
 number_of_floors = max([y for (x, y, z) in cells_to_fill]) + 1
-
 
 if len(cells_to_fill) == 1 or len(cells_to_fill) == 2 and number_of_floors == 2:
     build_one_by_one(number_of_floors)
