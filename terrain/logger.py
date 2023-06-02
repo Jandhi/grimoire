@@ -65,7 +65,8 @@ def log_trees(editor, build_rect, world_slice):
                 elif block_name == 'minecraft:grass_block':
                     continue
 
-def manual_clear(editor, build_rect, world_slice):
+#requires player to fly around to allow minecraft to clear all the foliage, and then set gamerule randomtickspeed to something normal. Still much quicker to clear trees
+def manual_clear(editor, build_rect, world_slice): 
     tile_drops_off = f'gamerule doTileDrops false'
     editor.runCommand(tile_drops_off)
 
