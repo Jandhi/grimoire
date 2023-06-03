@@ -1,4 +1,7 @@
-import biome_tags as bt
+import sys
+sys.path[0] = sys.path[0].removesuffix('\\industries')
+
+import industries.biome_tags as bt
 
 all_biomes = {
     'plains' : (bt.ROUGHNESS_LOW, bt.TEMPERATURE_MID, bt.ACQUATIC_NONE), 

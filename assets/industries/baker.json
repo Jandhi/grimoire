@@ -1,0 +1,5 @@
+{
+    "name" : "baker",
+    "type" : "primary_industry",
+    "required_tags" : ["plains"]
+}

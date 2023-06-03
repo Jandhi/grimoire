@@ -5,10 +5,10 @@ import random
 from data.asset import Asset, asset_defaults
 from gdpc.editor import Editor
 from districts.district import District
-from industry import biomes
+from industries import biomes
 
 class Industry(Asset):
-    buildings : str
+    pass
 
 @asset_defaults(
     parent_industries = None
@@ -22,10 +22,10 @@ class PrimaryIndustry(Industry):
 class SecondaryIndustry(Industry):
     parent_industries : list[str]
 
-def get_district_biomes(district, num_points = 3):
+def get_district_biomes(editor, district, num_points = 3):
     biomes_in_district = []
-    for point in random.sample(list(district.points_2d), num_points):
-        biomes_in_district.append(Editor.getBiome(point))
+    for point in random.sample(list(district.points), num_points):
+        biomes_in_district.append(editor.getBiome(point)[10:])
     return list(set(biomes_in_district))
 
 def get_primary_industries(district_biomes : list[str]):
@@ -33,9 +33,8 @@ def get_primary_industries(district_biomes : list[str]):
     for industry in PrimaryIndustry.all():
         industry : PrimaryIndustry
                 
-        if any((biome in district_biomes for biome in biomes.tag_map[industry.required_tags])):
-            continue
-        eligibile_primary_industries.append(industry)
+        if any((biome in district_biomes for biome in biomes.tag_map[industry.required_tags[0]])):
+            eligibile_primary_industries.append(industry)
     return eligibile_primary_industries
 
 def find_secondary_industries(district_primary_industries : list[str]):

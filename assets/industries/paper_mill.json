@@ -1,0 +1,5 @@
+{
+    "name" : "paper_mill",
+    "type" : "primary_industry",
+    "required_tags" : ["forest"]
+}

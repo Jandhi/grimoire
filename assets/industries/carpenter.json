@@ -1,0 +1,5 @@
+{
+    "name" : "carpenter",
+    "type" : "primary_industry",
+    "required_tags" : ["forest"]
+}
