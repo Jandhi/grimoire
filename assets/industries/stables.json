@@ -1,0 +1,5 @@
+{
+    "name" : "stables",
+    "type" : "primary_industry",
+    "required_tags" : ["horse_spawners"]
+}

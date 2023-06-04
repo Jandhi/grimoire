@@ -1,0 +1,5 @@
+{
+    "name" : "potter",
+    "type" : "primary_industry",
+    "required_tags" : ["shore"]
+}
