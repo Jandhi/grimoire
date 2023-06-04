@@ -28,25 +28,25 @@ def palette_swap(block_name : str, input_palette : Palette, output_palette : Pal
                 if 'plank_' in new_val:
                     new_val = new_val.replace('plank_', '')
 
-            return new_val
+            return fix_block_name(new_val)
         
-    # plank is not used in between words
-    if 'plank_' in block_name:
-        block_name = block_name.replace('plank_', '')
 
-    return block_name
+    return fix_block_name(block_name)
 
 # This is used to make a block name consistent with the annoying inconsistencies minecraft has
 def fix_block_name(name : str) -> str:
     for plural in plurals:
         if name.endswith(plural):
-            return f'{name}s'
+            name = f'{name}s'
     
     if 'plank_' in name:
-        return name.replace('plank_', '')
+        name = name.replace('plank_', '')
 
     for plural in plurals:
         if plural + 's' in name and not name.endswith(plural + 's'):
-            return name.replace(plural + 's', plural)
+            name = name.replace(plural + 's', plural)
+        
+    if 'smooth_' in name and 'wall' in name:
+        name = name.replace('smooth_', '')
         
     return name

@@ -145,20 +145,13 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
         editor.placeBlock(point, Block('air'))
 
     build_roof(plan, editor, [
-        RoofComponent.find('japanese_roof_flat_brick_outer_corner'),
-        RoofComponent.find('japanese_roof_flat_brick_inner_corner'),
-        RoofComponent.find('japanese_roof_flat_brick_side'),
+        component for component in RoofComponent.all() if 'desert' in component.tags
     ], rng.next())
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = [
-        Wall.find('japanese_wall_bottom_plain'),
-        Wall.find('japanese_wall_single_plain'),
-        Wall.find('japanese_wall_upper_traps'),
-        Wall.find('japanese_wall_upper_traps_opened'),
-    ]
+    walls = list(filter(lambda wall : 'desert' in wall.tags, Wall.all().copy()))
 
     build_walls(plan, editor, walls, rng)
 

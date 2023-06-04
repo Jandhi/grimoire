@@ -41,7 +41,7 @@ def build_wall(cell : Cell, direction : Direction, editor : Editor, walls : list
     eligible_walls : list[Wall] = list(filter(wall_is_eligible, walls))
 
     weighted_walls = {
-        wall : wall.weight for wall in eligible_walls
+        wall : wall.weight if wall.weight > 0 else 100 for wall in eligible_walls
     }
 
     wall : Wall = rng.choose_weighted(weighted_walls)

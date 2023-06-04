@@ -62,8 +62,4 @@ class District:
         return f'district {self.id}'
     
     def average(self) -> ivec3:
-        return ivec3(
-            self.sum.x // self.area,
-            self.sum.y // self.area,
-            self.sum.z // self.area,
-        )
+        return sum(self.points) / len(self.points)

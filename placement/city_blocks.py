@@ -174,11 +174,14 @@ def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed
 
     bubbles = generate_bubbles(rng, districts, map)
     blocks, block_map, block_adjacency = bubble_out(bubbles, map)
-    # blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
+    blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
 
     inners = []
 
     for i, block in enumerate(blocks):
+        if len(block) < MINIMUM_BLOCK_SZE:
+            continue
+
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:

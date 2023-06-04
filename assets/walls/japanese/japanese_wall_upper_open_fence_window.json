@@ -1,7 +1,7 @@
 {
-    "name" : "japanese_wall_upper_traps",
+    "name" : "japanese_wall_upper_open_fence_window",
     "type" : "wall",
-    "filepath" : "assets/walls/japanese/japanese_wall_upper_traps.nbt",
+    "filepath" : "assets/walls/japanese/japanese_wall_upper_open_fence_window.nbt",
     "origin" : [0, -1, 0],
     "facing" : "x_minus",
     "do_not_replace" : ["oak_trapdoor"],

@@ -6,9 +6,6 @@ sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from maps.water_map import get_water_map
-from paths.route_highway import route_highway, fill_out_highway
-from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts
 from placement.city_blocks import add_city_blocks
 from utils.geometry import get_outer_points
@@ -19,9 +16,15 @@ from terrain.plateau import plateau
 from palette.palette import Palette
 from noise.rng import RNG
 from districts.wall import build_wall_palisade, order_wall_points, build_wall_standard, build_wall_standard_with_inner
-from maps.building_map import BUILDING
+from maps.building_map import BUILDING, GATE
+from utils.bounds import area_2d
+from paths.route_highway import route_highway, fill_out_highway
+from paths.build_highway import build_highway
+from gdpc.geometry import line3D
+from utils.vectors import y_ivec3
+from structures.directions import get_ivec2
 
-SEED = 0xbabab00e
+SEED = 77273
 DO_TERRAFORMING = True
 
 editor = Editor(buffering=True, caching=True)
@@ -38,9 +41,10 @@ print("World slice loaded!")
 map = Map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
 map.districts = district_map
+# draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
 # set up palettes
-eligible_palettes = list(filter(lambda palette : 'japanese' in palette.tags, Palette.all()))
+eligible_palettes = list(filter(lambda palette : 'desert' in palette.tags, Palette.all()))
 rng = RNG(SEED, 'palettes')
 
 for district in districts:
@@ -71,6 +75,8 @@ if DO_TERRAFORMING:
     map.world = world_slice
     map.correct_district_heights(districts)
 # done
+
+map.copy_heightmap()
 
 # ground
 def place_at_ground(x, z, block_name):
@@ -113,12 +119,58 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = Palette.find('japanese_dark_blackstone')
+palette = Palette.find('desert_dark_prismarine')
 
 #can use either test_blocks for more urban or test_blocks_dirt for dirty ground
-replace_ground(inner_points, test_blocks_dirt, rng, map.water)
+# replace_ground(inner_points, test_blocks, rng, map.water)
 
-# draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
+# WALL
+
+#uncomment one of these to test one of the three wall types
+
+
+gates = build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, map.world, map.water, rng, palette)
+#gates = build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
+#gates = build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
+
+map.calculate_near_wall(districts)
+
+for gate in gates:
+    size = ivec2(12, 12)
+    for offset in area_2d(size):
+        point = ivec2(gate.location.x, gate.location.z) + offset - size / 2 # half size to center it
+
+        if not map.is_in_bounds2d(point):
+            continue
+        
+        map.buildings[point.x][point.y] = GATE
+
+    vec = get_ivec2(gate.direction)
+    route_start2d = ivec2(gate.location.x, gate.location.z) + 5 * vec
+    district = map.districts[route_start2d.x][route_start2d.y]
+
+    route_start = map.make_3d(route_start2d)
+
+    if district is not None and not district.is_urban:
+        d_avg = district.average()
+        d_mid = map.make_3d(ivec2(d_avg.x, d_avg.z))
+
+        for point in line3D(d_mid + y_ivec3(30), route_start + y_ivec3(30)):
+            editor.placeBlock(point, Block('red_wool'))
+
+        route = route_highway(route_start, d_mid, map, editor, is_debug=False)
+
+        if route is None:
+            continue
+
+        route = fill_out_highway(route)
+        build_highway(route, editor, map.world, map)
+
+        # final connection
+        route = route_highway(gate.location, route_start, map, editor, is_debug=False)
+        route = fill_out_highway(route)
+        build_highway(route, editor, map.world, map)
+
 
 for district in districts:
     x = district.origin.x
@@ -127,13 +179,7 @@ for district in districts:
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10 
     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, districts, map, SEED, is_debug=False)
+add_city_blocks(editor, districts, map, SEED, is_debug=True)
 
-# WALL
 
-#uncomment one of these to test one of the three wall types
-
-build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, map.world, map.water, rng, palette)
-#build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
-#build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 

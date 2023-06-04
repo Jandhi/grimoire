@@ -15,6 +15,7 @@ INNER_POINTS_MIN_DISTANCE = 5
 RETRIES = 100
 INNER_DISTRICTS_AMOUNT_RATIO = 0.5
 INNER_DISTRICTS_TARGET_AREA = 0.3 # The ratio of area where inner districts spawn
+CHOKEPOINT_ADJACENCY_RATIO = 0.3 # If this percent or less of an urban district touches other urban district, it is pruned
 
 def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, water_map : list[list[bool]]) -> tuple[list[District], list[list[District]]]:
     districts = spawn_districts(seed, build_rect, world_slice)
@@ -28,6 +29,14 @@ def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, 
     
     establish_adjacency(world_slice, district_map)
     merge_down(districts, district_map, TARGET_DISTRICT_AMT)
+
+    # remeasure adjacency after
+    for district in districts:
+        district.adjacency = {}
+        district.adjacencies_total = 0
+    establish_adjacency(world_slice, district_map)
+
+    prune_urban_chokepoints(districts)
 
     return (districts, district_map)
 
@@ -181,3 +190,25 @@ def generate_outer_district_points(outer_district_num : int, rng : RNG, build_re
                 break
     
     return points
+
+def prune_urban_chokepoints(districts : list[District]):
+    urban_count = sum(1 if district.is_urban else 0 for district in districts)
+
+    if urban_count < 4:
+        return
+
+    for district in districts:
+        if not district.is_urban:
+            continue
+
+        urban_adjacency = 0
+        
+        for other, value in district.adjacency.items():
+            other : District
+            if other.is_urban:
+                urban_adjacency += value
+        
+        if urban_adjacency < CHOKEPOINT_ADJACENCY_RATIO * district.adjacencies_total:
+            district.is_urban = False
+            urban_count -= 1
+            return prune_urban_chokepoints(districts)

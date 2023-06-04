@@ -95,3 +95,23 @@ def find_outer_direction(point : ivec2, points : set[ivec2], first_wins_ties = T
             best_dir_score = score
 
     return best_dir
+
+def find_outline(points : set[ivec2], thickness : int = 1) -> set[ivec2]:
+    points = points.copy()
+    edges = find_edges(points)
+    outline_set = set()
+
+    for _ in range(thickness):
+        outline = set()
+
+        for edge in edges:
+            for dir in cardinal:
+                pt = edge + get_ivec2(dir)
+
+                if pt not in points and pt not in outline_set:
+                    outline.add(pt)
+        
+        outline_set |= outline
+        edges = outline
+    
+    return outline_set
