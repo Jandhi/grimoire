@@ -15,7 +15,7 @@ from buildings.rooms.room import Room
 
 
 from data.load_assets import load_assets
-from structures.directions import cardinal, get_ivec3, opposite, right, up
+from structures.directions import cardinal, get_ivec3, opposite, right, up, north, east, south, west
 
 from style.style import Style
 from palette.palette import Palette
@@ -48,28 +48,11 @@ styles = {
 style = styles['viking']
 
 # PALETTE
-palette : Palette = Palette.find('japanese_palette')
+palette : Palette = Palette.find('japanese_dark_blackstone')
 
 # WALLS
 lower_wall : Wall = Wall.find(style['lower'])
 upper_wall : Wall = Wall.find(style['upper'])
-
-
-XRANGE = 2
-YRANGE = 1
-ZRANGE = 2
-cells_to_fill = [ivec3(x, y, z) for x in range(XRANGE) for y in range(YRANGE) for z in range(ZRANGE) ]
-
-for cell in cells_to_fill:
-    for direction in cardinal:
-            neighbor = cell + get_ivec3(direction)     
-            if neighbor not in cells_to_fill:      
-                grid.build(editor, lower_wall, palette, cell, direction)
-
-# ROOF
-# roof : Roof = Roof.find(style['roof'])
-# roof.build(editor, palette, grid, (0, 2, 0))
-
 
 ROOM_LIST = [
      'kitchen_no_window_small',
@@ -106,13 +89,13 @@ ONEBYONE_LIST = [
 ]
 
 
-def rotate(a,n=1):
+def rotate(a: list,n=1) -> list:
     if len(a) == 0:
         return a
     n = -n % len(a)     # flip rotation direction
     return np.concatenate((a[n:],a[:n]))  
 
-def is_corner(cell_to_check):
+def is_corner(cell_to_check: ivec3, cells_to_fill: list) -> tuple:
     corner_combinations = [
         ["wall", "wall", "open", "open"],
         ["open", "wall", "wall", "open"],
@@ -131,9 +114,7 @@ def is_corner(cell_to_check):
     return test in corner_combinations, test
 
 
-cells_with_rooms = []
-
-def build_start():
+def build_start(cells_with_rooms: list, cells_to_fill: list) -> list:
     start_connections = []
     start = rng.choose(cells_to_fill)
     for direction in cardinal:
@@ -145,8 +126,8 @@ def build_start():
 
     #find a room in that fits in that spot
     potential_rooms = []
-    for a_room in ROOM_LIST:
-        room : Room = Room.find(a_room)
+    for room_name in ROOM_LIST:
+        room : Room = Room.find(room_name)
         to_face = room.facing
         for i in range(4):
             if list(rotate(room.connections, i)) == start_connections:
@@ -159,18 +140,20 @@ def build_start():
     cells_with_rooms.append((start, connections))
     grid.build(editor, room_to_build, palette, start, facing = room_facing)
 
-def build_staircase(level):
+    return cells_with_rooms
+
+def build_staircase(level: int, cells_with_rooms: list, cells_to_fill: list) -> list:
     possible_starts = []
     for potential_start in cells_to_fill:
-        if is_corner(potential_start)[0] and potential_start + get_ivec3(up) in cells_to_fill and potential_start not in cells_with_rooms and list(potential_start)[1] == level:
+        if is_corner(potential_start, cells_to_fill)[0] and potential_start + get_ivec3(up) in cells_to_fill and potential_start not in cells_with_rooms and list(potential_start)[1] == level:
             possible_starts.append(potential_start)
 
     start = rng.choose(possible_starts)
-    start_connections = is_corner(start)[1]
+    start_connections = is_corner(start, cells_to_fill)[1]
 
     potential_rooms = []
-    for a_room in LOWER_STAIRCASE_LIST:
-        room : Room = Room.find(a_room)
+    for room_name in LOWER_STAIRCASE_LIST:
+        room : Room = Room.find(room_name)
         to_face = room.facing
         for i in range(4):
             if list(rotate(room.connections, i)) == start_connections:
@@ -187,10 +170,9 @@ def build_staircase(level):
     room_to_build : Room = Room.find('staircase_corner_upper')
     grid.build(editor, room_to_build, palette, start + get_ivec3(up), facing = room_facing)
 
+    return cells_with_rooms
 
-#populate the other cells with rooms
-
-def get_neighbors(rooms, inside_cells):
+def get_neighbors(rooms: list, inside_cells: list) -> set:
     neighbors = set()
     for room in rooms:
         for direction in cardinal:
@@ -199,7 +181,7 @@ def get_neighbors(rooms, inside_cells):
                 neighbors.add(new_cell)
     return neighbors
 
-def populate_floor(level):
+def populate_floor(level: int, cells_with_rooms: list, cells_to_fill: list) -> list:
     rooms_on_floor = [((x ,y, z), con) for (x, y, z), con in cells_with_rooms if y == level]
     cells_on_floor = [(x, y, z) for x, y, z in cells_to_fill if y == level]
     while len(rooms_on_floor) != len(cells_on_floor):
@@ -210,24 +192,24 @@ def populate_floor(level):
             for c, conns in rooms_on_floor:
                 for direction in cardinal:
                     if neighbor + get_ivec3(direction) == c:
-                        if direction == 'z_minus':
+                        if direction == north:
                             north_con = conns[2]
-                        elif direction == 'x_plus':
+                        elif direction == east:
                             east_con = conns[3]
-                        elif direction == 'z_plus':
+                        elif direction == south:
                             south_con = conns[0]
-                        elif direction == 'x_minus':
+                        elif direction == west:
                             west_con = conns[1]
 
             for direction in cardinal:
                 if (neighbor + get_ivec3(direction)) not in cells_on_floor:
-                    if direction == 'z_minus':
+                    if direction == north:
                         north_con = 'wall'
-                    elif direction == 'x_plus':
+                    elif direction == east:
                         east_con = 'wall'
-                    elif direction == 'z_plus':
+                    elif direction == south:
                         south_con = 'wall'
-                    elif direction == 'x_minus':
+                    elif direction == west:
                         west_con = 'wall'
 
             new_conns = [north_con, east_con, south_con, west_con]
@@ -257,8 +239,8 @@ def populate_floor(level):
                                 elif ni == 3:
                                     temp[3] = i3
 
-                            for a_room in ROOM_LIST:
-                                room: Room = Room.find(a_room)
+                            for room_name in ROOM_LIST:
+                                room: Room = Room.find(room_name)
                                 to_face = room.facing
                                 for i in range(4):
                                     if list(rotate(room.connections, i)) == temp:
@@ -281,7 +263,9 @@ def populate_floor(level):
         cells_with_rooms.append((cell_to_build, connections))
         grid.build(editor, room_to_build, palette, cell_to_build, facing = room_facing)
 
-def build_one_by_one(num_levels):
+    return cells_with_rooms
+
+def build_one_by_one(num_levels: int, cells_to_fill: list) -> None:
     if num_levels == 1:
         cell = cells_to_fill[0]
         pick = rng.choose(ONEBYONE_LIST)
@@ -298,18 +282,22 @@ def build_one_by_one(num_levels):
         grid.build(editor, lower_room, palette, cell)
         grid.build(editor, upper_room, palette, cell + get_ivec3(up))
 
-number_of_floors = max([y for (x, y, z) in cells_to_fill]) + 1
 
-if len(cells_to_fill) == 1 or len(cells_to_fill) == 2 and number_of_floors == 2:
-    build_one_by_one(number_of_floors)
-else:
-    for level in range(number_of_floors):
-        if number_of_floors == 1:
-            build_start()
-        elif level != number_of_floors - 1:
-            build_staircase(level)
 
-        populate_floor(level)
+def furnish(cells_to_fill: list) -> None:
+    number_of_floors = max([y for (x, y, z) in cells_to_fill]) + 1
+    cells_with_rooms = []
+
+    if len(cells_to_fill) == 1 or len(cells_to_fill) == 2 and number_of_floors == 2:
+        build_one_by_one(number_of_floors, cells_to_fill)
+    else:
+        for level in range(number_of_floors):
+            if number_of_floors == 1:
+                cells_with_rooms = build_start(cells_with_rooms, cells_to_fill)
+            elif level != number_of_floors - 1:
+                cells_with_rooms = build_staircase(level, cells_with_rooms, cells_to_fill)
+
+            cells_with_rooms = populate_floor(level, cells_with_rooms, cells_to_fill)
 
 
 
