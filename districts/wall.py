@@ -147,6 +147,7 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
     return add_gates(wall_points, editor, world_slice, True, None, palette=palette)
 
 
+
 def build_wall_standard_with_inner(wall_points: list[ivec2], wall_dict : dict, inner_points: list[ivec2], editor : Editor, world_slice : WorldSlice, water_map : dict, rng : RNG, palette : Palette) -> list[Gate]:
 
     wall_points = add_wall_points_height(wall_points, world_slice)
