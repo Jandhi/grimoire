@@ -60,7 +60,12 @@ ROOM_LIST = [
      'bedroom1',
      'bedroom_centered',
      'bedroom_corner',
-     'hallway_1'
+     'hallway_1',
+     'hallway_aquarium',
+     'small_kitchen_with_table',
+     'potion_room',
+     'storage_room',
+     'study'
 ]
 
 CONNECTION_LIST = [
@@ -77,15 +82,19 @@ UPPER_STAIRCASE_LIST = [
 ]
 
 ONEBYONE_UPPER_LIST = [
-    '1x1_twostorey_upper_1'
+    '1x1_twostorey_upper_1',
+    '1x1_twostorey_upper_2'
 ]
 
 ONEBYONE_LOWER_LIST = [
-    '1x1_twostorey_lower_1'
+    '1x1_twostorey_lower_1',
+    '1x1_twostorey_lower_2'
 ]
 
 ONEBYONE_LIST = [
-    '1x1_room_1'
+    '1x1_room_1',
+    '1x1_room_2',
+    '1x1_room_3'
 ]
 
 
