@@ -2,7 +2,7 @@ from gdpc.editor import Editor
 from gdpc.vector_tools import ivec3
 from structures.directions import north, east, west, south, get_ivec2, Direction, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
 
-#uses set block to place entities (playerheads/armor stands)
+#uses set block to place blocks with nbts (playerheads)
 def place_block(block: str, editor: Editor, point: ivec3, direction=None):
     actual_point = editor.transform.apply(point)
     #setting correct direction
@@ -14,3 +14,17 @@ def place_block(block: str, editor: Editor, point: ivec3, direction=None):
         block = block[:11] + '[rotation=8]' + block[11:len(block)]
     command = f'setblock {actual_point.x} {actual_point.y} {actual_point.z} minecraft:{block} replace'
     editor.runCommand(command)
+
+#summons an entity, mostly used for armor stand
+def summon_entity(id: str, nbt: str, editor: Editor, point: ivec3, direction=None):
+    actual_point = editor.transform.apply(point)
+    #setting correct direction
+    if direction == west:
+        nbt = nbt[:len(nbt)-1] + ',Rotation:[90.0f]}'
+    elif direction == east:
+        nbt = nbt[:len(nbt)-1] + ',Rotation:[-90.0f]}'
+    elif direction == north:
+        nbt = nbt[:len(nbt)-1] + ',Rotation:[180.0f]}'
+
+    summon_entity_command = f'summon {id} {actual_point.x} {actual_point.y} {actual_point.z} {nbt}'
+    editor.runCommand(summon_entity_command, position=ivec3(actual_point.x, actual_point.y, actual_point.z))

@@ -143,6 +143,7 @@ def build_wall_standard(wall_points: list[ivec2], wall_dict : dict, inner_points
                         walkway_list.append(ivec2(new_pt.x, new_pt.z))
                         walkway_dict[ivec2(new_pt.x, new_pt.z)] = new_pt.y + height_modifier
 
+    
     flatten_walkway(walkway_list, walkway_dict, editor, palett=palette)
     return add_gates(wall_points, editor, world_slice, True, None, palette=palette)
 
