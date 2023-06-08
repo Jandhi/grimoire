@@ -107,7 +107,7 @@ palette = Palette.find('dwarven')
 build_map = get_build_map(world_slice)
 
 urban_road : PaintPalette = PaintPalette.find('urban_road')
-#replace_ground_smooth(inner_points, urban_road.palette, rng, map.water, build_map, editor, world_slice)
+replace_ground_smooth(inner_points, urban_road.palette, rng, map.water, build_map, editor, world_slice)
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
@@ -124,7 +124,7 @@ add_city_blocks(editor, districts, map, SEED, is_debug=False)
 
 #uncomment one of these to test one of the three wall types
 
-#build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, map.world, map.water, rng, palette)
+build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, map.world, map.water, rng, palette)
 #build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 #build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 
@@ -136,23 +136,23 @@ ignore_blocks = [
 ]
 
 
-# test : PaintPalette = PaintPalette.find('farmland')
-# test2 : PaintPalette = PaintPalette.find('wheat')
-# forest : Forest = Forest.find('mixed_forest')
-# rural_road : PaintPalette = PaintPalette.find('rural_road')
+test : PaintPalette = PaintPalette.find('farmland')
+test2 : PaintPalette = PaintPalette.find('wheat')
+forest : Forest = Forest.find('mixed_forest')
+rural_road : PaintPalette = PaintPalette.find('rural_road')
 
-# options = [forest]
-# for district in districts:
+options = [forest]
+for district in districts:
 
-#     if district.is_urban == False: 
-#         choice = rng.choose(options)
-#         outer_district_points, inner_district_points = find_outer_and_inner_points(district.points_2d, 4)
-#         if choice == forest:
-#             plant_forest(list(inner_district_points), forest, rng, map.water, build_map, editor, world_slice, ignore_blocks)
-#         elif choice == test:
-#             replace_ground(list(inner_district_points), test.palette, rng, map.water, build_map, editor, world_slice, 0, ignore_blocks)
-#             replace_ground(list(inner_district_points), test2.palette, rng, map.water, build_map, editor, world_slice, 1, ignore_blocks)
-#             replace_ground(list(outer_district_points), rural_road.palette, rng, map.water, build_map, editor, world_slice)
-#         else:
-#             continue
+    if district.is_urban == False: 
+        choice = rng.choose(options)
+        outer_district_points, inner_district_points = find_outer_and_inner_points(district.points_2d, 4)
+        if choice == forest:
+            plant_forest(list(inner_district_points), forest, rng, map.water, build_map, editor, world_slice, ignore_blocks)
+        elif choice == test:
+            replace_ground(list(inner_district_points), test.palette, rng, map.water, build_map, editor, world_slice, 0, ignore_blocks)
+            replace_ground(list(inner_district_points), test2.palette, rng, map.water, build_map, editor, world_slice, 1, ignore_blocks)
+            replace_ground(list(outer_district_points), rural_road.palette, rng, map.water, build_map, editor, world_slice)
+        else:
+            continue
         
