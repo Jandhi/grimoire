@@ -4,13 +4,22 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from gdpc import WorldSlice
 from structures.directions import north, east, west, south, get_ivec2, directions, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
-from utils.geometry import get_neighbours_in_set, is_straight_ivec2, is_point_surrounded_dict, is_straight_not_diagonal_ivec2
+from utils.geometry import get_neighbours_in_set, is_straight_ivec2, is_point_surrounded_dict, is_straight_not_diagonal_ivec2, get_outer_points
 from utils.misc import is_water
 from structures.nbt.build_nbt import build_nbt
 from structures.nbt.nbt_asset import NBTAsset
 from structures.transformation import Transformation
 from palette.palette import Palette
 from palette.palette_swap import fix_block_name
+
+def get_wall_points(inner_points, world_slice):
+    wall_points, wall_dict = get_outer_points(inner_points, world_slice)
+    for point in wall_points:
+        neighbours = get_neighbours_in_set(point, inner_points)
+        if len(neighbours) == 1 and wall_dict.get(neighbours[0]) == True:
+            wall_points.remove(point)
+            wall_dict.pop(point)
+    return wall_points, wall_dict
 
 def find_wall_neighbour(current : ivec2, wall_dict : dict, ordered_wall_dict : dict):
     for check in [ivec2(-1,0),ivec2(0,-1),ivec2(-1,-1),ivec2(-1,1),ivec2(1,-1),ivec2(1,0),ivec2(0,1),ivec2(1,1)]: #prefers to go right
@@ -531,36 +540,39 @@ def add_gates(wall_list : list, editor : Editor, world_slice : WorldSlice, is_th
                             palette=palette
                         )
                     else:
-                        dir = vector(wall_list[i+3][1][0])
-                        middle_point = wall_list[i+3][0] + dir * 2
-                        #checking inner wall, if it is not where it is expected to be, not a valid gate location
-                        
-                        for a in range(i, i+7):
-                            inner_wall_pt = wall_list[a][0] + dir * 4
-                            if inner_wall_dict.get(ivec2(inner_wall_pt.x, inner_wall_pt.z)) == None:
-                                break
-                            #prep gate
-                            if a == i+6:
-                                neighbours = [ivec2(x, z) for x in range(middle_point.x -3, middle_point.x + 4) for z in range(middle_point.z -3, middle_point.z + 4)]
-                                height = height_map[middle_point.x, middle_point.z]
-                                gate_possible = distance_to_next_gate
-                                for height in range(height, height + 6):
-                                    for neighbour in neighbours:
-                                        editor.placeBlock((neighbour.x,height,neighbour.y), Block('minecraft:air'))
+                        try:
+                            dir = vector(wall_list[i+3][1][0]) #causes out of bound issues
+                            middle_point = wall_list[i+3][0] + dir * 2
+                            #checking inner wall, if it is not where it is expected to be, not a valid gate location
+                            
+                            for a in range(i, i+7):
+                                inner_wall_pt = wall_list[a][0] + dir * 4
+                                if inner_wall_dict.get(ivec2(inner_wall_pt.x, inner_wall_pt.z)) == None:
+                                    break
+                                #prep gate
+                                if a == i+6:
+                                    neighbours = [ivec2(x, z) for x in range(middle_point.x -3, middle_point.x + 4) for z in range(middle_point.z -3, middle_point.z + 4)]
+                                    height = height_map[middle_point.x, middle_point.z]
+                                    gate_possible = distance_to_next_gate
+                                    for height in range(height, height + 6):
+                                        for neighbour in neighbours:
+                                            editor.placeBlock((neighbour.x,height,neighbour.y), Block('minecraft:air'))
 
-                                #build gate
-                                diagonal_mirror = False
-                                if ivec3_to_dir(dir) in (north, south):
-                                    diagonal_mirror = True
-                                build_nbt(
-                                    editor = editor, 
-                                    asset = basic_wide_gate,
-                                    transformation=Transformation(
-                                        offset=ivec3(middle_point.x, height_map[middle_point.x, middle_point.z],middle_point.z),
-                                        mirror=(True, False, False),
-                                        diagonal_mirror=diagonal_mirror,
-                                    ),
-                                    palette=palette
-                                )
+                                    #build gate
+                                    diagonal_mirror = False
+                                    if ivec3_to_dir(dir) in (north, south):
+                                        diagonal_mirror = True
+                                    build_nbt(
+                                        editor = editor, 
+                                        asset = basic_wide_gate,
+                                        transformation=Transformation(
+                                            offset=ivec3(middle_point.x, height_map[middle_point.x, middle_point.z],middle_point.z),
+                                            mirror=(True, False, False),
+                                            diagonal_mirror=diagonal_mirror,
+                                        ),
+                                        palette=palette
+                                    )
+                        except:
+                            break
             else:
                 gate_possible -=1

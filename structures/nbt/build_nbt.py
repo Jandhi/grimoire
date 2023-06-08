@@ -47,7 +47,7 @@ def build_nbt(
         if (not allow_non_solid_replacement) and any(blocktype in block.name for blocktype in ('stairs', 'slab', 'walls', 'fence')):
             curr_block = editor.getBlock(position=(x, y, z))
 
-            if curr_block.id != 'minecraft:air':
+            if 'air' not in curr_block.id:
                 continue
 
         if block.name == 'minecraft:barrier':
