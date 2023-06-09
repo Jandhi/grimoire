@@ -2,7 +2,7 @@
     "name" : "dwarven_wall_base_2_door",
     "type" : "wall",
     "filepath" : "assets/walls/dwarven/dwarven_wall_base_2_door.nbt",
-    "origin" : [1, 0, 0],
+    "origin" : [1, -1, 0],
     "facing" : "x_minus",
     "positions" : ["lower"],
     "do_not_place" : ["minecraft:air"],
