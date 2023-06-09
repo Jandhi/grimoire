@@ -38,6 +38,7 @@ def log_stems(editor, build_rect, world_slice):
                 elif block_name == 'minecraft:dirt':
                     editor.placeBlock(check_pos, Block("minecraft:grass_block"))
                     continue
+
                 #only continue checking down if its still air and hasn't been caught by the above
                 elif block_name != 'minecraft:air':
                     continue
@@ -63,6 +64,7 @@ def log_trees(editor, build_rect, world_slice):
                 elif block_name == 'minecraft:dirt':
                     editor.placeBlock(check_pos, Block("minecraft:grass_block"))
                     continue
+
                 elif block_name != 'minecraft:air':
                     continue
 
