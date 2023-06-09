@@ -25,7 +25,7 @@ from utils.vectors import y_ivec3
 from structures.directions import get_ivec2
 
 SEED = 77273
-DO_TERRAFORMING = True
+DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
 load_assets('assets')

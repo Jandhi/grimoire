@@ -17,7 +17,8 @@ from placement.building_placement import place_building
 from structures.directions import x_plus, x_minus, z_plus, z_minus
 from noise.rng import RNG
 
-SEED = 0x030377
+
+SEED = 0x44444
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
@@ -36,3 +37,4 @@ rng = RNG(SEED)
 
 editor.placeBlock(ivec3(50, -50, 50), Block('glowstone'))
 place_building(editor, ivec2(50, 50), map, z_plus, rng, False)
+

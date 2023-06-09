@@ -16,6 +16,7 @@ from buildings.clear_interiors import clear_interiors
 from noise.rng import RNG
 from utils.vectors import y_ivec3
 from palette.palette_swap import fix_block_name
+from buildings.rooms.furnish import furnish
 
 offsets = {
     z_minus : [ivec2(0, 0), ivec2(-1, 0)],
@@ -132,7 +133,7 @@ def nearest_road(start_point : ivec2, map : Map) -> ivec2:
 
 def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : Map):
     district = map.districts[grid.origin.x][grid.origin.z]
-    palette : Palette = rng.choose(district.palettes)
+    palette : Palette = rng.choose(district.palettes) if district else Palette.find('japanese_dark_blackstone')
     
     plan = BuildingPlan(shape.points, grid, palette)
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
@@ -161,3 +162,8 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
 
         for y_coord in range(world_height, grid_height):
             editor.placeBlock(ivec3(point.x, y_coord, point.y), Block(fix_block_name(palette.primary_stone)))
+
+    try:
+        furnish([cell.position for cell in plan.cells], rng, grid, editor, palette, plan.cell_map)
+    except Exception:
+        pass # this is a last resort, this should not be used in the future

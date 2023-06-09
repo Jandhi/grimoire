@@ -4,5 +4,6 @@
     "filepath" : "assets/roofs/japanese/japanese_roof_flat_brick_inner_corner.nbt",
     "origin" : [0, -1, 0],
     "shape" : "inner",
-    "palette" : "japanese_dark_blackstone"
+    "palette" : "japanese_dark_blackstone",
+    "tags" : ["japanese"]
 }
