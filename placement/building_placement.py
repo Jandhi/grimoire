@@ -145,13 +145,13 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
         editor.placeBlock(point, Block('air'))
 
     build_roof(plan, editor, [
-        component for component in RoofComponent.all() if 'dwarven' in component.tags
+        component for component in RoofComponent.all() if 'dwarven_2' in component.tags
     ], rng.next())
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = list(filter(lambda wall : 'dwarven' in wall.tags, Wall.all().copy()))
+    walls = list(filter(lambda wall : 'dwarven_2' in wall.tags, Wall.all().copy()))
 
     build_walls(plan, editor, walls, rng)
 
