@@ -4,5 +4,5 @@
     "filepath" : "assets/roofs/dwarven/dwarven_roof_inner_corner.nbt",
     "origin" : [0, -1, 0],
     "shape" : "inner",
-    "tags" : ["dwarven"]
+    "tags" : ["dwarven","dwarven_1","dwarven_2"]
 }

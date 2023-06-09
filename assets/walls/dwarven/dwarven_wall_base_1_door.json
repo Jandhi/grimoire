@@ -7,5 +7,5 @@
     "positions" : ["lower"],
     "do_not_place" : ["minecraft:air"],
     "has_door" : true,
-    "tags" : ["dwarven"]
+    "tags" : ["dwarven","dwarven_1"]
 }

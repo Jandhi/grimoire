@@ -17,7 +17,7 @@ from noise.rng import RNG
 
 
 SEED = 0xbabab00e
-DO_TERRAFORMING = True
+DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
 load_assets('assets')
@@ -39,7 +39,7 @@ eligible_palettes = list(filter(lambda palette : 'desert' in palette.tags, Palet
 rng = RNG(SEED, 'palettes')
 
 for district in districts:
-    palettes = eligible_palettes.copy()
+    palettes = [Palette.find('dwarven'), Palette.find('dwarven'), Palette.find('dwarven')]
 
     for i in range(3):    
         district.palettes.append(rng.pop(palettes))
@@ -69,11 +69,5 @@ if DO_TERRAFORMING:
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
-for district in districts:
-    x = district.origin.x
-    z = district.origin.z
-
-    y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10 
-    editor.placeBlock((x, y, z), Block('sea_lantern'))
 
 add_city_blocks(editor, districts, map, SEED, is_debug=True)

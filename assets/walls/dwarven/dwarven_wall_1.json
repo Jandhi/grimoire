@@ -5,6 +5,5 @@
     "origin" : [1, -1, 0],
     "facing" : "x_minus",
     "positions" : ["upper"],
-    "do_not_replace" : ["stone_stairs"],
-    "tags" : ["dwarven"]
+    "tags" : ["dwarven","dwarven_1"]
 }

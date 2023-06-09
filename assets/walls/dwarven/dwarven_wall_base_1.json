@@ -6,5 +6,5 @@
     "facing" : "x_minus",
     "do_not_place" : ["minecraft:air"],
     "positions" : ["lower"],
-    "tags" : ["dwarven"]
+    "tags" : ["dwarven","dwarven_1"]
 }
