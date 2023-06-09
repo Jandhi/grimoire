@@ -35,7 +35,7 @@ door_points = {
 WATER_THRESHOLD = 0.4 # above this threshold a house cannot be built
 MAX_AVG_HEIGHT_DIFF = 4 
 
-def place_building(editor : Editor, start_point : ivec2, map : Map, outside_direction : str, rng : RNG, urban_only = True):
+def place_building(editor : Editor, start_point : ivec2, map : Map, outside_direction : str, rng : RNG, style : str = 'japanese', urban_only = True):
     my_offsets = offsets[outside_direction]
 
     shapes : list[BuildingShape] = BuildingShape.all()
@@ -103,7 +103,7 @@ def place_building(editor : Editor, start_point : ivec2, map : Map, outside_dire
                 continue
 
             # build
-            place(editor, shape, grid, rng, map)
+            place(editor, shape, grid, rng, map, style)
             return
         
 def nearest_road(start_point : ivec2, map : Map) -> ivec2:
@@ -131,7 +131,7 @@ def nearest_road(start_point : ivec2, map : Map) -> ivec2:
     
     return None
 
-def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : Map):
+def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : Map, style : str):
     district = map.districts[grid.origin.x][grid.origin.z]
     palette : Palette = rng.choose(district.palettes) if district else Palette.find('japanese_dark_blackstone')
     
@@ -146,13 +146,13 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
         editor.placeBlock(point, Block('air'))
 
     build_roof(plan, editor, [
-        component for component in RoofComponent.all() if 'desert' in component.tags
+        component for component in RoofComponent.all() if style in component.tags
     ], rng.next())
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = list(filter(lambda wall : 'desert' in wall.tags, Wall.all().copy()))
+    walls = list(filter(lambda wall : style in wall.tags, Wall.all().copy()))
 
     build_walls(plan, editor, walls, rng)
 

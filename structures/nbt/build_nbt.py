@@ -47,11 +47,7 @@ def build_nbt(
         # Doesn't allow non-solid blocks to replace blocks
         if (not allow_non_solid_replacement) and any(blocktype in block.name for blocktype in ('stairs', 'slab', 'walls', 'fence')):
             curr_block = editor.getBlock(position=(x, y, z))
-<<<<<<< HEAD
-            
-=======
 
->>>>>>> f3119f4f572ade79aeb142b77d1ec1c6f730adf6
             if 'air' not in curr_block.id:
                 continue
 

@@ -28,8 +28,8 @@ from terrain.forest import Forest
 from sets.find_outer_points import find_outer_and_inner_points
 
 
-SEED = 0xbab
-DO_TERRAFORMING = False
+SEED = 0xb33cff
+DO_TERRAFORMING = False # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
 load_assets('assets')
@@ -54,14 +54,22 @@ map = Map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
 map.districts = district_map
 
+styles = [
+    'japanese',
+    'viking',
+    'desert',
+    'dwarven'
+]
+style = 'japanese'
+
 # set up palettes
-eligible_palettes = list(filter(lambda palette : 'japanese' in palette.tags, Palette.all()))
+eligible_palettes = list(filter(lambda palette : style in palette.tags, Palette.all()))
 rng = RNG(SEED, 'palettes')
 
 for district in districts:
-    palettes = [Palette.find('dwarven'), Palette.find('dwarven'), Palette.find('dwarven')]
+    palettes = eligible_palettes.copy()
 
-    for i in range(3):    
+    for i in range(min(3, len(eligible_palettes))):    
         district.palettes.append(rng.pop(palettes))
 
 # plateau stuff
@@ -118,7 +126,7 @@ replace_ground_smooth(inner_points, urban_road.palette, rng, map.water, build_ma
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10 
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, districts, map, SEED, is_debug=False)
+add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
 
 # WALL
 
