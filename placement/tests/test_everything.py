@@ -1,5 +1,6 @@
 # Allows code to be run in root directory
 import sys
+import time
 sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
 
 # Actual file
@@ -28,8 +29,8 @@ from terrain.forest import Forest
 from sets.find_outer_points import find_outer_and_inner_points
 
 
-SEED = 0xb33cff
-DO_TERRAFORMING = False # Set this to true for the final iteration
+SEED = 0x6767673
+DO_TERRAFORMING = True # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
 load_assets('assets')
@@ -54,13 +55,21 @@ map = Map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
 map.districts = district_map
 
+# EDIT STYLE HERE
+
+from industries.industry import get_district_biomes
+# use some sort of lookup to map the district biomes you get to the style
+# maybe let that inform whether we add crops or forest or anything later
+
 styles = [
-    'japanese',
-    'viking',
-    'desert',
-    'dwarven'
+    'japanese', # I think this is the strongest one, so probably used in most environments
+    'viking', # Pretty weak I think so we could avoid, but we can test it
+    'desert', # Decentish variety I think
+    'dwarven' # Little variety so probably save it for mountains
 ]
-style = 'japanese'
+style = 'desert'
+
+
 
 # set up palettes
 eligible_palettes = list(filter(lambda palette : style in palette.tags, Palette.all()))
@@ -95,6 +104,9 @@ if DO_TERRAFORMING:
     map.correct_district_heights(districts)
 # done
 
+print('sleepy time to reduce http traffic')
+time.sleep(10) # to try to reduce http traffic, we'll do a little sleepy time
+
 inner_points = []
 
 for x in range(build_rect.size.x):
@@ -110,11 +122,11 @@ wall_points, wall_dict = get_wall_points(inner_points, world_slice)
 wall_points = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = Palette.find('dwarven')
+palette = rng.choose(eligible_palettes)
 
 build_map = get_build_map(world_slice)
 
-urban_road : PaintPalette = PaintPalette.find('urban_road')
+urban_road : PaintPalette = PaintPalette.find('desert_road') if style == 'desert' else PaintPalette.find('urban_road')
 replace_ground_smooth(inner_points, urban_road.palette, rng, map.water, build_map, editor, world_slice)
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
@@ -144,23 +156,29 @@ ignore_blocks = [
 ]
 
 
-test : PaintPalette = PaintPalette.find('farmland')
-test2 : PaintPalette = PaintPalette.find('wheat')
-forest : Forest = Forest.find('mixed_forest')
+farmland : PaintPalette = PaintPalette.find('farmland')
+forests = Forest.all()
+crops = list(filter(lambda palette : 'crops' in palette.tags, PaintPalette.all()))
 rural_road : PaintPalette = PaintPalette.find('rural_road')
 
-options = [forest]
+options = forests + crops
+
 for district in districts:
 
     if district.is_urban == False: 
-        choice = rng.choose(options)
+        choice_list = rng.choose([crops, forests, [None], [None]])
+        choice = rng.choose(choice_list)
+
+
         outer_district_points, inner_district_points = find_outer_and_inner_points(district.points_2d, 4)
-        if choice == forest:
-            plant_forest(list(inner_district_points), forest, rng, map.water, build_map, editor, world_slice, ignore_blocks)
-        elif choice == test:
-            replace_ground(list(inner_district_points), test.palette, rng, map.water, build_map, editor, world_slice, 0, ignore_blocks)
-            replace_ground(list(inner_district_points), test2.palette, rng, map.water, build_map, editor, world_slice, 1, ignore_blocks)
+        if isinstance(choice, Forest): # forest
+            plant_forest(list(inner_district_points), choice, rng, map.water, build_map, editor, world_slice, ignore_blocks)
+        elif isinstance(choice, PaintPalette): # crops
+            replace_ground(list(inner_district_points), farmland.palette, rng, map.water, build_map, editor, world_slice, 0, ignore_blocks)
+            replace_ground(list(inner_district_points), choice.palette, rng, map.water, build_map, editor, world_slice, 1, ignore_blocks)
             replace_ground(list(outer_district_points), rural_road.palette, rng, map.water, build_map, editor, world_slice)
         else:
             continue
+
+        time.sleep(5) # to try to reduce http traffic, we'll do a little sleepy time
         

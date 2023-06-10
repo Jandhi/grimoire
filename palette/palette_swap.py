@@ -1,6 +1,7 @@
 from palette.palette import Palette
 
 plurals = ['brick', 'plank', 'tile']
+woods = ['mangrove', 'spruce', 'oak', 'dark_oak', 'birch', 'jungle', 'acacia']
 
 def palette_swap(block_name : str, input_palette : Palette, output_palette : Palette):
     replacements = {
@@ -48,5 +49,8 @@ def fix_block_name(name : str) -> str:
         
     if 'smooth_' in name and 'wall' in name:
         name = name.replace('smooth_', '')
+    
+    if 'wall' in name and any(wood in name for wood in woods):
+        name = name.replace('wall', 'fence')
         
     return name

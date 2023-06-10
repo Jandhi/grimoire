@@ -7,5 +7,6 @@
         "beetroots[age=2]" : 2,
         "beetroots[age=3]" : 2
     },
-    "smooth" : "False"
+    "smooth" : "False",
+    "tags" : ["crops"]
 }

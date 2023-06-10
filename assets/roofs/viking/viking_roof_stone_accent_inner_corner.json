@@ -4,5 +4,6 @@
     "filepath" : "assets/roofs/viking/viking_roof_stone_accent_inner_corner.nbt",
     "origin" : [1, -1, 1],
     "shape" : "inner",
-    "palette" : "viking_palette"
+    "palette" : "viking_palette",
+    "tags" : ["viking"]
 }

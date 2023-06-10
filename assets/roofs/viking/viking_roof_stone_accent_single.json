@@ -4,5 +4,6 @@
     "filepath" : "assets/roofs/viking/viking_roof_stone_accent_single.nbt",
     "origin" : [1, -1, 2],
     "shape" : [[0, 0]],
-    "palette" : "viking_palette"
+    "palette" : "viking_palette",
+    "tags" : ["viking"]
 }
