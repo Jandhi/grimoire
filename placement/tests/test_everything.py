@@ -27,6 +27,8 @@ from districts.district_painter import replace_ground, plant_forest, replace_gro
 from districts.paint_palette import PaintPalette
 from terrain.forest import Forest
 from sets.find_outer_points import find_outer_and_inner_points
+from industries.industry import get_district_biomes
+from industries.biomes import forest, desert, rocky, snowy
 
 
 SEED = 0x6767673
@@ -55,19 +57,48 @@ map = Map(world_slice)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
 map.districts = district_map
 
-# EDIT STYLE HERE
-
-from industries.industry import get_district_biomes
-# use some sort of lookup to map the district biomes you get to the style
-# maybe let that inform whether we add crops or forest or anything later
-
 styles = [
     'japanese', # I think this is the strongest one, so probably used in most environments
     'viking', # Pretty weak I think so we could avoid, but we can test it
     'desert', # Decentish variety I think
     'dwarven' # Little variety so probably save it for mountains
 ]
-style = 'desert'
+
+biomes_in_districts = []
+forest_counter = 0
+desert_counter = 0
+rocky_counter = 0
+snowy_counter = 0
+mountainous = False
+snowy = False
+for district in districts:
+    biomes_in_district = get_district_biomes(editor, district)
+    for biome in biomes_in_district:
+        if biome in forest:
+            forest_counter += 1
+        elif biome in desert: 
+            desert_counter += 1
+        elif biome in rocky: 
+            mountainous = True
+            rocky_counter += 1
+        elif biome in snowy:
+            snowy_counter += 1
+
+if rocky_counter >= len(districts) // 2:
+    mountainous = True
+if snowy_counter >= len(districts) // 2:
+    snowy = True
+
+biome_counters = [forest_counter, desert_counter, rocky_counter]
+
+if max(biome_counters) == forest_counter:
+    style = 'japanese'
+elif max(biome_counters) == desert_counter:
+    style = 'desert'
+elif max(biome_counters) == rocky_counter: 
+    style = 'dwarven'
+else:
+    style = 'japanese'
 
 
 
@@ -161,12 +192,17 @@ forests = Forest.all()
 crops = list(filter(lambda palette : 'crops' in palette.tags, PaintPalette.all()))
 rural_road : PaintPalette = PaintPalette.find('rural_road')
 
+
 options = forests + crops
 
 for district in districts:
-
     if district.is_urban == False: 
-        choice_list = rng.choose([crops, forests, [None], [None]])
+        if mountainous and not snowy:
+            choice_list = rng.choose([[None], [None], [None], [None]])
+        elif snowy and not mountainous:
+            choice_list = rng.choose([forests, [None], [None], [None]])
+        else:
+            choice_list = rng.choose([crops, forests, [None], [None]])
         choice = rng.choose(choice_list)
 
 
