@@ -70,7 +70,8 @@ desert_counter = 0
 rocky_counter = 0
 snowy_counter = 0
 mountainous = False
-snowy = False
+is_snowy = False
+is_desert = False
 for district in districts:
     biomes_in_district = get_district_biomes(editor, district)
     for biome in biomes_in_district:
@@ -87,8 +88,9 @@ for district in districts:
 if rocky_counter >= len(districts) // 2:
     mountainous = True
 if snowy_counter >= len(districts) // 2:
-    snowy = True
-
+    is_snowy = True
+if desert_counter >= len(districts) // 2:
+    is_desert = True
 biome_counters = [forest_counter, desert_counter, rocky_counter]
 
 if max(biome_counters) == forest_counter:
@@ -197,9 +199,9 @@ options = forests + crops
 
 for district in districts:
     if district.is_urban == False: 
-        if mountainous and not snowy:
+        if mountainous and not is_snowy or is_desert:
             choice_list = rng.choose([[None], [None], [None], [None]])
-        elif snowy and not mountainous:
+        elif is_snowy and not mountainous:
             choice_list = rng.choose([forests, [None], [None], [None]])
         else:
             choice_list = rng.choose([crops, forests, [None], [None]])
