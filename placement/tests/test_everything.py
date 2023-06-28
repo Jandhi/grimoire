@@ -29,15 +29,24 @@ from terrain.forest import Forest
 from sets.find_outer_points import find_outer_and_inner_points
 from industries.industry import get_district_biomes
 from industries.biomes import forest, desert, rocky, snowy
+from gdpc.geometry import Box
 
-
-SEED = 0x6767673
+SEED = 0x4473
 DO_TERRAFORMING = True # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
 load_assets('assets')
 
 area = editor.getBuildArea()
+
+# can't to do areas too large yet
+if area.size.x > 1000:
+    x = area.center.x - 400
+    z = area.center.z - 400
+    editor.setBuildArea(Box((x, 0, z), (350, area.size.y, 350)))
+
+area = editor.getBuildArea()
+
 editor.transform = (area.begin.x, 0, area.begin.z)
 
 print("Loading world slice...")

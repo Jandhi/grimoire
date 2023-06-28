@@ -20,7 +20,7 @@ from maps.building_map import BUILDING, GATE
 from utils.bounds import area_2d
 from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
-from gdpc.geometry import line3D
+from gdpc.geometry import line3D, Box
 from utils.vectors import y_ivec3
 from structures.directions import get_ivec2
 
@@ -31,6 +31,8 @@ editor = Editor(buffering=True, caching=True)
 load_assets('assets')
 
 area = editor.getBuildArea()
+
+
 editor.transform = (area.begin.x, 0, area.begin.z)
 
 print("Loading world slice...")

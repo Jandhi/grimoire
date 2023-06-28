@@ -196,7 +196,7 @@ def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed
 
     # Has to be done after all inners are found
     for i, block in enumerate(blocks):
-        if i > len(inners):
+        if i >= len(inners):
             continue
 
         place_buildings(editor, inners[i], map, block_rng, style, is_debug)

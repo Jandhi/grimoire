@@ -5,10 +5,17 @@ from noise.random import choose_weighted, shuffle
 from terrain.tree import generate_tree
 from structures.directions import cardinal, get_ivec2, to_text
 from terrain.forest import Forest
+import time
 
 #gives the ability to provide a list of blocks upon which not to place
 def replace_ground(points: list[ivec2], block_dict: dict[any,int], rng: RNG, water_map: list[list[bool]], build_map: list[list[bool]], editor: Editor, world_slice: WorldSlice, height_offset: int = 0, ignore_blocks: list = [], ignore_water: bool = False):
+    counter = 0
     for point in points:
+        counter += 1
+
+        if counter % 1000 == 0:
+            time.sleep(5)
+
         if (ignore_water or water_map[point.x][point.y] == False) and build_map[point.x][point.y] == False:
             y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
             if editor.getBlock(ivec3(point.x, y - 1, point.y)).id not in ignore_blocks:
@@ -17,7 +24,13 @@ def replace_ground(points: list[ivec2], block_dict: dict[any,int], rng: RNG, wat
 
 #requires the block dict to have 3 dicts inside, blocks, slabs, stairs
 def replace_ground_smooth(points: list[ivec2], block_dict: dict[any,int], rng: RNG, water_map: list[list[bool]], build_map: list[list[bool]], editor: Editor, world_slice: WorldSlice, height_offset: int = 0, ignore_blocks: list = [], ignore_water: bool = False):
+    counter = 0
     for point in points:
+        counter += 1
+
+        if counter % 1000 == 0:
+            time.sleep(5)
+
         if (ignore_water or water_map[point.x][point.y] == False) and build_map[point.x][point.y] == False:
             y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
             if editor.getBlock(ivec3(point.x, y - 1, point.y)).id not in ignore_blocks:
