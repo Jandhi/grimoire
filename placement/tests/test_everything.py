@@ -41,8 +41,8 @@ area = editor.getBuildArea()
 
 # can't to do areas too large yet
 if area.size.x > 1000:
-    x = area.center.x - 400
-    z = area.center.z - 400
+    x = area.center.x - 175
+    z = area.center.z - 175
     editor.setBuildArea(Box((x, 0, z), (350, area.size.y, 350)))
 
 area = editor.getBuildArea()
@@ -111,7 +111,7 @@ elif max(biome_counters) == rocky_counter:
 else:
     style = 'japanese'
 
-
+style = 'dwarven'
 
 # set up palettes
 eligible_palettes = list(filter(lambda palette : style in palette.tags, Palette.all()))
@@ -207,7 +207,9 @@ rural_road : PaintPalette = PaintPalette.find('rural_road')
 options = forests + crops
 
 for district in districts:
-    if district.is_urban == False: 
+    if district.is_urban == False:
+        continue
+
         if mountainous and not is_snowy or is_desert:
             choice_list = rng.choose([[None], [None], [None], [None]])
         elif is_snowy and not mountainous:
