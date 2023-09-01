@@ -33,7 +33,8 @@ def build_nbt(
         if block.name == 'minecraft:air' and not place_air:
             continue
 
-        if asset.palette:
+        # don't swap if either are null
+        if asset.palette and palette:
             block = block.copy() # I do this to avoid doubly swapping palettes
             block.name = palette_swap(block.name, asset.palette, palette)
 
@@ -47,7 +48,7 @@ def build_nbt(
         if (not allow_non_solid_replacement) and any(blocktype in block.name for blocktype in ('stairs', 'slab', 'walls', 'fence')):
             curr_block = editor.getBlock(position=(x, y, z))
 
-            if curr_block.id != 'minecraft:air':
+            if 'air' not in curr_block.id:
                 continue
 
         if block.name == 'minecraft:barrier':

@@ -2,8 +2,9 @@ from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec3, ivec2
 from structures.directions import cardinal, get_ivec2, to_text
 from utils.bounds import is_in_bounds2d
+from maps.map import Map
 
-def build_highway(points : list[ivec3], editor : Editor, world_slice: WorldSlice, water_map : list[list[bool]], building_map : list[list[str]]):
+def build_highway(points : list[ivec3], editor : Editor, world_slice: WorldSlice, map : Map):
     master_points       : set[ivec2] = set()
     neighbour_points    : set[ivec2] = set()
     final_point_heights : dict[ivec2, int] = {}
@@ -33,6 +34,10 @@ def build_highway(points : list[ivec3], editor : Editor, world_slice: WorldSlice
     for point in final_point_heights:
         x, z = point
         y = final_point_heights[point] - 1
+
+        # don't place in urban area
+        if map.districts[x][z] is not None and map.districts[x][z].is_urban:
+            continue
 
         editor.placeBlock((x, y, z), blocks[point])
 

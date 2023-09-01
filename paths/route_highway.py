@@ -2,7 +2,9 @@ from gdpc.vector_tools import ivec3, distance
 from gdpc import WorldSlice, Editor
 from structures.directions import all_8, vector
 from paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
+from paths.a_star_debug import a_star_debug
 from utils.bounds import is_in_bounds
+from maps.map import Map
 
 HEURISTIC_WEIGHT = 3
 
@@ -62,7 +64,16 @@ def find_in_betweeners(point_a : ivec3, point_b : ivec3) -> list[ivec3]:
     return points
 
 
-def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_map : list[list[bool]], editor : Editor) -> list[ivec3]:
+def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_debug = False) -> list[ivec3]:
+    end = ivec3(*end) # copy end 
+
+    if end.x % 4 != start.x % 4:
+        end.x = (end.x - end.x % 4) + start.x % 4
+
+    if end.z % 4 != start.z % 4:
+        end.z = (end.z - end.z % 4) + start.z % 4
+
+    end.y = map.height[end.x][end.z]
     
     def get_cost(prev_cost : int, path : list[ivec3]):
         if len(path) == 1:
@@ -75,15 +86,24 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
         path_cost = prev_cost - prev_heuristic
         base_length_cost = 2 # added as length of path increases
 
-        height_diff = abs(last.y - world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][last.x][last.z])
+        height_diff = abs(last.y - map.height[last.x][last.z])
         height_cost = height_diff * 5
 
-        if water_map[last.x][last.z]:
+        district_cost = 0
+        district_at_last = map.districts[last.x][last.z]
+        if district_at_last is not None and district_at_last.is_urban:
+            district_cost += 50
+
+        near_wall_cost = 0
+        if map.near_wall and map.near_wall[last.x][last.z]:
+            near_wall_cost += 10
+
+        if map.water[last.x][last.z]:
             base_length_cost += 30 # WATER COST. Making this big means water gets avoided when possible.
 
         y_diff_penalty = abs(path[-1].y - path[-2].y) * 2
 
-        return path_cost + height_cost + base_length_cost + y_diff_penalty + distance(path[-2], last) + HEURISTIC_WEIGHT * distance(last, end)
+        return path_cost + height_cost + base_length_cost + y_diff_penalty + distance(path[-2], last) + HEURISTIC_WEIGHT * distance(last, end) + district_cost + near_wall_cost
     
     # prefer 4 out neighbours, but will accept 2 out
     def get_neighbours(point : ivec3):
@@ -95,8 +115,8 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
             # First consider 4 out
             neighbour = point + direction_vector * 4
 
-            if is_in_bounds(neighbour, world_slice):
-                actual_neighbour_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.z]
+            if is_in_bounds(neighbour, map.world):
+                actual_neighbour_y = map.height[neighbour.x][neighbour.z]
                 
                 if point.y < actual_neighbour_y - 2:
                     neighbour.y = point.y + 2
@@ -117,8 +137,8 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
             # Then consider 2 out
             neighbour = point + direction_vector * 2
 
-            if is_in_bounds(neighbour, world_slice):
-                neighbour.y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][neighbour.x][neighbour.z]
+            if is_in_bounds(neighbour, map.world):
+                neighbour.y = map.height[neighbour.x][neighbour.z]
 
                 if abs(point.y - neighbour.y) <= 2:
                     neighbours.append(neighbour)
@@ -126,7 +146,10 @@ def route_highway(start : ivec3, end : ivec3, world_slice : WorldSlice, water_ma
                 
         return neighbours
     
-    highway = a_star(start, end, get_neighbours, get_cost)
+    if is_debug:
+        highway = a_star_debug(start, end, get_neighbours, get_cost, editor)
+    else:
+        highway = a_star(start, end, get_neighbours, get_cost)
 
     if highway == COUNTER_LIMIT_EXCEEDED:
         print('Pathfinding took too long: Trying to route to the midpoint')

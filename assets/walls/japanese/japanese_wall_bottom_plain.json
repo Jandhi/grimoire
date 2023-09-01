@@ -6,5 +6,5 @@
     "facing" : "x_minus",
     "palette" : "japanese_dark_blackstone",
     "positions" : ["lower"],
-    "tags" : ["not_roof"]
+    "tags" : ["not_roof", "japanese"]
 }

@@ -148,7 +148,7 @@ def merge_small_blocks(blocks : list[set[ivec2]], block_map : list[list[int]], b
 
     return blocks, block_map
 
-def place_buildings(editor : Editor, block : set[ivec2], map : Map, rng : RNG, is_debug = False):
+def place_buildings(editor : Editor, block : set[ivec2], map : Map, rng : RNG, style='japanese', is_debug = False):
     edges = find_edges(block)
 
     for edge in edges:
@@ -157,9 +157,9 @@ def place_buildings(editor : Editor, block : set[ivec2], map : Map, rng : RNG, i
         if is_debug:
             editor.placeBlock(point_3d(edge, map.world) + y_ivec3(-1), Block('cobblestone_stairs', {'facing' : to_text(build_dir)}))
         
-        place_building(editor, edge, map, build_dir, rng)
+        place_building(editor, edge, map, build_dir, rng, style)
 
-def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed : int, is_debug=False):
+def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed : int, style = 'japanese', is_debug=False):
     rng = RNG(seed, 'add_city_blocks')
 
     urban_area : set[ivec2] = set()
@@ -174,11 +174,14 @@ def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed
 
     bubbles = generate_bubbles(rng, districts, map)
     blocks, block_map, block_adjacency = bubble_out(bubbles, map)
-    # blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
+    blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
 
     inners = []
 
     for i, block in enumerate(blocks):
+        if len(block) < MINIMUM_BLOCK_SZE:
+            continue
+
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:
@@ -193,6 +196,9 @@ def add_city_blocks(editor : Editor, districts : list[District], map : Map, seed
 
     # Has to be done after all inners are found
     for i, block in enumerate(blocks):
-        place_buildings(editor, inners[i], map, block_rng, is_debug)
+        if i >= len(inners):
+            continue
+
+        place_buildings(editor, inners[i], map, block_rng, style, is_debug)
 
         

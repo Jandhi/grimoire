@@ -1,0 +1,5 @@
+{
+    "name" : "clothier",
+    "type" : "primary_industry",
+    "required_tags" : ["plains"]
+}

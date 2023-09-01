@@ -4,7 +4,7 @@ from gdpc import Editor, Block
 # get_neighbours takes state
 # get_cost takes prev_cost and path
 
-COUNTER_LIMIT = 1000000
+COUNTER_LIMIT = 500000
 COUNTER_LIMIT_EXCEEDED = 'counter limit exceeded'
 
 def a_star(start, end, get_neighbours, get_cost) -> list:

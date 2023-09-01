@@ -38,7 +38,9 @@ def log_stems(editor, build_rect, world_slice):
                 elif block_name == 'minecraft:dirt':
                     editor.placeBlock(check_pos, Block("minecraft:grass_block"))
                     continue
-                elif block_name == 'minecraft:grass_block':
+
+                #only continue checking down if its still air and hasn't been caught by the above
+                elif block_name != 'minecraft:air':
                     continue
 
 def log_trees(editor, build_rect, world_slice):
@@ -62,7 +64,8 @@ def log_trees(editor, build_rect, world_slice):
                 elif block_name == 'minecraft:dirt':
                     editor.placeBlock(check_pos, Block("minecraft:grass_block"))
                     continue
-                elif block_name == 'minecraft:grass_block':
+
+                elif block_name != 'minecraft:air':
                     continue
 
 #requires player to fly around to allow minecraft to clear all the foliage, and then set gamerule randomtickspeed to something normal. Still much quicker to clear trees

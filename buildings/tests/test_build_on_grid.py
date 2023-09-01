@@ -2,23 +2,37 @@
 import sys
 sys.path[0] = sys.path[0].removesuffix('\\buildings\\tests')
 
+import numpy as np
+
+SEED = 1293786
+
 # Actual file
 from gdpc.editor import Editor
-from gdpc.vector_tools import ivec3
 from structures.grid import Grid
 from buildings.walls.wall import Wall
-from buildings.roofs.roof import Roof
+#from buildings.roofs.roof import Roof
 from buildings.rooms.room import Room
 
+
 from data.load_assets import load_assets
-from structures.directions import cardinal
+from structures.directions import cardinal, vector as get_ivec3, opposite, right, up, north, east, south, west
 
 from style.style import Style
 from palette.palette import Palette
+from buildings.roofs import Roof
 
-editor = Editor(transformLike=(0, -61, 0), buffering=True, caching=True)
+editor = Editor(buffering=True, caching=True)
+
+from noise.rng import RNG
+
+from gdpc.vector_tools import ivec3
+
+area = editor.getBuildArea()
+editor.transform = (area.begin.x, 3, area.begin.z)
 grid = Grid()
 load_assets('assets')
+
+rng = RNG(SEED, 'get_origins')
 
 styles = {
     'japanese' : {

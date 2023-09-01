@@ -1,0 +1,10 @@
+{
+    "name" : "desert_road",
+    "type" : "paint_palette",
+    "palette" : {
+        "slabs" : {"sandstone_slab": 1},
+        "blocks" : {"sandstone": 3,"sand" : 1},
+        "stairs" : {"sandstone_stairs": 3}
+    },
+    "smooth" : "True"
+}

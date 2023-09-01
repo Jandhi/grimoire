@@ -17,6 +17,7 @@ from buildings.walls.wall import Wall
 from palette.palette import Palette
 from buildings.build_floor import build_floor
 from buildings.tests.random_shape import random_shape
+from buildings.rooms.furnish import furnish
 
 SEED = 243
 
@@ -44,3 +45,4 @@ build_walls(plan, editor, [
     Wall.find('japanese_wall_single_plain'),
     Wall.find('japanese_wall_upper_traps'),
 ], RNG(SEED, 'build_walls'))
+

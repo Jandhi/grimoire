@@ -20,6 +20,7 @@ from buildings.roofs.roof_component import RoofComponent
 from buildings.roofs.build_roof import build_roof
 from buildings.clear_interiors import clear_interiors
 from buildings.tests.random_shape import random_shape
+from buildings.rooms.furnish import furnish
 
 SEED = 654
 
@@ -35,32 +36,22 @@ grid = Grid(origin=ivec3(
 ))
 load_assets('assets')
 
-shape = random_shape(SEED)
+shape = [ivec3(0, 0, 0)]
 
-palette = Palette.find('viking_palette') # Palette.find('japanese_dark_blackstone')
+palette = Palette.find('japanese_dark_blackstone')
 plan = BuildingPlan(shape, grid, palette)
 
 build_roof(plan, editor, [
-    RoofComponent.find('viking_roof_stone_accent_outer_corner'),
-    RoofComponent.find('viking_roof_stone_accent_inner_corner'),
-    RoofComponent.find('viking_roof_stone_accent_side'),
-    #RoofComponent.find('japanese_roof_flat_brick_outer_corner'),
-    #RoofComponent.find('japanese_roof_flat_brick_inner_corner'),
-    #RoofComponent.find('japanese_roof_flat_brick_side'),
+    roof for roof in RoofComponent.all() if 'japanese' in roof.tags
 ], SEED)
 
 clear_interiors(plan, editor)
 build_floor(plan, editor)
 
 walls = [
-    Wall.find('viking_wall_lower_stone_base_window'),
-    Wall.find('viking_wall_upper_logs_window'),
-
-    #Wall.find('japanese_wall_bottom_plain'),
-    #Wall.find('japanese_wall_single_plain'),
-    #Wall.find('japanese_wall_upper_traps'),
-    #Wall.find('japanese_wall_upper_traps_opened'),
+    wall for wall in Wall.all() if 'japanese' in wall.tags
 ]
 
 build_walls(plan, editor, walls, RNG(SEED, 'build_walls'))
 
+furnish([cell.position for cell in plan.cells], RNG(SEED, 'furnish'), grid, editor, palette)

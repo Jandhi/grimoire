@@ -12,6 +12,7 @@ from terrain.set_height import set_height
 from structures.directions import cardinal, vector, up
 from maps.building_map import get_building_map
 from utils.bounds import is_in_bounds
+from maps.map import Map
 
 SEED = 36322
 
@@ -25,8 +26,7 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
-water_map = get_water_map(world_slice)
-building_map = get_building_map(world_slice)
+map = Map(world_slice)
 
 start_x, start_z = 0, 0
 start_y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][start_x][start_z]
@@ -41,6 +41,6 @@ end = ivec3(end_x, end_y, end_z)
 editor.placeBlock(start, Block('minecraft:glowstone'))
 editor.placeBlock(end, Block('minecraft:glowstone'))
 
-highway = route_highway(start, end, world_slice, water_map, editor)
+highway = route_highway(start, end, map, editor, is_debug=True)
 highway = fill_out_highway(highway)
-build_highway(highway, editor, world_slice, water_map, building_map)
+build_highway(highway, editor, world_slice, map)

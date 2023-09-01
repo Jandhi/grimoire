@@ -6,9 +6,6 @@ sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
-from maps.water_map import get_water_map
-from paths.route_highway import route_highway, fill_out_highway
-from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts
 from placement.city_blocks import add_city_blocks
 from maps.map import Map
@@ -20,7 +17,7 @@ from noise.rng import RNG
 
 
 SEED = 0xbabab00e
-DO_TERRAFORMING = True
+DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
 load_assets('assets')
@@ -38,11 +35,11 @@ districts, district_map = generate_districts(SEED, build_rect, world_slice, map.
 map.districts = district_map
 
 # set up palettes
-eligible_palettes = list(filter(lambda palette : 'japanese' in palette.tags, Palette.all()))
+eligible_palettes = list(filter(lambda palette : 'desert' in palette.tags, Palette.all()))
 rng = RNG(SEED, 'palettes')
 
 for district in districts:
-    palettes = eligible_palettes.copy()
+    palettes = [Palette.find('dwarven'), Palette.find('dwarven'), Palette.find('dwarven')]
 
     for i in range(3):    
         district.palettes.append(rng.pop(palettes))
@@ -72,11 +69,5 @@ if DO_TERRAFORMING:
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
-for district in districts:
-    x = district.origin.x
-    z = district.origin.z
-
-    y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10 
-    editor.placeBlock((x, y, z), Block('sea_lantern'))
 
 add_city_blocks(editor, districts, map, SEED, is_debug=True)

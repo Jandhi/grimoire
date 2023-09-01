@@ -10,5 +10,6 @@
         "potatoes[age=6]" : 1,
         "potatoes[age=7]" : 5
     },
-    "smooth" : "False"
+    "smooth" : "False",
+    "tags" : ["crops"]
 }

@@ -8,5 +8,6 @@
         "wheat[age=4]" : 1,
         "wheat[age=5]" : 1
     },
-    "smooth" : "False"
+    "smooth" : "False",
+    "tags" : ["crops"]
 }

@@ -7,8 +7,6 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from districts.generate_districts import generate_districts
 from maps.water_map import get_water_map
-from paths.route_highway import route_highway, fill_out_highway
-from paths.build_highway import build_highway
 from districts.tests.draw_districts import draw_districts
 from placement.city_blocks import add_city_blocks
 from maps.map import Map
@@ -19,7 +17,8 @@ from placement.building_placement import place_building
 from structures.directions import x_plus, x_minus, z_plus, z_minus
 from noise.rng import RNG
 
-SEED = 0x030377
+
+SEED = 0x44444
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
@@ -38,3 +37,4 @@ rng = RNG(SEED)
 
 editor.placeBlock(ivec3(50, -50, 50), Block('glowstone'))
 place_building(editor, ivec2(50, 50), map, z_plus, rng, False)
+
