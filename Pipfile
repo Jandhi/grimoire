@@ -1,16 +1,12 @@
-[[source]]
-url = "https://pypi.org/simple"
-verify_ssl = true
-name = "pypi"
-
 [packages]
-gdpc = {git = "https://github.com/avdstaaij/gdpc"}
+pipenv = "*"
+gdpc = "*"
 colored = "*"
 nbtlib = "*"
 numpy = "*"
-pipenv = "*"
 
 [dev-packages]
 
+
 [requires]
-python_version = "3.10"
+python_version = "3.11"
