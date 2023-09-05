@@ -1,13 +1,19 @@
-from logs.logger import Logger, LoggerSettings
+from logs.logger import Logger, LoggerSettings, LoggingLevel
 from generator.settings import GeneratorSettings
 from generator.benchmarking import Benchmark
+from colored import Fore, Style
 
 class ModuleLogger(Logger):
-    def __init__(self, settings: LoggerSettings | None = None) -> None:
+    def __init__(self, settings: LoggerSettings, module : 'Module') -> None:
         super().__init__(settings)
+        self.module = module
 
-    def format():
-        pass
+    def format(self, text: str, level: LoggingLevel, is_in_console: bool = False) -> str:
+        if not self.settings.print_classname:
+            return super().format(text, level, is_in_console)
+
+        name = f'{Fore.green}{self.module.get_name()}{Style.reset}' if is_in_console else self.module.get_name()
+        return super().format(f'[{name}] {text}', level, is_in_console)
 
 class Module:
     name : str = None
@@ -16,7 +22,7 @@ class Module:
     @property
     def log(self) -> Logger:
         if not self.__logger:
-            self.__logger = Logger(GeneratorSettings.logger_settings)
+            self.__logger = ModuleLogger(GeneratorSettings.logger_settings, self)
 
         return self.__logger
     

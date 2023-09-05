@@ -20,6 +20,7 @@ class LoggerSettings:
     print_to_console : bool
     print_timestamp : bool
     print_level : bool
+    print_classname : bool
     minimum_console_level : LoggingLevel
     minimum_file_level : LoggingLevel
     __file : TextIOWrapper
@@ -28,6 +29,7 @@ class LoggerSettings:
                     print_to_console : bool = True,
                     print_timestamp : bool = False,
                     print_level : bool = True,
+                    print_classname : bool = True,
                     output_file : str | None = None,
                     minimum_console_level : LoggingLevel = LoggingLevel.DEBUG,
                     minimum_file_level : LoggingLevel = LoggingLevel.DEBUG,
@@ -35,6 +37,7 @@ class LoggerSettings:
         self.print_to_console = print_to_console
         self.print_timestamp = print_timestamp
         self.print_level = print_level
+        self.print_classname = print_classname
         self.__output_file = output_file
         self.__file = None
         self.minimum_console_level = minimum_console_level
@@ -74,7 +77,8 @@ class Logger:
         if self.settings.print_level:
             # We don't use colors unless we are in console
             level_str = f'{level.value.color}{level.name}{Style.reset}' if is_in_console else level.name
-            text = f'{level_str}: {text}'
+            buffer = (max(0, 5 - len(level.name))) * ' '
+            text = f'{level_str}:{buffer} {text}'
         
         if self.settings.print_timestamp:
             timestamp = f'{datetime.now().strftime("%H:%M:%S")} - '
