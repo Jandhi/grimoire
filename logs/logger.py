@@ -133,6 +133,10 @@ class Logger:
             self.settings._LoggerSettings__file.write(text)
 
     def progress(self, iterable : Iterable, description : str, position : int = 0, leave=True):
-        output = self.format(description, LoggingLevel.INFO, True)
+        output = self.format(
+            text=description, 
+            level=LoggingLevel.INFO, 
+            is_in_console=True
+        )
 
-        return tqdm(iterable, desc=output, position=position, leave=leave)
+        return tqdm(iterable=iterable, desc=output, position=position, leave=leave)

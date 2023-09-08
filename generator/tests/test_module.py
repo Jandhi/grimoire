@@ -19,8 +19,8 @@ class TestModule2(Module):
 
     @Module.main
     def test(self):
-        self.log.debug('test2')
-        time.sleep(0.4)
+        for _ in self.log.progress(range(5), 'test2'):
+            time.sleep(0.1)
 
 TestModule().test()
 TestModule2().test()

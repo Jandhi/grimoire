@@ -23,7 +23,7 @@ class Module:
     @property
     def log(self) -> Logger:
         if not self.__logger:
-            self.__logger = ModuleLogger(GeneratorSettings.logger_settings, self)
+            self.__logger = ModuleLogger(settings=GeneratorSettings.logger_settings, module=self)
 
         return self.__logger
     
