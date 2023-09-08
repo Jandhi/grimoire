@@ -129,7 +129,7 @@ class Logger:
     def display(self, text : str, console_only=False):
         if self.settings.print_to_console:
             print(text)
-        if self.settings.output_file:
+        if self.settings.output_file and not console_only:
             self.settings._LoggerSettings__file.write(text)
 
     def progress(self, iterable : Iterable, description : str, position : int = 0, leave=True):
