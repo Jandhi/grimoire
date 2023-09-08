@@ -10,9 +10,10 @@ class _LoggingLevel:
     color : str
 
 class LoggingLevel(Enum):
-    CRITICAL = _LoggingLevel(50, Fore.red)
-    ERROR    = _LoggingLevel(40, Fore.light_red)
-    WARNING  = _LoggingLevel(30, Fore.yellow)
+    CRITICAL = _LoggingLevel(60, Fore.red)
+    ERROR    = _LoggingLevel(50, Fore.light_red)
+    WARNING  = _LoggingLevel(40, Fore.yellow)
+    SUCCESS  = _LoggingLevel(30, Fore.green)
     INFO     = _LoggingLevel(20, Fore.cyan)
     DEBUG    = _LoggingLevel(10, Fore.dark_gray)
 
@@ -78,7 +79,7 @@ class Logger:
             # We don't use colors unless we are in console
             level_str = f'{level.value.color}{level.name}{Style.reset}' if is_in_console else level.name
             buffer = (max(0, 5 - len(level.name))) * ' '
-            text = f'{level_str}:{buffer} {text}'
+            text = f'[{level_str}]{buffer} {text}'
         
         if self.settings.print_timestamp:
             timestamp = f'{datetime.now().strftime("%H:%M:%S")} - '
@@ -121,3 +122,9 @@ class Logger:
 
     def critical(self, text : str):
         self.__log(text, LoggingLevel.CRITICAL)
+
+    def display(self, text : str):
+        if self.settings.print_to_console:
+            print(text)
+        if self.settings.output_file:
+            self.settings._LoggerSettings__file.write(text)

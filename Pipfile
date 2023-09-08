@@ -4,6 +4,7 @@ gdpc = "*"
 colored = "*"
 nbtlib = "*"
 numpy = "*"
+tqdm = "*"
 
 [dev-packages]
 

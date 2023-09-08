@@ -13,7 +13,7 @@ class ModuleLogger(Logger):
             return super().format(text, level, is_in_console)
 
         name = f'{Fore.green}{self.module.get_name()}{Style.reset}' if is_in_console else self.module.get_name()
-        return super().format(f'[{name}] {text}', level, is_in_console)
+        return super().format(f'{name}: {text}', level, is_in_console)
 
 class Module:
     name : str = None
@@ -34,14 +34,15 @@ class Module:
         def __init__(self, func) -> None:
             self.func = func
 
+        # When main is bound to the owner, this allows for us to find the owners class
         def __set_name__(self, owner : 'Module', name):
-            # Owner is a type which inherits from Module, but this type annotation will do
+            # Owner is actually a type which inherits from Module, but this type annotation will do
             func = self.func
 
             def my_func(self, *args, **kwargs):
-                Benchmark.time_function(
+                Benchmark.timed(
                     func=func, 
-                    log=self.log.info, 
+                    log=self.log, 
                     class_name=owner.get_name()
                 )(self, *args, **kwargs)
 

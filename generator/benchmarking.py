@@ -2,6 +2,7 @@ from time import time
 from datetime import datetime
 from colored import Fore, Style
 from typing import Callable, TypeVar
+from logs.logger import Logger
 
 T = TypeVar("T")
 
@@ -16,42 +17,43 @@ class Benchmark:
         Benchmark.__time_by_name[name].append(amount)
 
     @staticmethod
-    def log_results(log : Callable[[str], None]) -> None:
-        log('----------')
-        log('BENCHMARK BY CLASS')
+    def log_results(log : Logger) -> None:
+        log.display(f'{Fore.dark_gray}----------{Style.reset}')
+        log.info('BENCHMARK BY CLASS')
 
         longest_name = max(len(name) for name in Benchmark.__time_by_name)
 
-        log(f'{{:{longest_name}}} {{:>7}} {{:>7}}'.format('Name', 'Average', 'Total'))
+        log.info(f'{{:{longest_name}}} {{:>7}} {{:>7}}'.format('Name', 'Average', 'Total'))
 
         for name, times in Benchmark.__time_by_name.items():
             total = sum(times)
             average = total / len(times)
 
-            log(f'{{:{longest_name}}} {{:>7}} {{:>7}}'.format(name, '%.2f' % average, '%.2f' % total))
+            log.info(f'{{:{longest_name}}} {{:>7}} {{:>7}}'.format(name, '%.2f' % average, '%.2f' % total))
 
     @staticmethod
     def print_results() -> None:
-        Benchmark.log_results(print)
+        Benchmark.log_results(Logger())
 
     '''
     Adds a timer to method, logs time elapsed
     '''
     @staticmethod
-    def time_function(func : T, log : Callable[[str], None], class_name : str) -> T:
+    def timed(func : T, log : Logger, class_name : str) -> T:
         name = f'{Fore.green}{class_name}{Style.reset}'
         
         def inner(*args, **kwargs):
             start_time = time()
 
-            log(f'{name} started')
+            log.display(f'{Fore.dark_gray}----------{Style.reset}')
+            log.info(f'{name} started')
 
             func(*args, **kwargs)
             
             end_time = time()
             time_elapsed = end_time - start_time
 
-            log(f'{name} finished after {"%.2f" % time_elapsed} seconds')
+            log.info(f'{name} finished after {"%.2f" % time_elapsed} seconds')
             Benchmark.add_time(class_name, time_elapsed)
         
         return inner
