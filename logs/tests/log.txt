@@ -1,2 +1,2 @@
-20:43:04 - INFO: Test
-20:43:04 - ERROR: Test
+16:07:50 - [DEBUG] Debug
+16:07:50 - [ERROR] Error

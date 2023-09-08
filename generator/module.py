@@ -3,6 +3,7 @@ from generator.settings import GeneratorSettings
 from generator.benchmarking import Benchmark
 from colored import Fore, Style
 
+
 class ModuleLogger(Logger):
     def __init__(self, settings: LoggerSettings, module : 'Module') -> None:
         super().__init__(settings)

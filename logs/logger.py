@@ -3,6 +3,8 @@ from colored import Fore, Style
 from dataclasses import dataclass
 from datetime import datetime
 from io import TextIOWrapper
+from tqdm import tqdm
+from typing import Iterable
 
 @dataclass
 class _LoggingLevel:
@@ -123,8 +125,14 @@ class Logger:
     def critical(self, text : str):
         self.__log(text, LoggingLevel.CRITICAL)
 
-    def display(self, text : str):
+    # skips log formatting
+    def display(self, text : str, console_only=False):
         if self.settings.print_to_console:
             print(text)
         if self.settings.output_file:
             self.settings._LoggerSettings__file.write(text)
+
+    def progress(self, iterable : Iterable, description : str, position : int = 0, leave=True):
+        output = self.format(description, LoggingLevel.INFO, True)
+
+        return tqdm(iterable, desc=output, position=position, leave=leave)
