@@ -14,7 +14,7 @@ from data.load_assets import load_assets
 from terrain.smooth_edges import smooth_edges
 from terrain.plateau import plateau
 from placement.building_placement import place_building
-from structures.directions import x_plus, x_minus, z_plus, z_minus
+from structures.legacy_directions import x_plus, x_minus, z_plus, z_minus
 from noise.rng import RNG
 
 

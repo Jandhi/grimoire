@@ -1,6 +1,6 @@
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec3, ivec2
-from structures.directions import cardinal, get_ivec2, to_text
+from structures.legacy_directions import cardinal, get_ivec2, to_text
 from utils.bounds import is_in_bounds2d
 from maps.map import Map
 

@@ -1,148 +1,257 @@
+class Direction2D:
+    x : int
+    z : int
 
-from gdpc.vector_tools import ivec2, ivec3
+    def __init__(self, x : int, z : int) -> None:
+        self.x = x
+        self.z = z
 
-Direction = str
+    # Array access
+    def __getitem__(self, index : int) -> int:
+        return [self.x, self.z][index]
+    
+    def __setitem__(self, index : int, value : int) -> None:
+        if index == 0:
+            self.x = value
+        elif index == 1:
+            self.z = value
 
-# By Axis
-x_plus  = 'x_plus'
-x_minus = 'x_minus'
-y_plus  = 'y_plus'
-y_minus = 'y_minus'
-z_plus  = 'z_plus'
-z_minus = 'z_minus'
+    # Unary
+    def __neg__(self) -> 'Direction2D':
+        return Direction2D(-self.x, -self.z)
+    
+    def __pos__(self) -> 'Direction2D':
+        return Direction2D(self.x, self.z)
+    
+    def __abs__(self) -> 'Direction2D':
+        return Direction2D(*map(abs, self))
+    
+    # Equality
+    def __eq__(self, other : any) -> bool:
+        return self.x == other[0] and \
+               self.z == other[1]
+    def __ne__(self, other : any) -> bool:
+        return self.x != other[0] or \
+               self.z != other[1]
 
-# By Name
-north = z_minus
-east = x_plus
-south = z_plus
-west = x_minus
-up = y_plus
-down = y_minus
-cardinal = (north, east, south, west)
+    # Adding
+    def __add__(self, other) -> 'Direction2D':
+        return Direction2D(self.x + other[0], self.z + other[1])
+    
+    def __radd__(self, other) -> 'Direction2D':
+        return Direction2D(self.x + other[0], self.z + other[1])
+    
+    def __iadd__(self, other) -> 'Direction2D':
+        self.x += other[0]
+        self.z += other[1]
 
-# Compound Directions
-northeast = north + ' and ' + east
-northwest = north + ' and ' + west
-southwest = south + ' and ' + west
-southeast = south + ' and ' + east
-all_8 = (north, east, south, west, northeast, northwest, southwest, southeast)
+    # Subtracting
+    def __sub__(self, other) -> 'Direction2D':
+        return Direction2D(self.x - other[0], self.z - other[1])
+    
+    def __rsub__(self, other) -> 'Direction2D':
+        return Direction2D(other[0] - self.x, other[1] - self.z)
+    
+    def __isub__(self, other) -> 'Direction2D':
+        self.x -= other[0]
+        self.z -= other[1]
 
-directions = (north, east, south, west, up, down)
+    # Multiplication
+    def __mul__(self, value : int) -> 'Direction2D':
+        return Direction2D(self.x * value, self.z * value)
+    
+    def __rmul__(self, value : int) -> 'Direction2D':
+        return Direction2D(value * self.x, value * self.z)
+    
+    # Turns
+    def opposite(self) -> 'Direction2D':
+        return -self
+    
+    def right(self) -> 'Direction2D':
+        return Direction2D(-self.z, self.x)
+    
+    def left(self) -> 'Direction2D':
+        return Direction2D(self.z, -self.x)
+    
+    # Utility
+    def __hash__(self):
+        return hash(tuple(self))
+    
+    def to_3D(self) -> 'Direction':
+        return Direction(self.x, 0, self.z)
+    
+    # Display
+    def __repr__(self) -> str:
+        return f'Dir2D({self.x}, {self.z})'
 
-opposites = {
-    x_plus : x_minus,
-    x_minus : x_plus,
-    y_plus : y_minus,
-    y_minus : y_plus,
-    z_plus : z_minus,
-    z_minus : z_plus
-}
-def opposite(direction):
-    return opposites[direction]
+    def text(self) -> str:
+        if self.to_3D() == Directions.North:
+            return 'north'
+        if self.to_3D() == Directions.South:
+            return 'south'
+        if self.to_3D() == Directions.East:
+            return 'east'
+        if self.to_3D() == Directions.West:
+            return 'west'
+        
+        raise ValueError(f'Direction {self} can\'t be converted to text')
 
-vectors = {
-    x_plus  : ivec3(1, 0, 0),
-    x_minus : ivec3(-1, 0, 0),
-    y_plus  : ivec3(0, 1, 0),
-    y_minus : ivec3(0, -1, 0),
-    z_plus  : ivec3(0, 0, 1),
-    z_minus : ivec3(0, 0, -1)
-}
+class Direction:
+    x : int
+    y : int
+    z : int
 
-for dir1, dir2, compound in (
-    (north, east, northeast),
-    (north, west, northwest),
-    (south, west, southwest),
-    (south, east, southeast),
-):
-    vectors[compound] = vectors[dir1] + vectors[dir2]
+    def __init__(self, x : int, y : int, z : int) -> None:
+        self.x = x
+        self.y = y
+        self.z = z
 
-def vector(direction : Direction) -> ivec3:
-    return vectors[direction]
-def get_ivec2(direction : Direction) -> ivec2:
-    tup = vector(direction)
-    return ivec2(tup[0], tup[2])
+    # Array access
+    def __getitem__(self, index : int) -> int:
+        return [self.x, self.y, self.z][index]
+    
+    def __setitem__(self, index : int, value : int) -> None:
+        if index == 0:
+            self.x = value
+        elif index == 1:
+            self.y = value
+        elif index == 2:
+            self.z = value
 
-text_dict = {
-    north : 'north',
-    east  : 'east',
-    south : 'south',
-    west  : 'west',
-    up    : 'up',
-    down  : 'down',
-}
-def to_text(direction):
-    return text_dict[direction]
+    # Unary
+    def __neg__(self) -> 'Direction':
+        return Direction(-self.x, -self.y, -self.z)
+    
+    def __pos__(self) -> 'Direction':
+        return Direction(self.x, self.y, self.z)
+    
+    def __abs__(self) -> 'Direction':
+        return Direction(*map(abs, self))
+    
+    # Equality
+    def __eq__(self, other : any) -> bool:
+        return self.x == other[0] and \
+               self.y == other[1] and \
+               self.z == other[2]
+    def __ne__(self, other : any) -> bool:
+        return self.x != other[0] or \
+               self.y != other[1] or \
+               self.z != other[2]
 
-from_text_dict = {
-    'north' : north,
-    'east'  : east,
-    'south' : south,
-    'west'  : west,
-    'up'    : up,
-    'down'  : down,
-}
-def from_text(text : str):
-    return from_text_dict[text]
+    # Adding
+    def __add__(self, other) -> 'Direction':
+        return Direction(self.x + other[0], self.y + other[1], self.z + other[2])
+    
+    def __radd__(self, other) -> 'Direction':
+        return Direction(self.x + other[0], self.y + other[1], self.z + other[2])
+    
+    def __iadd__(self, other) -> 'Direction':
+        self.x += other[0]
+        self.y += other[1]
+        self.z += other[2]
 
-forwards = {
-    north : north,
-    east : east,
-    south : south,
-    west: west
-}
-right = {
-    north: east,
-    east: south,
-    south: west,
-    west: north,
-}
-left = {
-    north: west,
-    west: south,
-    south: east,
-    east: north,
-}
+    # Subtracting
+    def __sub__(self, other) -> 'Direction':
+        return Direction(self.x - other[0], self.y - other[1], self.z - other[2])
+    
+    def __rsub__(self, other) -> 'Direction':
+        return Direction(other[0] - self.x, other[1] - self.y, other[2] - self.z)
+    
+    def __isub__(self, other) -> 'Direction':
+        self.x -= other[0]
+        self.y -= other[1]
+        self.z -= other[2]
 
-backwards = opposites
+    # Multiplication
+    def __mul__(self, value : int) -> 'Direction':
+        return Direction(self.x * value, self.y * value, self.z * value)
+    
+    def __rmul__(self, value : int) -> 'Direction':
+        return Direction(value * self.x, value * self.y, value * self.z)
+    
+    # Turns
+    def opposite(self) -> 'Direction':
+        return -self
+    
+    def right(self) -> 'Direction':
+        return Direction(-self.z, self.y, self.x)
+    
+    def left(self) -> 'Direction':
+        return Direction(self.z, self.y, -self.x)
+    
+    # Utility
+    def __hash__(self):
+        return hash(tuple(self))
+    
+    def to_2D(self) -> Direction2D:
+        return Direction2D(self.x, self.z)
+    
+    # Display
+    def __repr__(self) -> str:
+        return f'Dir({self.x}, {self.y}, {self.z})'
 
-from_ivec2_dict = {
-    ivec2(0,-1) : north,
-    ivec2(0,1) : south,
-    ivec2(1,0) : east,
-    ivec2(-1,0) : west,
-}
+    def text(self) -> str:
+        if self == Directions.North:
+            return 'north'
+        if self == Directions.South:
+            return 'south'
+        if self == Directions.East:
+            return 'east'
+        if self == Directions.West:
+            return 'west'
+        if self == Directions.Up:
+            return 'up'
+        if self == Directions.Down:
+            return 'down'
+        
+        raise ValueError(f'Direction {self} can\'t be converted to text')
 
-def ivec2_to_dir(iv2 : ivec2):
-    return from_ivec2_dict[iv2]
+class Directions2D:
+    Zero = Direction2D(0, 0)
 
-from_ivec3_dict = {
-    ivec3(0,0,-1) : north,
-    ivec3(0,0,1) : south,
-    ivec3(1,0,0) : east,
-    ivec3(-1,0,0) : west,
-}
+    XPlus = Direction2D(1, 0)
+    XMinus = Direction2D(-1, 0)
+    ZPlus = Direction2D(0, 1)
+    ZMinus = Direction2D(0, -1)
 
-def ivec3_to_dir(iv3 : ivec3):
-    return from_ivec3_dict[iv3]
+    East = XPlus
+    West = XMinus
+    South = ZPlus
+    North = ZMinus
 
-x_mirror = {
-    x_plus : x_minus,
-    x_minus : x_plus,
-    z_plus : z_plus,
-    z_minus : z_minus,
-}
+    Northeast = North + East
+    Northwest = North + West
+    Southeast = South + East
+    Southwest = South + West
 
-z_mirror = {
-    x_plus : x_plus,
-    x_minus : x_minus,
-    z_plus : z_minus,
-    z_minus : z_plus,
-}
+    Cardinal = [North, East, South, West]
+    Diagonals = [Northeast, Northwest, Southeast, Southwest]
+    All8 = Cardinal + Diagonals
 
-x_z_flip = {
-    x_plus : z_plus,
-    x_minus : z_minus,
-    z_plus : x_plus,
-    z_minus : x_minus,
-}
+class Directions:
+    Zero = Direction(0, 0, 0)
+
+    XPlus = Direction(1, 0, 0)
+    XMinus = Direction(-1, 0, 0)
+    YPlus = Direction(0, 1, 0)
+    YMinus = Direction(0, -1, 0)
+    ZPlus = Direction(0, 0, 1)
+    ZMinus = Direction(0, 0, -1)
+    
+    East = XPlus
+    West = XMinus
+    Up = YPlus
+    Down = YMinus
+    South = ZPlus
+    North = ZMinus
+
+    Northeast = North + East
+    Northwest = North + West
+    Southeast = South + East
+    Southwest = South + West
+
+    Cardinal = [North, East, South, West]
+    Diagonals = [Northeast, Northwest, Southeast, Southwest]
+    Orthoginal = Cardinal + [Up, Down]
+    All8 = Cardinal + Diagonals
+    Omni = [Direction(*(i % 3 - 1, (i // 3) % 3 - 1, i // 9 - 1)) for i in range(1, 27)]

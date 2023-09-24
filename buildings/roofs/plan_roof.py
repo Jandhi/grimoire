@@ -1,5 +1,5 @@
 from buildings.building_plan import BuildingPlan
-from structures.directions import cardinal
+from structures.legacy_directions import cardinal
 from buildings.cell import Cell
 from buildings.roofs.roof_component import SIDE, CORNER, INNER
 

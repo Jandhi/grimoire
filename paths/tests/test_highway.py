@@ -9,7 +9,7 @@ from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
 from maps.water_map import get_water_map
 from terrain.set_height import set_height
-from structures.directions import cardinal, vector, up
+from structures.legacy_directions import cardinal, vector, up
 from maps.building_map import get_building_map
 from utils.bounds import is_in_bounds
 from maps.map import Map

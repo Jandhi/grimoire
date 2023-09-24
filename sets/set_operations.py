@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2, distance2
 from math import atan, pi
-from structures.directions import cardinal, get_ivec2, left, right
+from structures.legacy_directions import cardinal, get_ivec2, left, right
 
 def midpoint(points : set[ivec2]) -> ivec2:
     return sum(points) / len(points)
