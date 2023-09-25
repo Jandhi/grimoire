@@ -14,7 +14,7 @@ from districts.tests.draw_districts import draw_districts
 from palette.palette import Palette
 from data.load_assets import load_assets
 
-SEED = 2
+SEED = 7
 
 editor = Editor(buffering=True, caching=True)
 #editor.doBlockUpdates(value = False)
@@ -71,14 +71,15 @@ for x in range(build_rect.size.x):
             inner_points.append(ivec2(x,z))
 
 wall_points, wall_dict = get_outer_points(inner_points, world_slice)
-wall_points = order_wall_points(wall_points, wall_dict)
+wall_points_list = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
 palette = Palette.find('japanese_dark_blackstone')
 
 #uncomment one of these to test one of the three wall types
 
-build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map, rng, palette)
+for wall_points in wall_points_list:
+    build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map, rng, palette)
 #build_wall_palisade(wall_points, editor, world_slice, water_map, rng, palette)
 #build_wall_standard(wall_points, wall_dict, inner_points, editor, world_slice, water_map, palette)
 

@@ -161,7 +161,7 @@ for x in range(build_rect.size.x):
             inner_points.append(ivec2(x,z))
 
 wall_points, wall_dict = get_wall_points(inner_points, world_slice)
-wall_points = order_wall_points(wall_points, wall_dict)
+wall_points_list = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
 palette = rng.choose(eligible_palettes)
@@ -186,7 +186,8 @@ add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
 
 #uncomment one of these to test one of the three wall types
 
-build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, map.world, map.water, rng, palette)
+for wall_points in wall_points_list:
+    build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, map.water, rng, palette)
 #build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 #build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 

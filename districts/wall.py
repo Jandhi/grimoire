@@ -32,15 +32,16 @@ def find_wall_neighbour(current : ivec2, wall_dict : dict, ordered_wall_dict : d
 
 #orders the list of wall points based off the first point in the list
 #TODO we should probably put helpers below other functions
-def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[ivec2]:
+def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[ivec2]]:
     ordered_wall_points: list[ivec2] = []
+    list_of_ordered_wall_points: list[list[ivec2]] = []
     ordered_wall_dict: dict() = {}
     reverse_checked = False
 
-    ordered_wall_points.append(wall_points[0])
-    ordered_wall_dict[wall_points[0]] = True
+    ordered_wall_points.append(wall_points.pop(0))
+    ordered_wall_dict[ordered_wall_points[0]] = True
     current_wall_point = ordered_wall_points[0]
-    while len(ordered_wall_points) != len(wall_points):
+    while len(wall_points) >0:
         next_wall_point = find_wall_neighbour(current_wall_point, wall_dict, ordered_wall_dict)
         if next_wall_point == None: #error case, clean stopping
             if reverse_checked == False: #after the first error, we reverse list and check the other way
@@ -50,14 +51,22 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[ivec2]:
                 current_wall_point = ordered_wall_points[-1]
             else:
                 print('failed')
-                break
+                reverse_checked = False
+                if(len(ordered_wall_points)>20): #prevent weird small wall segements, test again to see if its improvement or not
+                    list_of_ordered_wall_points.append(ordered_wall_points)
+                ordered_wall_points = []
+                ordered_wall_points.append(wall_points.pop(0))
+                ordered_wall_dict[ordered_wall_points[0]] = True
+                current_wall_point = ordered_wall_points[0]
         else:
             #print(next_wall_point)
+            wall_points.remove(next_wall_point)
             ordered_wall_points.append(next_wall_point)
             ordered_wall_dict[next_wall_point] = True
             current_wall_point = next_wall_point
 
-    return ordered_wall_points
+    list_of_ordered_wall_points.append(ordered_wall_points)
+    return list_of_ordered_wall_points
 
 #currently not in use, adapt this function to point to the appropriate further build wall likely in the future
 def build_wall(wall_points: list[ivec2], wall_dict: dict, editor : Editor, world_slice : WorldSlice, rng : RNG, wall_type : str) -> list[Gate]:
