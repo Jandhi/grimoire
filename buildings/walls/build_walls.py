@@ -1,6 +1,6 @@
 from buildings.building_plan import BuildingPlan
 from buildings.cell import Cell
-from structures.directions import cardinal, vector, Direction, up
+from structures.legacy_directions import cardinal, vector, Direction, up
 from gdpc.editor import Editor
 from dataclasses import dataclass
 from buildings.walls.wall import Wall, LOWER, UPPER

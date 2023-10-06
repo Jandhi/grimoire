@@ -1,4 +1,4 @@
-from structures.directions import Direction
+from structures.legacy_directions import Direction
 from random import seed
 from random import randint
 from structures.market.goods import *

@@ -1,6 +1,6 @@
 
 from dataclasses import dataclass
-from structures.directions import Direction, vector
+from structures.legacy_directions import Direction, vector
 from gdpc.vector_tools import ivec3
 from buildings.roofs.roof_data import RoofData
 

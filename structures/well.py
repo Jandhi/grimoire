@@ -1,7 +1,7 @@
 
 from random import randint, seed
 from gdpc import Editor, Block
-from structures.directions import north, east, west, south, get_ivec2, Direction, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
+from structures.legacy_directions import north, east, west, south, get_ivec2, Direction, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
 from gdpc.vector_tools import ivec3
 from utils.setblock import place_block
 

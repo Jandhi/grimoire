@@ -3,7 +3,7 @@ from buildings.building_plan import BuildingPlan
 from structures.grid import Grid
 from gdpc.vector_tools import ivec3
 from buildings.roofs.roof_component import RoofComponent, CORNER, INNER, SIDE
-from structures.directions import north, south, east, west, left, right, opposites, x_minus, up
+from structures.legacy_directions import north, south, east, west, left, right, opposites, x_minus, up
 from utils.vectors import y_ivec3
 from structures.nbt.build_nbt import build_nbt
 from structures.transformation import Transformation

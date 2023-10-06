@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2, ivec3, vec2
 from maps.map import Map
-from structures.directions import z_minus, z_plus, x_minus, x_plus, cardinal, get_ivec2
+from structures.legacy_directions import z_minus, z_plus, x_minus, x_plus, cardinal, get_ivec2
 from structures.grid import Grid
 from buildings.building_shape import BuildingShape
 from maps.building_map import CITY_WALL, BUILDING, CITY_ROAD

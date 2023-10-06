@@ -1,6 +1,6 @@
 from gdpc import WorldSlice
 from districts.district import District
-from structures.directions import cardinal, get_ivec2, vector
+from structures.legacy_directions import cardinal, get_ivec2, vector
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3, Box
 
 # Tells the districts what neighbours they have and why

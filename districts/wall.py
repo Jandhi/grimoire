@@ -3,7 +3,7 @@ from noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from gdpc import WorldSlice
-from structures.directions import north, east, west, south, get_ivec2, directions, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
+from structures.legacy_directions import north, east, west, south, get_ivec2, directions, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
 from utils.geometry import get_neighbours_in_set, is_straight_ivec2, is_point_surrounded_dict, is_straight_not_diagonal_ivec2, get_outer_points
 from utils.misc import is_water
 from structures.nbt.build_nbt import build_nbt

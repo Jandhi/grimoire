@@ -15,7 +15,7 @@ from buildings.rooms.room import Room
 
 
 from data.load_assets import load_assets
-from structures.directions import cardinal, vector as get_ivec3, opposite, right, up, north, east, south, west
+from structures.legacy_directions import cardinal, vector as get_ivec3, opposite, right, up, north, east, south, west
 
 from style.style import Style
 from palette.palette import Palette

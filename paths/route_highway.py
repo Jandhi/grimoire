@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec3, distance
 from gdpc import WorldSlice, Editor
-from structures.directions import all_8, vector
+from structures.legacy_directions import all_8, vector
 from paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
 from paths.a_star_debug import a_star_debug
 from utils.bounds import is_in_bounds

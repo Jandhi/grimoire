@@ -1,6 +1,6 @@
 from structures.transformation import Transformation
 from structures.nbt.build_nbt import build_nbt
-from structures.directions import left, right, opposites, x_minus
+from structures.legacy_directions import left, right, opposites, x_minus
 from structures.nbt.build_nbt import build_nbt
 from structures.transformation import Transformation
 from gdpc.editor import Editor
