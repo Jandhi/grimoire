@@ -1,10 +1,9 @@
 from buildings.building_plan import BuildingPlan
 from buildings.cell import Cell
-from structures.legacy_directions import cardinal, vector, Direction, up
+from structures.legacy_directions import cardinal, Direction, up
 from gdpc.editor import Editor
-from dataclasses import dataclass
 from buildings.walls.wall import Wall, LOWER, UPPER
-from noise.rng import RNG
+from core.noise.rng import RNG
 from structures.grid import Grid
 
 NOT_ROOF = 'not_roof'

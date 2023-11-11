@@ -4,17 +4,12 @@ sys.path[0] = sys.path[0].removesuffix('\\structures\\tests')
 
 # Actual file
 from gdpc.editor import Editor
-from structures.nbt.build_nbt import build_nbt
-from structures.nbt.nbt_asset import NBTAsset
-from palette.palette import Palette
-from structures.transformation import Transformation
-from data.load_assets import load_assets
+from core.assets.load_assets import load_assets
 from structures.asset_structure import AssetStructure
 from gdpc.vector_tools import ivec3
 from terrain.water_map import get_water_map
 from terrain.build_map import get_build_map
-from structures.well import Well
-from structures.market.market import Market, Small_Market
+from structures.market.market import Market
 
 SEED = 2
 

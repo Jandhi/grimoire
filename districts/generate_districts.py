@@ -1,4 +1,4 @@
-from noise.rng import RNG
+from core.noise.rng import RNG
 from districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from structures.legacy_directions import cardinal, vector

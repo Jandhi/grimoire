@@ -1,7 +1,7 @@
 from structures.block import Block
 from gdpc.vector_tools import ivec3
 
-# A class derived from an NBT file, data describing something built in minecraft
+# A class derived from an NBT file, assets describing something built in minecraft
 # Used to actually construct NBT structures
 class Structure:
     def __init__(self, 

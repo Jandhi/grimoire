@@ -2,8 +2,8 @@ from structures.market.stall import *
 from gdpc import Editor, Block
 from random import seed
 from random import randint
-from structures.legacy_directions import north, east, west, south, get_ivec2, Direction, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
-from utils.setblock import place_block, summon_entity
+from structures.legacy_directions import north, east, west, south, left, right, to_text, opposite
+from core.utils.setblock import place_block, summon_entity
 from gdpc.vector_tools import ivec3
 
 class StallGenerator():

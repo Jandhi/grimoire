@@ -1,5 +1,5 @@
 from structures.nbt.nbt_asset import NBTAsset
-from data.asset import asset_defaults
+from core.assets.asset import asset_defaults
 from structures.legacy_directions import x_minus
 
 # Roof Component Types

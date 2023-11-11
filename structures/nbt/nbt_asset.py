@@ -1,4 +1,4 @@
-from data.asset import Asset, asset_defaults
+from core.assets.asset import Asset, asset_defaults
 from palette.palette import Palette
 from gdpc.vector_tools import ivec3
 

@@ -1,7 +1,7 @@
 from gdpc import Editor, Block, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
-from noise.rng import RNG
-from noise.random import choose_weighted, shuffle
+from core.noise.rng import RNG
+from core.noise.random import choose_weighted, shuffle
 from terrain.tree import generate_tree
 from structures.legacy_directions import cardinal, get_ivec2, to_text
 from terrain.forest import Forest

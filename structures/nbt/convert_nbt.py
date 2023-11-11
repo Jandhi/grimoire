@@ -1,3 +1,5 @@
+import sys
+
 from nbtlib import nbt, serialize_tag
 from structures.structure import Structure
 from structures.block import Block
@@ -5,7 +7,7 @@ from gdpc.vector_tools import ivec3
 
 # Converts an nbt file into a more legible Structure object
 def convert_nbt(filename : str) -> Structure:
-    file = nbt.load(filename)
+    file = nbt.load(sys.path[0] + '/' + filename)
     blocks, dimensions = __read_blocks_and_dimensions(file['blocks'])
     entities = __read_entities(file['entities'])
     palette = []
