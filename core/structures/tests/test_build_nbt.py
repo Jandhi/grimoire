@@ -4,11 +4,10 @@ sys.path[0] = sys.path[0].removesuffix('\\structures\\tests')
 
 # Actual file
 from gdpc.editor import Editor
-from gdpc.editor_tools import centerBuildAreaOnPlayer
-from structures.nbt.build_nbt import build_nbt
-from structures.nbt.nbt_asset import NBTAsset
+from core.structures.nbt.build_nbt import build_nbt
+from core.structures.nbt.nbt_asset import NBTAsset
 from palette.palette import Palette
-from structures.transformation import Transformation
+from core.structures.transformation import Transformation
 
 
 editor = Editor(transformLike=(0, -60, 0), buffering=True, caching=True)

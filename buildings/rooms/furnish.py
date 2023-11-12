@@ -1,10 +1,10 @@
 # Actual file
 from gdpc.editor import Editor, Block
-from structures.grid import Grid
+from core.structures.grid import Grid
 #from buildings.roofs.roof import Roof
 from buildings.rooms.room import Room
 
-from structures.legacy_directions import cardinal, vector as get_ivec3, right, up, north, east, south, west
+from core.structures.legacy_directions import cardinal, vector as get_ivec3, right, up, north, east, south, west
 
 from palette.palette import Palette
 from core.noise.rng import RNG

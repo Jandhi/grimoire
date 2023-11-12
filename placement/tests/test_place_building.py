@@ -8,7 +8,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from core.maps.map import Map
 from core.assets.load_assets import load_assets
 from placement.building_placement import place_building
-from structures.legacy_directions import z_plus
+from core.structures.legacy_directions import z_plus
 from core.noise.rng import RNG
 
 

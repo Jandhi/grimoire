@@ -6,14 +6,14 @@ SEED = 1293786
 
 # Actual file
 from gdpc.editor import Editor
-from structures.grid import Grid
+from core.structures.grid import Grid
 from buildings.walls.wall import Wall
 #from buildings.roofs.roof import Roof
 from buildings.rooms.room import Room
 
 
 from core.assets.load_assets import load_assets
-from structures.legacy_directions import cardinal
+from core.structures.legacy_directions import cardinal
 
 from palette.palette import Palette
 from buildings.roofs import Roof

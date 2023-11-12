@@ -21,7 +21,7 @@ from paths.route_highway import route_highway, fill_out_highway
 from paths.build_highway import build_highway
 from gdpc.geometry import line3D
 from core.utils.vectors import y_ivec3
-from structures.legacy_directions import get_ivec2
+from core.structures.legacy_directions import get_ivec2
 
 SEED = 77273
 DO_TERRAFORMING = False

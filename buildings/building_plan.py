@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from structures.grid import Grid
+from core.structures.grid import Grid
 from buildings.legacycell import LegacyCell
 from gdpc.vector_tools import ivec3
 from palette.palette import Palette

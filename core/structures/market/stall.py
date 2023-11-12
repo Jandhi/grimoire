@@ -1,7 +1,7 @@
-from structures.legacy_directions import Direction
+from core.structures.legacy_directions import Direction
 from random import seed
 from random import randint
-from structures.market.goods import *
+from core.structures.market.goods import *
 RANDOM = 'random'
 BASIC = 'basic'
 TRAPDOOR = 'trapdoor'

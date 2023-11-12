@@ -1,7 +1,7 @@
 from gdpc.vector_tools import ivec3
 
 from buildings.roofs.roof_data import RoofData
-from structures.legacy_directions import Direction, vector
+from core.structures.legacy_directions import Direction, vector
 
 
 # Class to store assets for cells in a building grid

@@ -5,11 +5,11 @@ sys.path[0] = sys.path[0].removesuffix('\\structures\\tests')
 # Actual file
 from gdpc.editor import Editor
 from core.assets.load_assets import load_assets
-from structures.asset_structure import AssetStructure
+from core.structures.asset_structure import AssetStructure
 from gdpc.vector_tools import ivec3
 from terrain.water_map import get_water_map
 from terrain.build_map import get_build_map
-from structures.market.market import Market
+from core.structures.market.market import Market
 
 SEED = 2
 

@@ -2,7 +2,7 @@
 import sys
 sys.path[0] = sys.path[0].removesuffix('\\structures\\tests')
 
-from structures.directions import Directions
+from core.structures.directions import Directions
 
 assert(Directions.North - Directions.North == Directions.Zero)
 assert(Directions.North * 0 == Directions.Zero)

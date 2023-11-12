@@ -1,8 +1,8 @@
 import sys
 
 from nbtlib import nbt, serialize_tag
-from structures.structure import Structure
-from structures.block import Block
+from core.structures.structure import Structure
+from core.structures.block import Block
 from gdpc.vector_tools import ivec3
 
 # Converts an nbt file into a more legible Structure object

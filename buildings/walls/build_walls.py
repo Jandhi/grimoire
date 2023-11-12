@@ -1,10 +1,10 @@
 from buildings.building_plan import BuildingPlan
 from buildings.legacycell import LegacyCell
-from structures.legacy_directions import cardinal, Direction, up
+from core.structures.legacy_directions import cardinal, Direction, up
 from gdpc.editor import Editor
 from buildings.walls.wall import Wall, LOWER, UPPER
 from core.noise.rng import RNG
-from structures.grid import Grid
+from core.structures.grid import Grid
 
 NOT_ROOF = 'not_roof'
 ONLY_ROOF = 'only_roof'

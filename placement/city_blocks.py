@@ -4,7 +4,7 @@ from gdpc.vector_tools import ivec2, ivec3, distance2
 from core.utils.sets.set_operations import calculate_stretch, find_edges, find_outer_direction
 from core.utils.sets.find_outer_points import find_outer_and_inner_points
 from core.noise.rng import RNG
-from structures.legacy_directions import cardinal, get_ivec2, to_text
+from core.structures.legacy_directions import cardinal, get_ivec2, to_text
 from core.utils.bounds import is_in_bounds2d
 from core.utils.vectors import point_3d, y_ivec3
 from core.maps.map import Map

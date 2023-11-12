@@ -1,4 +1,4 @@
-from structures.nbt.nbt_asset import NBTAsset
+from core.structures.nbt.nbt_asset import NBTAsset
 from buildings.walls.wall import Wall
 from core.assets.asset import default_subtype
 

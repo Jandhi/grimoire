@@ -1,11 +1,8 @@
-from structures.transformation import Transformation
-from structures.nbt.build_nbt import build_nbt
-from structures.legacy_directions import left, right, opposites, x_minus
-from structures.nbt.build_nbt import build_nbt
-from structures.transformation import Transformation
+from core.structures.legacy_directions import left, right, opposites
+from core.structures.nbt.build_nbt import build_nbt
+from core.structures.transformation import Transformation
 from gdpc.editor import Editor
-from gdpc.nbt_tools import nbt
-from structures.nbt.nbt_asset import NBTAsset
+from core.structures.nbt.nbt_asset import NBTAsset
 from palette.palette import Palette
 from gdpc.vector_tools import ivec3, ivec2
 from collections.abc import Iterator 

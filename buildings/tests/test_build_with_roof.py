@@ -5,7 +5,7 @@ sys.path[0] = sys.path[0].removesuffix('\\buildings\\tests')
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
-from structures.grid import Grid
+from core.structures.grid import Grid
 from core.assets.load_assets import load_assets
 from buildings.building_plan import BuildingPlan
 from buildings.walls.build_walls import build_walls

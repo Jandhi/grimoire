@@ -1,5 +1,5 @@
-from structures.market.stall_generator import StallGenerator
-from structures.market.stall import Stall
+from core.structures.market.stall_generator import StallGenerator
+from core.structures.market.stall import Stall
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
 

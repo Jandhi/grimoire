@@ -3,7 +3,7 @@ import sys
 sys.path[0] = sys.path[0].removesuffix('core\\assets\\tests')
 
 # Actual file
-from structures.nbt.nbt_asset import NBTAsset
+from core.structures.nbt.nbt_asset import NBTAsset
 from core.assets.load_assets import load_assets
 
 class Test(NBTAsset):

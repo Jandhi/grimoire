@@ -8,7 +8,7 @@ from core.assets.load_assets import load_assets
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
 from core.maps.map import Map
-from structures.grid import Grid
+from core.structures.grid import Grid
 from core.utils.vectors import point_3d
 
 SEED = 0x6234111

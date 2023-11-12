@@ -1,6 +1,7 @@
 from gdpc.editor import Editor
 from gdpc.vector_tools import ivec3
-from structures.legacy_directions import north, east, west, south, get_ivec2, Direction, left, right, to_text, ivec2_to_dir, vector, cardinal, opposite, ivec3_to_dir
+from core.structures.legacy_directions import north, east, west, south
+
 
 #uses set block to place blocks with nbts (playerheads)
 def place_block(block: str, editor: Editor, point: ivec3, direction=None):

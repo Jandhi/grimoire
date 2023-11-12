@@ -40,5 +40,5 @@ def load_types():
     _ = Forest
 
     # ASSET STRUCTURE
-    from structures.asset_structure import AssetStructure
+    from core.structures.asset_structure import AssetStructure
     _ = AssetStructure

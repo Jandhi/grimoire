@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2, distance2
 
-from structures.legacy_directions import cardinal, get_ivec2, left, right
+from core.structures.legacy_directions import cardinal, get_ivec2, left, right
 
 
 def midpoint(points: set[ivec2]) -> ivec2:

@@ -1,5 +1,5 @@
 from gdpc import Editor, Block
-from structures.grid import Grid
+from core.structures.grid import Grid
 from core.utils.vectors import x_ivec3, y_ivec3, z_ivec3
 from buildings.legacycell import LegacyCell
 
