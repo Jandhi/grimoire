@@ -5,7 +5,7 @@ from structures.legacy_directions import Direction, vector
 
 
 # Class to store assets for cells in a building grid
-class Cell:
+class LegacyCell:
     position: ivec3
     roof_data: RoofData
     plan: any  # will be a building plan

@@ -1,5 +1,5 @@
 from buildings.building_plan import BuildingPlan
-from buildings.cell import Cell
+from buildings.legacycell import LegacyCell
 from structures.legacy_directions import cardinal, Direction, up
 from gdpc.editor import Editor
 from buildings.walls.wall import Wall, LOWER, UPPER
@@ -15,7 +15,7 @@ def build_walls(plan : BuildingPlan, editor : Editor, walls : list[Wall], rng : 
             if not cell.has_neighbour(direction):
                 build_wall(cell, direction, editor, walls, rng)
 
-def build_wall(cell : Cell, direction : Direction, editor : Editor, walls : list[Wall], rng : RNG):
+def build_wall(cell : LegacyCell, direction : Direction, editor : Editor, walls : list[Wall], rng : RNG):
     has_door = cell.has_door(direction)
 
     def wall_is_eligible(wall : Wall):

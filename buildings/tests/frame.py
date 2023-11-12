@@ -1,10 +1,10 @@
 from gdpc import Editor, Block
 from structures.grid import Grid
 from core.utils.vectors import x_ivec3, y_ivec3, z_ivec3
-from buildings.cell import Cell
+from buildings.legacycell import LegacyCell
 
 
-def place_frame(cell : Cell, grid : Grid, editor : Editor):
+def place_frame(cell : LegacyCell, grid : Grid, editor : Editor):
     coords = grid.grid_to_world(cell.position)
 
     for x in range(grid.dimensions.x):
