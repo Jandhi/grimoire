@@ -51,8 +51,9 @@ class AssetLoader(Module):
                     continue
 
                 if len(validation_state.surplus_args) > 0:
-                    print(
-                        f'{Fore.yellow}Warning{Style.reset}: while loading {Fore.light_blue}{path}{Style.reset}. Object has non-annotated fields: {validation_state.surplus_args}')
+                    self.log.warning(
+                        f'while loading {Fore.light_blue}{path}{Style.reset}. Object has non-annotated fields: {validation_state.surplus_args}'
+                    )
 
         link_assets()
 

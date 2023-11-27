@@ -5,6 +5,8 @@ from colored import Fore, Style
 from core.generator.benchmarking import Benchmark
 from core.generator.settings import GeneratorSettings
 from core.logs.logger import Logger, LoggerSettings, LoggingLevel
+from core.noise.global_seed import GlobalSeed
+from core.noise.rng import RNG
 
 
 class ModuleLogger(Logger):
@@ -26,6 +28,10 @@ T = TypeVar('T')
 class Module:
     name: str = None
     __logger: Logger = None
+    rng : RNG
+
+    def init_rng_from_world_seed(self):
+        self.__setattr__("rng", RNG(GlobalSeed.get(), self.get_name()))
 
     @property
     def log(self) -> Logger:
@@ -33,6 +39,9 @@ class Module:
             self.__logger = ModuleLogger(settings=GeneratorSettings.logger_settings, module=self)
 
         return self.__logger
+
+    def set_module_logger_settings(self, logger_settings: LoggerSettings):
+        self.log.settings = logger_settings
 
     '''
     Decorator used to determine the main generator function for the module
@@ -49,7 +58,7 @@ class Module:
             func = self.func
 
             def my_func(self, *args, **kwargs):
-                Benchmark.timed(
+                return Benchmark.timed(
                     func=func,
                     log=self.log,
                     class_name=owner.get_name()
@@ -67,3 +76,7 @@ class Module:
             return cls.name
 
         return cls.__name__
+
+    def raise_error(self, description : str):
+        self.log.error(description)
+        raise Exception(description)

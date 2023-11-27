@@ -74,7 +74,7 @@ wall_points_list = order_wall_points(wall_points, wall_dict)
 rng = RNG(SEED)
 palette = Palette.find('japanese_dark_blackstone')
 
-#uncomment one of these to test one of the three wall types
+#uncomment one of these to tests one of the three wall types
 
 for wall_points in wall_points_list:
     build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, water_map, rng, palette)

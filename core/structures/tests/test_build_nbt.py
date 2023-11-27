@@ -13,17 +13,17 @@ from core.structures.transformation import Transformation
 editor = Editor(transformLike=(0, -60, 0), buffering=True, caching=True)
 
 nbt_asset = NBTAsset.construct(
-    name     = 'test',
+    name     = 'tests',
     type     = 'wall',
     filepath = 'assets/walls/medieval/medieval_stone_wall_door.nbt',
     origin   = (0, 0, 0),
-    palette =  Palette.construct(name='test')
+    palette =  Palette.construct(name='tests')
 )
 
 build_nbt(
     editor = editor, 
     asset = nbt_asset,
-    palette = Palette.construct(name='test'),
+    palette = Palette.construct(name='tests'),
     transformation=Transformation(
         mirror=(True, False, False),
         #diagonal_mirror=True,

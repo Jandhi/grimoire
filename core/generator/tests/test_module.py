@@ -6,15 +6,15 @@ from core.generator.module import Module
 from core.generator.benchmarking import Benchmark
 import time
 
-class TestModule(Module):
+class TestingModule(Module):
     name : str = 'Test'
 
     @Module.MainClass
     def test(self):
-        self.log.debug('test')
+        self.log.debug('tests')
         time.sleep(1)
 
-class TestModule2(Module):
+class TestingModule2(Module):
     name : str = 'Test2'
 
     @Module.MainClass
@@ -22,8 +22,8 @@ class TestModule2(Module):
         for _ in self.log.progress(range(5), 'test2'):
             time.sleep(0.1)
 
-TestModule().test()
-TestModule2().test()
-TestModule2().test()
+TestingModule().test()
+TestingModule2().test()
+TestingModule2().test()
 
 Benchmark.print_results()

@@ -127,7 +127,7 @@ palette = Palette.find('desert_dark_prismarine')
 
 # WALL
 
-#uncomment one of these to test one of the three wall types
+#uncomment one of these to tests one of the three wall types
 
 
 for wall_points in wall_points_list:

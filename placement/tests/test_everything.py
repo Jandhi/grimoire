@@ -64,7 +64,7 @@ map.districts = district_map
 
 styles = [
     'japanese',  # I think this is the strongest one, so probably used in most environments
-    'viking',  # Pretty weak I think so we could avoid, but we can test it
+    'viking',  # Pretty weak I think so we could avoid, but we can tests it
     'desert',  # Decentish variety I think
     'dwarven'  # Little variety so probably save it for mountains
 ]
@@ -178,7 +178,7 @@ add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
 
 # WALL
 
-# uncomment one of these to test one of the three wall types
+# uncomment one of these to tests one of the three wall types
 
 for wall_points in wall_points_list:
     build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, map.water, rng, palette)

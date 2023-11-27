@@ -32,7 +32,7 @@ test : AssetStructure = AssetStructure.find('well')
 '''
 build_nbt(
     editor = editor, 
-    asset = test,
+    asset = tests,
     palette = None,
     transformation=Transformation(
         offset= ivec3(area.middle.x,y,area.middle.z),

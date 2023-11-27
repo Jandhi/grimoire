@@ -10,7 +10,7 @@ from collections.abc import Iterator
 # Class to work with grids for buildings
 # Local coordinates are block coordinates relative to origin of house
 # World coordinates are coordinates relative to world or editor origin
-# Grid coordinates are cell coordinates, with dimensinos according to the dimensions given
+# Grid coordinates are cell coordinates, with dimensions according to the dimensions given
 class Grid:
     def __init__(self, 
             dimensions : ivec3 = ivec3(7, 5, 7), 

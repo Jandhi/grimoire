@@ -37,7 +37,7 @@ def run_hash_distribution_test(num_buckets, iterations, seed):
 
     print(s)
 
-# Runs the test
+# Runs the tests
 run_hash_distribution_test(
     num_buckets=20,
     iterations=100000,
