@@ -69,5 +69,4 @@ if DO_TERRAFORMING:
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
-
 add_city_blocks(editor, districts, map, SEED, is_debug=True)

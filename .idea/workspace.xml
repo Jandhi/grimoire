@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f4a8d30a-8bd5-44bd-bf91-2f46dfdf682b" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/video/logger.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/video/test_everything.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/video/voronoi_best.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/video/voronoi_better_neighbours.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/load_assets.py" beforeDir="false" afterPath="$PROJECT_DIR$/data/load_assets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/districts/generate_districts.py" beforeDir="false" afterPath="$PROJECT_DIR$/districts/generate_districts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/placement/tests/test_city_blocks.py" beforeDir="false" afterPath="$PROJECT_DIR$/placement/tests/test_city_blocks.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="2Y0ijs9MjcZBJcBIDYjpCt8Thq5" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;video&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/jando/OneDrive/Documents/Code/gdmc2023/video&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.keymap&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jando\OneDrive\Documents\Code\gdmc2023\video" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jando\OneDrive\Documents\Code\gdmc2023\core\generator" />
+      <recent name="C:\Users\jando\OneDrive\Documents\Code\gdmc2023\core" />
+      <recent name="C:\Users\jando\OneDrive\Documents\Code\gdmc2023\core\utils" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f4a8d30a-8bd5-44bd-bf91-2f46dfdf682b" name="Changes" comment="" />
+      <created>1699669036162</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1699669036162</updated>
+      <workItem from="1699669037186" duration="3565000" />
+      <workItem from="1699804791914" duration="2634000" />
+      <workItem from="1699820405837" duration="2340000" />
+      <workItem from="1700186250981" duration="663000" />
+      <workItem from="1700614434876" duration="6065000" />
+      <workItem from="1700664405567" duration="6362000" />
+      <workItem from="1700676096023" duration="8554000" />
+      <workItem from="1700766372069" duration="1906000" />
+      <workItem from="1701017753809" duration="1211000" />
+      <workItem from="1701056599443" duration="6345000" />
+      <workItem from="1701530885877" duration="5031000" />
+      <workItem from="1702000231278" duration="1973000" />
+      <workItem from="1704675180140" duration="7288000" />
+      <workItem from="1708198805993" duration="4787000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="Test.all()" language="Python" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/gdmc2023$test_everything.coverage" NAME="test_everything Coverage Results" MODIFIED="1708203529196" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/video" />
+    <SUITE FILE_PATH="coverage/gdmc2023$draw_districts.coverage" NAME="draw_districts Coverage Results" MODIFIED="1704675656538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/districts/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$generate_districts.coverage" NAME="generate_districts Coverage Results" MODIFIED="1704676600773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/districts" />
+    <SUITE FILE_PATH="coverage/gdmc2023$load_assets.coverage" NAME="load_assets Coverage Results" MODIFIED="1708203338652" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/data" />
+    <SUITE FILE_PATH="coverage/gdmc2023$frame.coverage" NAME="frame Coverage Results" MODIFIED="1699671444805" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/buildings/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$main.coverage" NAME="main Coverage Results" MODIFIED="1699669808286" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/gdmc2023$discretize.coverage" NAME="discretize Coverage Results" MODIFIED="1702000515372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/terrain" />
+    <SUITE FILE_PATH="coverage/gdmc2023$voronoi_better_neighbours.coverage" NAME="voronoi_better_neighbours Coverage Results" MODIFIED="1708200794695" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/video" />
+    <SUITE FILE_PATH="coverage/gdmc2023$hash_collision_test.coverage" NAME="hash_collision_test Coverage Results" MODIFIED="1699671276453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core/noise/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_build_frame.coverage" NAME="test_build_frame Coverage Results" MODIFIED="1699672035616" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/buildings/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_names.coverage" NAME="test_names Coverage Results" MODIFIED="1702001431482" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/story/names/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_discretize.coverage" NAME="test_discretize Coverage Results" MODIFIED="1702001088613" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/terrain/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_load_jsons.coverage" NAME="test_load_jsons Coverage Results" MODIFIED="1699671723114" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core/assets/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_module.coverage" NAME="test_module Coverage Results" MODIFIED="1700616553581" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core/generator/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$place_colors.coverage" NAME="place_colors Coverage Results" MODIFIED="1704677144724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/districts/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$logger.coverage" NAME="logger Coverage Results" MODIFIED="1708199099555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/video" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_logger.coverage" NAME="test_logger Coverage Results" MODIFIED="1699671074439" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core/logs/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$test_city_blocks.coverage" NAME="test_city_blocks Coverage Results" MODIFIED="1704682433510" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/placement/tests" />
+    <SUITE FILE_PATH="coverage/gdmc2023$voronoi.coverage" NAME="voronoi Coverage Results" MODIFIED="1708199571707" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/video" />
+    <SUITE FILE_PATH="coverage/gdmc2023$name_generator.coverage" NAME="name_generator Coverage Results" MODIFIED="1700616268626" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/story/names" />
+    <SUITE FILE_PATH="coverage/gdmc2023$voronoi_best.coverage" NAME="voronoi_best Coverage Results" MODIFIED="1708200963251" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/video" />
+    <SUITE FILE_PATH="coverage/gdmc2023$merge_runs.coverage" NAME="merge_runs Coverage Results" MODIFIED="1701063275878" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core/utils" />
+  </component>
+</project>

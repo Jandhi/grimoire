@@ -54,18 +54,20 @@ def bubble_out(world_slice : WorldSlice, districts : list[District], district_ma
         point = queue.pop(0)
         district = district_map[point.x][point.z]
 
+        print(f'district {district} has {point}')
+
         for neighbour in get_neighbours(point, world_slice):
             if neighbour in visited:
                 continue
 
             visited.add(neighbour)
             add_point_to_district(neighbour, district)
-            
+
             if water_map[neighbour.x][neighbour.z]:
                 water_queue.append(neighbour)
             else:
                 queue.append(neighbour)
-    
+
     # second pass water queue
     while len(water_queue) > 0:
         point = water_queue.pop(0)

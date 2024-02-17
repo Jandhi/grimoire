@@ -8,14 +8,21 @@ from colored import Style, Fore
 from data.load_types import load_types
 from data.link_assets import link_assets
 from buildings.building_shape import permute_shapes
+from os import walk
 
 # Loads all nbt assets from the assets folder
 def load_assets(root_directory) -> None:
     load_types()
 
-    names : list[str] = glob(root_directory + '/**/*.json', recursive=True) # glob allows us to get the subfolders too
+    w = walk(root_directory)
+    names = []
 
+    for (dirpath, dirnmames, filenames) in w:
+        for filename in filenames:
+            if filename.endswith('.json'):
     for name in names:
+        print(name)
+
         with open(name, 'r') as file:
             path = name.replace('\\', '/')
             data = json.load(file)
