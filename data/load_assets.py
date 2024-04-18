@@ -20,6 +20,7 @@ def load_assets(root_directory) -> None:
     for (dirpath, dirnmames, filenames) in w:
         for filename in filenames:
             if filename.endswith('.json'):
+                pass
     for name in names:
         print(name)
 

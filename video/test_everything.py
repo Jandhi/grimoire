@@ -32,7 +32,7 @@ from industries.biomes import forest, desert, rocky, snowy
 from gdpc.geometry import Box
 from districts.paint_palette import PaintPalette
 
-SEED = 0x4473
+SEED = 13 #0x4473
 DO_TERRAFORMING = True # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
