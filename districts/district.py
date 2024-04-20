@@ -14,6 +14,11 @@ class District:
     adjacencies_total : int
     is_urban : bool
 
+    roughness: float
+    biome_dict: dict[str, int]
+    water_percentage: float
+    forested_percentage: float
+
     palettes : list[Palette]
 
     def __init__(self, origin : ivec3, is_urban : bool) -> None:
@@ -29,6 +34,24 @@ class District:
         self.edges     = set()
         self.adjacencies_total = 0
         self.is_urban = is_urban
+        self.palettes = []
+        self.roughness = 0
+        self.biome_dict = {}
+        self.water_percentage = 0
+        self.forested_percentage = 0
+
+        self.add_point(origin)
+
+    def recenter(self, origin) -> None:
+    
+        self.origin = origin
+        self.sum = ivec3(0, 0, 0)
+        self.area = 0
+        self.adjacency = {}
+        self.points    = set()
+        self.points_2d = set()
+        self.edges     = set()
+        self.adjacencies_total = 0
         self.palettes = []
 
         self.add_point(origin)
