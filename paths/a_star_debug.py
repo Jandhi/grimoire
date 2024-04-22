@@ -7,7 +7,7 @@ from paths.a_star import COUNTER_LIMIT, COUNTER_LIMIT_EXCEEDED
 # get_cost takes prev_cost and path
 
 
-def a_star_debug(start, end, get_neighbours, get_cost, editor : Editor) -> list:
+def a_star_debug(start, end, get_neighbours, get_cost, editor: Editor) -> list:
     first_path = [start]
     paths = [(get_cost(0, first_path), first_path)]
     visited = set()
@@ -16,7 +16,7 @@ def a_star_debug(start, end, get_neighbours, get_cost, editor : Editor) -> list:
     while len(paths) > 0:
         counter += 1
         if counter % 10000 == 0:
-            print(f'counter at {counter}')
+            print(f"counter at {counter}")
 
         if counter > COUNTER_LIMIT:
             return COUNTER_LIMIT_EXCEEDED
@@ -26,7 +26,7 @@ def a_star_debug(start, end, get_neighbours, get_cost, editor : Editor) -> list:
         endpoint = curr_path[-1]
 
         visited.add(endpoint)
-        editor.placeBlock(endpoint + y_ivec3(20), Block('blue_wool'))
+        editor.placeBlock(endpoint + y_ivec3(20), Block("blue_wool"))
 
         for neighbour in get_neighbours(endpoint):
             if neighbour in visited:

@@ -5,7 +5,8 @@ from gdpc import Editor, Block
 # get_cost takes prev_cost and path
 
 COUNTER_LIMIT = 500000
-COUNTER_LIMIT_EXCEEDED = 'counter limit exceeded'
+COUNTER_LIMIT_EXCEEDED = "counter limit exceeded"
+
 
 def a_star(start, end, get_neighbours, get_cost) -> list:
     first_path = [start]
@@ -16,7 +17,7 @@ def a_star(start, end, get_neighbours, get_cost) -> list:
     while len(paths) > 0:
         counter += 1
         if counter % 10000 == 0:
-            print(f'counter at {counter}')
+            print(f"counter at {counter}")
 
         if counter > COUNTER_LIMIT:
             return COUNTER_LIMIT_EXCEEDED

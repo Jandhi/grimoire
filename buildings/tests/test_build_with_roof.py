@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\buildings\\tests')
+
+sys.path[0] = sys.path[0].removesuffix("\\buildings\\tests")
 
 # Actual file
 from gdpc import Editor, Block, WorldSlice
@@ -29,29 +30,34 @@ editor = Editor(buffering=True, caching=True)
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
 
-grid = Grid(origin=ivec3(
-    x = area.size.x // 2,
-    y = -61,
-    z = area.size.z // 2,
-))
-load_assets('assets')
+grid = Grid(
+    origin=ivec3(
+        x=area.size.x // 2,
+        y=-61,
+        z=area.size.z // 2,
+    )
+)
+load_assets("assets")
 
 shape = [ivec3(0, 0, 0)]
 
-palette = Palette.find('japanese_dark_blackstone')
+palette = Palette.find("japanese_dark_blackstone")
 plan = BuildingPlan(shape, grid, palette)
 
-build_roof(plan, editor, [
-    roof for roof in RoofComponent.all() if 'japanese' in roof.tags
-], SEED)
+build_roof(
+    plan,
+    editor,
+    [roof for roof in RoofComponent.all() if "japanese" in roof.tags],
+    SEED,
+)
 
 clear_interiors(plan, editor)
 build_floor(plan, editor)
 
-walls = [
-    wall for wall in Wall.all() if 'japanese' in wall.tags
-]
+walls = [wall for wall in Wall.all() if "japanese" in wall.tags]
 
-build_walls(plan, editor, walls, RNG(SEED, 'build_walls'))
+build_walls(plan, editor, walls, RNG(SEED, "build_walls"))
 
-furnish([cell.position for cell in plan.cells], RNG(SEED, 'furnish'), grid, editor, palette)
+furnish(
+    [cell.position for cell in plan.cells], RNG(SEED, "furnish"), grid, editor, palette
+)

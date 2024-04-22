@@ -8,13 +8,14 @@ from maps.map import Map
 
 HEURISTIC_WEIGHT = 3
 
-def fill_out_highway(points : list[ivec3]) -> list[ivec3]:
+
+def fill_out_highway(points: list[ivec3]) -> list[ivec3]:
     full_points = []
 
     point_a = points.pop()
-    
+
     full_points.append(point_a)
-    
+
     while len(points) > 0:
         point_b = points.pop()
 
@@ -25,7 +26,8 @@ def fill_out_highway(points : list[ivec3]) -> list[ivec3]:
 
     return full_points
 
-def find_in_betweeners(point_a : ivec3, point_b : ivec3) -> list[ivec3]:
+
+def find_in_betweeners(point_a: ivec3, point_b: ivec3) -> list[ivec3]:
     diff_vec = ivec3(0, 0, 0)
     magnitude = 2
     points = []
@@ -53,7 +55,7 @@ def find_in_betweeners(point_a : ivec3, point_b : ivec3) -> list[ivec3]:
     elif point_a.z - 4 == point_b.z:
         diff_vec += ivec3(0, 0, -1)
         magnitude = 4
-    
+
     for i in range(1, magnitude):
         pt = point_a + i * diff_vec
 
@@ -64,8 +66,10 @@ def find_in_betweeners(point_a : ivec3, point_b : ivec3) -> list[ivec3]:
     return points
 
 
-def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_debug = False) -> list[ivec3]:
-    end = ivec3(*end) # copy end 
+def route_highway(
+    start: ivec3, end: ivec3, map: Map, editor: Editor, is_debug=False
+) -> list[ivec3]:
+    end = ivec3(*end)  # copy end
 
     if end.x % 4 != start.x % 4:
         end.x = (end.x - end.x % 4) + start.x % 4
@@ -74,17 +78,17 @@ def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_deb
         end.z = (end.z - end.z % 4) + start.z % 4
 
     end.y = map.height[end.x][end.z]
-    
-    def get_cost(prev_cost : int, path : list[ivec3]):
+
+    def get_cost(prev_cost: int, path: list[ivec3]):
         if len(path) == 1:
             return 2 * distance(path[-1], end)
-        
+
         last = path[-1]
 
         prev_heuristic = HEURISTIC_WEIGHT * distance(path[-2], end)
 
         path_cost = prev_cost - prev_heuristic
-        base_length_cost = 2 # added as length of path increases
+        base_length_cost = 2  # added as length of path increases
 
         height_diff = abs(last.y - map.height[last.x][last.z])
         height_cost = height_diff * 5
@@ -99,16 +103,25 @@ def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_deb
             near_wall_cost += 10
 
         if map.water[last.x][last.z]:
-            base_length_cost += 30 # WATER COST. Making this big means water gets avoided when possible.
+            base_length_cost += 30  # WATER COST. Making this big means water gets avoided when possible.
 
         y_diff_penalty = abs(path[-1].y - path[-2].y) * 2
 
-        return path_cost + height_cost + base_length_cost + y_diff_penalty + distance(path[-2], last) + HEURISTIC_WEIGHT * distance(last, end) + district_cost + near_wall_cost
-    
+        return (
+            path_cost
+            + height_cost
+            + base_length_cost
+            + y_diff_penalty
+            + distance(path[-2], last)
+            + HEURISTIC_WEIGHT * distance(last, end)
+            + district_cost
+            + near_wall_cost
+        )
+
     # prefer 4 out neighbours, but will accept 2 out
-    def get_neighbours(point : ivec3):
+    def get_neighbours(point: ivec3):
         neighbours = []
-        
+
         for direction in all_8:
             direction_vector = vector(direction)
 
@@ -117,7 +130,7 @@ def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_deb
 
             if is_in_bounds(neighbour, map.world):
                 actual_neighbour_y = map.height[neighbour.x][neighbour.z]
-                
+
                 if point.y < actual_neighbour_y - 2:
                     neighbour.y = point.y + 2
                 elif point.y > actual_neighbour_y + 2:
@@ -128,7 +141,6 @@ def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_deb
                 if abs(point.y - neighbour.y) <= 2:
                     neighbours.append(neighbour)
                     continue
-
 
             # Don't consider compounds for short jumps
             if sum(direction_vector) >= 2:
@@ -143,25 +155,30 @@ def route_highway(start : ivec3, end : ivec3, map : Map, editor : Editor, is_deb
                 if abs(point.y - neighbour.y) <= 2:
                     neighbours.append(neighbour)
                     continue
-                
+
         return neighbours
-    
+
     if is_debug:
         highway = a_star_debug(start, end, get_neighbours, get_cost, editor)
     else:
         highway = a_star(start, end, get_neighbours, get_cost)
 
     if highway == COUNTER_LIMIT_EXCEEDED:
-        print('Pathfinding took too long: Trying to route to the midpoint')
+        print("Pathfinding took too long: Trying to route to the midpoint")
         midpoint = (start + end) / 2
-        
+
         part1 = a_star(start, midpoint, get_neighbours, get_cost)
         part2 = a_star(midpoint, end, get_neighbours, get_cost)
 
-        if part1 == COUNTER_LIMIT_EXCEEDED or part2 == COUNTER_LIMIT_EXCEEDED or part1 is None or part2 is None:
+        if (
+            part1 == COUNTER_LIMIT_EXCEEDED
+            or part2 == COUNTER_LIMIT_EXCEEDED
+            or part1 is None
+            or part2 is None
+        ):
             return None
 
         part1.pop()
         return part1 + part2
-    
+
     return highway

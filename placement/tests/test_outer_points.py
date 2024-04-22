@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
+
+sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
 
 # Actual file
 from gdpc import Editor, Block
@@ -31,10 +32,17 @@ for district in districts:
     x = district.origin.x
     z = district.origin.z
 
-    y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
-    editor.placeBlock((x, y, z), Block('sea_lantern'))
+    y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] + 10
+    editor.placeBlock((x, y, z), Block("sea_lantern"))
 
     outer, inner = find_outer_and_inner_points(district.points_2d, 2)
 
     for pt in outer:
-        editor.placeBlock(ivec3(pt.x, world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][pt.x][pt.y], pt.y), Block('cobblestone'))
+        editor.placeBlock(
+            ivec3(
+                pt.x,
+                world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][pt.x][pt.y],
+                pt.y,
+            ),
+            Block("cobblestone"),
+        )

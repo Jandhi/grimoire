@@ -1,10 +1,11 @@
 # PUT ALL TYPES HERE SO THAT THEY ARE LOADED
 
+
 def load_types():
     # WALLS
     from buildings.walls.wall import Wall
-    from buildings.walls.wall_nbt import WallNBT 
-    from buildings.walls.wall_blueprint import WallBlueprint 
+    from buildings.walls.wall_nbt import WallNBT
+    from buildings.walls.wall_blueprint import WallBlueprint
 
     # ROOFS
     from buildings.roofs.roof import Roof
@@ -22,7 +23,7 @@ def load_types():
 
     # BUILDING SHAPE
     from buildings.building_shape import BuildingShape
-    
+
     # PAINT PALETTES
     from districts.paint_palette import PaintPalette
 

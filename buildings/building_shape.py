@@ -2,24 +2,28 @@ from data.asset import Asset, asset_defaults
 from gdpc.vector_tools import ivec3, ivec2
 from structures.grid import Grid
 from collections.abc import Iterator
-from structures.legacy_directions import z_minus, x_z_flip as x_z_flip_dict, x_mirror as x_mirror_dict, z_mirror as z_mirror_dict
+from structures.legacy_directions import (
+    z_minus,
+    x_z_flip as x_z_flip_dict,
+    x_mirror as x_mirror_dict,
+    z_mirror as z_mirror_dict,
+)
+
 
 @asset_defaults(door_direction=z_minus)
 class BuildingShape(Asset):
-    points : list[ivec3]
-    door_direction : str
+    points: list[ivec3]
+    door_direction: str
 
     def on_construct(self) -> None:
-        self.points = [
-            ivec3(x, y, z) for (x, y, z) in self.points
-        ]
+        self.points = [ivec3(x, y, z) for (x, y, z) in self.points]
 
-    def get_points(self, grid : Grid) -> Iterator[ivec3]:
+    def get_points(self, grid: Grid) -> Iterator[ivec3]:
         for point in self.points:
             for pos in grid.get_points_at(point):
                 yield pos
 
-    def get_points_2d(self, grid : Grid) -> Iterator[ivec2]:
+    def get_points_2d(self, grid: Grid) -> Iterator[ivec2]:
         for x, _, z in self.points:
             for pos in grid.get_points_at_2d(ivec2(x, z)):
                 yield pos
@@ -46,22 +50,23 @@ class BuildingShape(Asset):
                     point.x = -point.x
 
                 new_door_direction = x_mirror_dict[new_door_direction]
-            
+
             if z_mirror:
                 for point in new_points:
-                    point.z = - point.z
+                    point.z = -point.z
 
                 new_door_direction = z_mirror_dict[new_door_direction]
 
-            if new_points != self.points or self.door_direction != new_door_direction: 
+            if new_points != self.points or self.door_direction != new_door_direction:
                 new_shape = BuildingShape()
                 new_shape.points = new_points
                 new_shape.door_direction = new_door_direction
-                new_shape.name = f'{self.name}_variant_{val}'
+                new_shape.name = f"{self.name}_variant_{val}"
                 new_shape.add_to_pool()
+
 
 # Creates variants of shapes
 def permute_shapes():
     for shape in BuildingShape.all().copy():
-        shape : BuildingShape
+        shape: BuildingShape
         shape.make_permutations()

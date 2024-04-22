@@ -1,6 +1,13 @@
 from gdpc.vector_tools import ivec2, ivec3, vec2
 from maps.map import Map
-from structures.legacy_directions import z_minus, z_plus, x_minus, x_plus, cardinal, get_ivec2
+from structures.legacy_directions import (
+    z_minus,
+    z_plus,
+    x_minus,
+    x_plus,
+    cardinal,
+    get_ivec2,
+)
 from structures.grid import Grid
 from buildings.building_shape import BuildingShape
 from maps.building_map import CITY_WALL, BUILDING, CITY_ROAD
@@ -19,48 +26,69 @@ from palette.palette_swap import fix_block_name
 from buildings.rooms.furnish import furnish
 
 offsets = {
-    z_minus : [ivec2(0, 0), ivec2(-1, 0)],
-    x_minus  : [ivec2(0, 0), ivec2(0, -1)],
-    x_plus  : [ivec2(-1, -1), ivec2(-1, 0)],
-    z_plus : [ivec2(-1, -1), ivec2(0, -1)],
+    z_minus: [ivec2(0, 0), ivec2(-1, 0)],
+    x_minus: [ivec2(0, 0), ivec2(0, -1)],
+    x_plus: [ivec2(-1, -1), ivec2(-1, 0)],
+    z_plus: [ivec2(-1, -1), ivec2(0, -1)],
 }
 
 door_points = {
-    z_minus : vec2(0.5, 0),
-    z_plus : vec2(0.5, 1),
-    x_plus : vec2(1, 0.5),
-    x_minus : vec2(0, 0.5),
+    z_minus: vec2(0.5, 0),
+    z_plus: vec2(0.5, 1),
+    x_plus: vec2(1, 0.5),
+    x_minus: vec2(0, 0.5),
 }
 
-WATER_THRESHOLD = 0.4 # above this threshold a house cannot be built
-MAX_AVG_HEIGHT_DIFF = 4 
+WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
+MAX_AVG_HEIGHT_DIFF = 4
 
-def place_building(editor : Editor, start_point : ivec2, map : Map, outside_direction : str, rng : RNG, style : str = 'japanese', urban_only = True):
+
+def place_building(
+    editor: Editor,
+    start_point: ivec2,
+    map: Map,
+    outside_direction: str,
+    rng: RNG,
+    style: str = "japanese",
+    urban_only=True,
+):
     my_offsets = offsets[outside_direction]
 
-    shapes : list[BuildingShape] = BuildingShape.all()
+    shapes: list[BuildingShape] = BuildingShape.all()
 
     shape_dict = {
-        shape : len(shape.points) ** 2 + 2 for shape in shapes if shape.door_direction == outside_direction
+        shape: len(shape.points) ** 2 + 2
+        for shape in shapes
+        if shape.door_direction == outside_direction
     }
 
     while True:
-        shape : BuildingShape = rng.pop_weighted(shape_dict)
+        shape: BuildingShape = rng.pop_weighted(shape_dict)
 
         if shape is None:
             return
-        
+
         if shape.door_direction != outside_direction:
             continue
 
         for offset in my_offsets:
             grid = Grid()
-            origin = start_point + ivec2(offset.x * (grid.dimensions.x), offset.y * (grid.dimensions.z))
+            origin = start_point + ivec2(
+                offset.x * (grid.dimensions.x), offset.y * (grid.dimensions.z)
+            )
 
             # We have to find the proper height for the door to be at ground level
             door_point = ivec2(*door_points[outside_direction])
-            door_point.x = (grid.dimensions.x // 2 + 1) if door_point.x == 0.5 else door_point.x * (grid.dimensions.x - 1)
-            door_point.y = (grid.dimensions.z // 2 + 1) if door_point.y == 0.5 else door_point.y * (grid.dimensions.z - 1)
+            door_point.x = (
+                (grid.dimensions.x // 2 + 1)
+                if door_point.x == 0.5
+                else door_point.x * (grid.dimensions.x - 1)
+            )
+            door_point.y = (
+                (grid.dimensions.z // 2 + 1)
+                if door_point.y == 0.5
+                else door_point.y * (grid.dimensions.z - 1)
+            )
 
             road_point = nearest_road(origin + door_point, map)
 
@@ -69,7 +97,7 @@ def place_building(editor : Editor, start_point : ivec2, map : Map, outside_dire
                 road_point = origin + door_point
 
             grid.origin = ivec3(origin.x, map.height_at(road_point) - 1, origin.y)
-            
+
             points = list(shape.get_points_2d(grid))
             is_free = True
             water_amt = 0
@@ -86,7 +114,10 @@ def place_building(editor : Editor, start_point : ivec2, map : Map, outside_dire
                     break
 
                 # urban check
-                if urban_only and (not map.districts[point.x][point.y] or not map.districts[point.x][point.y].is_urban):
+                if urban_only and (
+                    not map.districts[point.x][point.y]
+                    or not map.districts[point.x][point.y].is_urban
+                ):
                     is_free = False
                     break
 
@@ -105,8 +136,9 @@ def place_building(editor : Editor, start_point : ivec2, map : Map, outside_dire
             # build
             place(editor, shape, grid, rng, map, style)
             return
-        
-def nearest_road(start_point : ivec2, map : Map) -> ivec2:
+
+
+def nearest_road(start_point: ivec2, map: Map) -> ivec2:
     queue = [start_point]
     visited = set()
     limit = 100
@@ -120,21 +152,31 @@ def nearest_road(start_point : ivec2, map : Map) -> ivec2:
         if iterations > limit:
             return None
 
-        if map.is_in_bounds2d(point) and (map.buildings[point.x][point.y] == CITY_ROAD or map.buildings[point.x][point.y] == CITY_WALL):
+        if map.is_in_bounds2d(point) and (
+            map.buildings[point.x][point.y] == CITY_ROAD
+            or map.buildings[point.x][point.y] == CITY_WALL
+        ):
             return point
-        
+
         for direction in cardinal:
             neighbour = point + get_ivec2(direction)
-        
+
             if map.is_in_bounds2d(neighbour) and neighbour not in visited:
                 queue.append(neighbour)
-    
+
     return None
 
-def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : Map, style : str):
+
+def place(
+    editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
+):
     district = map.districts[grid.origin.x][grid.origin.z]
-    palette : Palette = rng.choose(district.palettes) if district else Palette.find('japanese_dark_blackstone')
-    
+    palette: Palette = (
+        rng.choose(district.palettes)
+        if district
+        else Palette.find("japanese_dark_blackstone")
+    )
+
     plan = BuildingPlan(shape.points, grid, palette)
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
@@ -143,16 +185,19 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
 
     # Clear the area
     for point in shape.get_points(grid):
-        editor.placeBlock(point, Block('air'))
+        editor.placeBlock(point, Block("air"))
 
-    build_roof(plan, editor, [
-        component for component in RoofComponent.all() if style in component.tags
-    ], rng.next())
+    build_roof(
+        plan,
+        editor,
+        [component for component in RoofComponent.all() if style in component.tags],
+        rng.next(),
+    )
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = list(filter(lambda wall : style in wall.tags, Wall.all().copy()))
+    walls = list(filter(lambda wall: style in wall.tags, Wall.all().copy()))
 
     build_walls(plan, editor, walls, rng)
 
@@ -161,9 +206,19 @@ def place(editor : Editor, shape : BuildingShape, grid : Grid, rng : RNG, map : 
         grid_height = grid.origin.y
 
         for y_coord in range(world_height, grid_height):
-            editor.placeBlock(ivec3(point.x, y_coord, point.y), Block(fix_block_name(palette.primary_stone)))
+            editor.placeBlock(
+                ivec3(point.x, y_coord, point.y),
+                Block(fix_block_name(palette.primary_stone)),
+            )
 
     try:
-        furnish([cell.position for cell in plan.cells], rng, grid, editor, palette, plan.cell_map)
+        furnish(
+            [cell.position for cell in plan.cells],
+            rng,
+            grid,
+            editor,
+            palette,
+            plan.cell_map,
+        )
     except Exception:
-        pass # this is a last resort, this should not be used in the future
+        pass  # this is a last resort, this should not be used in the future

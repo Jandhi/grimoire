@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
+
+sys.path[0] = sys.path[0].removesuffix("\\districts\\tests")
 
 # Actual file
 from gdpc import Editor, Block
@@ -30,5 +31,5 @@ for district in districts:
     x = district.origin.x
     z = district.origin.z
 
-    y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
-    editor.placeBlock((x, y, z), Block('sea_lantern'))
+    y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] + 10
+    editor.placeBlock((x, y, z), Block("sea_lantern"))

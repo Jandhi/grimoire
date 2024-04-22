@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\structures\\tests')
+
+sys.path[0] = sys.path[0].removesuffix("\\structures\\tests")
 
 # Actual file
 from gdpc.editor import Editor
@@ -14,19 +15,19 @@ from structures.transformation import Transformation
 editor = Editor(transformLike=(0, -60, 0), buffering=True, caching=True)
 
 nbt_asset = NBTAsset.construct(
-    name     = 'test',
-    type     = 'wall',
-    filepath = 'assets/walls/medieval/medieval_stone_wall_door.nbt',
-    origin   = (0, 0, 0),
-    palette =  Palette.construct(name='test')
+    name="test",
+    type="wall",
+    filepath="assets/walls/medieval/medieval_stone_wall_door.nbt",
+    origin=(0, 0, 0),
+    palette=Palette.construct(name="test"),
 )
 
 build_nbt(
-    editor = editor, 
-    asset = nbt_asset,
-    palette = Palette.construct(name='test'),
+    editor=editor,
+    asset=nbt_asset,
+    palette=Palette.construct(name="test"),
     transformation=Transformation(
         mirror=(True, False, False),
-        #diagonal_mirror=True,
+        # diagonal_mirror=True,
     ),
 )

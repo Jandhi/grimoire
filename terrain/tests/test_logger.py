@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\terrain\\tests')
+
+sys.path[0] = sys.path[0].removesuffix("\\terrain\\tests")
 
 # Actual file
 from gdpc import Editor, Block

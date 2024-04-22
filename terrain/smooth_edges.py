@@ -4,16 +4,26 @@ from gdpc.vector_tools import ivec2, ivec3, Rect
 from terrain.set_height import set_height
 from terrain.smooth import average_neighbour_height, update_district_points
 
-DISTRICT_AVG_RATIO = 0.5 # the percent of the height that the district average should influence
-EDGE_RANGE = 5 # how far in both directions the edges are smoothed
+DISTRICT_AVG_RATIO = (
+    0.5  # the percent of the height that the district average should influence
+)
+EDGE_RANGE = 5  # how far in both directions the edges are smoothed
 
-def smooth_edges(build_rect : Rect, districts : list[District], district_map : list[list[District]], world_slice : WorldSlice, editor : Editor, water_map : list[list[bool]]):
-    print(f'Smoothing edges')
+
+def smooth_edges(
+    build_rect: Rect,
+    districts: list[District],
+    district_map: list[list[District]],
+    world_slice: WorldSlice,
+    editor: Editor,
+    water_map: list[list[bool]],
+):
+    print(f"Smoothing edges")
 
     points = set()
 
     for district in districts:
-        if not district.is_urban: # only need to smooth edges for urban areas
+        if not district.is_urban:  # only need to smooth edges for urban areas
             continue
 
         for edge in district.edges:
@@ -22,31 +32,36 @@ def smooth_edges(build_rect : Rect, districts : list[District], district_map : l
                     pt = ivec2(edge.x + dx, edge.z + dz)
 
                     # out of bounds
-                    if pt.x < 0 or pt.y < 0 or pt.x >= world_slice.box.size.x or pt.y >= world_slice.box.size.z: 
+                    if (
+                        pt.x < 0
+                        or pt.y < 0
+                        or pt.x >= world_slice.box.size.x
+                        or pt.y >= world_slice.box.size.z
+                    ):
                         continue
 
-                     # don't smooth water tiles
+                    # don't smooth water tiles
                     if water_map[pt.x][pt.y]:
                         continue
 
                     if pt not in points:
                         points.add(pt)
-    
+
     updated_heights = dict()
 
     for x, z in points:
         key = x, z
 
-        updated_heights[key] = (average_neighbour_height(x, z, world_slice))
+        updated_heights[key] = average_neighbour_height(x, z, world_slice)
 
     for key in updated_heights:
         y = updated_heights[key]
         x, z = key
         set_height(x, y, z, world_slice, editor)
 
-    editor.flushBuffer() # this is needed to reload the world slice properly
-    print('Reloading worldSlice')
+    editor.flushBuffer()  # this is needed to reload the world slice properly
+    print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    
+
     for district in districts:
         update_district_points(district, world_slice)

@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
+
+sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
 
 # Actual file
 from gdpc import Editor, Block
@@ -25,4 +26,11 @@ for x in range(build_rect.size.x):
 a, b = split(points)
 
 for point in a:
-    editor.placeBlock(ivec3(point.x, world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y], point.y), Block('cobblestone'))
+    editor.placeBlock(
+        ivec3(
+            point.x,
+            world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y],
+            point.y,
+        ),
+        Block("cobblestone"),
+    )

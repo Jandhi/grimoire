@@ -7,7 +7,7 @@ from structures.legacy_directions import right, left, opposites
 from buildings.walls.wall import Wall
 from data.asset import default_subtype
 
+
 # Blueprint type for Wall
 class WallBlueprint(Wall):
     pass
-       
