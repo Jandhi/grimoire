@@ -59,7 +59,4 @@ class Module:
 
     @classmethod
     def get_name(cls) -> str:
-        if cls.name:
-            return cls.name
-
-        return cls.__name__
+        return cls.name if cls.name else cls.__name__

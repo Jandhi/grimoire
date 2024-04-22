@@ -55,6 +55,8 @@ def replace_ground(
             place_at_ground(point.x, point.y, block)
 
 
+import itertools
+
 test_blocks = {
     "stone": 3,
     "cobblestone": 2,
@@ -72,14 +74,13 @@ test_blocks_dirt = {
 
 inner_points = []
 
-for x in range(build_rect.size.x):
-    for z in range(build_rect.size.y):
-        district = district_map[x][z]
+for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)):
+    district = district_map[x][z]
 
-        if district is None:
-            continue
-        elif district.is_urban:
-            inner_points.append(ivec2(x, z))
+    if district is None:
+        continue
+    elif district.is_urban:
+        inner_points.append(ivec2(x, z))
 
 wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)

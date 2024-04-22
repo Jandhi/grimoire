@@ -20,10 +20,10 @@ down = y_minus
 cardinal = (north, east, south, west)
 
 # Compound Directions
-northeast = north + " and " + east
-northwest = north + " and " + west
-southwest = south + " and " + west
-southeast = south + " and " + east
+northeast = f"{north} and {east}"
+northwest = f"{north} and {west}"
+southwest = f"{south} and {west}"
+southeast = f"{south} and {east}"
 all_8 = (north, east, south, west, northeast, northwest, southwest, southeast)
 
 directions = (north, east, south, west, up, down)

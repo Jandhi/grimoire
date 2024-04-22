@@ -19,7 +19,7 @@ def find_outer_and_inner_points(
     queue: list[tuple[ivec2, int]] = [(edge, 0) for edge in edges]
     visited = edges.copy()
 
-    while len(queue) > 0:
+    while queue:
         point, edge_distance = queue.pop(0)
 
         if edge_distance >= distance:

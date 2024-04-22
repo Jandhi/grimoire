@@ -50,8 +50,8 @@ def fix_block_name(name: str) -> str:
         name = name.replace("plank_", "")
 
     for plural in plurals:
-        if plural + "s" in name and not name.endswith(plural + "s"):
-            name = name.replace(plural + "s", plural)
+        if f"{plural}s" in name and not name.endswith(f"{plural}s"):
+            name = name.replace(f"{plural}s", plural)
 
     if "smooth_" in name and "wall" in name:
         name = name.replace("smooth_", "")

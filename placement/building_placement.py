@@ -1,3 +1,4 @@
+import contextlib
 from gdpc.vector_tools import ivec2, ivec3, vec2
 from maps.map import Map
 from structures.legacy_directions import (
@@ -144,7 +145,7 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2:
     limit = 100
     iterations = 0
 
-    while len(queue) > 0:
+    while queue:
         point = queue.pop(0)
         visited.add(point)
         iterations += 1
@@ -152,10 +153,10 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2:
         if iterations > limit:
             return None
 
-        if map.is_in_bounds2d(point) and (
-            map.buildings[point.x][point.y] == CITY_ROAD
-            or map.buildings[point.x][point.y] == CITY_WALL
-        ):
+        if map.is_in_bounds2d(point) and map.buildings[point.x][point.y] in [
+            CITY_ROAD,
+            CITY_WALL,
+        ]:
             return point
 
         for direction in cardinal:
@@ -211,7 +212,8 @@ def place(
                 Block(fix_block_name(palette.primary_stone)),
             )
 
-    try:
+    # FIXME: this suppression is a last resort, and should not be used in the future
+    with contextlib.suppress(Exception):
         furnish(
             [cell.position for cell in plan.cells],
             rng,
@@ -220,5 +222,3 @@ def place(
             palette,
             plan.cell_map,
         )
-    except Exception:
-        pass  # this is a last resort, this should not be used in the future

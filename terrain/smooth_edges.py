@@ -1,3 +1,4 @@
+import itertools
 from districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3, Rect
@@ -18,7 +19,7 @@ def smooth_edges(
     editor: Editor,
     water_map: list[list[bool]],
 ):
-    print(f"Smoothing edges")
+    print("Smoothing edges")
 
     points = set()
 
@@ -27,35 +28,33 @@ def smooth_edges(
             continue
 
         for edge in district.edges:
-            for dx in range(-EDGE_RANGE, EDGE_RANGE):
-                for dz in range(-EDGE_RANGE, EDGE_RANGE):
-                    pt = ivec2(edge.x + dx, edge.z + dz)
+            for dx, dz in itertools.product(range(-EDGE_RANGE, EDGE_RANGE), range(-EDGE_RANGE, EDGE_RANGE)):
+                pt = ivec2(edge.x + dx, edge.z + dz)
 
-                    # out of bounds
-                    if (
-                        pt.x < 0
-                        or pt.y < 0
-                        or pt.x >= world_slice.box.size.x
-                        or pt.y >= world_slice.box.size.z
-                    ):
-                        continue
+                # out of bounds
+                if (
+                    pt.x < 0
+                    or pt.y < 0
+                    or pt.x >= world_slice.box.size.x
+                    or pt.y >= world_slice.box.size.z
+                ):
+                    continue
 
-                    # don't smooth water tiles
-                    if water_map[pt.x][pt.y]:
-                        continue
+                # don't smooth water tiles
+                if water_map[pt.x][pt.y]:
+                    continue
 
-                    if pt not in points:
-                        points.add(pt)
+                if pt not in points:
+                    points.add(pt)
 
-    updated_heights = dict()
+    updated_heights = {}
 
     for x, z in points:
         key = x, z
 
         updated_heights[key] = average_neighbour_height(x, z, world_slice)
 
-    for key in updated_heights:
-        y = updated_heights[key]
+    for key, y in updated_heights.items():
         x, z = key
         set_height(x, y, z, world_slice, editor)
 

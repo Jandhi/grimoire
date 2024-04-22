@@ -21,10 +21,9 @@ def link(asset: Asset):
             and hasattr(field_type, "__args__")
             and isinstance(field_type.__args__[0], AssetMeta)
         ):
-            new_list = []
-            for string_ref in getattr(asset, field_name):
-                if not isinstance(string_ref, str):
-                    continue
-
-                new_list.append(field_type.__args__[0].find(string_ref))
+            new_list = [
+                field_type.__args__[0].find(string_ref)
+                for string_ref in getattr(asset, field_name)
+                if isinstance(string_ref, str)
+            ]
             setattr(asset, field_name, new_list)

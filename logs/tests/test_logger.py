@@ -18,7 +18,7 @@ log.error("Error")
 # Result: Should only show error with timestamp
 
 # Simple progress bar
-for i in log.progress(range(5), "Testing progress"):
+for _ in log.progress(range(5), "Testing progress"):
     # We should avoid nested progress bars, but they are possible like so
-    for i in log.progress(range(5), "Testing inner progress", position=1, leave=False):
+    for _ in log.progress(range(5), "Testing inner progress", position=1, leave=False):
         sleep(0.1)

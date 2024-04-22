@@ -48,10 +48,7 @@ class District:
         self.adjacency[district] += 1
 
     def get_adjacency(self, district):
-        if district not in self.adjacency:
-            return 0
-
-        return self.adjacency[district]
+        return 0 if district not in self.adjacency else self.adjacency[district]
 
     def get_adjacent_districts(self) -> list:
         return list(self.adjacency.keys())

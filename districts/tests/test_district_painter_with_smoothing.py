@@ -73,7 +73,7 @@ for x in range(build_rect.size.x):
 
 rng = RNG(SEED)
 
-test_blocks = {f"farmland[moisture=6]": 1}
+test_blocks = {"farmland[moisture=6]": 1}
 
 urban_road = {
     "stone": 3,
@@ -83,7 +83,7 @@ urban_road = {
     "gravel": 1,
 }
 
-test_farm = {f"wheat[age=7]": 1}
+test_farm = {"wheat[age=7]": 1}
 
 urban = {
     "slabs": {

@@ -1,3 +1,4 @@
+import itertools
 from gdpc import Editor, Block, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
 from noise.rng import RNG
@@ -21,10 +22,7 @@ def replace_ground(
     ignore_blocks: list = [],
     ignore_water: bool = False,
 ):
-    counter = 0
-    for point in points:
-        counter += 1
-
+    for counter, point in enumerate(points, start=1):
         if counter % 1000 == 0:
             time.sleep(5)
 
@@ -52,10 +50,7 @@ def replace_ground_smooth(
     ignore_blocks: list = [],
     ignore_water: bool = False,
 ):
-    counter = 0
-    for point in points:
-        counter += 1
-
+    for counter, point in enumerate(points, start=1):
         if counter % 1000 == 0:
             time.sleep(5)
 
@@ -99,7 +94,7 @@ def replace_ground_smooth(
                 ):
                     block = choose_weighted(rng.value(), block_dict["slabs"])
 
-                if block == None:
+                if block is None:
                     block = choose_weighted(rng.value(), block_dict["blocks"])
 
                 editor.placeBlock(
@@ -132,10 +127,12 @@ def plant_forest(
                     editor,
                     forest.tree_palette[tree_type],
                 )
-                for a in range(
-                    point.x - forest.tree_density + 1, point.x + forest.tree_density
-                ):
-                    for b in range(
+                for a, b in itertools.product(
+                    range(
+                        point.x - forest.tree_density + 1, point.x + forest.tree_density
+                    ),
+                    range(
                         point.y - forest.tree_density + 1, point.y + forest.tree_density
-                    ):
-                        build_map[a][b] = True
+                    ),
+                ):
+                    build_map[a][b] = True

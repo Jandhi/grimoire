@@ -7,7 +7,7 @@ BITNOISE4 = 0x0C1FC20B
 # hashes together a seed and a position
 def hash(seed: int, pos: int) -> int:
     noise = pos
-    noise = noise * BITNOISE1
+    noise *= BITNOISE1
     noise = noise + seed
     noise = noise ^ (noise >> 8)
     noise = noise + BITNOISE2
@@ -17,9 +17,7 @@ def hash(seed: int, pos: int) -> int:
 
     # mask to reduce size of integer
     # otherwise python will start making larger and larger sizes
-    noise = noise & 0xFFFFFFFF
-
-    return noise
+    return noise & 0xFFFFFFFF
 
 
 # hashes together a seed with any amount of arguments

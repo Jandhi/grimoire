@@ -60,7 +60,7 @@ def split(points: set[ivec2]) -> tuple[set[ivec2], set[ivec2]]:
     ]:
         split = voronoi_split(points, mid + point_a, mid + point_b)
 
-        if best_split == None:
+        if best_split is None:
             best_split = split
             continue
 

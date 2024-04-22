@@ -19,14 +19,14 @@ def merge_down(
     while district_count > target_number:
         child = find_smallest_adjusted_district(districts, ignore)
 
-        if child == None:
+        if child is None:
             break
 
         neighbours: list[District] = child.get_adjacent_districts()
 
         parent = get_best_merge_candidate(child, neighbours)
 
-        if parent == None:
+        if parent is None:
             ignore.add(child)
 
             if child.area < 10:  # remove garbage district
@@ -156,9 +156,9 @@ def fix_map_and_edges(
     identities: dict[District, District],
 ):
     # Fixes map
-    for x in range(len(district_map)):
+    for item in district_map:
         for z in range(len(district_map[0])):
-            district = district_map[x][z]
+            district = item[z]
 
             if district != None:
-                district_map[x][z] = identities[district]
+                item[z] = identities[district]

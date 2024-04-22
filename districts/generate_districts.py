@@ -61,7 +61,7 @@ def bubble_out(
         district.add_point(point)
 
     # first pass normal queue
-    while len(queue) > 0:
+    while queue:
         point = queue.pop(0)
         district = district_map[point.x][point.z]
 
@@ -78,7 +78,7 @@ def bubble_out(
                 queue.append(neighbour)
 
     # second pass water queue
-    while len(water_queue) > 0:
+    while water_queue:
         point = water_queue.pop(0)
         district = district_map[point.x][point.z]
 

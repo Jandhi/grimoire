@@ -4,9 +4,7 @@ from glob import glob
 
 
 def load_jsons(directory_path: str) -> list[dict]:
-    names = glob(
-        directory_path + "/**/*.json", recursive=True
-    )  # glob allows us to get the subfolders too
+    names = glob(f"{directory_path}/**/*.json", recursive=True)
 
     jsons = []
 

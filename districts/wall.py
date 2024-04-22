@@ -56,7 +56,7 @@ def find_wall_neighbour(current: ivec2, wall_dict: dict, ordered_wall_dict: dict
         ivec2(0, 1),
         ivec2(1, 1),
     ]:  # prefers to go right
-        if current == None:  # error case
+        if current is None:  # error case
             return None
         next_wall_point = current + check
         if (
@@ -69,19 +69,17 @@ def find_wall_neighbour(current: ivec2, wall_dict: dict, ordered_wall_dict: dict
 # orders the list of wall points based off the first point in the list
 # TODO we should probably put helpers below other functions
 def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[ivec2]]:
-    ordered_wall_points: list[ivec2] = []
     list_of_ordered_wall_points: list[list[ivec2]] = []
-    ordered_wall_dict: dict() = {}
     reverse_checked = False
 
-    ordered_wall_points.append(wall_points.pop(0))
-    ordered_wall_dict[ordered_wall_points[0]] = True
+    ordered_wall_points: list[ivec2] = [wall_points.pop(0)]
+    ordered_wall_dict: dict() = {ordered_wall_points[0]: True}
     current_wall_point = ordered_wall_points[0]
-    while len(wall_points) > 0:
+    while wall_points:
         next_wall_point = find_wall_neighbour(
             current_wall_point, wall_dict, ordered_wall_dict
         )
-        if next_wall_point == None:  # error case, clean stopping
+        if next_wall_point is None:  # error case, clean stopping
             if (
                 reverse_checked == False
             ):  # after the first error, we reverse list and check the other way
@@ -219,7 +217,7 @@ def build_wall_standard(
             )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
-                if i != 0 and i != len(wall_points) - 1:
+                if i not in [0, len(wall_points) - 1]:
                     prev_h = wall_points[i - 1][0].y
                     next_h = wall_points[i + 1][0].y
                     h = point.y
@@ -233,7 +231,7 @@ def build_wall_standard(
                     ):
                         if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                             break
-                        if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
+                        if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) is None:
                             walkway_list.append(ivec2(new_pt.x, new_pt.z))
                             walkway_dict[ivec2(new_pt.x, new_pt.z)] = (
                                 new_pt.y + height_modifier
@@ -242,7 +240,7 @@ def build_wall_standard(
                     new_pt = point + vector(dir) * x
                     if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                         break
-                    if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
+                    if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) is None:
                         walkway_list.append(ivec2(new_pt.x, new_pt.z))
                         walkway_dict[ivec2(new_pt.x, new_pt.z)] = (
                             new_pt.y + height_modifier
@@ -312,7 +310,7 @@ def build_wall_standard_with_inner(
             )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
-                if i != 0 and i != len(wall_points) - 1:
+                if i not in [0, len(wall_points) - 1]:
                     prev_h = wall_points[i - 1][0].y
                     next_h = wall_points[i + 1][0].y
                     h = point.y
@@ -326,7 +324,7 @@ def build_wall_standard_with_inner(
                     ):
                         if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                             break
-                        if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
+                        if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) is None:
                             walkway_list.append(ivec2(new_pt.x, new_pt.z))
                             walkway_dict[ivec2(new_pt.x, new_pt.z)] = (
                                 new_pt.y + height_modifier
@@ -352,14 +350,14 @@ def build_wall_standard_with_inner(
                     ):
                         if (
                             wall_dict.get(ivec2(wall_pt.x, wall_pt.z)) != True
-                            and walkway_dict.get(ivec2(wall_pt.x, wall_pt.z)) == None
+                            and walkway_dict.get(ivec2(wall_pt.x, wall_pt.z)) is None
                         ):
                             inner_wall_list.append(ivec3(wall_pt.x, point.y, wall_pt.z))
                 for x in range(1, 4):
                     new_pt = point + vector(dir) * x
                     if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                         break
-                    if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) == None:
+                    if walkway_dict.get(ivec2(new_pt.x, new_pt.z)) is None:
                         walkway_list.append(ivec2(new_pt.x, new_pt.z))
                         walkway_dict[ivec2(new_pt.x, new_pt.z)] = (
                             new_pt.y + height_modifier
@@ -370,7 +368,7 @@ def build_wall_standard_with_inner(
                             if (
                                 wall_dict.get(ivec2(wall_pt.x, wall_pt.z)) != True
                                 and walkway_dict.get(ivec2(wall_pt.x, wall_pt.z))
-                                == None
+                                is None
                             ):
                                 inner_wall_list.append(
                                     ivec3(wall_pt.x, point.y, wall_pt.z)
@@ -390,11 +388,11 @@ def build_wall_standard_with_inner(
 
     for pt in inner_wall_list:
         if (
-            walkway_dict.get(ivec2(pt.x, pt.z)) == None
+            walkway_dict.get(ivec2(pt.x, pt.z)) is None
         ):  # check again since walkway was not completed as inner wall was being added
-            inner_wall_dict[
-                ivec2(pt.x, pt.z)
-            ] = True  # can put something else here if needed
+            inner_wall_dict[ivec2(pt.x, pt.z)] = (
+                True  # can put something else here if needed
+            )
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
                 editor.placeBlock((pt.x, y, pt.z), Block(full_block))
             if (
@@ -646,7 +644,7 @@ def add_towers(
                     for height in range(point_height - 1, point_height + 6):
                         if (
                             height == point_height + 5
-                            or walkway_dict.get(neighbour) == None
+                            or walkway_dict.get(neighbour) is None
                         ):
                             editor.placeBlock(
                                 (neighbour.x, height, neighbour.y), Block(full_block)
@@ -663,7 +661,7 @@ def add_towers(
                     ),
                     palette=palette,
                 )
-            # else:
-            #    print("actually it isnt")
+                # else:
+                #    print("actually it isnt")
         else:
             tower_possible -= 1

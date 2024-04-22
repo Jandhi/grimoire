@@ -14,9 +14,7 @@ from buildings.building_shape import permute_shapes
 def load_assets(root_directory) -> None:
     load_types()
 
-    names: list[str] = glob(
-        root_directory + "/**/*.json", recursive=True
-    )  # glob allows us to get the subfolders too
+    names: list[str] = glob(f"{root_directory}/**/*.json", recursive=True)
 
     for name in names:
         with open(name, "r") as file:

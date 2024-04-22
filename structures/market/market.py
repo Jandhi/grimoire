@@ -13,8 +13,7 @@ class Small_Market:
 
     def build(self, editor: Editor):
         x, y, z = self.origin
-        self.stalls = []
-        self.stalls.append(
+        self.stalls = [
             Stall(
                 (x + 9, y, z + 4),
                 "half_stair",
@@ -23,7 +22,7 @@ class Small_Market:
                 "trapdoor",
                 "x_minus",
             )
-        )
+        ]
         self.stalls.append(
             Stall(
                 (x + 9, y, z + 10),
@@ -87,8 +86,7 @@ class Market:
 
     def build(self, editor: Editor):
         x, y, z = self.origin
-        self.stalls = []
-        self.stalls.append(
+        self.stalls = [
             Stall(
                 (x + 5, y, z + 4),
                 "random",
@@ -97,7 +95,7 @@ class Market:
                 "trapdoor",
                 "z_plus",
             )
-        )
+        ]
         self.stalls.append(
             Stall(
                 (x + 15, y, z + 4),

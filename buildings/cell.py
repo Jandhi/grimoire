@@ -25,7 +25,4 @@ class Cell:
     def get_neighbour(self, direction: Direction):
         pt = self.position + vector(direction)
 
-        if pt not in self.plan.cells:
-            return None
-
-        return self.plan.cells[pt]
+        return None if pt not in self.plan.cells else self.plan.cells[pt]

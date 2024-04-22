@@ -37,13 +37,10 @@ def block_is_admissible(points: set[ivec2]) -> bool:
 
     stretch = calculate_stretch(points)
 
-    if (
-        stretch.x / stretch.y > MAXIMUM_STRETCH_RATIO
-        or stretch.y / stretch.x > MAXIMUM_STRETCH_RATIO
-    ):
-        return False
-
-    return True
+    return (
+        stretch.x / stretch.y <= MAXIMUM_STRETCH_RATIO
+        and stretch.y / stretch.x <= MAXIMUM_STRETCH_RATIO
+    )
 
 
 def generate_bubbles(
@@ -99,7 +96,7 @@ def bubble_out(
         blocks[i].add(bubble)
         block_index_map[bubble.x][bubble.y] = i
 
-    queue = [bubble for bubble in bubbles]
+    queue = list(bubbles)
 
     def is_eligible(vec: ivec2):
         district = map.districts[vec.x][vec.y]
@@ -112,7 +109,7 @@ def bubble_out(
 
         return district != None and district.is_urban
 
-    while len(queue) > 0:
+    while queue:
         point = queue.pop(0)
         block_index = block_index_map[point.x][point.y]
         block: set[ivec3] = blocks[block_index]

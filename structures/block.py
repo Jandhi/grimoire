@@ -10,11 +10,10 @@ class Block:
         string = self.name
 
         if len(self.properties) > 0:
-            properties_string = ""
-
-            for property in self.properties:
-                properties_string += f",{property}={self.properties[property]}"
-
+            properties_string = "".join(
+                f",{property}={self.properties[property]}"
+                for property in self.properties
+            )
             string = f"{string}[{properties_string[1:]}]"
 
         return string

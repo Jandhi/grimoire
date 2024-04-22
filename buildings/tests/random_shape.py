@@ -8,7 +8,7 @@ def random_shape(SEED: int):
     heights = {}
     rand = RNG(SEED, "random_points")
 
-    for i in range(20):
+    for _ in range(20):
         point = ivec2(rand.randrange(-2, 2), rand.randrange(-2, 2))
 
         y = 0

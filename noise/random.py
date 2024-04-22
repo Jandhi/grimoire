@@ -1,33 +1,21 @@
 # returns a random integer 0 <= n < max
 def randint(seed: int, max: int) -> int:
-    if max == 0:
-        return 0
-
-    return seed % max
+    return 0 if max == 0 else seed % max
 
 
 # returns a random integer min <= n < max
 def randrange(seed: int, min: int, max: int) -> int:
-    if min == max:
-        return min
-
-    return min + (seed % (max - min))
+    return min if min == max else min + (seed % (max - min))
 
 
 # returns a random item in a list
 def choose(seed: int, items: list):
-    if len(items) == 0:
-        return None
-
-    return items[seed % len(items)]
+    return items[seed % len(items)] if items else None
 
 
 # pops a random item from a list
 def pop(seed: int, items: list):
-    if len(items) == 0:
-        return None
-
-    return items.pop(seed % len(items))
+    return items.pop(seed % len(items)) if items else None
 
 
 # returns a random item from a dictionary of weights
@@ -80,7 +68,7 @@ def shuffle(seed: int, items: list) -> list:
     copied_list = items.copy()
     new_list = []
 
-    while len(copied_list) > 0:
+    while copied_list:
         length = len(copied_list)
         index = randint(hash(seed), length)
         new_list.append(copied_list.pop(index))

@@ -13,7 +13,7 @@ def establish_adjacency(world_slice: WorldSlice, district_map: list[list[Distric
     for x in range(build_box.size.x):
         for z in range(build_box.size.z):
             # Don't consider unclaimed territory
-            if district_map[x][z] == None:
+            if district_map[x][z] is None:
                 continue
 
             district = district_map[x][z]
@@ -40,7 +40,7 @@ def establish_adjacency(world_slice: WorldSlice, district_map: list[list[Distric
                 if point_district == district:  # same district, uninteresting
                     continue
 
-                if point_district == None:
+                if point_district is None:
                     district.adjacencies_total += 1  # log an empty adjacency
                     continue
 
@@ -61,7 +61,7 @@ def find_edges(world_slice: WorldSlice, district_map: list[list[District]]):
             point = ivec3(x, y, z)
             district = district_map[x][z]
 
-            if district == None:
+            if district is None:
                 continue
 
             for direction in cardinal:

@@ -20,13 +20,11 @@ class BuildingShape(Asset):
 
     def get_points(self, grid: Grid) -> Iterator[ivec3]:
         for point in self.points:
-            for pos in grid.get_points_at(point):
-                yield pos
+            yield from grid.get_points_at(point)
 
     def get_points_2d(self, grid: Grid) -> Iterator[ivec2]:
         for x, _, z in self.points:
-            for pos in grid.get_points_at_2d(ivec2(x, z)):
-                yield pos
+            yield from grid.get_points_at_2d(ivec2(x, z))
 
     def make_permutations(self):
         for val in range(8):

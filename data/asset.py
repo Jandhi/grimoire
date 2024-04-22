@@ -29,10 +29,11 @@ def register_asset_subclass(cls):
         cls.type_name = camel_to_snake_case(cls.__name__)
 
     cls.parent_types = []
-    for type in inspect.getmro(cls)[1:-1]:
-        if type.type_name not in BASE_TYPE_NAMES:
-            cls.parent_types.append(type)
-
+    cls.parent_types.extend(
+        type
+        for type in inspect.getmro(cls)[1:-1]
+        if type.type_name not in BASE_TYPE_NAMES
+    )
     Asset.assets_by_type_name[cls.type_name] = []
 
 
@@ -112,7 +113,7 @@ class Asset(metaclass=AssetMeta):
             for field_name, field_value in Asset.defaults[tp.type_name].items():
                 value = field_value
 
-                if isinstance(value, list) or isinstance(value, dict):
+                if isinstance(value, (list, dict)):
                     value = value.copy()
 
                 if not hasattr(self, field_name):
@@ -209,8 +210,11 @@ Asset.defaults["asset"] = {
 def find_asset(name: str, type: str):
     for assetType in Asset.types:
         if assetType.type_name == type:
-            for asset in Asset.assets_by_type_name[type]:
-                if asset.name == name:
-                    return asset
-
-            return None
+            return next(
+                (
+                    asset
+                    for asset in Asset.assets_by_type_name[type]
+                    if asset.name == name
+                ),
+                None,
+            )

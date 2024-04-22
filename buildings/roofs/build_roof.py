@@ -222,6 +222,8 @@ def build_roof(
 
         continue
 
+        # FIXME: Unreachable code: Why?
+
         # northeast
         build_nbt(
             editor,

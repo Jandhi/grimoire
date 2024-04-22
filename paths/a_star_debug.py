@@ -13,7 +13,7 @@ def a_star_debug(start, end, get_neighbours, get_cost, editor: Editor) -> list:
     visited = set()
     counter = 0
 
-    while len(paths) > 0:
+    while paths:
         counter += 1
         if counter % 10000 == 0:
             print(f"counter at {counter}")

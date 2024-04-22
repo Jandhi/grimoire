@@ -50,21 +50,18 @@ def place_crop(points: list[ivec2], block_dict: dict[any, int], rng, water_map):
             editor.placeBlock((point.x, y, point.y), Block(block))
 
 
+import itertools
+
 urban_points = []
 rural_points = []
 all_points = []
 
-for x in range(build_rect.size.x):
-    for z in range(build_rect.size.y):
-        district = district_map[x][z]
+for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)):
+    district = district_map[x][z]
 
-        if district is None:
-            continue
-        # elif district.is_urban:
-        #    urban_points.append(ivec2(x,z))
-        else:
-            # rural_points.append(ivec2(x,z))
-            all_points.append(ivec2(x, z))
+    if district is not None:
+        # rural_points.append(ivec2(x,z))
+        all_points.append(ivec2(x, z))
 
 rng = RNG(SEED)
 

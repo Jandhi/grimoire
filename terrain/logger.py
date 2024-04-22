@@ -98,10 +98,10 @@ def log_trees(editor, build_rect, world_slice):
 
 # requires player to fly around to allow minecraft to clear all the foliage, and then set gamerule randomtickspeed to something normal. Still much quicker to clear trees
 def manual_clear(editor, build_rect, world_slice):
-    tile_drops_off = f"gamerule doTileDrops false"
+    tile_drops_off = "gamerule doTileDrops false"
     editor.runCommand(tile_drops_off)
 
-    increase_tick_speed = f"gamerule randomTickSpeed 4096"
+    increase_tick_speed = "gamerule randomTickSpeed 4096"
     editor.runCommand(increase_tick_speed)
 
     log_stems(editor, build_rect, world_slice)

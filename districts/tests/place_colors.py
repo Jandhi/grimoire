@@ -30,7 +30,7 @@ colors = [
 
 def get_color(district, districts):
     blocks = colors
-    return blocks[districts.index(district) % len(blocks)] + "_wool"
+    return f"{blocks[districts.index(district) % len(blocks)]}_wool"
 
 
 def get_color_differentiated(district, districts, is_water):

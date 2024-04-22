@@ -11,7 +11,7 @@ def run_hash_distribution_test(num_buckets, iterations, seed):
     # Test
     buckets = {i: 0 for i in range(num_buckets)}
     rng = RNG(seed)
-    for i in range(iterations):
+    for _ in range(iterations):
         buckets[rng.next() % num_buckets] += 1
 
     expected = iterations / num_buckets
@@ -28,7 +28,7 @@ def run_hash_distribution_test(num_buckets, iterations, seed):
     s = f"{s}\n"
 
     # Bar of table
-    for i in range(num_buckets):
+    for _ in range(num_buckets):
         text = "-" * 4
         s = f"{s}{text}|"
     s = f"{s}\n"

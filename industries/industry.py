@@ -24,9 +24,10 @@ class SecondaryIndustry(Industry):
 
 
 def get_district_biomes(editor, district, num_points=3):
-    biomes_in_district = []
-    for point in random.sample(list(district.points), num_points):
-        biomes_in_district.append(editor.getBiome(point)[10:])
+    biomes_in_district = [
+        editor.getBiome(point)[10:]
+        for point in random.sample(list(district.points), num_points)
+    ]
     return list(set(biomes_in_district))
 
 
@@ -50,12 +51,9 @@ def find_secondary_industries(district_primary_industries: list[str]):
     for industry in SecondaryIndustry.all():
         industry: SecondaryIndustry
 
-        if any(
-            (
-                primary not in district_primary_industries
-                for primary in industry.parent_industries
-            )
+        if all(
+            primary in district_primary_industries
+            for primary in industry.parent_industries
         ):
-            continue
-        eligible_secondary_industries.append(industry)
+            eligible_secondary_industries.append(industry)
     return eligible_secondary_industries

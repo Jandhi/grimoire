@@ -55,7 +55,7 @@ ONEBYONE_LIST = ["1x1_room_1", "1x1_room_2", "1x1_room_3"]
 
 
 def rotate(a: list, n=1) -> list:
-    if len(a) == 0:
+    if not a:
         return a
     n = -n % len(a)  # flip rotation direction
     return np.concatenate((a[n:], a[:n]))
@@ -128,16 +128,16 @@ def build_staircase(
     palette: Palette,
     cells: dict[ivec3, Cell],
 ) -> list:
-    possible_starts = []
-    for potential_start in cells_to_fill:
+    possible_starts = [
+        potential_start
+        for potential_start in cells_to_fill
         if (
             is_corner(potential_start, cells_to_fill)[0]
             and potential_start + get_ivec3(up) in cells_to_fill
             and potential_start not in cells_with_rooms
             and list(potential_start)[1] == level
-        ):
-            possible_starts.append(potential_start)
-
+        )
+    ]
     start = rng.choose(possible_starts)
     start_connections = is_corner(start, cells_to_fill)[1]
 
@@ -196,6 +196,8 @@ def populate_floor(
         ((x, y, z), con) for (x, y, z), con in cells_with_rooms if y == level
     ]
     cells_on_floor = [(x, y, z) for x, y, z in cells_to_fill if y == level]
+
+    entropy = 0
     while len(rooms_on_floor) != len(cells_on_floor):
         candidates = []
         # get the connections for the new rooms
@@ -238,14 +240,9 @@ def populate_floor(
 
             # i have definitely found the worst way to do this but I just need it to work for now
 
-            entropy = 0
             potential_rooms = []
 
-            none_idx = []
-            for idx, val in enumerate(new_conns):
-                if val is None:
-                    none_idx.append(idx)
-
+            none_idx = [idx for idx, val in enumerate(new_conns) if val is None]
             for i0 in CONNECTION_LIST:
                 for i1 in CONNECTION_LIST:
                     for i2 in CONNECTION_LIST:
@@ -265,27 +262,29 @@ def populate_floor(
                                 room: Room = Room.find(room_name)
                                 to_face = room.facing
                                 for i in range(4):
-                                    if list(rotate(room.connections, i)) == temp:
-                                        if (
+                                    if (
+                                        list(rotate(room.connections, i)) == temp
+                                        and (
                                             room,
                                             to_face,
                                             list(rotate(room.connections, i)),
-                                        ) not in potential_rooms:
-                                            potential_rooms.append(
-                                                (
-                                                    room,
-                                                    to_face,
-                                                    tuple(rotate(room.connections, i)),
-                                                )
+                                        )
+                                        not in potential_rooms
+                                    ):
+                                        potential_rooms.append(
+                                            (
+                                                room,
+                                                to_face,
+                                                tuple(rotate(room.connections, i)),
                                             )
+                                        )
 
                                     if i > 0:
                                         to_face = right[to_face]
 
-            entropy = len(potential_rooms)
-            candidates.append((neighbor, entropy, potential_rooms))
+            candidates.append((neighbor, len(potential_rooms), potential_rooms))
 
-        min_entropy = min([y for x, y, z in candidates])
+        min_entropy = min(y for x, y, z in candidates)
         candidates_with_min_entropy = [
             (x, y, z) for x, y, z in candidates if y == min_entropy
         ]
@@ -335,7 +334,7 @@ def furnish(
     palette: Palette,
     cells: dict[ivec3, Cell],
 ) -> None:
-    number_of_floors = max([y for (x, y, z) in cells_to_fill]) + 1
+    number_of_floors = max(y for (x, y, z) in cells_to_fill) + 1
     cells_with_rooms = []
 
     if len(cells_to_fill) == 1 or len(cells_to_fill) == 2 and number_of_floors == 2:
