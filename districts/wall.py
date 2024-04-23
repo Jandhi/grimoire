@@ -52,7 +52,7 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
             else:
                 print('failed')
                 reverse_checked = False
-                if(len(ordered_wall_points)>20): #prevent weird small wall segements, test again to see if its improvement or not
+                if(len(ordered_wall_points)>20): #prevent weird small wall segements, tests again to see if its improvement or not
                     list_of_ordered_wall_points.append(ordered_wall_points)
                 ordered_wall_points = []
                 ordered_wall_points.append(wall_points.pop(0))

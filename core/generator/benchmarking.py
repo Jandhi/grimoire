@@ -51,12 +51,14 @@ class Benchmark:
             log.display(f'{Fore.dark_gray}----------{Style.reset}')
             log.info(f'{name} started')
 
-            func(*args, **kwargs)
+            retval = func(*args, **kwargs)
 
             end_time = time()
             time_elapsed = end_time - start_time
 
             log.info(f'{name} finished after {"%.2f" % time_elapsed} seconds')
             Benchmark.add_time(class_name, time_elapsed)
+
+            return retval
 
         return inner

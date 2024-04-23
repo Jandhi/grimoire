@@ -50,6 +50,17 @@ class LoggerSettings:
             self.__file = open(output_file, mode='w')
 
     __output_file : str | None
+
+    def clone(self):
+        return LoggerSettings(
+            self.print_to_console,
+            self.print_timestamp,
+            self.print_level,
+            self.print_classname,
+            self.__output_file,
+            self.minimum_console_level,
+            self.minimum_file_level
+        )
     
     @property
     def output_file(self) -> str | None:

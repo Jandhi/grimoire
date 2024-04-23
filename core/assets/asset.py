@@ -1,4 +1,5 @@
 import inspect
+from typing import TypeVar
 
 from core.assets.asset_validation_state import AssetValidationState
 from core.utils.strings import camel_to_snake_case
@@ -61,7 +62,6 @@ def default_subtype(other_cls):
         return cls
 
     return register_subtype
-
 
 # Base Class for all assets loaded from json files
 class Asset(metaclass=AssetMeta):
