@@ -1,4 +1,4 @@
-from heapq import heapify, heappop, heappush
+from heapq import heappop, heappush
 from gdpc import Editor, Block
 
 # get_neighbours takes state

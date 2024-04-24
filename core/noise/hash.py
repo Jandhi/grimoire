@@ -1,7 +1,7 @@
 BITNOISE1 = 0x85297A4D
 BITNOISE2 = 0x68E31DA4
 BITNOISE3 = 0x1859C4E9
-BITNOISE4 = 0x0C1FC20B
+BITNOISE4 = 0x0C1FC20B  # FIXME: Unused variable
 
 
 # hashes together a seed and a position

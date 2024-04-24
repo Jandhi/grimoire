@@ -37,6 +37,7 @@ districts, district_map = generate_districts(SEED, build_rect, world_slice, wate
 load_assets("assets")
 
 
+# FIXME: Unused function
 def place_crop(points: list[ivec2], block_dict: dict[any, int], rng, water_map):
     for point in points:
         if water_map[point.x][point.y] == False:
@@ -61,6 +62,7 @@ for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)
 rng = RNG(SEED)
 
 
+# FIXME: Unused variable
 test_farm = {
     "wheat[age=1]": 1,
     "wheat[age=2]": 1,
@@ -78,8 +80,10 @@ ignore_blocks = [
     "minecraft:copper_ore",
 ]
 
+# FIXME: Unused variable
 test_blocks = {"farmland[moisture=7]": 1}
 
+# FIXME: Unused variable
 test_blocks2 = {
     "beetroots[age=0]": 1,
     "beetroots[age=1]": 1,
@@ -88,12 +92,13 @@ test_blocks2 = {
 }
 
 
+# FIXME: Unused, duplicate variable
 baobab = {"small_baobab": 1}
 
 baobab = {"small_baobab": 1}
 
 test: PaintPalette = PaintPalette.find("farmland")
-test2: PaintPalette = PaintPalette.find("carrot")
+test2: PaintPalette = PaintPalette.find("carrot")  # FIXME: Unused variable
 forest: Forest = Forest.find("mixed_forest")
 # replace_ground(all_points, test_blocks2, rng, water_map, build_map, editor, world_slice)
 # replace_ground(all_points, tests.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)

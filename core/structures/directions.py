@@ -204,6 +204,7 @@ class Direction:
         raise ValueError(f"Direction {self} can't be converted to text")
 
 
+# NOTE: Unused class; replace with GDPC vectors
 class Directions2D:
     Zero = Direction2D(0, 0)
 
@@ -251,6 +252,6 @@ class Directions:
 
     Cardinal = [North, East, South, West]
     Diagonals = [Northeast, Northwest, Southeast, Southwest]
-    Orthoginal = Cardinal + [Up, Down]
+    Orthogonal = Cardinal + [Up, Down]
     All8 = Cardinal + Diagonals
     Omni = [Direction(*(i % 3 - 1, (i // 3) % 3 - 1, i // 9 - 1)) for i in range(1, 27)]

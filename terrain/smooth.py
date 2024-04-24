@@ -55,7 +55,7 @@ def average_neighbour_height(x: int, z: int, world_slice: WorldSlice) -> int:
 # updates the points set of a district to be correct
 def update_district_points(district: District, world_slice: WorldSlice):
     district.points.clear()
-    sum_point = ivec3(0, 0, 0)
+    sum_point = ivec3(0, 0, 0)  # FIXME: Unused variable
 
     for x, z in district.points_2d:
         y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]

@@ -1,9 +1,9 @@
 from gdpc import WorldSlice
 
-HIGHWAY = "highway"
+HIGHWAY = "highway"  # FIXME: Unused variable
 CITY_ROAD = "city_road"
 BUILDING = "building"
-WALL = "Wall"
+WALL = "Wall"  # FIXME: Unused variable
 CITY_WALL = "city_wall"
 GATE = "gate"
 

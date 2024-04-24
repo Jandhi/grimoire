@@ -1,6 +1,7 @@
 from core.noise.rng import RNG
 
 
+# FIXME: Unused class
 # Class created to randomly choose an item based on weight, while not having to store all the items
 # This is good for tasks where we dynamically generate a lot of items
 # Each time an item is added, it has a chance to be the chosen item based on its weight
@@ -12,13 +13,11 @@ class Reservoir:
         self.count = 0
         self.item = None
 
+    # FIXME: Unused method
     def add_item(self, item, weight):
         if self.rng.odds(weight, self.total_weight):
-            self.item = item
+            self.reservoir_item = item
 
         self.count += 1
         self.total_weight += weight
-        return self.item()
-
-    def item(self):
-        return self.item
+        return self.reservoir_item()

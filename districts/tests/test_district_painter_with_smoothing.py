@@ -67,6 +67,7 @@ for x in range(build_rect.size.x):
 
 rng = RNG(SEED)
 
+# FIXME: Unused variable
 test_blocks = {"farmland[moisture=6]": 1}
 
 urban_road = {
@@ -77,6 +78,7 @@ urban_road = {
     "gravel": 1,
 }
 
+# FIXME: Unused variable
 test_farm = {"wheat[age=7]": 1}
 
 urban = {

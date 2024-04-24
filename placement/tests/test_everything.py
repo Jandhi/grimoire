@@ -76,7 +76,7 @@ styles = [
     "dwarven",  # Little variety so probably save it for mountains
 ]
 
-biomes_in_districts = []
+biomes_in_districts = []  # FIXME: Unused variable
 forest_counter = 0
 desert_counter = 0
 rocky_counter = 0

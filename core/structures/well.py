@@ -12,6 +12,7 @@ from gdpc.vector_tools import ivec3
 from core.utils.setblock import place_block
 
 
+# FIXME: Unused class
 class Well:
     name = "Well"
     origin = ivec3(0, 0, 0)

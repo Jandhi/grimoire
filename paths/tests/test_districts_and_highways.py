@@ -33,7 +33,7 @@ player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 map = Map(world_slice)
 
 water_map = map.water
-building_map = map.buildings
+building_map = map.buildings  # FIXME: Unused variable
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 map.districts = district_map
 

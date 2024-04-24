@@ -30,6 +30,7 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
+# FIXME: Unused variable
 test_map = Map(world_slice)
 
 shape: BuildingShape = BuildingShape.find("quad")

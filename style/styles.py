@@ -1,1 +1,1 @@
-Medieval = "Medieval"
+Medieval = "Medieval"  # FIXME: Unused variable

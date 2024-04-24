@@ -1,5 +1,7 @@
 from core.assets.load_types import load_types
 
+# FIXME: Unused
+
 load_types()
 
 my_nbt_path = "C:\\Users\\jando\\AppData\\Roaming\\.minecraft\\saves\\NBTs\\generated\\minecraft\\structures"

@@ -1,6 +1,6 @@
-import os
 import json
 from glob import glob
+from typing import Any
 
 
 def load_jsons(directory_path: str) -> list[dict]:
@@ -16,7 +16,8 @@ def load_jsons(directory_path: str) -> list[dict]:
     return jsons
 
 
-def load_objects(directory_path: str, cls: type) -> list[any]:
+# FIXME: Unused function
+def load_objects(directory_path: str, cls) -> list[Any]:
     objects = []
 
     for json in load_jsons(directory_path):

@@ -46,4 +46,5 @@ def build_wall(
         print("Could not find suitable wall, skipped")
         return
 
+    # FIXME: `wall` is Wall instead of NBTAsset
     grid.build(editor, wall, cell.plan.palette, cell.position, direction)

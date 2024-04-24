@@ -47,6 +47,7 @@ class Grid:
     def world_to_local(self, coordinates: ivec3) -> ivec3:
         return coordinates - self.origin
 
+    # NOTE: Unused method
     def world_to_grid(self, coordinates: ivec3) -> ivec3:
         return self.local_to_grid(self.world_to_local(coordinates))
 

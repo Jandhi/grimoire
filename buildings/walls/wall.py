@@ -2,6 +2,7 @@ from core.assets.asset import Asset, asset_defaults
 from gdpc.editor import Editor
 from core.structures.grid import Grid
 from gdpc.vector_tools import ivec3
+from typing import Optional
 
 # WALL POSITIONS
 LOWER = "lower"
@@ -16,7 +17,11 @@ class Wall(Asset):
     positions: list[str]
 
     def build(
-        self, editor: Editor, grid: Grid, grid_coordinate: ivec3, facing: str = None
+        self,
+        editor: Editor,
+        grid: Grid,
+        grid_coordinate: ivec3,
+        facing: Optional[str] = None,
     ):
         pass
 

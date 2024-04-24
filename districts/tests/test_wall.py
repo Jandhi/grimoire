@@ -50,6 +50,7 @@ def replace_ground(
 
 import itertools
 
+# FIXME: Unused variable
 test_blocks = {
     "stone": 3,
     "cobblestone": 2,

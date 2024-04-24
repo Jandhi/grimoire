@@ -4,6 +4,7 @@ from buildings.legacycell import LegacyCell
 from buildings.roofs.roof_component import CORNER
 
 
+# FIXME: Unused code
 def plan_roof(plan: BuildingPlan):
     plan.shape.sort(key=lambda point: point[1])
 
@@ -15,6 +16,7 @@ def plan_roof_at_cell(plan: BuildingPlan, cell: LegacyCell):
     up, right, down, left = (cell.has_neighbour(direction) for direction in cardinal)
 
     # SINGLE
+    # FIXME: Unused attributes
     if not up and not right and not down and not left:
         cell.roof_data.top_left_component = CORNER
         cell.roof_data.top_right_component = CORNER

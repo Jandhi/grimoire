@@ -3,4 +3,4 @@ from style.substyle import Substyle
 
 
 class Style(Asset):
-    substyles: list[Substyle]
+    substyles: list[Substyle]  # FIXME: Unused variable

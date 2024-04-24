@@ -18,7 +18,7 @@ from core.assets.load_assets import load_assets
 from core.structures.legacy_directions import cardinal
 
 from palette.palette import Palette
-from buildings.roofs import Roof
+from buildings.roofs.roof import Roof
 
 editor = Editor(buffering=True, caching=True)
 
@@ -55,6 +55,7 @@ lower_wall: Wall = Wall.find(style["lower"])
 upper_wall: Wall = Wall.find(style["upper"])
 
 for direction in cardinal:
+    # FIXME: `lower_wall` and `upper_wall` are Wall instead of NBTAsset
     grid.build(editor, lower_wall, palette, ivec3(0, 0, 0), direction)
     grid.build(editor, upper_wall, palette, ivec3(0, 1, 0), direction)
 

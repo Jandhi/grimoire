@@ -4,6 +4,7 @@ from gdpc import Editor
 from gdpc.vector_tools import ivec3
 
 
+# FIXME: Unused class
 class Small_Market:
     name = "Small Market"
     origin = ivec3(0, 0, 0)

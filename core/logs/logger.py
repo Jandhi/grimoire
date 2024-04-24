@@ -57,6 +57,7 @@ class LoggerSettings:
 
     __output_file: str | None
 
+    # FIXME: Unused method
     def clone(self):
         return LoggerSettings(
             self.print_to_console,
@@ -138,6 +139,9 @@ class Logger:
 
     def info(self, text: str):
         self.__log(text, LoggingLevel.INFO)
+
+    def success(self, text: str):
+        self.__log(text, LoggingLevel.SUCCESS)
 
     def warning(self, text: str):
         self.__log(text, LoggingLevel.WARNING)

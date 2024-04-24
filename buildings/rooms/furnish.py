@@ -40,6 +40,7 @@ CONNECTION_LIST = ["wall", "open"]
 
 LOWER_STAIRCASE_LIST = ["staircase_corner_lower"]
 
+# NOTE: Unused variable
 UPPER_STAIRCASE_LIST = ["staircase_corner_upper"]
 
 ONEBYONE_UPPER_LIST = ["1x1_twostorey_upper_1", "1x1_twostorey_upper_2"]
@@ -198,6 +199,7 @@ def get_neighbors(rooms: list, inside_cells: list) -> set:
                 neighbors.add(new_cell)
     return neighbors
 
+
 # FIXME: Refactor
 def populate_floor(
     level: int,
@@ -214,6 +216,7 @@ def populate_floor(
     ]
     cells_on_floor = [(x, y, z) for x, y, z in cells_to_fill if y == level]
 
+    # FIXME: Unused variable
     entropy = 0
     while len(rooms_on_floor) != len(cells_on_floor):
         candidates = []
@@ -305,6 +308,7 @@ def populate_floor(
         candidates_with_min_entropy = [
             (x, y, z) for x, y, z in candidates if y == min_entropy
         ]
+        # FIXME: Unused variable `ent`
         cell_to_build, ent, room_to_build = candidates_with_min_entropy[
             rng.randint(len(candidates_with_min_entropy))
         ]

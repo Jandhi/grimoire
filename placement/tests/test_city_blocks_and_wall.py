@@ -101,6 +101,7 @@ def replace_ground(
             place_at_ground(point.x, point.y, block)
 
 
+# FIXME: Unused variable
 test_blocks = {
     "stone": 3,
     "cobblestone": 2,

@@ -17,12 +17,12 @@ def link(asset: Asset):
             string_ref = getattr(asset, field_name)
             setattr(asset, field_name, field_type.find(string_ref))
         elif (
-            field_type.__name__ == "list"
+            field_type == "list"
             and hasattr(field_type, "__args__")
             and isinstance(field_type.__args__[0], AssetMeta)
         ):
             new_list = [
-                field_type.__args__[0].find(string_ref)
+                field_type.__args__[0].find(string_ref)  # TODO: No attribute `find()`
                 for string_ref in getattr(asset, field_name)
                 if isinstance(string_ref, str)
             ]

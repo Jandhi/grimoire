@@ -54,6 +54,7 @@ walls = [wall for wall in Wall.all() if "japanese" in wall.tags]
 
 build_walls(plan, editor, walls, RNG(SEED, "build_walls"))
 
+# FIXME: missing argument
 furnish(
     [cell.position for cell in plan.cells], RNG(SEED, "furnish"), grid, editor, palette
 )

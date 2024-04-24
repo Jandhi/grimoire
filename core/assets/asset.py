@@ -1,5 +1,5 @@
 import inspect
-from typing import TypeVar
+from typing import Any, TypeVar
 
 from core.assets.asset_validation_state import AssetValidationState
 from core.utils.strings import camel_to_snake_case
@@ -19,6 +19,7 @@ class AssetMeta(type):
         return subclass
 
 
+# FIXME: Unused variable
 BASE_TYPES_CLASS_NAMES = ("Asset", "NBTAsset")
 BASE_TYPE_NAMES = ("asset", "nbtasset")
 
@@ -31,10 +32,11 @@ def register_asset_subclass(cls):
         cls.type_name = camel_to_snake_case(cls.__name__)
 
     cls.parent_types = []
-    for type in inspect.getmro(cls)[1:-1]:
-        if type.type_name not in BASE_TYPE_NAMES:
-            cls.parent_types.append(type)
-
+    cls.parent_types.extend(
+        type
+        for type in inspect.getmro(cls)[1:-1]
+        if type.type_name not in BASE_TYPE_NAMES
+    )
     Asset.assets_by_type_name[cls.type_name] = []
 
 
@@ -72,13 +74,13 @@ class Asset(metaclass=AssetMeta):
     assets_by_type_name: dict[str, list] = {}
 
     # Defaults by type
-    defaults: dict[str, dict[str, any]] = {}
+    defaults: dict[str, dict[str, Any]] = {}
 
     # Tracks all types of assets
     types: list[AssetMeta] = []
 
     # See is_default_subtype_for above
-    default_subtype = {}
+    default_subtype: dict = {}
 
     # Tracks all parent types of this asset, not including Asset or NBTAsset
     parent_types: list[type] = []
@@ -94,24 +96,24 @@ class Asset(metaclass=AssetMeta):
     # This function ensures all required fields are there
     def validate(self) -> AssetValidationState:
         state = AssetValidationState()
-        annotations = type(self).get_annotations()
+        annotations: dict[str, str] = type(self).get_annotations()
 
         for field_name, field_type in annotations.items():
             if not hasattr(self, field_name):
-                state.missing_args.append((field_name, str(field_type)))
+                state.missing_args.append((field_name, field_type))
 
         for field in self.__dict__:
             if field not in annotations:
-                state.surplus_args.append((field, str(type(field))))
+                state.surplus_args.append((field, field))
 
         return state
 
     def set_defaults(self) -> None:
         for tp in inspect.getmro(type(self))[:-1]:
-            if tp.type_name not in Asset.defaults:
+            if tp.__name__ not in Asset.defaults:
                 continue
 
-            for field_name, field_value in Asset.defaults[tp.type_name].items():
+            for field_name, field_value in Asset.defaults[tp.__name__].items():
                 value = field_value
 
                 if isinstance(value, (list, dict)):
@@ -126,7 +128,7 @@ class Asset(metaclass=AssetMeta):
     # Adds object to global pool of objects
     def add_to_pool(self) -> None:
         for tp in (type(self), *self.parent_types):
-            Asset.assets_by_type_name[tp.type_name].append(self)
+            Asset.assets_by_type_name[tp.__name__].append(self)
 
     # -------------
     # CLASS METHODS
@@ -156,7 +158,7 @@ class Asset(metaclass=AssetMeta):
     @classmethod
     def construct_unsafe(
         cls, add_to_pool=True, **kwargs
-    ) -> tuple[any, AssetValidationState]:
+    ) -> tuple[Any, AssetValidationState]:
         obj = cls()
 
         for key, val in kwargs.items():
@@ -178,7 +180,7 @@ class Asset(metaclass=AssetMeta):
 
     # Call this to properly create an asset
     @classmethod
-    def construct(cls, add_to_pool=True, **kwargs) -> any:
+    def construct(cls, add_to_pool=True, **kwargs) -> Any:
         if "type" not in kwargs:
             kwargs["type"] = cls.type_name
 
@@ -208,11 +210,15 @@ Asset.defaults["asset"] = {
 }
 
 
+# FIXME: Unused function
 def find_asset(name: str, type: str):
     for assetType in Asset.types:
-        if assetType.type_name == type:
-            for asset in Asset.assets_by_type_name[type]:
-                if asset.name == name:
-                    return asset
-
-            return None
+        if assetType.__name__ == type:
+            return next(
+                (
+                    asset
+                    for asset in Asset.assets_by_type_name[type]
+                    if asset.name == name
+                ),
+                None,
+            )

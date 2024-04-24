@@ -11,6 +11,7 @@ T = TypeVar("T")
 class Benchmark:
     __time_by_name: dict[str, list[float]] = {}
 
+    # NOTE: Used only by commented-out code below
     @staticmethod
     def add_time(name: str, amount: float) -> None:
         if name not in Benchmark.__time_by_name:

@@ -1,4 +1,4 @@
-from typing import Callable, TypeVar
+from typing import TypeVar
 
 from colored import Fore, Style
 

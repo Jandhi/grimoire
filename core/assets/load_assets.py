@@ -22,8 +22,8 @@ class AssetLoader(Module):
         load_types()
 
         names: list[str] = glob(
-            sys.path[0] + "/" + root_directory + "/**/*.json", recursive=True
-        )  # glob allows us to get the subfolders too
+            f"{sys.path[0]}/{root_directory}/**/*.json", recursive=True
+        )
 
         for name in self.log.progress(names, "Loading Assets"):
             with open(name, "r") as file:

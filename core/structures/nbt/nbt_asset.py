@@ -7,7 +7,7 @@ from gdpc.vector_tools import ivec3
 # We will be subclassing this for different types of structures, e.g. walls and rooms
 @asset_defaults(
     palette=None,
-    do_not_replace=[],
+    do_not_replace=[],  # FIXME: Unused attribute
     replace=[],
     do_not_place=[],
 )

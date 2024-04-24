@@ -17,6 +17,7 @@ def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     return neighbours
 
 
+# FIXME: Unused function
 # finds the neighbours points of a point not in a set
 def get_neighbours_not_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []

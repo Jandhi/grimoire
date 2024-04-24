@@ -4,6 +4,7 @@ from core.utils.vectors import x_ivec3, y_ivec3, z_ivec3
 from buildings.legacycell import LegacyCell
 
 
+# FIXME: Unused function
 def place_frame(cell: LegacyCell, grid: Grid, editor: Editor):
     coords = grid.grid_to_world(cell.position)
 

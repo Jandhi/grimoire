@@ -20,10 +20,11 @@ MAXIMUM_SIZE = 2000
 UNSPLITTABLE_SIZE = 100
 MAXIMUM_STRETCH_RATIO = 5
 EDGE_THICKNESS = 1
-DESIRED_BLOCK_SIZE = 500
+DESIRED_BLOCK_SIZE = 500  # FIXME: Unused variable; Should perhaps be used below?
 MINIMUM_BLOCK_SZE = 100
 
 
+# FIXME: Function is unused
 def block_is_admissible(points: set[ivec2]) -> bool:
     # We will automatically pass this as it should not be split again
     if len(points) <= UNSPLITTABLE_SIZE:
@@ -44,7 +45,7 @@ def generate_bubbles(
     rng: RNG,
     districts: list[District],
     map: Map,
-    desired_block_size=1200,
+    desired_block_size=1200,  # NOTE: Perhaps this should use DESIRED_BLOCK_SIZE?
     minimum_point_distance=15,
 ) -> list[ivec2]:
     points = []

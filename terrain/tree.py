@@ -361,7 +361,7 @@ def generate_medium_birch(
             if chance != 4:
                 place_block(editor, x0, y, z0 - 1, Block(wood))
 
-    for a in range(0, branch_num):
+    for a in range(branch_num):
         branch_height = randint(int((height - y0) / 2 + y0) + 2, height - 1)
         branch_pos = randint(1, 16)
         if branch_pos == 1:
@@ -538,7 +538,7 @@ def generate_large_birch(
             if chance != 4:
                 place_block(editor, x0, y, z0 - 1, Block(wood))
 
-    for a in range(0, branch_num):
+    for a in range(branch_num):
         branch_height = randint(int((height - y0) / 2 + y0) + 4, height - 1)
         branch_pos = randint(1, 24)
         if branch_pos == 1:
@@ -2041,7 +2041,7 @@ def generate_medium_oak(
             if chance != 4:
                 place_block(editor, x0, y, z0 - 1, Block(wood))
 
-    for a in range(0, branch_num):
+    for a in range(branch_num):
         branch_height = randint(int((height - y0) / 2 + y0) + 4, height - 1)
         branch_pos = randint(1, 24)
         if branch_pos == 1:
@@ -2295,7 +2295,7 @@ def generate_large_oak(
             if chance != 4:
                 place_block(editor, x0, y, z0 - 1, Block(wood))
 
-    for a in range(0, branch_num):
+    for a in range(branch_num):
         branch_height = randint(int((height - y0) / 2 + y0) + 5, height - 1)
         branch_pos = randint(1, 40)
         if branch_pos == 1:
@@ -3183,7 +3183,7 @@ def generate_medium_jungle(
     branch_num = randint(1, 3)
     small_branches = []
     # small side branches
-    for a in range(0, branch_num):
+    for a in range(branch_num):
         branch_height = randint(int((height - y0) / 2 + y0), height - 5)
         branch_pos = randint(1, 16)
         if branch_pos == 1:
@@ -3559,7 +3559,7 @@ def generate_large_jungle(
     branch_num = randint(2, 5)
     small_branches = []
     # small lower branches
-    for a in range(0, branch_num):
+    for a in range(branch_num):
         branch_height = randint(int((height - y0) / 2 + y0), height - 7)
         branch_pos = randint(1, 24)
         if branch_pos == 1:

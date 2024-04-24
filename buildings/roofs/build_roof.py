@@ -33,6 +33,7 @@ def build_roof(
             continue
 
         coords = grid.grid_to_local(cell.position + y_ivec3(1)) + grid.origin
+        # FIXME: Unused variable
         transform_vecs = {
             north: ivec3(0, 0, 0),  # northwest
             east: ivec3(grid.width - 1, 0, 0),  # northeast
