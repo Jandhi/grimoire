@@ -1,8 +1,8 @@
 from districts.district import District
-from gdpc import Editor, WorldSlice, Block
+from gdpc import Editor, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
 from terrain.set_height import set_height
-from utils.bounds import is_in_bounds2d
+from core.utils.bounds import is_in_bounds2d
 
 
 def smooth(
