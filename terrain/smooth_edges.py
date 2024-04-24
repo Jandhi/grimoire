@@ -28,7 +28,9 @@ def smooth_edges(
             continue
 
         for edge in district.edges:
-            for dx, dz in itertools.product(range(-EDGE_RANGE, EDGE_RANGE), range(-EDGE_RANGE, EDGE_RANGE)):
+            for dx, dz in itertools.product(
+                range(-EDGE_RANGE, EDGE_RANGE), range(-EDGE_RANGE, EDGE_RANGE)
+            ):
                 pt = ivec2(edge.x + dx, edge.z + dz)
 
                 # out of bounds

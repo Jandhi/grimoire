@@ -9,7 +9,6 @@ from districts.district import District
 from industries import industry
 
 
-
 def detect_biome():
     load_assets("assets")
     editor = Editor(buffering=True, caching=True)

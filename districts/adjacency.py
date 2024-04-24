@@ -4,7 +4,6 @@ from core.structures.legacy_directions import cardinal, vector
 from gdpc.vector_tools import Rect, ivec2, ivec3
 
 
-
 # Tells the districts what neighbours they have and why
 def establish_adjacency(world_slice: WorldSlice, district_map: list[list[District]]):
     build_box = world_slice.box

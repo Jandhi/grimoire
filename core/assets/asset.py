@@ -5,13 +5,12 @@ from core.assets.asset_validation_state import AssetValidationState
 from core.utils.strings import camel_to_snake_case
 
 
-
 # Metaclass that registers NBTAsset subtypes
 class AssetMeta(type):
     def __new__(cls, name, bases, dct):
         subclass = super().__new__(cls, name, bases, dct)
 
-        if name == 'Asset':
+        if name == "Asset":
             subclass.types.append(subclass)
             subclass.assets_by_type_name["asset"] = []
         else:
@@ -20,8 +19,8 @@ class AssetMeta(type):
         return subclass
 
 
-BASE_TYPES_CLASS_NAMES = ('Asset', 'NBTAsset')
-BASE_TYPE_NAMES = ('asset', 'nbtasset')
+BASE_TYPES_CLASS_NAMES = ("Asset", "NBTAsset")
+BASE_TYPE_NAMES = ("asset", "nbtasset")
 
 
 def register_asset_subclass(cls):
@@ -155,7 +154,9 @@ class Asset(metaclass=AssetMeta):
     # This is used to create an asset without raising an exception on failure
     # IMPORTANT: This can return None when the asset created is invalid. It will NOT throw an error.
     @classmethod
-    def construct_unsafe(cls, add_to_pool=True, **kwargs) -> tuple[any, AssetValidationState]:
+    def construct_unsafe(
+        cls, add_to_pool=True, **kwargs
+    ) -> tuple[any, AssetValidationState]:
         obj = cls()
 
         for key, val in kwargs.items():
@@ -178,13 +179,15 @@ class Asset(metaclass=AssetMeta):
     # Call this to properly create an asset
     @classmethod
     def construct(cls, add_to_pool=True, **kwargs) -> any:
-        if 'type' not in kwargs:
-            kwargs['type'] = cls.type_name
+        if "type" not in kwargs:
+            kwargs["type"] = cls.type_name
 
         asset, state = cls.construct_unsafe(add_to_pool, **kwargs)
 
         if state.is_invalid():
-            raise AssetError(f'Asset is missing the following arguments: {[state.missing_args]}')
+            raise AssetError(
+                f"Asset is missing the following arguments: {[state.missing_args]}"
+            )
 
         return asset
 
@@ -199,9 +202,9 @@ class Asset(metaclass=AssetMeta):
         return annotations
 
 
-Asset.defaults['asset'] = {
-    'tags': [],
-    'weight': 100,
+Asset.defaults["asset"] = {
+    "tags": [],
+    "weight": 100,
 }
 
 

@@ -8,15 +8,14 @@ from palette.palette import Palette
 from palette.palette_swap import palette_swap
 
 
-
 # Constructs an NBTAsset given an editor and transformation
 def build_nbt(
-        editor: Editor,
-        asset: NBTAsset,
-        palette: Palette = None,
-        transformation: Transformation = None,
-        place_air: bool = False,
-        allow_non_solid_replacement: bool = False,
+    editor: Editor,
+    asset: NBTAsset,
+    palette: Palette = None,
+    transformation: Transformation = None,
+    place_air: bool = False,
+    allow_non_solid_replacement: bool = False,
 ):
     structure = convert_nbt(asset.filepath)
     transformation = transformation or Transformation()  # construct default value
@@ -48,14 +47,16 @@ def build_nbt(
 
         # Doesn't allow non-solid blocks to replace blocks
         if (not allow_non_solid_replacement) and any(
-                blocktype in block.name for blocktype in ('stairs', 'slab', 'walls', 'fence')):
+            blocktype in block.name
+            for blocktype in ("stairs", "slab", "walls", "fence")
+        ):
             curr_block = editor.getBlock(position=(x, y, z))
 
             if "air" not in curr_block.id:
                 continue
 
-        if block.name == 'minecraft:barrier':
-            block.name = 'minecraft:air'
+        if block.name == "minecraft:barrier":
+            block.name = "minecraft:air"
 
         editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block(nbt))
 
@@ -66,9 +67,7 @@ def build_nbt(
         nbt = entity[1]
 
         x, y, z = transformation.apply_to_point(
-            point=pos,
-            structure=structure,
-            asset=asset
+            point=pos, structure=structure, asset=asset
         )
-        summon_entity_command = f'summon {id} {x} {y} {z} {nbt}'
+        summon_entity_command = f"summon {id} {x} {y} {z} {nbt}"
         editor.runCommand(summon_entity_command, position=ivec3(x, y, z))

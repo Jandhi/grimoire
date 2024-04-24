@@ -1,7 +1,11 @@
 from districts.district import District
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3, distance2
-from core.utils.sets.set_operations import calculate_stretch, find_edges, find_outer_direction
+from core.utils.sets.set_operations import (
+    calculate_stretch,
+    find_edges,
+    find_outer_direction,
+)
 from core.utils.sets.find_outer_points import find_outer_and_inner_points
 from core.noise.rng import RNG
 from core.structures.legacy_directions import cardinal, get_ivec2, to_text

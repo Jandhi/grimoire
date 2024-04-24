@@ -17,7 +17,9 @@ def calculate_stretch(points: set[ivec2]) -> ivec2:
     return stretch
 
 
-def voronoi_split(points: set[ivec2], point_a: ivec2, point_b: ivec2) -> tuple[set[ivec2], set[ivec2]]:
+def voronoi_split(
+    points: set[ivec2], point_a: ivec2, point_b: ivec2
+) -> tuple[set[ivec2], set[ivec2]]:
     set_a = set()
     set_b = set()
 
@@ -43,8 +45,12 @@ def split(points: set[ivec2]) -> tuple[set[ivec2], set[ivec2]]:
         stretch_a = calculate_stretch(split[0])
         stretch_b = calculate_stretch(split[1])
 
-        stretch_penalty_a = max(stretch_a.x, stretch_a.y) / min(stretch_a.x, stretch_a.y)
-        stretch_penalty_b = max(stretch_b.x, stretch_b.y) / min(stretch_b.x, stretch_b.y)
+        stretch_penalty_a = max(stretch_a.x, stretch_a.y) / min(
+            stretch_a.x, stretch_a.y
+        )
+        stretch_penalty_b = max(stretch_b.x, stretch_b.y) / min(
+            stretch_b.x, stretch_b.y
+        )
 
         return evenness + stretch_penalty_a * 0.1 + stretch_penalty_b * 0.1
 

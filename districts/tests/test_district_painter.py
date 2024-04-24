@@ -90,16 +90,16 @@ test_blocks2 = {
 
 baobab = {"small_baobab": 1}
 
-baobab = {
-    'small_baobab': 1
-}
+baobab = {"small_baobab": 1}
 
-test : PaintPalette = PaintPalette.find('farmland')
-test2 : PaintPalette = PaintPalette.find('carrot')
-forest : Forest = Forest.find('mixed_forest')
-#replace_ground(all_points, test_blocks2, rng, water_map, build_map, editor, world_slice)
-#replace_ground(all_points, tests.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)
-#replace_ground(all_points, test2.palette, rng, water_map, build_map, editor, world_slice, 1, ignore_blocks)
-#replace_ground(urban_points, urban_road, rng, water_map, build_map, editor, world_slice)
-#replace_ground_smooth(urban_points, urban, rng, water_map, build_map, editor, world_slice)
-plant_forest(all_points, forest, rng, water_map, build_map, editor, world_slice, ignore_blocks)
+test: PaintPalette = PaintPalette.find("farmland")
+test2: PaintPalette = PaintPalette.find("carrot")
+forest: Forest = Forest.find("mixed_forest")
+# replace_ground(all_points, test_blocks2, rng, water_map, build_map, editor, world_slice)
+# replace_ground(all_points, tests.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)
+# replace_ground(all_points, test2.palette, rng, water_map, build_map, editor, world_slice, 1, ignore_blocks)
+# replace_ground(urban_points, urban_road, rng, water_map, build_map, editor, world_slice)
+# replace_ground_smooth(urban_points, urban, rng, water_map, build_map, editor, world_slice)
+plant_forest(
+    all_points, forest, rng, water_map, build_map, editor, world_slice, ignore_blocks
+)

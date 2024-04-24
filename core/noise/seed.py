@@ -2,7 +2,7 @@ from typing import TypeVar
 
 from core.noise.random import *
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 # Class that wraps the seed value
@@ -20,16 +20,16 @@ class Seed:
     def randrange(self, min: int, max: int) -> int:
         return randrange(self.value(), min, max)
 
-    def choose(self, items : list[T]) -> T:
+    def choose(self, items: list[T]) -> T:
         return choose(self.value(), items)
 
-    def pop(self, items : list[T]) -> T:
+    def pop(self, items: list[T]) -> T:
         return pop(self.value(), items)
 
-    def choose_weighted(self, items : dict[T, int]) -> T:
+    def choose_weighted(self, items: dict[T, int]) -> T:
         return choose_weighted(self.value(), items)
 
-    def pop_weighted(self, items : dict[T, int]) -> T:
+    def pop_weighted(self, items: dict[T, int]) -> T:
         return pop_weighted(self.value(), items)
 
     def odds(self, successes: int, failures: int) -> bool:

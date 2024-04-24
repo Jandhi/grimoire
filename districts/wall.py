@@ -3,8 +3,22 @@ from core.noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
-from core.structures.legacy_directions import north, get_ivec2, right, to_text, ivec2_to_dir, vector, cardinal, opposite
-from core.utils.geometry import get_neighbours_in_set, is_straight_ivec2, is_point_surrounded_dict, get_outer_points
+from core.structures.legacy_directions import (
+    north,
+    get_ivec2,
+    right,
+    to_text,
+    ivec2_to_dir,
+    vector,
+    cardinal,
+    opposite,
+)
+from core.utils.geometry import (
+    get_neighbours_in_set,
+    is_straight_ivec2,
+    is_point_surrounded_dict,
+    get_outer_points,
+)
 from core.utils.misc import is_water
 from core.structures.nbt.build_nbt import build_nbt
 from core.structures.nbt.nbt_asset import NBTAsset
@@ -69,7 +83,9 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
             else:
                 print("failed")
                 reverse_checked = False
-                if(len(ordered_wall_points)>20): #prevent weird small wall segements, tests again to see if its improvement or not
+                if (
+                    len(ordered_wall_points) > 20
+                ):  # prevent weird small wall segements, tests again to see if its improvement or not
                     list_of_ordered_wall_points.append(ordered_wall_points)
                 ordered_wall_points = []
                 ordered_wall_points.append(wall_points.pop(0))
@@ -367,9 +383,9 @@ def build_wall_standard_with_inner(
         if (
             walkway_dict.get(ivec2(pt.x, pt.z)) is None
         ):  # check again since walkway was not completed as inner wall was being added
-            inner_wall_dict[ivec2(pt.x, pt.z)] = (
-                True  # can put something else here if needed
-            )
+            inner_wall_dict[
+                ivec2(pt.x, pt.z)
+            ] = True  # can put something else here if needed
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
                 editor.placeBlock((pt.x, y, pt.z), Block(full_block))
             if (

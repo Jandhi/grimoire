@@ -38,7 +38,9 @@ class NameGenerator(Module):
         self.__context_stack: list[NameGenerator.Context] = []
 
     @Module.main
-    def generate_name(self, rule_name: str, schema: NamingSchema, args: dict[str, any] = None) -> tuple[str, dict]:
+    def generate_name(
+        self, rule_name: str, schema: NamingSchema, args: dict[str, any] = None
+    ) -> tuple[str, dict]:
         self.push_ctx(NameGenerator.Context(schema, args or {}))
         return self.__invoke_rule(rule_name), self.args
 
@@ -51,7 +53,7 @@ class NameGenerator(Module):
         if isinstance(rule, dict):
             parsed_rules = {}
 
-            for (name, odds) in rule.items():
+            for name, odds in rule.items():
                 if isinstance(odds, int):
                     parsed_rules[name] = odds
                 else:
@@ -71,11 +73,13 @@ class NameGenerator(Module):
             rule = rule[start_index:]
 
             if ">" not in rule:
-                self.raise_error(f"Malformed rule \"{rule}\" in schema {self.schema.name}")
+                self.raise_error(
+                    f'Malformed rule "{rule}" in schema {self.schema.name}'
+                )
 
             end_index = rule.index(">")
-            command = rule[0:end_index + 1].removeprefix("<").removesuffix(">")
-            rule = rule[end_index + 1:]
+            command = rule[0 : end_index + 1].removeprefix("<").removesuffix(">")
+            rule = rule[end_index + 1 :]
             result += self.__parse_cmd(command)
         result += rule
         return result

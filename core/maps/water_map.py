@@ -10,7 +10,7 @@ def get_water_map(world_slice: WorldSlice):
 
     for x in range(size.x):
         for z in range(size.y):
-            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
             block: Block = world_slice.getBlock((x, y - 1, z))
 
         if block.id in WATERS | {"minecraft:ice", "minecraft:seagrass"}:

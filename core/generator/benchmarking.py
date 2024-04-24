@@ -20,8 +20,8 @@ class Benchmark:
 
     @staticmethod
     def log_results(log: Logger) -> None:
-        log.display(f'{Fore.dark_gray}----------{Style.reset}')
-        log.info('BENCHMARK BY CLASS')
+        log.display(f"{Fore.dark_gray}----------{Style.reset}")
+        log.info("BENCHMARK BY CLASS")
 
         longest_name = max(len(name) for name in Benchmark.__time_by_name)
 
@@ -43,6 +43,7 @@ class Benchmark:
     def print_results() -> None:
         Benchmark.log_results(Logger())
 
+    # FIXME: Why is this commented out; as a docstring?
     """
     Adds a timer to method, logs time elapsed
     '''
@@ -68,3 +69,4 @@ class Benchmark:
             return retval
 
         return inner
+    """

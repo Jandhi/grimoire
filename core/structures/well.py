@@ -1,6 +1,13 @@
 from random import randint, seed
 from gdpc import Editor, Block
-from core.structures.legacy_directions import north, east, west, south, to_text, opposite
+from core.structures.legacy_directions import (
+    north,
+    east,
+    west,
+    south,
+    to_text,
+    opposite,
+)
 from gdpc.vector_tools import ivec3
 from core.utils.setblock import place_block
 

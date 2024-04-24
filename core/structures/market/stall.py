@@ -2,22 +2,24 @@ from core.structures.legacy_directions import Direction
 from random import seed
 from random import randint
 from core.structures.market.goods import *
-RANDOM = 'random'
-BASIC = 'basic'
-TRAPDOOR = 'trapdoor'
-FENCE_GATE = 'fence_gate'
-HALF_STAIR = 'half_stair'
-STAIR = 'stair'
-HALF_SLAB = 'half_slab'
-SLAB = 'slab'
-STAIR_SLAB = 'stair_slab'
-CAMPFIRE = 'campfire'
-FENCE = 'fence'
-BANNER = 'banner'
-BACK_DOWN = 'back_down'
-SIDES_DOWN = 'sides_down'
-FRONT_DOWN = 'front_down'
-FRONT_BACK_DOWN = 'front_back_down'
+
+RANDOM = "random"
+BASIC = "basic"
+TRAPDOOR = "trapdoor"
+FENCE_GATE = "fence_gate"
+HALF_STAIR = "half_stair"
+STAIR = "stair"
+HALF_SLAB = "half_slab"
+SLAB = "slab"
+STAIR_SLAB = "stair_slab"
+CAMPFIRE = "campfire"
+FENCE = "fence"
+BANNER = "banner"
+BACK_DOWN = "back_down"
+SIDES_DOWN = "sides_down"
+FRONT_DOWN = "front_down"
+FRONT_BACK_DOWN = "front_back_down"
+
 
 class Stall:
     # p1 and p2 are the starting and end points of the rectangle that forms the road

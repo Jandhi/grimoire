@@ -2,7 +2,16 @@ from core.structures.market.stall import *
 from gdpc import Editor, Block
 from random import seed
 from random import randint
-from core.structures.legacy_directions import north, east, west, south, left, right, to_text, opposite
+from core.structures.legacy_directions import (
+    north,
+    east,
+    west,
+    south,
+    left,
+    right,
+    to_text,
+    opposite,
+)
 from core.utils.setblock import place_block, summon_entity
 from gdpc.vector_tools import ivec3
 

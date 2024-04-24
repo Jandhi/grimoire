@@ -2,7 +2,7 @@
 import sys
 import time
 
-sys.path[0] = sys.path[0].removesuffix('\\placement\\tests')
+sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
 
 # Actual file
 from gdpc import Editor
@@ -15,11 +15,18 @@ from terrain.smooth_edges import smooth_edges
 from terrain.plateau import plateau
 from palette.palette import Palette
 from core.noise.rng import RNG
-from districts.wall import order_wall_points, build_wall_standard_with_inner, \
-    get_wall_points
+from districts.wall import (
+    order_wall_points,
+    build_wall_standard_with_inner,
+    get_wall_points,
+)
 from terrain.logger import log_trees
 from core.maps.build_map import get_build_map
-from districts.district_painter import replace_ground, plant_forest, replace_ground_smooth
+from districts.district_painter import (
+    replace_ground,
+    plant_forest,
+    replace_ground_smooth,
+)
 from districts.paint_palette import PaintPalette
 from terrain.forest import Forest
 from core.utils.sets.find_outer_points import find_outer_and_inner_points
@@ -63,10 +70,10 @@ districts, district_map = generate_districts(SEED, build_rect, world_slice, map.
 map.districts = district_map
 
 styles = [
-    'japanese',  # I think this is the strongest one, so probably used in most environments
-    'viking',  # Pretty weak I think so we could avoid, but we can tests it
-    'desert',  # Decentish variety I think
-    'dwarven'  # Little variety so probably save it for mountains
+    "japanese",  # I think this is the strongest one, so probably used in most environments
+    "viking",  # Pretty weak I think so we could avoid, but we can tests it
+    "desert",  # Decentish variety I think
+    "dwarven",  # Little variety so probably save it for mountains
 ]
 
 biomes_in_districts = []
@@ -101,15 +108,15 @@ biome_counters = [forest_counter, desert_counter, rocky_counter]
 if max(biome_counters) == forest_counter:
     style = "japanese"
 elif max(biome_counters) == desert_counter:
-    style = 'desert'
+    style = "desert"
 elif max(biome_counters) == rocky_counter:
-    style = 'dwarven'
+    style = "dwarven"
 else:
-    style = 'japanese'
+    style = "japanese"
 
 # set up palettes
 eligible_palettes = list(filter(lambda palette: style in palette.tags, Palette.all()))
-rng = RNG(SEED, 'palettes')
+rng = RNG(SEED, "palettes")
 
 for district in districts:
     palettes = eligible_palettes.copy()
@@ -127,20 +134,20 @@ if DO_TERRAFORMING:
         plateau(district, district_map, world_slice, editor, map.water)
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
-    print('Reloading worldSlice')
+    print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
     map.world = world_slice
 
     smooth_edges(build_rect, districts, district_map, world_slice, editor, map.water)
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
-    print('Reloading worldSlice')
+    print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
     map.world = world_slice
     map.correct_district_heights(districts)
 # done
 
-print('sleepy time to reduce http traffic')
+print("sleepy time to reduce http traffic")
 time.sleep(10)  # to try to reduce http traffic, we'll do a little sleepy time
 
 inner_points = []
@@ -162,8 +169,14 @@ palette = rng.choose(eligible_palettes)
 
 build_map = get_build_map(world_slice)
 
-urban_road: PaintPalette = PaintPalette.find('desert_road') if style == 'desert' else PaintPalette.find('urban_road')
-replace_ground_smooth(inner_points, urban_road.palette, rng, map.water, build_map, editor, world_slice)
+urban_road: PaintPalette = (
+    PaintPalette.find("desert_road")
+    if style == "desert"
+    else PaintPalette.find("urban_road")
+)
+replace_ground_smooth(
+    inner_points, urban_road.palette, rng, map.water, build_map, editor, world_slice
+)
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
@@ -181,7 +194,16 @@ add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
 # uncomment one of these to tests one of the three wall types
 
 for wall_points in wall_points_list:
-    build_wall_standard_with_inner(wall_points, wall_dict, inner_points, editor, world_slice, map.water, rng, palette)
+    build_wall_standard_with_inner(
+        wall_points,
+        wall_dict,
+        inner_points,
+        editor,
+        world_slice,
+        map.water,
+        rng,
+        palette,
+    )
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 
@@ -192,10 +214,10 @@ ignore_blocks = [
     "minecraft:copper_ore",
 ]
 
-farmland: PaintPalette = PaintPalette.find('farmland')
+farmland: PaintPalette = PaintPalette.find("farmland")
 forests = Forest.all()
-crops = list(filter(lambda palette: 'crops' in palette.tags, PaintPalette.all()))
-rural_road: PaintPalette = PaintPalette.find('rural_road')
+crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
+rural_road: PaintPalette = PaintPalette.find("rural_road")
 
 options = forests + crops
 
@@ -209,17 +231,52 @@ for district in districts:
             choice_list = rng.choose([crops, forests, [None], [None]])
         choice = rng.choose(choice_list)
 
-        outer_district_points, inner_district_points = find_outer_and_inner_points(district.points_2d, 4)
+        outer_district_points, inner_district_points = find_outer_and_inner_points(
+            district.points_2d, 4
+        )
         if isinstance(choice, Forest):  # forest
-            plant_forest(list(inner_district_points), choice, rng, map.water, build_map, editor, world_slice,
-                         ignore_blocks)
+            plant_forest(
+                list(inner_district_points),
+                choice,
+                rng,
+                map.water,
+                build_map,
+                editor,
+                world_slice,
+                ignore_blocks,
+            )
         elif isinstance(choice, PaintPalette):  # crops
-            replace_ground(list(inner_district_points), farmland.palette, rng, map.water, build_map, editor,
-                           world_slice, 0, ignore_blocks)
-            replace_ground(list(inner_district_points), choice.palette, rng, map.water, build_map, editor, world_slice,
-                           1, ignore_blocks)
-            replace_ground(list(outer_district_points), rural_road.palette, rng, map.water, build_map, editor,
-                           world_slice)
+            replace_ground(
+                list(inner_district_points),
+                farmland.palette,
+                rng,
+                map.water,
+                build_map,
+                editor,
+                world_slice,
+                0,
+                ignore_blocks,
+            )
+            replace_ground(
+                list(inner_district_points),
+                choice.palette,
+                rng,
+                map.water,
+                build_map,
+                editor,
+                world_slice,
+                1,
+                ignore_blocks,
+            )
+            replace_ground(
+                list(outer_district_points),
+                rural_road.palette,
+                rng,
+                map.water,
+                build_map,
+                editor,
+                world_slice,
+            )
         else:
             continue
 

@@ -10,7 +10,7 @@ from core.noise.rng import RNG
 
 
 class ModuleLogger(Logger):
-    def __init__(self, settings: LoggerSettings, module: 'Module') -> None:
+    def __init__(self, settings: LoggerSettings, module: "Module") -> None:
         super().__init__(settings)
         self.module = module
 
@@ -28,14 +28,13 @@ class ModuleLogger(Logger):
         return super().format(f"{name}: {text}", level, is_in_console)
 
 
-
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Module:
     name: str = None
     __logger: Logger = None
-    rng : RNG
+    rng: RNG
 
     def init_rng_from_world_seed(self):
         self.__setattr__("rng", RNG(GlobalSeed.get(), self.get_name()))
@@ -52,25 +51,23 @@ class Module:
     def set_module_logger_settings(self, logger_settings: LoggerSettings):
         self.log.settings = logger_settings
 
-    '''
+    """
     Decorator used to determine the main generator function for the module
     Benchmarking will begin when this is called and end when it is finished
-    '''
+    """
 
     class MainClass:
         def __init__(self, func):
             self.func = func
 
         # When main is bound to the owner, this allows for us to find the owners class
-        def __set_name__(self, owner: 'Module', name):
+        def __set_name__(self, owner: "Module", name):
             # Owner is actually a type which inherits from Module, but this type annotation will do
             func = self.func
 
             def my_func(self, *args, **kwargs):
                 return Benchmark.timed(
-                    func=func,
-                    log=self.log,
-                    class_name=owner.get_name()
+                    func=func, log=self.log, class_name=owner.get_name()
                 )(self, *args, **kwargs)
 
             setattr(owner, name, my_func)
@@ -86,6 +83,6 @@ class Module:
 
         return cls.__name__
 
-    def raise_error(self, description : str):
+    def raise_error(self, description: str):
         self.log.error(description)
         raise Exception(description)
