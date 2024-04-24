@@ -43,6 +43,7 @@ WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
 MAX_AVG_HEIGHT_DIFF = 4
 
 
+# FIXME: Refactor
 def place_building(
     editor: Editor,
     start_point: ivec2,

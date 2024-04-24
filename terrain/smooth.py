@@ -13,7 +13,7 @@ def smooth(
     water_map: list[list[bool]],
 ):
     print(f"Smoothing {district}")
-    updated_heights = dict()
+    updated_heights = {}
 
     for x, _, z in district.points:
         key = x, z
@@ -24,8 +24,7 @@ def smooth(
 
         updated_heights[key] = average_neighbour_height(x, z, world_slice)
 
-    for key in updated_heights:
-        y = updated_heights[key]
+    for key, y in updated_heights.items():
         x, z = key
         set_height(x, y, z, world_slice, editor)
 

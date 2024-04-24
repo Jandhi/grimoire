@@ -26,19 +26,12 @@ def build_wall(
         if wall.has_door != has_door:
             return False
 
-        if cell.position.y == 0 and not wall.has_position(LOWER):
-            return False
-
-        if cell.position.y > 0 and not wall.has_position(UPPER):
-            return False
-
-        if (not cell.has_neighbour(up)) and NOT_ROOF in wall.tags:
-            return False
-
-        if cell.has_neighbour(up) and ONLY_ROOF in wall.tags:
-            return False
-
-        return True
+        return bool(
+            (cell.position.y != 0 or wall.has_position(LOWER))
+            and (cell.position.y <= 0 or wall.has_position(UPPER))
+            and (cell.has_neighbour(up) or NOT_ROOF not in wall.tags)
+            and (not cell.has_neighbour(up) or ONLY_ROOF not in wall.tags)
+        )
 
     eligible_walls: list[Wall] = list(filter(wall_is_eligible, walls))
 

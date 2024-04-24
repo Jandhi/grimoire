@@ -78,11 +78,8 @@ class Module:
 
     @classmethod
     def get_name(cls) -> str:
-        if cls.name:
-            return cls.name
-
-        return cls.__name__
+        return cls.name or cls.__name__
 
     def raise_error(self, description: str):
         self.log.error(description)
-        raise Exception(description)
+        raise RuntimeError(description)

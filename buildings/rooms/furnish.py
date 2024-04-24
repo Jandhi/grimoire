@@ -123,15 +123,16 @@ def build_staircase(
     palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> list:
-    possible_starts = []
-    for potential_start in cells_to_fill:
+    possible_starts = [
+        potential_start
+        for potential_start in cells_to_fill
         if (
             is_corner(potential_start, cells_to_fill)[0]
             and potential_start + get_ivec3(up) in cells_to_fill
             and potential_start not in cells_with_rooms
             and list(potential_start)[1] == level
-        ):
-            possible_starts.append(potential_start)
+        )
+    ]
 
 
 def build_staircase(
@@ -142,7 +143,7 @@ def build_staircase(
     grid: Grid,
     editor: Editor,
     palette: Palette,
-    cells: dict[ivec3, Cell],
+    cells: dict[ivec3, LegacyCell],
 ) -> list:
     possible_starts = [
         potential_start
@@ -197,7 +198,7 @@ def get_neighbors(rooms: list, inside_cells: list) -> set:
                 neighbors.add(new_cell)
     return neighbors
 
-
+# FIXME: Refactor
 def populate_floor(
     level: int,
     cells_with_rooms: list,
@@ -350,7 +351,7 @@ def furnish(
     palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> None:
-    number_of_floors = max([y for (x, y, z) in cells_to_fill]) + 1
+    number_of_floors = max(y for (x, y, z) in cells_to_fill) + 1
     cells_with_rooms = []
 
     if len(cells_to_fill) == 1 or len(cells_to_fill) == 2 and number_of_floors == 2:

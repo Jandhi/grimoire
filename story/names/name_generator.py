@@ -51,14 +51,10 @@ class NameGenerator(Module):
         if isinstance(rule, list):
             return self.__parse_rule(self.rng.choose(rule))
         if isinstance(rule, dict):
-            parsed_rules = {}
-
-            for name, odds in rule.items():
-                if isinstance(odds, int):
-                    parsed_rules[name] = odds
-                else:
-                    parsed_rules[name] = int(self.__parse_rule(odds))
-
+            parsed_rules = {
+                name: (odds if isinstance(odds, int) else int(self.__parse_rule(odds)))
+                for name, odds in rule.items()
+            }
             return self.__parse_rule(self.rng.choose_weighted(parsed_rules))
 
         return self.__parse_rule(rule)
@@ -69,7 +65,7 @@ class NameGenerator(Module):
 
         while "<" in rule:
             start_index = rule.index("<")
-            result += rule[0:start_index]
+            result += rule[:start_index]
             rule = rule[start_index:]
 
             if ">" not in rule:
@@ -78,7 +74,7 @@ class NameGenerator(Module):
                 )
 
             end_index = rule.index(">")
-            command = rule[0 : end_index + 1].removeprefix("<").removesuffix(">")
+            command = rule[: end_index + 1].removeprefix("<").removesuffix(">")
             rule = rule[end_index + 1 :]
             result += self.__parse_cmd(command)
         result += rule
@@ -120,31 +116,63 @@ class NameGenerator(Module):
                 self.raise_error(f"Arg {arg_name} does not exist!")
             return value
         if arg.startswith("?"):
-            parts = arg[1:].split(":")
-            tag = parts[0]
-            args = parts[1].split("|")
-            on_true = args[0]
-            on_false = args[1]
-            return self.__parse_arg(on_true if self.__has_tag(tag) else on_false)
+            return self.__interpret_tag(arg)
         if arg.startswith("#"):
-            parts = arg[1:].split(":")
-            schema_name = parts[0]
-            rule_name = parts[1]
-
-            schema = NamingSchema.find(schema_name)
-            if schema is None:
-                self.raise_error(f"Schema {schema_name} does not exist!")
-            self.push_ctx(NameGenerator.Context(schema, self.args))
-            result = self.__invoke_rule(rule_name)
-            self.pop_ctx()
-
-            return result
+            return self.__interpret_arg(arg)
         # LITERAL
-        if arg.startswith("'"):
-            return arg[1:-1]
-        else:
-            rule_name = arg
-            return self.__invoke_rule(rule_name)
+        return arg[1:-1] if arg.startswith("'") else self.__invoke_rule(arg)
+
+    # TODO: Improve name and description
+    def __interpret_arg(self, arg):
+        """
+        Parses the argument to extract schema and rule names, finds the naming schema,
+        invokes the specified rule, and returns the result.
+
+        Args:
+            arg (str): The argument containing the schema and rule names.
+
+        Returns:
+            The result of invoking the specified rule.
+
+        Raises:
+            This function does not raise any exceptions.
+        """
+
+        parts = arg[1:].split(":")
+        schema_name = parts[0]
+        rule_name = parts[1]
+
+        schema = NamingSchema.find(schema_name)
+        if schema is None:
+            self.raise_error(f"Schema {schema_name} does not exist!")
+        self.push_ctx(NameGenerator.Context(schema, self.args))
+        result = self.__invoke_rule(rule_name)
+        self.pop_ctx()
+
+        return result
+
+    # TODO: Improve name and description
+    def __interpret_tag(self, arg):
+        """
+        Parses the argument to extract tag, on_true, and on_false values, checks the tag condition,
+        and recursively parses the corresponding value based on the tag condition.
+
+        Args:
+            arg (str): The argument containing the tag, on_true, and on_false values.
+
+        Returns:
+            The result of parsing the value based on the tag condition.
+
+        Raises:
+            This function does not raise any exceptions.
+        """
+
+        parts = arg[1:].split(":")
+        tag = parts[0]
+        args = parts[1].split("|")
+        on_true = args[0]
+        on_false = args[1]
+        return self.__parse_arg(on_true if self.__has_tag(tag) else on_false)
 
     def __add_tag(self, tag: str) -> None:
         if "tags" not in self.args:
@@ -164,14 +192,7 @@ class NameGenerator(Module):
         tags.remove(tag)
 
     def __has_tag(self, tag: str) -> bool:
-        if "tags" not in self.args:
-            return False
-        if tag not in self.args["tags"]:
-            return False
-        return True
+        return False if "tags" not in self.args else tag in self.args["tags"]
 
     def __get_arg(self, arg_name: str) -> any:
-        if arg_name in self.args:
-            return self.args[arg_name]
-
-        return None
+        return self.args[arg_name] if arg_name in self.args else None
