@@ -28,7 +28,7 @@ def load_types():
     _ = Room
 
     # PALETTES
-    from palette.palette import Palette
+    from grimoire.palette import Palette
 
     _ = Palette
 

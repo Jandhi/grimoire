@@ -4,19 +4,16 @@ from core.structures.legacy_directions import all_8, vector
 from paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
 from paths.a_star_debug import a_star_debug
 from core.utils.bounds import is_in_bounds
-from core.maps.map import Map
+from grimoire.core.maps import Map
 
 HEURISTIC_WEIGHT = 3
 
 
 def fill_out_highway(points: list[ivec3]) -> list[ivec3]:
-    full_points = []
-
     point_a = points.pop()
 
-    full_points.append(point_a)
-
-    while len(points) > 0:
+    full_points = [point_a]
+    while points:
         point_b = points.pop()
 
         full_points += find_in_betweeners(point_a, point_b)

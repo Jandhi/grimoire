@@ -30,7 +30,7 @@ print("World slice loaded!")
 
 
 water_map = get_water_map(world_slice)
-build_map = get_build_map(world_slice)
+build_map = get_build_map(world_slice, 20)
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 
 # draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)

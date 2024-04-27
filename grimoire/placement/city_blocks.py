@@ -11,8 +11,8 @@ from core.noise.rng import RNG
 from core.structures.legacy_directions import cardinal, get_ivec2, to_text
 from core.utils.bounds import is_in_bounds2d
 from core.utils.vectors import point_3d, y_ivec3
-from core.maps.map import Map
-from core.maps.building_map import CITY_WALL, CITY_ROAD
+from grimoire.core.maps import Map
+from core.maps import CITY_WALL, CITY_ROAD
 from placement.building_placement import place_building
 
 MAXIMUM_SIZE = 2000

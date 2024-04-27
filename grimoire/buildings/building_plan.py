@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from core.structures.grid import Grid
 from buildings.legacycell import LegacyCell
 from gdpc.vector_tools import ivec3
-from palette.palette import Palette
+from grimoire.palette import Palette
 
 
 @dataclass

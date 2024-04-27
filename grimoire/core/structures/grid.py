@@ -3,7 +3,7 @@ from core.structures.nbt.build_nbt import build_nbt
 from core.structures.transformation import Transformation
 from gdpc.editor import Editor
 from core.structures.nbt.nbt_asset import NBTAsset
-from palette.palette import Palette
+from grimoire.palette import Palette
 from gdpc.vector_tools import ivec3, ivec2
 from collections.abc import Iterator
 

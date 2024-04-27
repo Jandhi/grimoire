@@ -23,8 +23,8 @@ from core.utils.misc import is_water
 from core.structures.nbt.build_nbt import build_nbt
 from core.structures.nbt.nbt_asset import NBTAsset
 from core.structures.transformation import Transformation
-from palette.palette import Palette
-from palette.palette_swap import fix_block_name
+from grimoire.palette import Palette
+from palette import fix_block_name
 from districts.gate import add_gates, Gate
 
 
@@ -66,7 +66,7 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
     reverse_checked = False
 
     ordered_wall_points: list[ivec2] = [wall_points.pop(0)]
-    ordered_wall_dict: dict() = {ordered_wall_points[0]: True}
+    ordered_wall_dict: dict = {ordered_wall_points[0]: True}
     current_wall_point = ordered_wall_points[0]
     while wall_points:
         next_wall_point = find_wall_neighbour(
@@ -185,7 +185,7 @@ def build_wall_standard(
     walkway_list = (
         []
     )  # idea is to get this list and then get the new inner points of hte wall, how do I get height to those
-    walkway_dict: dict() = {}
+    walkway_dict: dict = {}
 
     # blocks
     stone = palette.primary_stone
@@ -263,10 +263,10 @@ def build_wall_standard_with_inner(
     walkway_list = (
         []
     )  # idea is to get this list and then get the new inner points of hte wall, how do I get height to those
-    walkway_dict: dict() = {}
+    walkway_dict: dict = {}
 
     inner_wall_list = []
-    inner_wall_dict: dict() = {}
+    inner_wall_dict: dict = {}
 
     # blocks
     stone = palette.primary_stone
@@ -383,9 +383,9 @@ def build_wall_standard_with_inner(
         if (
             walkway_dict.get(ivec2(pt.x, pt.z)) is None
         ):  # check again since walkway was not completed as inner wall was being added
-            inner_wall_dict[
-                ivec2(pt.x, pt.z)
-            ] = True  # can put something else here if needed
+            inner_wall_dict[ivec2(pt.x, pt.z)] = (
+                True  # can put something else here if needed
+            )
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
                 editor.placeBlock((pt.x, y, pt.z), Block(full_block))
             if (

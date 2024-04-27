@@ -1,5 +1,5 @@
 from core.assets.asset import Asset, asset_defaults
-from palette.palette import Palette
+from grimoire.palette import Palette
 from gdpc.vector_tools import ivec3
 
 

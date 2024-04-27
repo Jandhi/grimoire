@@ -1,7 +1,23 @@
-from palette.palette import Palette
+from core.assets.asset import Asset, asset_defaults
+from gdpc.lookup import WOOD_TYPES
 
-plurals = ["brick", "plank", "tile"]
-woods = ["mangrove", "spruce", "oak", "dark_oak", "birch", "jungle", "acacia"]
+
+PLURALS = ["brick", "plank", "tile"]
+
+
+@asset_defaults(
+    primary_wood="oak",
+    secondary_wood="spruce",
+    primary_stone="cobblestone",
+    primary_stone_accent="stone_brick",
+)
+class Palette(Asset):
+    primary_wood: str  # FIXME: Unused variable
+    secondary_wood: str
+    primary_stone: str
+    primary_stone_accent: str  # FIXME: Unused variable
+
+    fields = ["primary_wood", "secondary_wood", "primary_stone", "primary_stone_accent"]
 
 
 def palette_swap(block_name: str, input_palette: Palette, output_palette: Palette):
@@ -18,7 +34,7 @@ def palette_swap(block_name: str, input_palette: Palette, output_palette: Palett
 
             new_val = block_name.replace(target, result)
 
-            for plural in plurals:
+            for plural in PLURALS:
                 # remove plural for combo bricks
                 if (
                     target.endswith(plural)
@@ -42,21 +58,21 @@ def palette_swap(block_name: str, input_palette: Palette, output_palette: Palett
 
 # This is used to make a block name consistent with the annoying inconsistencies minecraft has
 def fix_block_name(name: str) -> str:
-    for plural in plurals:
+    for plural in PLURALS:
         if name.endswith(plural):
             name = f"{name}s"
 
     if "plank_" in name:
         name = name.replace("plank_", "")
 
-    for plural in plurals:
+    for plural in PLURALS:
         if f"{plural}s" in name and not name.endswith(f"{plural}s"):
             name = name.replace(f"{plural}s", plural)
 
     if "smooth_" in name and "wall" in name:
         name = name.replace("smooth_", "")
 
-    if "wall" in name and any(wood in name for wood in woods):
+    if "wall" in name and any(wood in name for wood in WOOD_TYPES):
         name = name.replace("wall", "fence")
 
     return name

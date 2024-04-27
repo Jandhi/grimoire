@@ -167,7 +167,7 @@ wall_points_list = order_wall_points(wall_points, wall_dict)
 rng = RNG(SEED)
 palette = rng.choose(eligible_palettes)
 
-build_map = get_build_map(world_slice)
+build_map = get_build_map(world_slice, 20)
 
 urban_road: PaintPalette = (
     PaintPalette.find("desert_road")

@@ -1,29 +1,31 @@
 import contextlib
-from gdpc.vector_tools import ivec2, ivec3, vec2
-from core.maps.map import Map
+
+from buildings.build_floor import build_floor
+from buildings.building_plan import BuildingPlan
+from buildings.building_shape import BuildingShape
+from buildings.clear_interiors import clear_interiors
+from buildings.roofs.build_roof import build_roof
+from buildings.roofs.roof_component import RoofComponent
+from buildings.rooms.furnish import furnish
+from buildings.walls.build_walls import build_walls
+from buildings.walls.wall import Wall
+from core.maps import CITY_ROAD, CITY_WALL
+from core.noise.rng import RNG
+from core.structures.grid import Grid
 from core.structures.legacy_directions import (
-    z_minus,
-    z_plus,
-    x_minus,
-    x_plus,
     cardinal,
     get_ivec2,
+    x_minus,
+    x_plus,
+    z_minus,
+    z_plus,
 )
-from core.structures.grid import Grid
-from buildings.building_shape import BuildingShape
-from core.maps.building_map import CITY_WALL, CITY_ROAD
-from palette.palette import Palette
-from buildings.building_plan import BuildingPlan
-from gdpc import Editor, Block
-from buildings.build_floor import build_floor
-from buildings.roofs.roof_component import RoofComponent
-from buildings.roofs.build_roof import build_roof
-from buildings.walls.wall import Wall
-from buildings.walls.build_walls import build_walls
-from buildings.clear_interiors import clear_interiors
-from core.noise.rng import RNG
-from palette.palette_swap import fix_block_name
-from buildings.rooms.furnish import furnish
+from gdpc import Block, Editor
+from gdpc.vector_tools import ivec2, ivec3, vec2
+from palette import fix_block_name
+
+from grimoire.core.maps import Map
+from grimoire.palette import Palette
 
 offsets = {
     z_minus: [ivec2(0, 0), ivec2(-1, 0)],

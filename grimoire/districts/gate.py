@@ -6,7 +6,7 @@ from core.utils.geometry import is_straight_not_diagonal_ivec2
 from core.structures.nbt.build_nbt import build_nbt
 from core.structures.nbt.nbt_asset import NBTAsset
 from core.structures.transformation import Transformation
-from palette.palette import Palette
+from grimoire.palette import Palette
 
 
 # Class to track gate assets

@@ -16,7 +16,7 @@ from core.structures.legacy_directions import (
     west,
 )
 
-from palette.palette import Palette
+from grimoire.palette import Palette
 from core.noise.rng import RNG
 from gdpc.vector_tools import ivec3
 import numpy as np

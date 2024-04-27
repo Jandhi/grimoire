@@ -1,11 +1,57 @@
 from districts.district import District
-from core.maps.building_map import get_building_map
-from core.maps.water_map import get_water_map
 from gdpc import WorldSlice
+from gdpc.block import Block
+from gdpc.lookup import WATERS, WATER_PLANTS, ICE_BLOCKS
 from gdpc.vector_tools import ivec2, ivec3
 from core.utils.bounds import is_in_bounds
 from core.utils.bounds import is_in_bounds2d
 from core.utils.sets.set_operations import find_outline
+
+
+HIGHWAY = "highway"  # FIXME: Unused variable
+CITY_ROAD = "city_road"
+BUILDING = "building"
+WALL = "Wall"  # FIXME: Unused variable
+CITY_WALL = "city_wall"
+GATE = "gate"
+
+
+def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
+    """
+    Returns a 2D list representing a build map with dimensions extended by the specified buffer size in the x and z directions.
+
+    Args:
+        world_slice: The WorldSlice object containing the size information.
+        buffer: An integer specifying the additional size to extend the dimensions by (default is 0).
+
+    Returns:
+        A 2D list representing the build map with extended dimensions based on the buffer size.
+    """
+
+    size: ivec2 = world_slice.rect.size
+
+    return [[False for _ in range(size.z + buffer)] for _ in range(size.x + buffer)]
+
+
+def get_building_map(world_slice: WorldSlice):
+    size = world_slice.rect.size
+    return [[None for _ in range(size.y)] for _ in range(size.x)]
+
+
+def get_water_map(world_slice: WorldSlice):
+    size = world_slice.rect.size
+
+    water_map = [[False for _ in range(size.y)] for _ in range(size.x)]
+
+    for x in range(size.x):
+        for z in range(size.y):
+            y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
+            block: Block = world_slice.getBlock((x, y - 1, z))
+
+        if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
+            water_map[x][z] = True
+
+    return water_map
 
 
 # class that carries all the different maps required

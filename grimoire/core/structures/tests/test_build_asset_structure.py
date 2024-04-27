@@ -24,7 +24,7 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 water_map = get_water_map(world_slice)
-build_map = get_build_map(world_slice)
+build_map = get_build_map(world_slice, 20)
 
 load_assets("assets")
 y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][0][0]
@@ -32,7 +32,7 @@ y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][0][0]
 test: AssetStructure = AssetStructure.find("well")
 """
 build_nbt(
-    editor = editor, 
+    editor = editor,
     asset = tests,
     palette = None,
     transformation=Transformation(
