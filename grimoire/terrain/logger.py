@@ -13,7 +13,6 @@ TREE_BLOCKS = (
     + MUSHROOM_BLOCKS
     + (
         "minecraft:bamboo",
-        "minecraft:vine",
         "minecraft:mangrove_roots",
         "minecraft:moss_carpet",
         "minecraft:bee_nest",
@@ -24,60 +23,34 @@ TREE_AND_LEAF_BLOCKS = TREE_BLOCKS + FOLIAGE
 
 
 def log_stems(editor, build_rect, world_slice):
-    for x in range(build_rect.size.x):
-        for z in range(build_rect.size.y):
-            y1 = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] - 1
-            check_pos = ivec3(x, y1, z)
-            block_name = world_slice.getBlock(check_pos).id
-
-            if block_name not in TREE_BLOCKS:
-                continue
-            editor.placeBlock(check_pos, Block("minecraft:air"))
-            for y in range(40):
-                check_pos = ivec3(x, y1, z) - ivec3(0, y, 0)
-                block_name = world_slice.getBlock(check_pos).id
-
-                if block_name in TREE_BLOCKS:
-                    # print(block_name)
-                    editor.placeBlock(check_pos, Block("minecraft:air"))
-                elif block_name == "minecraft:dirt":
-                    editor.placeBlock(check_pos, Block("minecraft:grass_block"))
-                    continue
-
-                # only continue checking down if its still air and hasn't been caught by the above
-                elif block_name != "minecraft:air":
-                    continue
+    return erode(
+        editor,
+        world_slice,
+        heightmap="MOTION_BLOCKING_NO_LEAVES",
+        to_replace=TREE_BLOCKS,
+    )
 
 
 def log_trees(editor, build_rect, world_slice):
-    for x in range(build_rect.size.x):
-        for z in range(build_rect.size.y):
-            y1 = world_slice.heightmaps["MOTION_BLOCKING"][x][z] - 1
-            check_pos = ivec3(x, y1, z)
-            block_name = world_slice.getBlock(check_pos).id
+    return erode(
+        editor,
+        world_slice,
+        heightmap="MOTION_BLOCKING",
+        to_replace=TREE_AND_LEAF_BLOCKS,
+        to_skip=["minecraft:air"],  # to catch all spruce tree leaves
+    )
 
-            if block_name not in TREE_AND_LEAF_BLOCKS:
-                continue
-            editor.placeBlock(check_pos, Block("minecraft:air"))
-            for y in range(40):
-                check_pos = ivec3(x, y1, z) - ivec3(0, y, 0)
-                block_name = world_slice.getBlock(check_pos).id
-
-                if block_name in TREE_AND_LEAF_BLOCKS:
-                    # print(block_name)
-                    editor.placeBlock(check_pos, Block("minecraft:air"))
-                elif block_name == "minecraft:dirt":
-                    editor.placeBlock(check_pos, Block("minecraft:grass_block"))
-                    continue
-
-                elif block_name != "minecraft:air":
-                    continue
+    # NOTE: If you want the positions of only the tree trunks and branches, use `log_stems` followed by leaf erosion
+    # NOTE: If you still wanted to replace the dirt with grass, mycelium, podzol etc., so this:
+    # for x, z in erode(...):
+    #     # get surface block; if it's dirt replace it based on adjacent blocks
 
 
 # TODO: Simplify conditions after unit tests have been written
 def erode(
     editor: Editor,
     world_slice: WorldSlice,
+    *,
     heightmap: str,
     to_replace: Sequence[Block],
     to_skip: Optional[Sequence[Block]] = None,
