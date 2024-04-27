@@ -481,9 +481,12 @@ def flatten_walkway(
         walkway_dict[point] = average_neighbour_height(point.x, point.y, walkway_dict)
 
     # first pass places slabs and changes dict heights
-    for key in walkway_dict:
-        height = walkway_dict[key]
-        if height % 1 <= 0.25:
+    for key, height in walkway_dict.items():
+        if (
+            height % 1 <= 0.25
+            or not 0.25 < height % 1 <= 0.5
+            and not 0.5 < height % 1 <= 0.75
+        ):
             editor.placeBlock(
                 (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab")
             )
@@ -493,25 +496,19 @@ def flatten_walkway(
                 (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab[type=top]")
             )
             walkway_dict[key] = round(height) + 0.49
-        elif 0.5 < height % 1 <= 0.75:
+        else:
             editor.placeBlock(
                 (key.x, round(height) - 1, key.y),
                 Block(f"minecraft:{wood}_slab[type=top]"),
             )
             walkway_dict[key] = round(height) - 0.51
-        else:
-            editor.placeBlock(
-                (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab")
-            )
-            walkway_dict[key] = round(height)
-
     # 2nd pass to add stairs based on first pass changes
     for key in walkway_dict:
         height = walkway_dict[key]
         for direction in cardinal:
             delta = get_ivec2(direction)
             neighbour = key + delta
-            if walkway_dict.get(neighbour) == None:
+            if walkway_dict.get(neighbour) is None:
                 continue
             elif height % 1 == 0:  # bottom slab
                 if walkway_dict.get(neighbour) - height >= 1:
@@ -519,14 +516,13 @@ def flatten_walkway(
                         (key.x, round(height), key.y),
                         Block(f"minecraft:{wood}_stairs[facing={to_text(direction)}]"),
                     )
-            else:  # top slab
-                if walkway_dict.get(neighbour) - height <= -1:
-                    editor.placeBlock(
-                        (key.x, round(height), key.y),
-                        Block(
-                            f"minecraft:{wood}_stairs[facing={to_text(opposite(direction))}]"
-                        ),
-                    )
+            elif walkway_dict.get(neighbour) - height <= -1:
+                editor.placeBlock(
+                    (key.x, round(height), key.y),
+                    Block(
+                        f"minecraft:{wood}_stairs[facing={to_text(opposite(direction))}]"
+                    ),
+                )
 
     return walkway_dict
 

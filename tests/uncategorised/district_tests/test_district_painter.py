@@ -3,17 +3,18 @@ import sys
 
 sys.path[0] = sys.path[0].removesuffix("\\districts\\tests")
 
-from gdpc import Editor, Block
+from gdpc import Block, Editor
+from gdpc.lookup import GRANULARS
 from gdpc.vector_tools import ivec2
-from districts.generate_districts import generate_districts
-from core.maps.water_map import get_water_map
-from core.maps.build_map import get_build_map
-from core.noise.rng import RNG
-from core.noise.random import choose_weighted
-from districts.district_painter import plant_forest
-from core.assets.load_assets import load_assets
-from districts.paint_palette import PaintPalette
-from terrain.forest import Forest
+
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.maps import get_build_map, get_water_map
+from grimoire.core.noise.random import choose_weighted
+from grimoire.core.noise.rng import RNG
+from grimoire.districts.district_painter import plant_forest
+from grimoire.districts.generate_districts import generate_districts
+from grimoire.districts.paint_palette import PaintPalette
+from grimoire.terrain.forest import Forest
 
 SEED = 2
 
@@ -73,12 +74,10 @@ test_farm = {
     "wheat[age=7]": 1,
 }
 
-ignore_blocks = [
-    "minecraft:sand",
-    "minecraft:gravel",
+ignore_blocks = GRANULARS | {
     "minecraft:stone",
     "minecraft:copper_ore",
-]
+}
 
 # FIXME: Unused variable
 test_blocks = {"farmland[moisture=7]": 1}

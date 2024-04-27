@@ -5,7 +5,7 @@
 - [ ] Simplify `structures` sub-package (as part of building improvements?)
 - [ ] Simplify `data` sub-package
 - [ ] Adoptions
-	- [ ] Adopt block information from `lookup`
+	- [x] Adopt block information from `lookup`
 	- [ ] Adopt biome information from `lookup`
 - [ ] Merges
 	- [x] `biome_tags` into `biomes`

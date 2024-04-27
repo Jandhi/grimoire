@@ -4,15 +4,15 @@ import sys
 sys.path[0] = sys.path[0].removesuffix("\\districts\\tests")
 
 from gdpc import Editor
+from gdpc.lookup import GRANULARS
 from gdpc.vector_tools import ivec2
-from districts.generate_districts import generate_districts
-from terrain.smooth_edges import smooth_edges
-from core.maps.water_map import get_water_map
-from core.maps.build_map import get_build_map
-from terrain.plateau import plateau
-from core.noise.rng import RNG
 
-from districts.district_painter import plant_forest, replace_ground_smooth
+from grimoire.core.maps import get_build_map, get_water_map
+from grimoire.core.noise.rng import RNG
+from grimoire.districts.district_painter import plant_forest, replace_ground_smooth
+from grimoire.districts.generate_districts import generate_districts
+from grimoire.terrain.plateau import plateau
+from grimoire.terrain.smooth_edges import smooth_edges
 
 SEED = 2
 
@@ -105,7 +105,7 @@ urban = {
 
 oak_forest = {"mega_oak": 1, "large_oak": 3, "medium_oak": 4, "small_oak": 3}
 
-ignore_blocks = ["minecraft:sand", "minecraft:gravel"]
+ignore_blocks = GRANULARS
 
 replace_ground_smooth(
     urban_points, urban, rng, water_map, build_map, editor, world_slice

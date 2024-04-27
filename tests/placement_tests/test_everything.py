@@ -6,33 +6,34 @@ sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
 
 # Actual file
 from gdpc import Editor
+from gdpc.geometry import Box
+from gdpc.lookup import GRANULARS
 from gdpc.vector_tools import ivec2
-from districts.generate_districts import generate_districts
-from placement.city_blocks import add_city_blocks
-from core.maps.map import Map
-from core.assets.load_assets import load_assets
-from terrain.smooth_edges import smooth_edges
-from terrain.plateau import plateau
-from palette.palette import Palette
-from core.noise.rng import RNG
-from districts.wall import (
-    order_wall_points,
-    build_wall_standard_with_inner,
-    get_wall_points,
-)
-from terrain.logger import log_trees
-from core.maps.build_map import get_build_map
-from districts.district_painter import (
-    replace_ground,
+
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.maps import Map, get_build_map
+from grimoire.core.noise.rng import RNG
+from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
+from grimoire.districts.district_painter import (
     plant_forest,
+    replace_ground,
     replace_ground_smooth,
 )
-from districts.paint_palette import PaintPalette
-from terrain.forest import Forest
-from core.utils.sets.find_outer_points import find_outer_and_inner_points
-from industries.industry import get_district_biomes
-from industries.biomes import forest, desert, rocky, snowy
-from gdpc.geometry import Box
+from grimoire.districts.generate_districts import generate_districts
+from grimoire.districts.paint_palette import PaintPalette
+from grimoire.districts.wall import (
+    build_wall_standard_with_inner,
+    get_wall_points,
+    order_wall_points,
+)
+from grimoire.industries.biomes import desert, forest, rocky, snowy
+from grimoire.industries.industry import get_district_biomes
+from grimoire.palette import Palette
+from grimoire.placement.city_blocks import add_city_blocks
+from grimoire.terrain.forest import Forest
+from grimoire.terrain.logger import log_trees
+from grimoire.terrain.plateau import plateau
+from grimoire.terrain.smooth_edges import smooth_edges
 
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
@@ -105,15 +106,15 @@ if desert_counter >= len(districts) // 2:
     is_desert = True
 biome_counters = [forest_counter, desert_counter, rocky_counter]
 
-if max(biome_counters) == forest_counter:
+if max(biome_counters) == forest_counter or max(biome_counters) not in [
+    desert_counter,
+    rocky_counter,
+]:
     style = "japanese"
 elif max(biome_counters) == desert_counter:
     style = "desert"
-elif max(biome_counters) == rocky_counter:
-    style = "dwarven"
 else:
-    style = "japanese"
-
+    style = "dwarven"
 # set up palettes
 eligible_palettes = list(filter(lambda palette: style in palette.tags, Palette.all()))
 rng = RNG(SEED, "palettes")
@@ -121,7 +122,7 @@ rng = RNG(SEED, "palettes")
 for district in districts:
     palettes = eligible_palettes.copy()
 
-    for i in range(min(3, len(eligible_palettes))):
+    for _ in range(min(3, len(eligible_palettes))):
         district.palettes.append(rng.pop(palettes))
 
 # plateau stuff
@@ -207,12 +208,10 @@ for wall_points in wall_points_list:
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 
-ignore_blocks = [
-    "minecraft:sand",
-    "minecraft:gravel",
+ignore_blocks = GRANULARS | {
     "minecraft:stone",
     "minecraft:copper_ore",
-]
+}
 
 farmland: PaintPalette = PaintPalette.find("farmland")
 forests = Forest.all()
