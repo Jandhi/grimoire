@@ -1,7 +1,7 @@
 from heapq import heappop, heappush
 from gdpc import Editor, Block
-from core.utils.vectors import y_ivec3
-from paths.a_star import COUNTER_LIMIT, COUNTER_LIMIT_EXCEEDED
+from grimoire.core.utils.vectors import y_ivec3
+from grimoire.paths.a_star import COUNTER_LIMIT, COUNTER_LIMIT_EXCEEDED
 
 # get_neighbours takes state
 # get_cost takes prev_cost and path

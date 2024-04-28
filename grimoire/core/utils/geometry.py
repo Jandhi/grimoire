@@ -62,11 +62,8 @@ def is_straight_ivec2(previous: ivec2, next: ivec2, length: int):
 # returns true if the line formed by the two points is 'straight' (on the minecraft plane)
 def is_straight_not_diagonal_ivec2(previous: ivec2, next: ivec2, length: int):
     vec_line = previous - next
-    if (abs(vec_line.x) == length and vec_line.y == 0) or (
-        abs(vec_line.y) == length and vec_line.x == 0
-    ):
-        return True
-    return False
+    return (abs(vec_line.x) == length and vec_line.y == 0) or (
+        abs(vec_line.y) == length and vec_line.x == 0)
 
 
 # returns true if all of points neighbours (including diagonal) are in dict

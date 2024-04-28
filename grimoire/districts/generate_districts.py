@@ -1,10 +1,10 @@
-from core.noise.rng import RNG
-from districts.district import District
+from grimoire.core.noise.rng import RNG
+from grimoire.districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from core.structures.legacy_directions import cardinal, vector
+from grimoire.core.structures.legacy_directions import cardinal, vector
 from gdpc import WorldSlice
-from districts.adjacency import establish_adjacency
-from districts.merging_districts import merge_down
+from grimoire.districts.adjacency import establish_adjacency
+from grimoire.districts.merging_districts import merge_down
 
 # from districts.adjacency import establish_adjacency, get_neighbours
 

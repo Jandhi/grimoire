@@ -1,4 +1,4 @@
-from core.assets.asset import Asset
+from grimoire.core.assets.asset import Asset
 
 
 class PaintPalette(Asset):

@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\districts\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\districts\\story_tests")
 
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2
@@ -91,17 +91,13 @@ test_blocks2 = {
     "beetroots[age=3]": 2,
 }
 
-
-# FIXME: Unused, duplicate variable
-baobab = {"small_baobab": 1}
-
 baobab = {"small_baobab": 1}
 
 test: PaintPalette = PaintPalette.find("farmland")
 test2: PaintPalette = PaintPalette.find("carrot")  # FIXME: Unused variable
 forest: Forest = Forest.find("mixed_forest")
 # replace_ground(all_points, test_blocks2, rng, water_map, build_map, editor, world_slice)
-# replace_ground(all_points, tests.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)
+# replace_ground(all_points, story_tests.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)
 # replace_ground(all_points, test2.palette, rng, water_map, build_map, editor, world_slice, 1, ignore_blocks)
 # replace_ground(urban_points, urban_road, rng, water_map, build_map, editor, world_slice)
 # replace_ground_smooth(urban_points, urban, rng, water_map, build_map, editor, world_slice)

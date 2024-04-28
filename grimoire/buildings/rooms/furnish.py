@@ -216,8 +216,6 @@ def populate_floor(
     ]
     cells_on_floor = [(x, y, z) for x, y, z in cells_to_fill if y == level]
 
-    # FIXME: Unused variable
-    entropy = 0
     while len(rooms_on_floor) != len(cells_on_floor):
         candidates = []
         # get the connections for the new rooms

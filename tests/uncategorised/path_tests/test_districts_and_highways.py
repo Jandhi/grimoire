@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\paths\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\paths\\story_tests")
 
 # Actual file
 from gdpc import Editor
@@ -33,7 +33,6 @@ player_pos = ivec2(area.size.x // 2, area.size.z // 2)
 map = Map(world_slice)
 
 water_map = map.water
-building_map = map.buildings  # FIXME: Unused variable
 districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
 map.districts = district_map
 

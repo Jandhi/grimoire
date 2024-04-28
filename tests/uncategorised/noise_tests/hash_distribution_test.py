@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\core\\noise\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\core\\noise\\story_tests")
 
 # Actual file
 from core.noise.rng import RNG
@@ -42,7 +42,7 @@ def run_hash_distribution_test(num_buckets, iterations, seed):
     print(s)
 
 
-# Runs the tests
+# Runs the story_tests
 run_hash_distribution_test(
     num_buckets=20,
     iterations=100000,

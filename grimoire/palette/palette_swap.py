@@ -1,4 +1,4 @@
-from palette.palette import Palette
+from grimoire.palette.palette import Palette
 
 plurals = ["brick", "plank", "tile"]
 woods = ["mangrove", "spruce", "oak", "dark_oak", "birch", "jungle", "acacia"]

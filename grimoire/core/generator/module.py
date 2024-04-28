@@ -2,11 +2,11 @@ from typing import TypeVar
 
 from colored import Fore, Style
 
-from core.generator.benchmarking import Benchmark
-from core.generator.settings import GeneratorSettings
-from core.logs.logger import Logger, LoggerSettings, LoggingLevel
-from core.noise.global_seed import GlobalSeed
-from core.noise.rng import RNG
+from grimoire.core.generator.benchmarking import Benchmark
+from grimoire.core.generator.settings import GeneratorSettings
+from grimoire.core.logs.logger import Logger, LoggerSettings, LoggingLevel
+from grimoire.core.noise.global_seed import GlobalSeed
+from grimoire.core.noise.rng import RNG
 
 
 class ModuleLogger(Logger):

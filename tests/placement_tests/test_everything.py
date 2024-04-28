@@ -2,7 +2,7 @@
 import sys
 import time
 
-sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\placement\\story_tests")
 
 # Actual file
 from gdpc import Editor
@@ -71,12 +71,11 @@ map.districts = district_map
 
 styles = [
     "japanese",  # I think this is the strongest one, so probably used in most environments
-    "viking",  # Pretty weak I think so we could avoid, but we can tests it
+    "viking",  # Pretty weak I think so we could avoid, but we can story_tests it
     "desert",  # Decentish variety I think
     "dwarven",  # Little variety so probably save it for mountains
 ]
 
-biomes_in_districts = []  # FIXME: Unused variable
 forest_counter = 0
 desert_counter = 0
 rocky_counter = 0
@@ -191,7 +190,7 @@ add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
 
 # WALL
 
-# uncomment one of these to tests one of the three wall types
+# uncomment one of these to story_tests one of the three wall types
 
 for wall_points in wall_points_list:
     build_wall_standard_with_inner(

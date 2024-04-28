@@ -44,11 +44,9 @@ class Benchmark:
     def print_results() -> None:
         Benchmark.log_results(Logger())
 
-    # FIXME: Why is this commented out; as a docstring?
-    """
+    '''
     Adds a timer to method, logs time elapsed
     '''
-
     @staticmethod
     def timed(func: T, log: Logger, class_name: str) -> T:
         name = f'{Fore.green}{class_name}{Style.reset}'
@@ -70,4 +68,3 @@ class Benchmark:
             return retval
 
         return inner
-    """

@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\core\\generator\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\core\\generator\\story_tests")
 
 from core.generator.module import Module
 from core.generator.benchmarking import Benchmark
@@ -13,7 +13,7 @@ class TestingModule(Module):
 
     @Module.MainClass
     def test(self):
-        self.log.debug("tests")
+        self.log.debug("story_tests")
         time.sleep(1)
 
 

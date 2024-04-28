@@ -1,4 +1,4 @@
-from districts.district import District
+from grimoire.districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3
 

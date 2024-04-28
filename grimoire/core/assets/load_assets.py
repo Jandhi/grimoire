@@ -1,15 +1,15 @@
 import sys
 
-from core.assets.asset import Asset
-from core.assets.asset_validation_state import AssetValidationState
+from grimoire.core.assets.asset import Asset
+from grimoire.core.assets.asset_validation_state import AssetValidationState
 from glob import glob
 import json
 from colored import Style, Fore
 
-from core.assets.load_types import load_types
-from core.assets.link_assets import link_assets
-from buildings.building_shape import permute_shapes
-from core.generator.module import Module
+from grimoire.core.assets.load_types import load_types
+from grimoire.core.assets.link_assets import link_assets
+from grimoire.buildings.building_shape import permute_shapes
+from grimoire.core.generator.module import Module
 
 
 # Loads all nbt assets from the assets folder

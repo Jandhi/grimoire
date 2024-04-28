@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\placement\\story_tests")
 
 # Actual file
 from gdpc import Editor, Block
@@ -139,7 +139,7 @@ palette = Palette.find("desert_dark_prismarine")
 
 # WALL
 
-# uncomment one of these to tests one of the three wall types
+# uncomment one of these to story_tests one of the three wall types
 
 
 for wall_points in wall_points_list:

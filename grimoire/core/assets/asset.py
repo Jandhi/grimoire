@@ -1,8 +1,8 @@
 import inspect
 from typing import Any, TypeVar
 
-from core.assets.asset_validation_state import AssetValidationState
-from core.utils.strings import camel_to_snake_case
+from grimoire.core.assets.asset_validation_state import AssetValidationState
+from grimoire.core.utils.strings import camel_to_snake_case
 
 
 # Metaclass that registers NBTAsset subtypes

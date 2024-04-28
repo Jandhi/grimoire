@@ -1,5 +1,5 @@
-from core.assets.asset import Asset
-from style.substyle import Substyle
+from grimoire.core.assets.asset import Asset
+from grimoire.style.substyle import Substyle
 
 
 class Style(Asset):

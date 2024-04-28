@@ -1,4 +1,4 @@
 def load_types():
-    from story.names.name_generator import NamingSchema
+    from grimoire.story.names.name_generator import NamingSchema
 
     _ = NamingSchema

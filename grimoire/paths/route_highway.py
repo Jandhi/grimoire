@@ -1,10 +1,10 @@
 from gdpc.vector_tools import ivec3, distance
 from gdpc import Editor
-from core.structures.legacy_directions import all_8, vector
-from paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
-from paths.a_star_debug import a_star_debug
-from core.utils.bounds import is_in_bounds
-from core.maps.map import Map
+from grimoire.core.structures.legacy_directions import all_8, vector
+from grimoire.paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
+from grimoire.paths.a_star_debug import a_star_debug
+from grimoire.core.utils.bounds import is_in_bounds
+from grimoire.core.maps.map import Map
 
 HEURISTIC_WEIGHT = 3
 

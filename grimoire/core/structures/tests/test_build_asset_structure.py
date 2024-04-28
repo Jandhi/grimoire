@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\structures\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\structures\\story_tests")
 
 # Actual file
 from gdpc.editor import Editor
@@ -33,7 +33,7 @@ test: AssetStructure = AssetStructure.find("well")
 """
 build_nbt(
     editor = editor, 
-    asset = tests,
+    asset = story_tests,
     palette = None,
     transformation=Transformation(
         offset= ivec3(area.middle.x,y,area.middle.z),

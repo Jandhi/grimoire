@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("core\\assets\\tests")
+sys.path[0] = sys.path[0].removesuffix("core\\assets\\story_tests")
 
 # Actual file
 from core.structures.nbt.nbt_asset import NBTAsset
@@ -16,7 +16,7 @@ class SubTest(Test):
     pass
 
 
-load_assets("core\\assets\\tests")
+load_assets("core\\assets\\story_tests")
 
 # you should see one error and two warnings about fields not being annotated
 assert len(Test.all()) == 2

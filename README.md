@@ -1,7 +1,7 @@
 # How to run the generator (Linux)
 ```shell
 $ pipenv install
-$ pipenv run python placement/tests/test_everything.py
+$ pipenv run python placement/story_tests/test_everything.py
 ```
 
 You may have to switch `python` to `python3` or whatever your local version is

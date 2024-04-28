@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\core\\logs\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\core\\logs\\story_tests")
 
 from core.logs.logger import Logger, LoggingLevel
 from time import sleep

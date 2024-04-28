@@ -1,9 +1,9 @@
 import itertools
-from districts.district import District
+from grimoire.districts.district import District
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3, Rect
-from terrain.set_height import set_height
-from terrain.smooth import average_neighbour_height, update_district_points
+from grimoire.terrain.set_height import set_height
+from grimoire.terrain.smooth import average_neighbour_height, update_district_points
 
 DISTRICT_AVG_RATIO = (
     0.5  # the percent of the height that the district average should influence

@@ -1,15 +1,15 @@
 # Allows code to be run in root directory
 import sys
 
-from core.generator.test import TestModule
-from core.logs.logger import LoggerSettings, LoggingLevel
-from core.noise.global_seed import GlobalSeed
-from story.names.name_generator import NamingSchema, NameGenerator
+from grimoire.core.generator.test import TestModule
+from grimoire.core.logs.logger import LoggerSettings, LoggingLevel
+from grimoire.core.noise.global_seed import GlobalSeed
+from grimoire.story.names.name_generator import NamingSchema, NameGenerator
 
-sys.path[0] = sys.path[0].removesuffix("story\\names\\tests")
+sys.path[0] = sys.path[0].removesuffix("story\\names\\story_tests")
 
-from core.assets.load_assets import load_assets
-from story.load_story_types import load_types
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.story.load_story_types import load_types
 
 
 class TestNames(TestModule):

@@ -1,6 +1,6 @@
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\industries\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\industries\\story_tests")
 
 from gdpc import Editor
 from gdpc.vector_tools import ivec3

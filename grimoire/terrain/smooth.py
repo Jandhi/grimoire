@@ -1,8 +1,8 @@
-from districts.district import District
+from grimoire.districts.district import District
 from gdpc import Editor, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
-from terrain.set_height import set_height
-from core.utils.bounds import is_in_bounds2d
+from grimoire.terrain.set_height import set_height
+from grimoire.core.utils.bounds import is_in_bounds2d
 
 
 def smooth(

@@ -1,14 +1,14 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\paths\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\paths\\story_tests")
 
 # Actual file
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
-from paths.route_highway import route_highway, fill_out_highway
-from paths.build_highway import build_highway
-from core.maps.map import Map
+from grimoire.paths.route_highway import route_highway, fill_out_highway
+from grimoire.paths.build_highway import build_highway
+from grimoire.core.maps.map import Map
 
 SEED = 36322
 

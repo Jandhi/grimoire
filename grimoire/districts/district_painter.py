@@ -1,11 +1,11 @@
 import itertools
 from gdpc import Editor, Block, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
-from core.noise.rng import RNG
-from core.noise.random import choose_weighted, shuffle
-from terrain.tree import generate_tree
-from core.structures.legacy_directions import cardinal, get_ivec2, to_text
-from terrain.forest import Forest
+from grimoire.core.noise.rng import RNG
+from grimoire.core.noise.random import choose_weighted, shuffle
+from grimoire.terrain.tree import generate_tree
+from grimoire.core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from grimoire.terrain.forest import Forest
 import time
 
 
