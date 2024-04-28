@@ -2,31 +2,122 @@ from unittest.mock import Mock
 
 import pytest
 from gdpc import Block, Editor
+from gdpc.lookup import FOLIAGE, TREE_BLOCKS
+from gdpc.vector_tools import Box
 from gdpc.world_slice import WorldSlice
 
 from grimoire.terrain.logger import erode
+
+EDITOR_MOCK = Mock(spec=Editor)
+
+WORLD_SLICE_MOCK = Mock(WorldSlice)
+"""
+Mock WorldSlice (4x255x4)
+
+~: Water
+C: Sugar cane
+G: Grass
+L: Leaves
+S: Sand
+W: Wood
+
+WORLD_SURFACE
+ ~~CG  64, 64, 67, 65
+ ~~LL  64, 64, 70, 70
+ ~LLL  64, 70, 70, 72
+ GLLL  66, 70, 71, 72
+
+OCEAN_FLOOR
+ SSCG  62, 63, 67, 65
+ SSLL  61, 62, 70, 70
+ SLLL  63, 70, 70, 72
+ GLLL  66, 70, 71, 72
+
+MOTION_BLOCKING
+ SSGG  62, 63, 64, 65
+ SSLL  61, 62, 70, 70
+ SLLL  63, 70, 70, 72
+ GLLL  66, 70, 71, 72
+
+MOTION_BLOCKING_NO_LEAVES
+ SSGG  62, 63, 64, 65
+ SSSG  61, 62, 63, 64
+ SSSG  63, 63, 63, 64
+ GGGW  66, 65, 64, 71
+"""
+WORLD_SLICE_MOCK.heightmaps = {
+    "WORLD_SURFACE": [
+        [64, 64, 67, 65],
+        [64, 64, 70, 70],
+        [64, 70, 70, 72],
+        [66, 70, 71, 72],
+    ],
+    "OCEAN_FLOOR": [
+        [62, 63, 67, 65],
+        [61, 62, 70, 70],
+        [63, 70, 70, 72],
+        [66, 70, 71, 72],
+    ],
+    "MOTION_BLOCKING": [
+        [62, 63, 64, 65],
+        [61, 62, 70, 70],
+        [63, 70, 70, 72],
+        [66, 70, 71, 72],
+    ],
+    "MOTION_BLOCKING_NO_LEAVES": [
+        [62, 63, 64, 65],
+        [61, 62, 63, 64],
+        [63, 63, 63, 64],
+        [66, 65, 64, 71],
+    ],
+}
+WORLD_SLICE_MOCK.yBegin
+WORLD_SLICE_MOCK.box = Box(size=(4, 255, 2))
+WORLD_SLICE_MOCK.getBlock.return_value  # TODO: Mock getBlock
 
 
 @pytest.mark.parametrize(
     "world_slice, heightmap, to_replace, to_skip, stop_at, max_depth, expected_affected, test_id,",
     [
         # Happy path tests
+        ## Removing whole trees
         (
-            "WORLD_SURFACE",
-            [Block("minecraft:dirt")],
+            WORLD_SLICE_MOCK,
+            "MOTION_BLOCKING",
+            TREE_BLOCKS | FOLIAGE,
+            "minecraft:air",
+            None,
+            None,
             Block("minecraft:air"),
-            {(1, 1), (2, 2)},
-            "happy_path_single_block",
+            {
+                (1, 2): 1,
+                (1, 3): 1,
+                (2, 1): 1,
+                (2, 2): 1,
+                (2, 3): 3,
+                (3, 1): 1,
+                (3, 2): 3,
+                (3, 3): 7,
+            },
+            "happy_path_full_tree",
         ),
+        ## Removing tree trunks
         (
-            "WORLD_SURFACE",
-            [Block("minecraft:dirt"), Block("minecraft:grass")],
+            WORLD_SLICE_MOCK,
+            "MOTION_BLOCKING_NO_LEAVES",
+            TREE_BLOCKS,
+            "minecraft:air",
+            None,
+            None,
             Block("minecraft:air"),
-            {(1, 1), (2, 2), (3, 3)},
-            "happy_path_multiple_blocks",
+            {(3, 3): 6},
+            "happy_path_full_tree",
         ),
+        ## Removing water
+        ## Exposing stone
         # Edge cases
         (
+            WORLD_SLICE_MOCK,
             "WORLD_SURFACE",
             [Block("minecraft:dirt")],
             [Block("minecraft:sand"), Block("minecraft:gravel")],
@@ -34,6 +125,7 @@ from grimoire.terrain.logger import erode
             "edge_case_replace_with_sequence",
         ),
         (
+            WORLD_SLICE_MOCK,
             "WORLD_SURFACE",
             [Block("minecraft:dirt")],
             Block("minecraft:air"),
@@ -42,6 +134,7 @@ from grimoire.terrain.logger import erode
         ),
         # Error cases
         (
+            WORLD_SLICE_MOCK,
             "INVALID_HEIGHTMAP",
             [Block("minecraft:dirt")],
             Block("minecraft:air"),
@@ -60,7 +153,7 @@ def test_erode(
     expected_affected,
     test_id,
 ) -> None:
-    """_summary_
+    """Unit tests for the `erode()` function
 
     Arguments that need testing:
         editor -- (Not required)
@@ -75,18 +168,12 @@ def test_erode(
         test_id -- Name of test
     """
     # Arrange
-    editor_mock = Mock(spec=Editor)
-    world_slice_mock = Mock(spec=WorldSlice)
-    world_slice_mock.heightmaps = {"WORLD_SURFACE": [[1, 2], [2, 3]]}
-    world_slice_mock.box.size.x = range(2)
-    world_slice_mock.box.size.z = range(2)
-    world_slice_mock.getBlock.return_value.id = "minecraft:dirt"
 
     # Act and Assert
     if isinstance(expected_affected, set):
         affected = erode(
-            editor=editor_mock,
-            world_slice=world_slice_mock,
+            editor=EDITOR_MOCK,
+            world_slice=WORLD_SLICE_MOCK,
             heightmap=heightmap,
             to_replace=to_replace,
             to_skip=to_skip,
@@ -98,8 +185,8 @@ def test_erode(
     else:
         with pytest.raises(expected_affected, match=".*not a valid heightmap.*"):
             erode(
-                editor=editor_mock,
-                world_slice=world_slice_mock,
+                editor=EDITOR_MOCK,
+                world_slice=WORLD_SLICE_MOCK,
                 heightmap=heightmap,
                 to_replace=to_replace,
                 to_skip=to_skip,

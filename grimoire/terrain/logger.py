@@ -57,7 +57,7 @@ def erode(
     stop_at: Optional[Sequence[Block]] = None,
     max_depth: Optional[int] = None,
     replace_with: Union[Block, Sequence[Block]] = Block("minecraft:air"),
-) -> set[ivec2]:
+) -> dict[ivec2, int]:
     """
     Erode (replace from the surface down) blocks in a world slice based on specified parameters.
 
@@ -86,7 +86,7 @@ def erode(
     if max_depth is None:
         max_depth = world_slice.box.size.y
 
-    affected: set[ivec2] = set()
+    affected: dict[ivec2, int] = {}
 
     for x, z in iter_product(world_slice.box.size.x, world_slice.box.size.z):
         y0 = world_slice.heightmaps[heightmap][x][z] - 1
@@ -98,7 +98,9 @@ def erode(
 
             if current_block in to_replace:
                 editor.placeBlock(current_position, replace_with)
-                affected.add(ivec2(x, z))
+                if ivec2(x, z) not in affected:
+                    affected[ivec2(x, z)] = 0
+                affected[ivec2(x, z)] += 1
             elif to_skip is None and stop_at is None:
                 break
             elif to_skip is not None and current_block in to_skip:
