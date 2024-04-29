@@ -16,7 +16,7 @@ editor = Editor(transformLike=(0, -60, 0), buffering=True, caching=True)
 nbt_asset = NBTAsset.construct(
     name="story",
     type="wall",
-    filepath="assets/walls/medieval/medieval_stone_wall_door.nbt",
+    filepath="asset_datawalls/medieval/medieval_stone_wall_door.nbt",
     origin=(0, 0, 0),
     palette=Palette.construct(name="story"),
 )

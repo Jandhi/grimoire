@@ -608,7 +608,7 @@ def add_towers(
     tower = NBTAsset.construct(
         name="tower",
         type="tower",
-        filepath="grimoire/assets/city_wall/towers/basic_tower.nbt",
+        filepath="grimoire/asset_data/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
         palette=Palette.find("wall_palette"),
     )

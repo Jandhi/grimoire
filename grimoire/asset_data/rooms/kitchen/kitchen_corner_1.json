@@ -1,6 +1,6 @@
 {
     "name" : "kitchen_corner_1",
-    "filepath" : "grimoire/assets/rooms/kitchen/kitchen_corner_1.nbt",
+    "filepath" : "grimoire/asset_data/rooms/kitchen/kitchen_corner_1.nbt",
     "type" : "room",
     "origin" : [-1, 0, -1],
     "do_not_place" : "glass",

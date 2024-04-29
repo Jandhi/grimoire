@@ -30,7 +30,7 @@ def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
 
     size: ivec2 = world_slice.rect.size
 
-    return [[False for _ in range(size.z + buffer)] for _ in range(size.x + buffer)]
+    return [[False for _ in range(size.y + buffer)] for _ in range(size.x + buffer)]
 
 
 def get_building_map(world_slice: WorldSlice):

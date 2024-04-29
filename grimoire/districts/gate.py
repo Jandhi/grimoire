@@ -37,7 +37,7 @@ def add_gates(
     basic_wide_gate = NBTAsset.construct(
         name="gate",
         type="gate",
-        filepath="grimoire/assets/city_wall/gates/basic_wide_gate.nbt",
+        filepath="grimoire/asset_data/city_wall/gates/basic_wide_gate.nbt",
         origin=(3, 1, 3),
         palette=Palette.find("wall_palette"),
     )
@@ -45,7 +45,7 @@ def add_gates(
     basic_thin_gate = NBTAsset.construct(
         name="gate",
         type="gate",
-        filepath="grimoire/assets/city_wall/gates/basic_thin_gate.nbt",
+        filepath="grimoire/asset_data/city_wall/gates/basic_thin_gate.nbt",
         origin=(1, 1, 3),
         palette=Palette.find("wall_palette"),
     )
@@ -53,7 +53,7 @@ def add_gates(
     basic_palisade_gate = NBTAsset.construct(
         name="gate",
         type="gate",
-        filepath="grimoire/assets/city_wall/gates/basic_palisade_gate.nbt",
+        filepath="grimoire/asset_data/city_wall/gates/basic_palisade_gate.nbt",
         origin=(1, 1, 2),
         palette=Palette.find("wall_palette"),
     )
