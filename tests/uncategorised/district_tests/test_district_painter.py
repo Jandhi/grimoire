@@ -5,15 +5,15 @@ sys.path[0] = sys.path[0].removesuffix("\\districts\\story_tests")
 
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2
-from districts.generate_districts import generate_districts
-from core.maps.water_map import get_water_map
-from core.maps.build_map import get_build_map
-from core.noise.rng import RNG
-from core.noise.random import choose_weighted
-from districts.district_painter import plant_forest
-from core.assets.load_assets import load_assets
-from districts.paint_palette import PaintPalette
-from terrain.forest import Forest
+from grimoire.districts.generate_districts import generate_districts
+from grimoire.core.maps.water_map import get_water_map
+from grimoire.core.maps.build_map import get_build_map
+from grimoire.core.noise.rng import RNG
+from grimoire.core.noise.random import choose_weighted
+from grimoire.districts.district_painter import plant_forest
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.districts.paint_palette import PaintPalette
+from grimoire.terrain.forest import Forest
 
 SEED = 2
 
@@ -37,7 +37,6 @@ districts, district_map = generate_districts(SEED, build_rect, world_slice, wate
 load_assets("assets")
 
 
-# FIXME: Unused function
 def place_crop(points: list[ivec2], block_dict: dict[any, int], rng, water_map):
     for point in points:
         if water_map[point.x][point.y] == False:
@@ -62,7 +61,6 @@ for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)
 rng = RNG(SEED)
 
 
-# FIXME: Unused variable
 test_farm = {
     "wheat[age=1]": 1,
     "wheat[age=2]": 1,
@@ -80,10 +78,8 @@ ignore_blocks = [
     "minecraft:copper_ore",
 ]
 
-# FIXME: Unused variable
 test_blocks = {"farmland[moisture=7]": 1}
 
-# FIXME: Unused variable
 test_blocks2 = {
     "beetroots[age=0]": 1,
     "beetroots[age=1]": 1,
@@ -94,7 +90,7 @@ test_blocks2 = {
 baobab = {"small_baobab": 1}
 
 test: PaintPalette = PaintPalette.find("farmland")
-test2: PaintPalette = PaintPalette.find("carrot")  # FIXME: Unused variable
+test2: PaintPalette = PaintPalette.find("carrot")
 forest: Forest = Forest.find("mixed_forest")
 # replace_ground(all_points, test_blocks2, rng, water_map, build_map, editor, world_slice)
 # replace_ground(all_points, story_tests.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)

@@ -15,37 +15,17 @@ from grimoire.core.maps.map import Map
 from grimoire.core.maps.building_map import CITY_WALL, CITY_ROAD
 from grimoire.placement.building_placement import place_building
 
-MAXIMUM_SIZE = 2000
 
-UNSPLITTABLE_SIZE = 100
-MAXIMUM_STRETCH_RATIO = 5
 EDGE_THICKNESS = 1
-DESIRED_BLOCK_SIZE = 500  # FIXME: Unused variable; Should perhaps be used below?
+DESIRED_BLOCK_SIZE = 120
 MINIMUM_BLOCK_SZE = 100
-
-
-# FIXME: Function is unused
-def block_is_admissible(points: set[ivec2]) -> bool:
-    # We will automatically pass this as it should not be split again
-    if len(points) <= UNSPLITTABLE_SIZE:
-        return True
-
-    if len(points) > MAXIMUM_SIZE:
-        return False
-
-    stretch = calculate_stretch(points)
-
-    return (
-        stretch.x / stretch.y <= MAXIMUM_STRETCH_RATIO
-        and stretch.y / stretch.x <= MAXIMUM_STRETCH_RATIO
-    )
 
 
 def generate_bubbles(
     rng: RNG,
     districts: list[District],
     map: Map,
-    desired_block_size=1200,  # NOTE: Perhaps this should use DESIRED_BLOCK_SIZE?
+    desired_block_size=DESIRED_BLOCK_SIZE,
     minimum_point_distance=15,
 ) -> list[ivec2]:
     points = []
@@ -80,11 +60,11 @@ def generate_bubbles(
 
 def bubble_out(
     bubbles: list[ivec2], map: Map
-) -> tuple[list[set[ivec2]], list[list[int]], dict[int, dict[int, int]]]:
-    block_index_map = [
+) -> tuple[list[set[ivec2]], list[list[int | None]], dict[int, dict[int, int]]]:
+    block_index_map: list[list[int | None]] = [
         [None for _ in range(len(map.districts[0]))] for _ in range(len(map.districts))
     ]
-    blocks = [set() for _ in bubbles]
+    blocks: list[set[ivec2]] = [set() for _ in bubbles]
     num_blocks = len(blocks)
     block_adjacency = {
         block: {other: 0 for other in range(num_blocks)} for block in range(num_blocks)
@@ -105,12 +85,12 @@ def bubble_out(
         if map.water[vec.x][vec.y]:
             return False
 
-        return district != None and district.is_urban
+        return district is not None and district.is_urban
 
     while queue:
         point = queue.pop(0)
         block_index = block_index_map[point.x][point.y]
-        block: set[ivec3] = blocks[block_index]
+        block: set[ivec2] = blocks[block_index]
 
         for direction in cardinal:
             neighbour = point + get_ivec2(direction)
@@ -129,7 +109,7 @@ def bubble_out(
                 continue
 
             neighbour_block_index = block_index_map[neighbour.x][neighbour.y]
-            if neighbour_block_index != None:
+            if neighbour_block_index is not None:
                 block_adjacency[block_index][neighbour_block_index] += 1
                 block_adjacency[neighbour_block_index][block_index] += 1
                 continue

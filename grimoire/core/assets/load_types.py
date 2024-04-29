@@ -6,21 +6,14 @@ def load_types():
     # WALLS
     from grimoire.buildings.walls.wall import Wall
     from grimoire.buildings.walls.wall_nbt import WallNBT
-    from grimoire.buildings.walls.wall_blueprint import WallBlueprint
 
-    _ = Wall, WallNBT, WallBlueprint
+    _ = Wall, WallNBT
 
     # ROOFS
     from grimoire.buildings.roofs.roof import Roof
     from grimoire.buildings.roofs.roof_component import RoofComponent
 
     _ = Roof, RoofComponent
-
-    # STYLES
-    from grimoire.style.style import Style
-    from grimoire.style.substyle import Substyle
-
-    _ = Style, Substyle
 
     # ROOMS
     from grimoire.buildings.rooms.room import Room

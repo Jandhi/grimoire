@@ -1,7 +1,7 @@
 {
     "name" : "desert_wall_door",
     "type" : "wall",
-    "filepath" : "assets/walls/desert/desert_wall_door.nbt",
+    "filepath" : "grimoire/assets/walls/desert/desert_wall_door.nbt",
     "origin" : [0, -1, 0],
     "facing" : "x_minus",
     "palette" : "desert_dark_prismarine",

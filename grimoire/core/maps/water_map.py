@@ -13,7 +13,7 @@ def get_water_map(world_slice: WorldSlice):
             y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
             block: Block = world_slice.getBlock((x, y - 1, z))
 
-        if block.id in WATERS | {"minecraft:ice", "minecraft:seagrass"}:
-            water_map[x][z] = True
+            if block.id in WATERS | {"minecraft:ice", "minecraft:seagrass"}:
+                water_map[x][z] = True
 
     return water_map

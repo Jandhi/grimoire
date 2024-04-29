@@ -1,28 +1,30 @@
-from districts.district import District
-from core.maps.building_map import get_building_map
-from core.maps.water_map import get_water_map
+from grimoire.districts.district import District
+from grimoire.core.maps.building_map import get_building_map
+from grimoire.core.maps.water_map import get_water_map
 from gdpc import WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
-from core.utils.bounds import is_in_bounds
-from core.utils.bounds import is_in_bounds2d
-from core.utils.sets.set_operations import find_outline
+from grimoire.core.utils.bounds import is_in_bounds
+from grimoire.core.utils.bounds import is_in_bounds2d
+from grimoire.core.utils.sets.set_operations import find_outline
 
 
 # class that carries all the different maps required
 class Map:
     water: list[list[bool]]
-    districts: list[list[District]]
+    districts: list[list[District | None]]
     buildings: list[list[str]]
     height: list[list[int]]
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads
 
     def __init__(self, world_slice: WorldSlice) -> None:
+        size = world_slice.rect.size
         self.world = world_slice
         self.districts = self.empty_map()
         self.water = get_water_map(world_slice)
         self.buildings = get_building_map(world_slice)
         self.copy_heightmap()
+        self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
 
     def correct_district_heights(self, districts: list[District]):
         for district in districts:

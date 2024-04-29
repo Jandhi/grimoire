@@ -1,9 +1,9 @@
-from core.structures.block import Block
+from grimoire.core.structures.block import Block
 from gdpc.vector_tools import ivec3
 
 
 # A class derived from an NBT file, assets describing something built in minecraft
-# Used to actually construct NBT structures
+# Used to actually construct NBT landmarks
 class Structure:
     def __init__(
         self,

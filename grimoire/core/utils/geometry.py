@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2
 from gdpc import WorldSlice
-from core.structures.legacy_directions import cardinal, get_ivec2
+from grimoire.core.structures.legacy_directions import cardinal, get_ivec2
 
 
 # finds the neighbours points of a point in a set
@@ -17,7 +17,6 @@ def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     return neighbours
 
 
-# FIXME: Unused function
 # finds the neighbours points of a point not in a set
 def get_neighbours_not_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
@@ -63,7 +62,8 @@ def is_straight_ivec2(previous: ivec2, next: ivec2, length: int):
 def is_straight_not_diagonal_ivec2(previous: ivec2, next: ivec2, length: int):
     vec_line = previous - next
     return (abs(vec_line.x) == length and vec_line.y == 0) or (
-        abs(vec_line.y) == length and vec_line.x == 0)
+        abs(vec_line.y) == length and vec_line.x == 0
+    )
 
 
 # returns true if all of points neighbours (including diagonal) are in dict

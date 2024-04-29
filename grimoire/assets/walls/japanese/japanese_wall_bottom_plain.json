@@ -1,7 +1,7 @@
 {
     "name" : "japanese_wall_bottom_plain",
     "type" : "wall",
-    "filepath" : "assets/walls/japanese/japanese_wall_bottom_plain.nbt",
+    "filepath" : "grimoire/assets/walls/japanese/japanese_wall_bottom_plain.nbt",
     "origin" : [1, -1, 0],
     "facing" : "x_minus",
     "palette" : "japanese_dark_blackstone",

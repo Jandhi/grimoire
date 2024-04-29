@@ -6,18 +6,18 @@ sys.path[0] = sys.path[0].removesuffix("\\buildings\\story_tests")
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
-from core.structures.grid import Grid
-from core.assets.load_assets import load_assets
-from buildings.building_plan import BuildingPlan
-from buildings.walls.build_walls import build_walls
-from core.noise.rng import RNG
-from buildings.walls.wall import Wall
-from palette.palette import Palette
-from buildings.build_floor import build_floor
-from buildings.roofs.roof_component import RoofComponent
-from buildings.roofs.build_roof import build_roof
-from buildings.clear_interiors import clear_interiors
-from buildings.rooms.furnish import furnish
+from grimoire.core.structures.grid import Grid
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.buildings.building_plan import BuildingPlan
+from grimoire.buildings.walls.build_walls import build_walls
+from grimoire.core.noise.rng import RNG
+from grimoire.buildings.walls.wall import Wall
+from grimoire.palette.palette import Palette
+from grimoire.buildings.build_floor import build_floor
+from grimoire.buildings.roofs.roof_component import RoofComponent
+from grimoire.buildings.roofs.build_roof import build_roof
+from grimoire.buildings.clear_interiors import clear_interiors
+from grimoire.buildings.rooms.furnish import furnish
 
 SEED = 654
 
@@ -54,7 +54,11 @@ walls = [wall for wall in Wall.all() if "japanese" in wall.tags]
 
 build_walls(plan, editor, walls, RNG(SEED, "build_walls"))
 
-# FIXME: missing argument
 furnish(
-    [cell.position for cell in plan.cells], RNG(SEED, "furnish"), grid, editor, palette
+    [cell.position for cell in plan.cells],
+    RNG(SEED, "furnish"),
+    grid,
+    editor,
+    palette,
+    plan.cell_map,
 )

@@ -1,4 +1,4 @@
-from core.structures.nbt.nbt_asset import NBTAsset
+from grimoire.core.structures.nbt.nbt_asset import NBTAsset
 
 
 class Room(NBTAsset):

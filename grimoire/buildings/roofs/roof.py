@@ -1,11 +1,11 @@
-from core.assets.asset import Asset
+from grimoire.core.assets.asset import Asset
 
 # Roof Component Types
 SIDE = "side"
 CORNER = "corner"
 INNER = "inner"  # inner corner
 
-# FIXME: Unused constants
+# Roof Component Types for taller roofs
 UPPER_SIDE = "upper_side"
 UPPER_CORNER = "upper_corner"
 UPPER_INNER = "upper_inner"

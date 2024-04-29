@@ -28,7 +28,6 @@ colors = [
 ]
 
 
-# FIXME: Unused function
 def get_color(district, districts):
     blocks = colors
     return f"{blocks[districts.index(district) % len(blocks)]}_wool"

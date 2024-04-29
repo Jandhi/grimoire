@@ -1,6 +1,6 @@
 from random import randint, seed
 from gdpc import Editor, Block
-from core.structures.legacy_directions import (
+from grimoire.core.structures.legacy_directions import (
     north,
     east,
     west,
@@ -9,10 +9,10 @@ from core.structures.legacy_directions import (
     opposite,
 )
 from gdpc.vector_tools import ivec3
-from core.utils.setblock import place_block
+from grimoire.core.utils.setblock import place_block
 
 
-# FIXME: Unused class
+# Constructs a little well structure
 class Well:
     name = "Well"
     origin = ivec3(0, 0, 0)

@@ -5,13 +5,13 @@ sys.path[0] = sys.path[0].removesuffix("\\districts\\story_tests")
 
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2
-from districts.generate_districts import generate_districts
-from core.utils.geometry import get_outer_points
-from districts.wall import order_wall_points, build_wall_standard_with_inner
-from core.maps.water_map import get_water_map
-from core.noise.rng import RNG
-from palette.palette import Palette
-from core.assets.load_assets import load_assets
+from grimoire.districts.generate_districts import generate_districts
+from grimoire.core.utils.geometry import get_outer_points
+from grimoire.districts.wall import order_wall_points, build_wall_standard_with_inner
+from grimoire.core.maps.water_map import get_water_map
+from grimoire.core.noise.rng import RNG
+from grimoire.palette.palette import Palette
+from grimoire.core.assets.load_assets import load_assets
 
 SEED = 7
 
@@ -50,7 +50,7 @@ def replace_ground(
 
 import itertools
 
-# FIXME: Unused variable
+
 test_blocks = {
     "stone": 3,
     "cobblestone": 2,

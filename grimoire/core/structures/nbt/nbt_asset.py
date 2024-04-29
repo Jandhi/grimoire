@@ -1,13 +1,13 @@
-from core.assets.asset import Asset, asset_defaults
-from palette.palette import Palette
+from grimoire.core.assets.asset import Asset, asset_defaults
+from grimoire.palette.palette import Palette
 from gdpc.vector_tools import ivec3
 
 
 # Base class with metadata for an NBT file
-# We will be subclassing this for different types of structures, e.g. walls and rooms
+# We will be subclassing this for different types of landmarks, e.g. walls and rooms
 @asset_defaults(
     palette=None,
-    do_not_replace=[],  # FIXME: Unused attribute
+    do_not_replace=[],
     replace=[],
     do_not_place=[],
 )

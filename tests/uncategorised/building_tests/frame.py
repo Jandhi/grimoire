@@ -1,10 +1,10 @@
 from gdpc import Editor, Block
-from core.structures.grid import Grid
-from core.utils.vectors import x_ivec3, y_ivec3, z_ivec3
-from buildings.legacycell import LegacyCell
+from grimoire.core.structures.grid import Grid
+from grimoire.core.utils.vectors import x_ivec3, y_ivec3, z_ivec3
+from grimoire.buildings.legacycell import LegacyCell
 
 
-# FIXME: Unused function
+# Places a frame for a house grid cell. Useful for debugging.
 def place_frame(cell: LegacyCell, grid: Grid, editor: Editor):
     coords = grid.grid_to_world(cell.position)
 

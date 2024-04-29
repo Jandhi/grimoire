@@ -1,11 +1,11 @@
 # Actual file
 from gdpc.editor import Editor, Block
-from core.structures.grid import Grid
+from grimoire.core.structures.grid import Grid
 
 # from buildings.roofs.roof import Roof
-from buildings.rooms.room import Room
+from grimoire.buildings.rooms.room import Room
 
-from core.structures.legacy_directions import (
+from grimoire.core.structures.legacy_directions import (
     cardinal,
     vector as get_ivec3,
     right,
@@ -16,11 +16,11 @@ from core.structures.legacy_directions import (
     west,
 )
 
-from palette.palette import Palette
-from core.noise.rng import RNG
+from grimoire.palette.palette import Palette
+from grimoire.core.noise.rng import RNG
 from gdpc.vector_tools import ivec3
 import numpy as np
-from buildings.legacycell import LegacyCell
+from grimoire.buildings.legacycell import LegacyCell
 
 ROOM_LIST = [
     "kitchen_no_window_small",
@@ -306,8 +306,8 @@ def populate_floor(
         candidates_with_min_entropy = [
             (x, y, z) for x, y, z in candidates if y == min_entropy
         ]
-        # FIXME: Unused variable `ent`
-        cell_to_build, ent, room_to_build = candidates_with_min_entropy[
+
+        cell_to_build, _, room_to_build = candidates_with_min_entropy[
             rng.randint(len(candidates_with_min_entropy))
         ]
         room_to_build, room_facing, connections = rng.choose(room_to_build)

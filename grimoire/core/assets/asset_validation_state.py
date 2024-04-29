@@ -13,7 +13,7 @@ class AssetValidationState:
     def is_invalid(self) -> bool:
         return len(self.missing_args) > 0
 
-    # FIXME: Unused method
+    # Adds two validation states in case two
     def combine(self, other) -> "AssetValidationState":
         return AssetValidationState(
             missing_args=self.missing_args + other.missing_args,

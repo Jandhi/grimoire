@@ -383,9 +383,9 @@ def build_wall_standard_with_inner(
         if (
             walkway_dict.get(ivec2(pt.x, pt.z)) is None
         ):  # check again since walkway was not completed as inner wall was being added
-            inner_wall_dict[
-                ivec2(pt.x, pt.z)
-            ] = True  # can put something else here if needed
+            inner_wall_dict[ivec2(pt.x, pt.z)] = (
+                True  # can put something else here if needed
+            )
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
                 editor.placeBlock((pt.x, y, pt.z), Block(full_block))
             if (
@@ -612,7 +612,7 @@ def add_towers(
     tower = NBTAsset.construct(
         name="tower",
         type="tower",
-        filepath="assets/city_wall/towers/basic_tower.nbt",
+        filepath="grimoire/assets/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
         palette=Palette.find("wall_palette"),
     )

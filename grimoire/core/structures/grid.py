@@ -1,9 +1,9 @@
-from core.structures.legacy_directions import left, right, opposites
-from core.structures.nbt.build_nbt import build_nbt
-from core.structures.transformation import Transformation
+from grimoire.core.structures.legacy_directions import left, right, opposites
+from grimoire.core.structures.nbt.build_nbt import build_nbt
+from grimoire.core.structures.transformation import Transformation
 from gdpc.editor import Editor
-from core.structures.nbt.nbt_asset import NBTAsset
-from palette.palette import Palette
+from grimoire.core.structures.nbt.nbt_asset import NBTAsset
+from grimoire.palette.palette import Palette
 from gdpc.vector_tools import ivec3, ivec2
 from collections.abc import Iterator
 

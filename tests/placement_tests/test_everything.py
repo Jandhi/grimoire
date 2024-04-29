@@ -2,43 +2,43 @@
 import sys
 import time
 
-sys.path[0] = sys.path[0].removesuffix("\\placement\\story_tests")
+sys.path[0] = sys.path[0].removesuffix("\\tests\\placement_tests")
 
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec2
-from districts.generate_districts import generate_districts
-from placement.city_blocks import add_city_blocks
-from core.maps.map import Map
-from core.assets.load_assets import load_assets
-from terrain.smooth_edges import smooth_edges
-from terrain.plateau import plateau
-from palette.palette import Palette
-from core.noise.rng import RNG
-from districts.wall import (
+from grimoire.districts.generate_districts import generate_districts
+from grimoire.placement.city_blocks import add_city_blocks
+from grimoire.core.maps.map import Map
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.terrain.smooth_edges import smooth_edges
+from grimoire.terrain.plateau import plateau
+from grimoire.palette.palette import Palette
+from grimoire.core.noise.rng import RNG
+from grimoire.districts.wall import (
     order_wall_points,
     build_wall_standard_with_inner,
     get_wall_points,
 )
-from terrain.logger import log_trees
-from core.maps.build_map import get_build_map
-from districts.district_painter import (
+from grimoire.terrain.tree_cutter import log_trees
+from grimoire.core.maps.build_map import get_build_map
+from grimoire.districts.district_painter import (
     replace_ground,
     plant_forest,
     replace_ground_smooth,
 )
-from districts.paint_palette import PaintPalette
-from terrain.forest import Forest
-from core.utils.sets.find_outer_points import find_outer_and_inner_points
-from industries.industry import get_district_biomes
-from industries.biomes import forest, desert, rocky, snowy
+from grimoire.districts.paint_palette import PaintPalette
+from grimoire.terrain.forest import Forest
+from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
+from grimoire.industries.industry import get_district_biomes
+from grimoire.industries.biomes import forest, desert, rocky, snowy
 from gdpc.geometry import Box
 
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
-load_assets("assets")
+load_assets("grimoire/assets")
 
 area = editor.getBuildArea()
 

@@ -1,10 +1,10 @@
-from buildings.building_plan import BuildingPlan
-from buildings.legacycell import LegacyCell
-from core.structures.legacy_directions import cardinal, Direction, up
+from grimoire.buildings.building_plan import BuildingPlan
+from grimoire.buildings.legacycell import LegacyCell
+from grimoire.core.structures.legacy_directions import cardinal, Direction, up
 from gdpc.editor import Editor
-from buildings.walls.wall import Wall, LOWER, UPPER
-from core.noise.rng import RNG
-from core.structures.grid import Grid
+from grimoire.buildings.walls.wall import Wall, LOWER, UPPER
+from grimoire.core.noise.rng import RNG
+from grimoire.core.structures.grid import Grid
 
 NOT_ROOF = "not_roof"
 ONLY_ROOF = "only_roof"
@@ -46,5 +46,4 @@ def build_wall(
         print("Could not find suitable wall, skipped")
         return
 
-    # FIXME: `wall` is Wall instead of NBTAsset
     grid.build(editor, wall, cell.plan.palette, cell.position, direction)

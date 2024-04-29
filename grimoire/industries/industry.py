@@ -44,7 +44,6 @@ def get_primary_industries(district_biomes: list[str]):
     return eligibile_primary_industries
 
 
-# FIXME: Unused function
 def find_secondary_industries(district_primary_industries: list[str]):
     eligible_secondary_industries = []
     for industry in SecondaryIndustry.all():
