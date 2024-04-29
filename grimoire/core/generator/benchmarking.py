@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from colored import Fore, Style
 
-from ..logs.logger import Logger
+from ..logger import Logger
 
 T = TypeVar("T")
 

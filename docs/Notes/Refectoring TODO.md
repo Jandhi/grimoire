@@ -1,6 +1,6 @@
 #james
 
-- [ ] Fix broken imports from restructuring
+- [x] Fix broken imports from restructuring
 - [ ] Replace all `print`s with logger messages
 - [ ] Simplify `structures` sub-package (as part of building improvements?)
 - [ ] Simplify `data` sub-package

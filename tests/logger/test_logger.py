@@ -3,7 +3,7 @@ import sys
 
 sys.path[0] = sys.path[0].removesuffix("tests\\logger")
 
-from grimoire.core.logs.logger import Logger, LoggingLevel
+from grimoire.core.logger import Logger, LoggingLevel
 from time import sleep
 
 log = Logger()

@@ -1,4 +1,4 @@
-from ..logs.logger import LoggerSettings
+from ..logger import LoggerSettings
 
 
 class GeneratorSettings:
