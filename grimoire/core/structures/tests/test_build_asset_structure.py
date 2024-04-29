@@ -1,7 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\landmarks\\story_tests")
+sys.path[0] = sys.path[0].removesuffix("\\landmarks\\story")
 
 # Actual file
 from gdpc.editor import Editor
@@ -34,7 +34,7 @@ test: AssetStructure = AssetStructure.find("well")
 build_nbt(
 <<<<<<< HEAD
     editor = editor, 
-    asset = story_tests,
+    asset = story,
 =======
     editor = editor,
     asset = tests,

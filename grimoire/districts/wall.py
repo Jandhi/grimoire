@@ -85,7 +85,7 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
                 reverse_checked = False
                 if (
                     len(ordered_wall_points) > 20
-                ):  # prevent weird small wall segements, story_tests again to see if its improvement or not
+                ):  # prevent weird small wall segements, story again to see if its improvement or not
                     list_of_ordered_wall_points.append(ordered_wall_points)
                 ordered_wall_points = []
                 ordered_wall_points.append(wall_points.pop(0))
@@ -534,7 +534,7 @@ def average_neighbour_height(x: int, z: int, walkway_dict: dict) -> int:
     for dx, dz in NEIGHBOURS:
         if (
             ivec2(x + dx, z + dz) not in walkway_dict
-        ):  # we only need to flatten for within a district
+        ):  # we only need to flatten for within a districts
             continue
         elif (
             abs(walkway_dict[ivec2(x + dx, z + dz)] - walkway_dict[ivec2(x, z)]) >= 4

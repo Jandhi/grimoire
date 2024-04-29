@@ -37,7 +37,7 @@ def establish_adjacency(world_slice: WorldSlice, district_map: list[list[Distric
                 point_district = district_map[point.x][point.y]
 
                 # they are neighbours
-                if point_district == district:  # same district, uninteresting
+                if point_district == district:  # same districts, uninteresting
                     continue
 
                 if point_district is None:

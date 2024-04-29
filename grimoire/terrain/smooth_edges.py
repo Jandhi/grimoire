@@ -7,7 +7,7 @@ from ..terrain.smooth import average_neighbour_height, update_district_points
 from ..core.utils.bounds import is_in_bounds2d
 
 DISTRICT_AVG_RATIO = (
-    0.5  # the percent of the height that the district average should influence
+    0.5  # the percent of the height that the districts average should influence
 )
 EDGE_RANGE = 5  # how far in both directions the edges are smoothed
 

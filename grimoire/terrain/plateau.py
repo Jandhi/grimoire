@@ -4,7 +4,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from ..terrain.set_height import set_height
 
 DISTRICT_AVG_RATIO = (
-    0.7  # the percent of the height that the district average should influence
+    0.7  # the percent of the height that the districts average should influence
 )
 
 

@@ -41,7 +41,7 @@ def generate_bubbles(
 
         while trials < max_trials and district_points_generated < desired_point_amount:
             trials += 1
-            point = rng.pop(district_points)  # choose random point in district
+            point = rng.pop(district_points)  # choose random point in districts
 
             if any(
                 distance2(point, other) < minimum_point_distance for other in points

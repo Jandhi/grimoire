@@ -52,7 +52,7 @@ def average_neighbour_height(x: int, z: int, world_slice: WorldSlice) -> int:
     return round(height_sum / total_weight)
 
 
-# updates the points set of a district to be correct
+# updates the points set of a districts to be correct
 def update_district_points(district: District, world_slice: WorldSlice):
     district.points.clear()
 
