@@ -1,10 +1,10 @@
-from grimoire.buildings.building_plan import BuildingPlan
-from grimoire.buildings.legacycell import LegacyCell
-from grimoire.core.structures.legacy_directions import cardinal, LegacyDirection, up
+from ..building_plan import BuildingPlan
+from ..legacycell import LegacyCell
+from ...core.structures.legacy_directions import cardinal, LegacyDirection, up
 from gdpc.editor import Editor
-from grimoire.buildings.walls.wall import Wall, LOWER, UPPER
-from grimoire.core.noise.rng import RNG
-from grimoire.core.structures.grid import Grid
+from .wall import Wall, LOWER, UPPER
+from ...core.noise.rng import RNG
+from ...core.structures.grid import Grid
 
 NOT_ROOF = "not_roof"
 ONLY_ROOF = "only_roof"

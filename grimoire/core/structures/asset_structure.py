@@ -1,4 +1,4 @@
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
+from .nbt.nbt_asset import NBTAsset
 from gdpc.vector_tools import ivec3
 
 

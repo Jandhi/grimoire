@@ -1,4 +1,4 @@
-from grimoire.districts.district import District
+from ..districts.district import District
 
 RURAL_SIZE_RATIO = (
     3  # we expect rural districts to be this times larger in area than urban ones

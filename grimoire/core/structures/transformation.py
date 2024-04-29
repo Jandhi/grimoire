@@ -1,5 +1,5 @@
-from grimoire.core.structures.block import Block
-from grimoire.core.structures.legacy_directions import (
+from .block import Block
+from .legacy_directions import (
     x_plus,
     x_minus,
     y_plus,
@@ -10,8 +10,8 @@ from grimoire.core.structures.legacy_directions import (
     to_text,
     directions,
 )
-from grimoire.core.structures.structure import Structure
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
+from .structure import Structure
+from .nbt.nbt_asset import NBTAsset
 from gdpc.vector_tools import ivec3
 
 # region Transformation dictionaries

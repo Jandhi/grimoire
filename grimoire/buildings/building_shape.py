@@ -1,8 +1,8 @@
-from grimoire.core.assets.asset import Asset, asset_defaults
+from ..core.assets.asset import Asset, asset_defaults
 from gdpc.vector_tools import ivec3, ivec2
-from grimoire.core.structures.grid import Grid
+from ..core.structures.grid import Grid
 from collections.abc import Iterator
-from grimoire.core.structures.legacy_directions import (
+from ..core.structures.legacy_directions import (
     z_minus,
     x_z_flip as x_z_flip_dict,
     x_mirror as x_mirror_dict,

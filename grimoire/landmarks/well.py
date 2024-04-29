@@ -1,6 +1,6 @@
 from random import randint, seed
 from gdpc import Editor, Block
-from grimoire.core.structures.legacy_directions import (
+from ..core.structures.legacy_directions import (
     north,
     east,
     west,
@@ -9,10 +9,11 @@ from grimoire.core.structures.legacy_directions import (
     opposite,
 )
 from gdpc.vector_tools import ivec3
-from grimoire.core.utils.setblock import place_block
+from ..core.utils.setblock import place_block
 
 
 # Constructs a little well structure
+# TODO: Allow use of other blocks (palletize)
 class Well:
     name = "Well"
     origin = ivec3(0, 0, 0)
@@ -103,7 +104,7 @@ class Well:
         seed()
         a = randint(0, 3)
         if a == 0:
-            block = Block(f"minecraft:cauldron")
+            block = Block("minecraft:cauldron")
         else:
             block = Block(f"minecraft:water_cauldron[level={a}]")
         editor.placeBlock((cx, y + 1, cz), block)

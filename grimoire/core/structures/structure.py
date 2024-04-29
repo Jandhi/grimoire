@@ -1,4 +1,4 @@
-from grimoire.core.structures.block import Block
+from .block import Block
 from gdpc.vector_tools import ivec3
 
 

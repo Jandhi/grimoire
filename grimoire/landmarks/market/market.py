@@ -1,5 +1,5 @@
-from grimoire.landmarks.market.stall_generator import StallGenerator
-from grimoire.landmarks.market.stall import Stall
+from ..landmarks.market.stall_generator import StallGenerator
+from ..landmarks.market.stall import Stall
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
 

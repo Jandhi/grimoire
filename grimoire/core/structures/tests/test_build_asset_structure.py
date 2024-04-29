@@ -5,12 +5,12 @@ sys.path[0] = sys.path[0].removesuffix("\\landmarks\\story_tests")
 
 # Actual file
 from gdpc.editor import Editor
-from core.assets.load_assets import load_assets
-from core.structures.asset_structure import AssetStructure
+from ..core.assets.load_assets import load_assets
+from ..core.structures.asset_structure import AssetStructure
 from gdpc.vector_tools import ivec3
-from terrain.water_map import get_water_map
-from terrain.build_map import get_build_map
-from core.structures.market.market import Market
+from ..terrani.water_map import get_water_map
+from ..terrani.build_map import get_build_map
+from ..core.structures.market.market import Market
 
 SEED = 2
 
@@ -24,7 +24,7 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 water_map = get_water_map(world_slice)
-build_map = get_build_map(world_slice)
+build_map = get_build_map(world_slice, 20)
 
 load_assets("assets")
 y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][0][0]
@@ -32,8 +32,13 @@ y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][0][0]
 test: AssetStructure = AssetStructure.find("well")
 """
 build_nbt(
+<<<<<<< HEAD
     editor = editor, 
     asset = story_tests,
+=======
+    editor = editor,
+    asset = tests,
+>>>>>>> 02c25de9b7a9820350b4fc39db5440fab0975558
     palette = None,
     transformation=Transformation(
         offset= ivec3(area.middle.x,y,area.middle.z),

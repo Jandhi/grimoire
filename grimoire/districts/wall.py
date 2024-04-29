@@ -1,9 +1,9 @@
-from grimoire.core.noise.rng import RNG
-from grimoire.core.noise.random import randrange
+from ..core.noise.rng import RNG
+from ..core.noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
-from grimoire.core.structures.legacy_directions import (
+from ..core.structures.legacy_directions import (
     north,
     get_ivec2,
     right,
@@ -13,19 +13,19 @@ from grimoire.core.structures.legacy_directions import (
     cardinal,
     opposite,
 )
-from grimoire.core.utils.geometry import (
+from ..core.utils.geometry import (
     get_neighbours_in_set,
     is_straight_ivec2,
     is_point_surrounded_dict,
     get_outer_points,
 )
-from grimoire.core.utils.misc import is_water
-from grimoire.core.structures.nbt.build_nbt import build_nbt
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
-from grimoire.core.structures.transformation import Transformation
-from grimoire.palette.palette import Palette
-from grimoire.palette.palette_swap import fix_block_name
-from grimoire.districts.gate import add_gates, Gate
+from ..core.utils.misc import is_water
+from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.nbt_asset import NBTAsset
+from ..core.structures.transformation import Transformation
+from ..palette import Palette
+from ..palette import fix_block_name
+from ..districts.gate import add_gates, Gate
 
 
 def get_wall_points(inner_points, world_slice):
@@ -66,7 +66,7 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
     reverse_checked = False
 
     ordered_wall_points: list[ivec2] = [wall_points.pop(0)]
-    ordered_wall_dict: dict() = {ordered_wall_points[0]: True}
+    ordered_wall_dict: dict = {ordered_wall_points[0]: True}
     current_wall_point = ordered_wall_points[0]
     while wall_points:
         next_wall_point = find_wall_neighbour(
@@ -185,7 +185,7 @@ def build_wall_standard(
     walkway_list = (
         []
     )  # idea is to get this list and then get the new inner points of hte wall, how do I get height to those
-    walkway_dict: dict() = {}
+    walkway_dict: dict = {}
 
     # blocks
     stone = palette.primary_stone
@@ -263,10 +263,10 @@ def build_wall_standard_with_inner(
     walkway_list = (
         []
     )  # idea is to get this list and then get the new inner points of hte wall, how do I get height to those
-    walkway_dict: dict() = {}
+    walkway_dict: dict = {}
 
     inner_wall_list = []
-    inner_wall_dict: dict() = {}
+    inner_wall_dict: dict = {}
 
     # blocks
     stone = palette.primary_stone
@@ -481,9 +481,12 @@ def flatten_walkway(
         walkway_dict[point] = average_neighbour_height(point.x, point.y, walkway_dict)
 
     # first pass places slabs and changes dict heights
-    for key in walkway_dict:
-        height = walkway_dict[key]
-        if height % 1 <= 0.25:
+    for key, height in walkway_dict.items():
+        if (
+            height % 1 <= 0.25
+            or not 0.25 < height % 1 <= 0.5
+            and not 0.5 < height % 1 <= 0.75
+        ):
             editor.placeBlock(
                 (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab")
             )
@@ -493,25 +496,19 @@ def flatten_walkway(
                 (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab[type=top]")
             )
             walkway_dict[key] = round(height) + 0.49
-        elif 0.5 < height % 1 <= 0.75:
+        else:
             editor.placeBlock(
                 (key.x, round(height) - 1, key.y),
                 Block(f"minecraft:{wood}_slab[type=top]"),
             )
             walkway_dict[key] = round(height) - 0.51
-        else:
-            editor.placeBlock(
-                (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab")
-            )
-            walkway_dict[key] = round(height)
-
     # 2nd pass to add stairs based on first pass changes
     for key in walkway_dict:
         height = walkway_dict[key]
         for direction in cardinal:
             delta = get_ivec2(direction)
             neighbour = key + delta
-            if walkway_dict.get(neighbour) == None:
+            if walkway_dict.get(neighbour) is None:
                 continue
             elif height % 1 == 0:  # bottom slab
                 if walkway_dict.get(neighbour) - height >= 1:
@@ -519,14 +516,13 @@ def flatten_walkway(
                         (key.x, round(height), key.y),
                         Block(f"minecraft:{wood}_stairs[facing={to_text(direction)}]"),
                     )
-            else:  # top slab
-                if walkway_dict.get(neighbour) - height <= -1:
-                    editor.placeBlock(
-                        (key.x, round(height), key.y),
-                        Block(
-                            f"minecraft:{wood}_stairs[facing={to_text(opposite(direction))}]"
-                        ),
-                    )
+            elif walkway_dict.get(neighbour) - height <= -1:
+                editor.placeBlock(
+                    (key.x, round(height), key.y),
+                    Block(
+                        f"minecraft:{wood}_stairs[facing={to_text(opposite(direction))}]"
+                    ),
+                )
 
     return walkway_dict
 

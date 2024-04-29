@@ -1,13 +1,13 @@
 from gdpc import Editor
-from grimoire.buildings.building_plan import BuildingPlan
-from grimoire.core.structures.grid import Grid
 from gdpc.vector_tools import ivec3
-from grimoire.buildings.roofs.roof_component import RoofComponent, CORNER, INNER, SIDE
-from grimoire.core.structures.legacy_directions import north, south, east, west, up
-from grimoire.core.utils.vectors import y_ivec3
-from grimoire.core.structures.nbt.build_nbt import build_nbt
-from grimoire.core.structures.transformation import Transformation
-from grimoire.core.noise.rng import RNG
+from .roof_component import RoofComponent, CORNER, INNER, SIDE
+from ..building_plan import BuildingPlan
+from ...core.structures.grid import Grid
+from ...core.structures.legacy_directions import north, south, east, west, up
+from ...core.utils.vectors import y_ivec3
+from ...core.structures.nbt.build_nbt import build_nbt
+from ...core.structures.transformation import Transformation
+from ...core.noise.rng import RNG
 
 
 def build_roof(

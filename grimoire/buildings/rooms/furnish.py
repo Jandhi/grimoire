@@ -1,11 +1,14 @@
 # Actual file
+import numpy as np
 from gdpc.editor import Editor, Block
-from grimoire.core.structures.grid import Grid
+from gdpc.vector_tools import ivec3
 
-# from buildings.roofs.roof import Roof
-from grimoire.buildings.rooms.room import Room
-
-from grimoire.core.structures.legacy_directions import (
+from ..legacycell import LegacyCell
+from ...core.noise.rng import RNG
+from ...palette import Palette
+from .room import Room
+from ...core.structures.grid import Grid
+from ...core.structures.legacy_directions import (
     cardinal,
     vector as get_ivec3,
     right,
@@ -15,12 +18,6 @@ from grimoire.core.structures.legacy_directions import (
     south,
     west,
 )
-
-from grimoire.palette.palette import Palette
-from grimoire.core.noise.rng import RNG
-from gdpc.vector_tools import ivec3
-import numpy as np
-from grimoire.buildings.legacycell import LegacyCell
 
 ROOM_LIST = [
     "kitchen_no_window_small",

@@ -5,10 +5,10 @@ sys.path[0] = sys.path[0].removesuffix("\\landmarks\\story_tests")
 
 # Actual file
 from gdpc.editor import Editor
-from core.structures.nbt.build_nbt import build_nbt
-from core.structures.nbt.nbt_asset import NBTAsset
-from palette.palette import Palette
-from core.structures.transformation import Transformation
+from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.nbt_asset import NBTAsset
+from ..palette import Palette
+from ..core.structures.transformation import Transformation
 
 
 editor = Editor(transformLike=(0, -60, 0), buffering=True, caching=True)

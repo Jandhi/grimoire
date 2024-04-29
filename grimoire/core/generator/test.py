@@ -1,6 +1,6 @@
 import abc
 
-from grimoire.core.generator.module import Module
+from ..core.generator.module import Module
 
 
 class TestModule(Module):

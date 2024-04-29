@@ -1,4 +1,4 @@
-from grimoire.core.assets.asset import Asset, AssetMeta
+from .asset import Asset, AssetMeta
 
 
 def link_assets():

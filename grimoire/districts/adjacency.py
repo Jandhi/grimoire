@@ -1,6 +1,6 @@
 from gdpc import WorldSlice
-from grimoire.districts.district import District
-from grimoire.core.structures.legacy_directions import cardinal, vector
+from ..districts.district import District
+from ..core.structures.legacy_directions import cardinal, vector
 from gdpc.vector_tools import Rect, ivec2, ivec3
 
 

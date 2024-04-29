@@ -20,6 +20,30 @@
             }
           },
           {
+            "id": "f3ab5443f0e8acb6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Refectoring TODO.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "0cf502a789286a92",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "GDPC Improvements.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
             "id": "ce3ec46d9762a7be",
             "type": "leaf",
             "state": {
@@ -33,20 +57,6 @@
           }
         ],
         "currentTab": 1
-      },
-      {
-        "id": "59a7a8b90909f541",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "b3b4e15cd15e761e",
-            "type": "leaf",
-            "state": {
-              "type": "graph",
-              "state": {}
-            }
-          }
-        ]
       }
     ],
     "direction": "vertical"
@@ -96,7 +106,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "1cc4e703cc79988e",
@@ -112,6 +123,7 @@
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Refectoring TODO.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -128,6 +140,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Refectoring TODO.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -150,7 +163,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Untitled.md"
+                "file": "Refectoring TODO.md"
               }
             }
           }
@@ -171,8 +184,11 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "09a367566069b051",
+  "active": "f3ab5443f0e8acb6",
   "lastOpenFiles": [
+    "GDPC Improvements.md",
+    "Refectoring TODO.md",
+    "README.md",
     "James' Old Notes/Token Palettes.md",
     "James' Old Notes/Temp (Waterway detection).md",
     "James' Old Notes/Temp (Structures).md",
@@ -192,7 +208,6 @@
     "Decorations.md",
     "Untitled.md",
     "James' Old Notes",
-    "README.md",
     "Welcome.md"
   ]
 }

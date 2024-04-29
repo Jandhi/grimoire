@@ -1,10 +1,10 @@
-from grimoire.core.assets.asset import Asset, asset_defaults
-from gdpc.editor import Editor
-from grimoire.core.structures.grid import Grid
-from gdpc.vector_tools import ivec3
 from typing import Optional
 
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
+from gdpc.editor import Editor
+from gdpc.vector_tools import ivec3
+
+from ...core.assets.asset import Asset, asset_defaults
+from ...core.structures.grid import Grid
 
 # WALL POSITIONS
 LOWER = "lower"

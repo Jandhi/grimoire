@@ -2,44 +2,44 @@
 import sys
 import time
 
-from gdpc import Editor, Box
+sys.path[0] = sys.path[0].removesuffix("\\placement\\tests")
+
+# Actual file
+from gdpc import Editor
+from gdpc.geometry import Box
 from gdpc.lookup import GRANULARS
-from glm import ivec2
+from gdpc.vector_tools import ivec2
 
 from grimoire.core.assets.load_assets import load_assets
 from grimoire.core.maps import Map, get_build_map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
 from grimoire.districts.district_painter import (
-    replace_ground_smooth,
     plant_forest,
     replace_ground,
+    replace_ground_smooth,
 )
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.districts.paint_palette import PaintPalette
 from grimoire.districts.wall import (
+    build_wall_standard_with_inner,
     get_wall_points,
     order_wall_points,
-    build_wall_standard_with_inner,
 )
-from grimoire.industries.biomes import snowy, rocky, desert, forest
+from grimoire.industries.biomes import desert, forest, rocky, snowy
 from grimoire.industries.industry import get_district_biomes
 from grimoire.palette import Palette
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.forest import Forest
+from grimoire.terrain.logger import log_trees
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
-from grimoire.terrain.tree_cutter import log_trees
-
-sys.path[0] = sys.path[0].removesuffix("\\tests\\placement_tests")
-
-# Actual file
 
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
-load_assets("grimoire/assets")
+load_assets("assets")
 
 area = editor.getBuildArea()
 
@@ -72,11 +72,12 @@ map.districts = district_map
 
 styles = [
     "japanese",  # I think this is the strongest one, so probably used in most environments
-    "viking",  # Pretty weak I think so we could avoid, but we can story_tests it
+    "viking",  # Pretty weak I think so we could avoid, but we can tests it
     "desert",  # Decentish variety I think
     "dwarven",  # Little variety so probably save it for mountains
 ]
 
+biomes_in_districts = []  # FIXME: Unused variable
 forest_counter = 0
 desert_counter = 0
 rocky_counter = 0
@@ -191,7 +192,7 @@ add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
 
 # WALL
 
-# uncomment one of these to story_tests one of the three wall types
+# uncomment one of these to tests one of the three wall types
 
 for wall_points in wall_points_list:
     build_wall_standard_with_inner(

@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2
 from gdpc import WorldSlice
-from grimoire.core.structures.legacy_directions import cardinal, get_ivec2
+from ..structures.legacy_directions import cardinal, get_ivec2
 
 
 # finds the neighbours points of a point in a set

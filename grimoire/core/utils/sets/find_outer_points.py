@@ -1,5 +1,5 @@
 from gdpc.vector_tools import ivec2
-from grimoire.core.structures.legacy_directions import cardinal, get_ivec2
+from ...structures.legacy_directions import cardinal, get_ivec2
 
 
 def find_edges(points: set[ivec2]) -> set[ivec2]:

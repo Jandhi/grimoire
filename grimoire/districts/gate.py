@@ -1,18 +1,12 @@
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
-from grimoire.core.structures.legacy_directions import (
-    north,
-    east,
-    south,
-    vector,
-    ivec3_to_dir,
-)
-from grimoire.core.utils.geometry import is_straight_not_diagonal_ivec2
-from grimoire.core.structures.nbt.build_nbt import build_nbt
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
-from grimoire.core.structures.transformation import Transformation
-from grimoire.palette.palette import Palette
+from ..core.structures.legacy_directions import north, east, south, vector, ivec3_to_dir
+from ..core.utils.geometry import is_straight_not_diagonal_ivec2
+from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.nbt_asset import NBTAsset
+from ..core.structures.transformation import Transformation
+from ..palette import Palette
 
 
 # Class to track gate assets

@@ -1,6 +1,6 @@
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
-from grimoire.core.assets.asset import asset_defaults
-from grimoire.core.structures.legacy_directions import x_minus
+from ...core.structures.nbt.nbt_asset import NBTAsset
+from ...core.assets.asset import asset_defaults
+from ...core.structures.legacy_directions import x_minus
 
 # Roof Component Types
 SIDE = "side"

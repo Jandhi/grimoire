@@ -1,5 +1,5 @@
 from typing import TypeVar
-from grimoire.core.noise.random import *
+from .random import *
 
 T = TypeVar("T")
 

@@ -1,7 +1,7 @@
 from gdpc.vector_tools import ivec3
 
-from grimoire.buildings.roofs.roof_data import RoofData
-from grimoire.core.structures.legacy_directions import LegacyDirection, vector
+from ..buildings.roofs.roof_data import RoofData
+from ..core.structures.legacy_directions import LegacyDirection, vector
 
 
 # Class to store assets for cells in a building grid

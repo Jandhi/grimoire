@@ -1,8 +1,8 @@
 from gdpc import Block, Editor
-from grimoire.buildings.building_plan import BuildingPlan
-from grimoire.core.structures.grid import Grid
+from ..buildings.building_plan import BuildingPlan
+from ..core.structures.grid import Grid
 from gdpc.vector_tools import ivec3
-from grimoire.core.structures.legacy_directions import x_plus, x_minus, z_minus, z_plus
+from ..core.structures.legacy_directions import x_plus, x_minus, z_minus, z_plus
 
 
 def clear_interiors(plan: BuildingPlan, editor: Editor):

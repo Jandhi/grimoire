@@ -1,5 +1,5 @@
-from grimoire.core.noise.hash import hash, hash_string
-from grimoire.core.noise.seed import Seed
+from .hash import hash, hash_string
+from .seed import Seed
 
 
 # deterministic random number generator with state

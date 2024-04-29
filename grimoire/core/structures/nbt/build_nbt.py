@@ -1,11 +1,10 @@
 from gdpc.editor import Editor
 from gdpc.vector_tools import ivec3
 
-from grimoire.core.structures.nbt.convert_nbt import convert_nbt
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
-from grimoire.core.structures.transformation import Transformation
-from grimoire.palette.palette import Palette
-from grimoire.palette.palette_swap import palette_swap
+from ....palette import Palette, palette_swap
+from .convert_nbt import convert_nbt
+from .nbt_asset import NBTAsset
+from ..transformation import Transformation
 
 
 # Constructs an NBTAsset given an editor and transformation

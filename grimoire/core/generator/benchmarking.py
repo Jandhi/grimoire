@@ -3,7 +3,7 @@ from typing import TypeVar
 
 from colored import Fore, Style
 
-from grimoire.core.logs.logger import Logger
+from ..logs.logger import Logger
 
 T = TypeVar("T")
 

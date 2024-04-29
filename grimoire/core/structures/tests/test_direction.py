@@ -3,7 +3,7 @@ import sys
 
 sys.path[0] = sys.path[0].removesuffix("\\landmarks\\story_tests")
 
-from core.structures.directions import Directions
+from ..core.structures.directions import Directions
 
 assert Directions.North - Directions.North == Directions.Zero
 assert Directions.North * 0 == Directions.Zero

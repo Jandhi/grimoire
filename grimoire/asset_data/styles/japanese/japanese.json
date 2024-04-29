@@ -1,0 +1,7 @@
+{
+    "name" : "japanese",
+    "type" : "style",
+    "substyles" : [
+        "japanese_plain_wood"
+    ]
+}

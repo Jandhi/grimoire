@@ -1,6 +1,7 @@
-from grimoire.core.assets.asset import Asset, asset_defaults
-from grimoire.palette.palette import Palette
 from gdpc.vector_tools import ivec3
+
+from ...assets.asset import Asset, asset_defaults
+from ....palette import Palette
 
 
 # Base class with metadata for an NBT file

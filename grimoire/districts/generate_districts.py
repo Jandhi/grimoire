@@ -1,12 +1,12 @@
-from grimoire.core.noise.rng import RNG
-from grimoire.districts.district import District
+from ..core.noise.rng import RNG
+from ..districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from grimoire.core.structures.legacy_directions import cardinal, vector
+from ..core.structures.legacy_directions import cardinal, vector
 from gdpc import WorldSlice
-from grimoire.districts.adjacency import establish_adjacency
-from grimoire.districts.merging_districts import merge_down
+from ..districts.adjacency import establish_adjacency
+from ..districts.merging_districts import merge_down
 
-# from districts.adjacency import establish_adjacency, get_neighbours
+# from ..districts.adjacency import establish_adjacency, get_neighbours
 
 TARGET_POINTS_GENERATED = 36
 TARGET_DISTRICT_AMT = 10

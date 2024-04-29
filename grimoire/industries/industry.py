@@ -3,8 +3,8 @@ import sys
 sys.path[0] = sys.path[0].removesuffix("\\industries")
 
 import random
-from grimoire.core.assets.asset import Asset, asset_defaults
-from grimoire.industries import biomes
+from ..core.assets.asset import Asset, asset_defaults
+from ..industries import biomes
 
 
 class Industry(Asset):

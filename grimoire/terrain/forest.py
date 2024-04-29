@@ -1,4 +1,4 @@
-from grimoire.core.assets.asset import Asset
+from ..core.assets.asset import Asset
 
 
 class Forest(Asset):

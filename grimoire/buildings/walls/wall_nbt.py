@@ -1,6 +1,6 @@
-from grimoire.core.structures.nbt.nbt_asset import NBTAsset
-from grimoire.buildings.walls.wall import Wall
-from grimoire.core.assets.asset import default_subtype
+from .wall import Wall
+from ...core.structures.nbt.nbt_asset import NBTAsset
+from ...core.assets.asset import default_subtype
 
 
 # NBT class for walls

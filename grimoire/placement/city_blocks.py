@@ -1,19 +1,18 @@
-from grimoire.districts.district import District
+from ..districts.district import District
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3, distance2
-from grimoire.core.utils.sets.set_operations import (
-    calculate_stretch,
+from ..core.utils.sets.set_operations import (
     find_edges,
     find_outer_direction,
 )
-from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
-from grimoire.core.noise.rng import RNG
-from grimoire.core.structures.legacy_directions import cardinal, get_ivec2, to_text
-from grimoire.core.utils.bounds import is_in_bounds2d
-from grimoire.core.utils.vectors import point_3d, y_ivec3
-from grimoire.core.maps.map import Map
-from grimoire.core.maps.building_map import CITY_WALL, CITY_ROAD
-from grimoire.placement.building_placement import place_building
+from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
+from ..core.noise.rng import RNG
+from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.utils.bounds import is_in_bounds2d
+from ..core.utils.vectors import point_3d, y_ivec3
+from ..core.maps import Map
+from ..core.maps import CITY_WALL, CITY_ROAD
+from ..placement.building_placement import place_building
 
 
 EDGE_THICKNESS = 1
