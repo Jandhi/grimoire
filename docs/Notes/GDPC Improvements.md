@@ -12,9 +12,11 @@
 		- [ ] Downfall
 		- [ ] Percipitation
 	- [ ] Add pre-gen biome information
-		- [ ] Temperature (5 levels)
-		- [ ] Humidity/vegetation (5 levels)
 		- [ ] Continentalness (7 levels)
 		- [ ] Erosion (7 levels)
+		- [ ] Temperature (5 levels)
+		- [ ] Humidity/vegetation (5 levels)
 		- [ ] Weirdness (2 levels)
-		- [ ] Offset (number, Nether only)
+		- [ ] Depth (3 levels)
+		- [ ] (Peaks and valleys) (5 levels)
+		- [ ] (Offset) (number, Nether only)

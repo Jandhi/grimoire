@@ -17,6 +17,12 @@ if __name__ == "__main__":
     # ==== PLANNING ====
     # TODO: Planning
 
+    ## == DISTRICTS ==
+
+    ## == BUILDINGS ==
+
+    ## == DECORATION ==
+
     # ==== SIMULATION ====
     # NOTE: There are currently no simulations in this generator
 

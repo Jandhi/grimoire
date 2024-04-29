@@ -20,6 +20,18 @@
             }
           },
           {
+            "id": "58af8accd939ced5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Decorating TODO.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
             "id": "f3ab5443f0e8acb6",
             "type": "leaf",
             "state": {
@@ -44,6 +56,30 @@
             }
           },
           {
+            "id": "974a7f2e4e201a09",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Meeting.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
+            "id": "ced20d6e064a49a9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Path Generation.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          },
+          {
             "id": "ce3ec46d9762a7be",
             "type": "leaf",
             "state": {
@@ -56,7 +92,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 5
       }
     ],
     "direction": "vertical"
@@ -123,7 +159,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Refectoring TODO.md",
+                "file": "Path Generation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -140,7 +176,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Refectoring TODO.md",
+                "file": "Path Generation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -163,7 +199,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Refectoring TODO.md"
+                "file": "Path Generation.md"
               }
             }
           }
@@ -184,11 +220,15 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f3ab5443f0e8acb6",
+  "active": "ced20d6e064a49a9",
   "lastOpenFiles": [
+    "Meeting.md",
+    "Path Generation.md",
     "GDPC Improvements.md",
-    "Refectoring TODO.md",
+    "Decorating TODO.md",
     "README.md",
+    "Refectoring TODO.md",
+    "Decorations.md",
     "James' Old Notes/Token Palettes.md",
     "James' Old Notes/Temp (Waterway detection).md",
     "James' Old Notes/Temp (Structures).md",
@@ -205,8 +245,6 @@
     "James' Old Notes/Criteria.md",
     "James' Old Notes/Construction.md",
     "James' Old Notes/Cell Maps.md",
-    "Decorations.md",
-    "Untitled.md",
     "James' Old Notes",
     "Welcome.md"
   ]
