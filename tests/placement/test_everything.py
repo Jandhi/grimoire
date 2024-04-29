@@ -39,7 +39,7 @@ SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 
 editor = Editor(buffering=True, caching=True)
-load_assets("grimoire/assets")
+load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 

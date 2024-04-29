@@ -1,6 +1,6 @@
 {
     "name" : "kitchen_no_window_small",
-    "filepath" : "grimoire/assets/rooms/kitchen/kitchen_no_window_small.nbt",
+    "filepath" : "grimoire/asset_data/rooms/kitchen/kitchen_no_window_small.nbt",
     "type" : "room",
     "origin" : [-1, 0, -1],
     "do_not_place" : "glass",

@@ -1,6 +1,6 @@
 {
     "name" : "study",
-    "filepath" : "grimoire/assets/rooms/misc/study.nbt",
+    "filepath" : "grimoire/asset_data/rooms/misc/study.nbt",
     "type" : "room",
     "origin" : [0, 0, -1],
     "do_not_place" : "glass",

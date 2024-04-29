@@ -1,7 +1,7 @@
 {
     "name" : "dwarven_wall_base_2_door",
     "type" : "wall",
-    "filepath" : "grimoire/assets/walls/dwarven/dwarven_wall_base_2_door.nbt",
+    "filepath" : "grimoire/asset_data/walls/dwarven/dwarven_wall_base_2_door.nbt",
     "origin" : [1, -1, 0],
     "facing" : "x_minus",
     "positions" : ["lower"],

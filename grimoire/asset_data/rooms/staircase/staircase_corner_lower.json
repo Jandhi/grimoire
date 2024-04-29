@@ -1,6 +1,6 @@
 {
     "name" : "staircase_corner_lower",
-    "filepath" : "grimoire/assets/rooms/staircase/staircase_corner_lower.nbt",
+    "filepath" : "grimoire/asset_data/rooms/staircase/staircase_corner_lower.nbt",
     "type" : "room",
     "origin" : [-1, 0, -1],
     "do_not_place" : "glass",
