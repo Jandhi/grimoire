@@ -1,8 +1,8 @@
 import sys
 
 from nbtlib import nbt, serialize_tag
-from core.structures.structure import Structure
-from core.structures.block import Block
+from ..structure import Structure
+from ..block import Block
 from gdpc.vector_tools import ivec3
 
 

@@ -57,7 +57,6 @@ class LoggerSettings:
 
     __output_file: str | None
 
-    # FIXME: Unused method
     def clone(self):
         return LoggerSettings(
             self.print_to_console,

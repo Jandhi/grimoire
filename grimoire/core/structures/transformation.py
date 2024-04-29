@@ -1,5 +1,5 @@
-from core.structures.block import Block
-from core.structures.legacy_directions import (
+from .block import Block
+from .legacy_directions import (
     x_plus,
     x_minus,
     y_plus,
@@ -10,8 +10,8 @@ from core.structures.legacy_directions import (
     to_text,
     directions,
 )
-from core.structures.structure import Structure
-from core.structures.nbt.nbt_asset import NBTAsset
+from .structure import Structure
+from .nbt.nbt_asset import NBTAsset
 from gdpc.vector_tools import ivec3
 
 # region Transformation dictionaries
@@ -54,7 +54,7 @@ diagonal_mirror = {
 # endregion
 
 
-# Class to house tranformations of structures, including mirroring and offsets
+# Class to house tranformations of landmarks, including mirroring and offsets
 # Rotation is only supported by switching the x/z axis, in other words diagonal_mirror
 class Transformation:
     def __init__(

@@ -5,7 +5,7 @@ sys.path[0] = sys.path[0].removesuffix("\\industries")
 ROUGHNESS_LOW = "roughness_low"
 ROUGHNESS_MID = "roughness_mid"
 ROUGHNESS_HIGH = "roughness_high"
-ROUGHNESS = (ROUGHNESS_LOW, ROUGHNESS_MID, ROUGHNESS_HIGH)  # FIXME: Unused variable
+ROUGHNESS = (ROUGHNESS_LOW, ROUGHNESS_MID, ROUGHNESS_HIGH)
 
 TEMPERATURE_LOW = "temperature_low"
 TEMPERATURE_MID = "temperature_mid"
@@ -14,7 +14,7 @@ TEMPERATURE = (
     TEMPERATURE_LOW,
     TEMPERATURE_MID,
     TEMPERATURE_HIGH,
-)  # FIXME: Unused variable
+)
 
 ACQUATIC_NONE = "acquatic_none"
 ACQUATIC_COASTAL = "acquatic_coastal"
@@ -26,12 +26,12 @@ ACQUATIC = (
     ACQUATIC_COASTAL,
     ACQUATIC_SMALL_BODY,
     ACQUATIC_LARGE_BODY,
-)  # FIXME: Unused variable
+)
 
 BARREN = "barren"
 WOODED = "wooded"
 
-WOOD = (BARREN, WOODED)  # FIXME: Unused variable
+WOOD = (BARREN, WOODED)
 
 all_biomes = {
     "plains": (ROUGHNESS_LOW, TEMPERATURE_MID, ACQUATIC_NONE),
@@ -262,20 +262,16 @@ jungle = {
     "bamboo_jungle": (ROUGHNESS_MID, TEMPERATURE_HIGH, ACQUATIC_NONE),
 }
 
-# FIXME: Is `continue` a placeholder for something? Otherwise these if statements should be combined
 common_animal_spawners = {}
 for biome in all_biomes:
-    if biome in desert:
-        continue
-    if biome in badlands:
-        continue
-    if biome in shore:
-        continue
-    if biome in snowy:
-        continue
-    if biome in aquatic:
-        continue
-    if biome == "mushroom_fields":
+    if (
+        biome in desert
+        or biome in badlands
+        or biome in shore
+        or biome in snowy
+        or biome in aquatic
+        or biome == "mushroom_fields"
+    ):
         continue
     common_animal_spawners[biome] = all_biomes[biome]
 

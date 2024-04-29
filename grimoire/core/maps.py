@@ -1,11 +1,11 @@
-from districts.district import District
+from ..districts.district import District
 from gdpc import WorldSlice
 from gdpc.block import Block
 from gdpc.lookup import WATERS, WATER_PLANTS, ICE_BLOCKS
 from gdpc.vector_tools import ivec2, ivec3
-from core.utils.bounds import is_in_bounds
-from core.utils.bounds import is_in_bounds2d
-from core.utils.sets.set_operations import find_outline
+from .utils.bounds import is_in_bounds
+from .utils.bounds import is_in_bounds2d
+from .utils.sets.set_operations import find_outline
 
 
 HIGHWAY = "highway"  # FIXME: Unused variable
@@ -48,8 +48,8 @@ def get_water_map(world_slice: WorldSlice):
             y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
             block: Block = world_slice.getBlock((x, y - 1, z))
 
-        if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
-            water_map[x][z] = True
+            if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
+                water_map[x][z] = True
 
     return water_map
 
@@ -57,18 +57,20 @@ def get_water_map(world_slice: WorldSlice):
 # class that carries all the different maps required
 class Map:
     water: list[list[bool]]
-    districts: list[list[District]]
-    buildings: list[list[str]]
+    districts: list[list[District | None]]
+    buildings: list[list[str | None]]
     height: list[list[int]]
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads
 
     def __init__(self, world_slice: WorldSlice) -> None:
+        size = world_slice.rect.size
         self.world = world_slice
         self.districts = self.empty_map()
         self.water = get_water_map(world_slice)
         self.buildings = get_building_map(world_slice)
         self.copy_heightmap()
+        self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
 
     def correct_district_heights(self, districts: list[District]):
         for district in districts:

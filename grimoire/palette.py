@@ -1,4 +1,4 @@
-from core.assets.asset import Asset, asset_defaults
+from .core.assets.asset import Asset, asset_defaults
 from gdpc.lookup import WOOD_TYPES
 
 

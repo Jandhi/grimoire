@@ -2,11 +2,11 @@ from typing import TypeVar
 
 from colored import Fore, Style
 
-from core.generator.benchmarking import Benchmark
-from core.generator.settings import GeneratorSettings
-from core.logs.logger import Logger, LoggerSettings, LoggingLevel
-from core.noise.global_seed import GlobalSeed
-from core.noise.rng import RNG
+from .benchmarking import Benchmark
+from .settings import GeneratorSettings
+from ..logs.logger import Logger, LoggerSettings, LoggingLevel
+from ..noise.global_seed import GlobalSeed
+from ..noise.rng import RNG
 
 
 class ModuleLogger(Logger):

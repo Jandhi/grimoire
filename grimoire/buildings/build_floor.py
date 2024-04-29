@@ -1,8 +1,8 @@
 from gdpc import Block, Editor
 from gdpc.vector_tools import ivec3
 
-from buildings.building_plan import BuildingPlan
-from core.structures.grid import Grid
+from ..buildings.building_plan import BuildingPlan
+from ..core.structures.grid import Grid
 
 
 def build_floor(plan: BuildingPlan, editor: Editor, build_ceiling=True):

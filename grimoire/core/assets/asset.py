@@ -1,8 +1,8 @@
 import inspect
 from typing import Any, TypeVar
 
-from core.assets.asset_validation_state import AssetValidationState
-from core.utils.strings import camel_to_snake_case
+from .asset_validation_state import AssetValidationState
+from ..utils.strings import camel_to_snake_case
 
 
 # Metaclass that registers NBTAsset subtypes
@@ -19,8 +19,7 @@ class AssetMeta(type):
         return subclass
 
 
-# FIXME: Unused variable
-BASE_TYPES_CLASS_NAMES = ("Asset", "NBTAsset")
+# Base types will not be used to store objects
 BASE_TYPE_NAMES = ("asset", "nbtasset")
 
 
@@ -110,10 +109,10 @@ class Asset(metaclass=AssetMeta):
 
     def set_defaults(self) -> None:
         for tp in inspect.getmro(type(self))[:-1]:
-            if tp.__name__ not in Asset.defaults:
+            if tp.type_name not in Asset.defaults:
                 continue
 
-            for field_name, field_value in Asset.defaults[tp.__name__].items():
+            for field_name, field_value in Asset.defaults[tp.type_name].items():
                 value = field_value
 
                 if isinstance(value, (list, dict)):
@@ -128,7 +127,7 @@ class Asset(metaclass=AssetMeta):
     # Adds object to global pool of objects
     def add_to_pool(self) -> None:
         for tp in (type(self), *self.parent_types):
-            Asset.assets_by_type_name[tp.__name__].append(self)
+            Asset.assets_by_type_name[tp.type_name].append(self)
 
     # -------------
     # CLASS METHODS
@@ -208,17 +207,3 @@ Asset.defaults["asset"] = {
     "tags": [],
     "weight": 100,
 }
-
-
-# FIXME: Unused function
-def find_asset(name: str, type: str):
-    for assetType in Asset.types:
-        if assetType.__name__ == type:
-            return next(
-                (
-                    asset
-                    for asset in Asset.assets_by_type_name[type]
-                    if asset.name == name
-                ),
-                None,
-            )

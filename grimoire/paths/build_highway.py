@@ -1,8 +1,14 @@
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec3, ivec2
-from core.structures.legacy_directions import cardinal, get_ivec2, to_text
-from core.utils.bounds import is_in_bounds2d
-from grimoire.core.maps import Map
+<<<<<<< HEAD
+from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.utils.bounds import is_in_bounds2d
+from ..core.maps.map import Map
+=======
+from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.utils.bounds import is_in_bounds2d
+from ..core.maps import Map
+>>>>>>> 02c25de9b7a9820350b4fc39db5440fab0975558
 
 
 def build_highway(

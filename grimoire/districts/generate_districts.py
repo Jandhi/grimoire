@@ -1,12 +1,12 @@
-from core.noise.rng import RNG
-from districts.district import District
+from ..core.noise.rng import RNG
+from ..districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from core.structures.legacy_directions import cardinal, vector
+from ..core.structures.legacy_directions import cardinal, vector
 from gdpc import WorldSlice
-from districts.adjacency import establish_adjacency
-from districts.merging_districts import merge_down
+from ..districts.adjacency import establish_adjacency
+from ..districts.merging_districts import merge_down
 
-# from districts.adjacency import establish_adjacency, get_neighbours
+# from ..districts.adjacency import establish_adjacency, get_neighbours
 
 TARGET_POINTS_GENERATED = 36
 TARGET_DISTRICT_AMT = 10
@@ -15,7 +15,7 @@ INNER_POINTS_MIN_DISTANCE = 5
 RETRIES = 100
 INNER_DISTRICTS_AMOUNT_RATIO = 0.5
 INNER_DISTRICTS_TARGET_AREA = 0.3  # The ratio of area where inner districts spawn
-CHOKEPOINT_ADJACENCY_RATIO = 0.3  # If this percent or less of an urban district touches other urban district, it is pruned
+CHOKEPOINT_ADJACENCY_RATIO = 0.3  # If this percent or less of an urban districts touches other urban districts, it is pruned
 
 
 def generate_districts(
@@ -127,7 +127,7 @@ def spawn_districts(
     outer_district_num = TARGET_POINTS_GENERATED - inner_district_num
 
     # The inner length ratio r is the proportion of the sides of an area the inner region occupies
-    # The inner district's x spans from (1 - r) / 2 * x to 1 - (1 - r) / 2 * x
+    # The inner districts's x spans from (1 - r) / 2 * x to 1 - (1 - r) / 2 * x
 
     inner_ratio = INNER_DISTRICTS_TARGET_AREA**0.5
     outer_ratio = (1 - inner_ratio) / 2

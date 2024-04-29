@@ -1,11 +1,14 @@
 # Actual file
+import numpy as np
 from gdpc.editor import Editor, Block
-from core.structures.grid import Grid
+from gdpc.vector_tools import ivec3
 
-# from buildings.roofs.roof import Roof
-from buildings.rooms.room import Room
-
-from core.structures.legacy_directions import (
+from ..legacycell import LegacyCell
+from ...core.noise.rng import RNG
+from ...palette import Palette
+from .room import Room
+from ...core.structures.grid import Grid
+from ...core.structures.legacy_directions import (
     cardinal,
     vector as get_ivec3,
     right,
@@ -15,12 +18,6 @@ from core.structures.legacy_directions import (
     south,
     west,
 )
-
-from grimoire.palette import Palette
-from core.noise.rng import RNG
-from gdpc.vector_tools import ivec3
-import numpy as np
-from buildings.legacycell import LegacyCell
 
 ROOM_LIST = [
     "kitchen_no_window_small",
@@ -216,8 +213,6 @@ def populate_floor(
     ]
     cells_on_floor = [(x, y, z) for x, y, z in cells_to_fill if y == level]
 
-    # FIXME: Unused variable
-    entropy = 0
     while len(rooms_on_floor) != len(cells_on_floor):
         candidates = []
         # get the connections for the new rooms
@@ -308,8 +303,8 @@ def populate_floor(
         candidates_with_min_entropy = [
             (x, y, z) for x, y, z in candidates if y == min_entropy
         ]
-        # FIXME: Unused variable `ent`
-        cell_to_build, ent, room_to_build = candidates_with_min_entropy[
+
+        cell_to_build, _, room_to_build = candidates_with_min_entropy[
             rng.randint(len(candidates_with_min_entropy))
         ]
         room_to_build, room_facing, connections = rng.choose(room_to_build)

@@ -1,12 +1,12 @@
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
-from core.structures.legacy_directions import north, east, south, vector, ivec3_to_dir
-from core.utils.geometry import is_straight_not_diagonal_ivec2
-from core.structures.nbt.build_nbt import build_nbt
-from core.structures.nbt.nbt_asset import NBTAsset
-from core.structures.transformation import Transformation
-from grimoire.palette import Palette
+from ..core.structures.legacy_directions import north, east, south, vector, ivec3_to_dir
+from ..core.utils.geometry import is_straight_not_diagonal_ivec2
+from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.nbt_asset import NBTAsset
+from ..core.structures.transformation import Transformation
+from ..palette import Palette
 
 
 # Class to track gate assets
@@ -37,7 +37,7 @@ def add_gates(
     basic_wide_gate = NBTAsset.construct(
         name="gate",
         type="gate",
-        filepath="assets/city_wall/gates/basic_wide_gate.nbt",
+        filepath="grimoire/assets/city_wall/gates/basic_wide_gate.nbt",
         origin=(3, 1, 3),
         palette=Palette.find("wall_palette"),
     )
@@ -45,7 +45,7 @@ def add_gates(
     basic_thin_gate = NBTAsset.construct(
         name="gate",
         type="gate",
-        filepath="assets/city_wall/gates/basic_thin_gate.nbt",
+        filepath="grimoire/assets/city_wall/gates/basic_thin_gate.nbt",
         origin=(1, 1, 3),
         palette=Palette.find("wall_palette"),
     )
@@ -53,7 +53,7 @@ def add_gates(
     basic_palisade_gate = NBTAsset.construct(
         name="gate",
         type="gate",
-        filepath="assets/city_wall/gates/basic_palisade_gate.nbt",
+        filepath="grimoire/assets/city_wall/gates/basic_palisade_gate.nbt",
         origin=(1, 1, 2),
         palette=Palette.find("wall_palette"),
     )

@@ -1,9 +1,9 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\structures\\tests")
+sys.path[0] = sys.path[0].removesuffix("\\landmarks\\story")
 
-from core.structures.directions import Directions
+from ..core.structures.directions import Directions
 
 assert Directions.North - Directions.North == Directions.Zero
 assert Directions.North * 0 == Directions.Zero

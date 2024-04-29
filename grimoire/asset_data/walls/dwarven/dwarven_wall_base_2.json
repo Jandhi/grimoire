@@ -1,7 +1,7 @@
 {
     "name" : "dwarven_wall_base_2",
     "type" : "wall",
-    "filepath" : "assets/walls/dwarven/dwarven_wall_base_2.nbt",
+    "filepath" : "grimoire/assets/walls/dwarven/dwarven_wall_base_2.nbt",
     "origin" : [1, -1, 0],
     "facing" : "x_minus",
     "do_not_place" : ["minecraft:air"],

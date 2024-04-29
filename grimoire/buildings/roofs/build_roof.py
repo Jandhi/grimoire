@@ -1,13 +1,13 @@
 from gdpc import Editor
-from buildings.building_plan import BuildingPlan
-from core.structures.grid import Grid
 from gdpc.vector_tools import ivec3
-from buildings.roofs.roof_component import RoofComponent, CORNER, INNER, SIDE
-from core.structures.legacy_directions import north, south, east, west, up
-from core.utils.vectors import y_ivec3
-from core.structures.nbt.build_nbt import build_nbt
-from core.structures.transformation import Transformation
-from core.noise.rng import RNG
+from .roof_component import RoofComponent, CORNER, INNER, SIDE
+from ..building_plan import BuildingPlan
+from ...core.structures.grid import Grid
+from ...core.structures.legacy_directions import north, south, east, west, up
+from ...core.utils.vectors import y_ivec3
+from ...core.structures.nbt.build_nbt import build_nbt
+from ...core.structures.transformation import Transformation
+from ...core.noise.rng import RNG
 
 
 def build_roof(
@@ -33,13 +33,6 @@ def build_roof(
             continue
 
         coords = grid.grid_to_local(cell.position + y_ivec3(1)) + grid.origin
-        # FIXME: Unused variable
-        transform_vecs = {
-            north: ivec3(0, 0, 0),  # northwest
-            east: ivec3(grid.width - 1, 0, 0),  # northeast
-            south: ivec3(0, 0, grid.depth - 1),  # southeast
-            west: ivec3(grid.width - 1, 0, grid.depth - 1),  # southwest
-        }
 
         # northwest
         if cell.has_neighbour(north) and cell.has_neighbour(west):
@@ -210,10 +203,6 @@ def build_roof(
                     diagonal_mirror=True,
                 ),
             )
-
-        continue
-
-        # FIXME: Unreachable code: Why?
 
         # northeast
         build_nbt(

@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2, ivec3
 
-Direction = str
+LegacyDirection = str
 
 # By Axis
 x_plus = "x_plus"
@@ -60,11 +60,11 @@ for dir1, dir2, compound in (
     vectors[compound] = vectors[dir1] + vectors[dir2]
 
 
-def vector(direction: Direction) -> ivec3:
+def vector(direction: LegacyDirection) -> ivec3:
     return vectors[direction]
 
 
-def get_ivec2(direction: Direction) -> ivec2:
+def get_ivec2(direction: LegacyDirection) -> ivec2:
     tup = vector(direction)
     return ivec2(tup[0], tup[2])
 

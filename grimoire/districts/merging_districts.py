@@ -1,4 +1,4 @@
-from districts.district import District
+from ..districts.district import District
 
 RURAL_SIZE_RATIO = (
     3  # we expect rural districts to be this times larger in area than urban ones
@@ -11,7 +11,7 @@ def merge_down(
 ):
     identities = {
         district: district for district in districts
-    }  # tracks whether a district is truly itself
+    }  # tracks whether a districts is truly itself
     district_count = len(districts)
 
     ignore = set()
@@ -29,7 +29,7 @@ def merge_down(
         if parent is None:
             ignore.add(child)
 
-            if child.area < 10:  # remove garbage district
+            if child.area < 10:  # remove garbage districts
                 districts.remove(child)
                 district_count -= 1
                 identities[child] = None
@@ -99,7 +99,7 @@ def get_adjusted_area(district: District) -> int:
         return district.area // RURAL_SIZE_RATIO
 
 
-# merges child district into parent
+# merges child districts into parent
 # NOTE: this will create outdated edges (between parent and child).
 # Edges should be scanned for again after the merging process.
 def merge(
@@ -144,7 +144,7 @@ def merge(
             district.adjacency[parent] += district.adjacency[child]
             district.adjacency.pop(child)
 
-    # add alias tracking for district map
+    # add alias tracking for districts map
     for alias in list(identities.keys()):
         if identities[alias] == child:
             identities[alias] = parent

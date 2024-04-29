@@ -1,4 +1,4 @@
-from core.logs.logger import LoggerSettings
+from ..logs.logger import LoggerSettings
 
 
 class GeneratorSettings:

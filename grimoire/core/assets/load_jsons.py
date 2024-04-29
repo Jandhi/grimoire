@@ -14,16 +14,3 @@ def load_jsons(directory_path: str) -> list[dict]:
             jsons.append(data)
 
     return jsons
-
-
-# FIXME: Unused function
-def load_objects(directory_path: str, cls) -> list[Any]:
-    objects = []
-
-    for json in load_jsons(directory_path):
-        obj = cls.construct(**json)
-
-        if obj is not None:
-            objects.append(obj)
-
-    return objects

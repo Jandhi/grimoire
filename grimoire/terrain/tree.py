@@ -2,8 +2,8 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
 from random import seed
 from random import randint
-from core.noise.rng import RNG
-from core.noise.random import choose_weighted
+from ..core.noise.rng import RNG
+from ..core.noise.random import choose_weighted
 
 
 def place_block(

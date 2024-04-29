@@ -1,7 +1,7 @@
 {
     "name" : "basic_thin_gate",
     "type" : "gate",
-    "filepath" : "assets/city_wall/gates/basic_thin_gate.nbt",
+    "filepath" : "grimoire/assets/city_wall/gates/basic_thin_gate.nbt",
     "origin" : [1, 1, 3],
     "palette" : "wall_palette"
 }

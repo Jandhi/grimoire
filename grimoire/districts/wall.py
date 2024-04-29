@@ -1,9 +1,9 @@
-from core.noise.rng import RNG
-from core.noise.random import randrange
+from ..core.noise.rng import RNG
+from ..core.noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
-from core.structures.legacy_directions import (
+from ..core.structures.legacy_directions import (
     north,
     get_ivec2,
     right,
@@ -13,19 +13,19 @@ from core.structures.legacy_directions import (
     cardinal,
     opposite,
 )
-from core.utils.geometry import (
+from ..core.utils.geometry import (
     get_neighbours_in_set,
     is_straight_ivec2,
     is_point_surrounded_dict,
     get_outer_points,
 )
-from core.utils.misc import is_water
-from core.structures.nbt.build_nbt import build_nbt
-from core.structures.nbt.nbt_asset import NBTAsset
-from core.structures.transformation import Transformation
-from grimoire.palette import Palette
-from palette import fix_block_name
-from districts.gate import add_gates, Gate
+from ..core.utils.misc import is_water
+from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.nbt_asset import NBTAsset
+from ..core.structures.transformation import Transformation
+from ..palette import Palette
+from ..palette import fix_block_name
+from ..districts.gate import add_gates, Gate
 
 
 def get_wall_points(inner_points, world_slice):
@@ -85,7 +85,7 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
                 reverse_checked = False
                 if (
                     len(ordered_wall_points) > 20
-                ):  # prevent weird small wall segements, tests again to see if its improvement or not
+                ):  # prevent weird small wall segements, story again to see if its improvement or not
                     list_of_ordered_wall_points.append(ordered_wall_points)
                 ordered_wall_points = []
                 ordered_wall_points.append(wall_points.pop(0))
@@ -534,7 +534,7 @@ def average_neighbour_height(x: int, z: int, walkway_dict: dict) -> int:
     for dx, dz in NEIGHBOURS:
         if (
             ivec2(x + dx, z + dz) not in walkway_dict
-        ):  # we only need to flatten for within a district
+        ):  # we only need to flatten for within a districts
             continue
         elif (
             abs(walkway_dict[ivec2(x + dx, z + dz)] - walkway_dict[ivec2(x, z)]) >= 4
@@ -608,7 +608,7 @@ def add_towers(
     tower = NBTAsset.construct(
         name="tower",
         type="tower",
-        filepath="assets/city_wall/towers/basic_tower.nbt",
+        filepath="grimoire/assets/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
         palette=Palette.find("wall_palette"),
     )

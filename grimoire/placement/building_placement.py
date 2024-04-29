@@ -1,18 +1,29 @@
 import contextlib
+from gdpc.vector_tools import ivec2, ivec3, vec2
+from ..core.maps import Map
+from ..core.structures.legacy_directions import (
+    z_minus,
+    z_plus,
+    x_minus,
+    x_plus,
+    cardinal,
+    get_ivec2,
+    LegacyDirection,
+)
 
-from buildings.build_floor import build_floor
-from buildings.building_plan import BuildingPlan
-from buildings.building_shape import BuildingShape
-from buildings.clear_interiors import clear_interiors
-from buildings.roofs.build_roof import build_roof
-from buildings.roofs.roof_component import RoofComponent
-from buildings.rooms.furnish import furnish
-from buildings.walls.build_walls import build_walls
-from buildings.walls.wall import Wall
-from core.maps import CITY_ROAD, CITY_WALL
-from core.noise.rng import RNG
-from core.structures.grid import Grid
-from core.structures.legacy_directions import (
+from ..buildings.build_floor import build_floor
+from ..buildings.building_plan import BuildingPlan
+from ..buildings.building_shape import BuildingShape
+from ..buildings.clear_interiors import clear_interiors
+from ..buildings.roofs.build_roof import build_roof
+from ..buildings.roofs.roof_component import RoofComponent
+from ..buildings.rooms.furnish import furnish
+from ..buildings.walls.build_walls import build_walls
+from ..buildings.walls.wall import Wall
+from ..core.maps import CITY_ROAD, CITY_WALL
+from ..core.noise.rng import RNG
+from ..core.structures.grid import Grid
+from ..core.structures.legacy_directions import (
     cardinal,
     get_ivec2,
     x_minus,
@@ -22,10 +33,10 @@ from core.structures.legacy_directions import (
 )
 from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
-from palette import fix_block_name
+from ..palette import fix_block_name
 
-from grimoire.core.maps import Map
-from grimoire.palette import Palette
+from ..core.maps import Map
+from ..palette import Palette
 
 offsets = {
     z_minus: [ivec2(0, 0), ivec2(-1, 0)],
@@ -45,7 +56,8 @@ WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
 MAX_AVG_HEIGHT_DIFF = 4
 
 
-# FIXME: Refactor
+# Attempts to place a building at a point
+# returns True on success
 def place_building(
     editor: Editor,
     start_point: ivec2,
@@ -54,94 +66,129 @@ def place_building(
     rng: RNG,
     style: str = "japanese",
     urban_only=True,
-):
+) -> bool:
+    # A building can always be placed with the door to the left or right of the original spot
     my_offsets = offsets[outside_direction]
 
     shapes: list[BuildingShape] = BuildingShape.all()
 
-    shape_dict = {
-        shape: len(shape.points) ** 2 + 2
+    # We increase the weight of larger buildings exponentially since they are much harder to place
+    def building_shape_weight(shape: BuildingShape):
+        return len(shape.points) ** 2 + 2
+
+    weighted_shape_dict = {
+        shape: building_shape_weight(shape)
         for shape in shapes
         if shape.door_direction == outside_direction
     }
 
+    # iterate over shapes randomly by weight
     while True:
-        shape: BuildingShape = rng.pop_weighted(shape_dict)
+        shape: BuildingShape = rng.pop_weighted(weighted_shape_dict)
 
         if shape is None:
-            return
+            return False
 
         if shape.door_direction != outside_direction:
             continue
 
         for offset in my_offsets:
-            grid = Grid()
-            origin = start_point + ivec2(
-                offset.x * (grid.dimensions.x), offset.y * (grid.dimensions.z)
+            success = attempt_building_placement_at_offset(
+                editor,
+                rng,
+                map,
+                start_point,
+                offset,
+                outside_direction,
+                shape,
+                style,
+                urban_only,
             )
 
-            # We have to find the proper height for the door to be at ground level
-            door_point = ivec2(*door_points[outside_direction])
-            door_point.x = (
-                (grid.dimensions.x // 2 + 1)
-                if door_point.x == 0.5
-                else door_point.x * (grid.dimensions.x - 1)
-            )
-            door_point.y = (
-                (grid.dimensions.z // 2 + 1)
-                if door_point.y == 0.5
-                else door_point.y * (grid.dimensions.z - 1)
-            )
-
-            road_point = nearest_road(origin + door_point, map)
-
-            # Usually we should be able to find the nearest road, but otherwise we can default to the door height
-            if road_point is None:
-                road_point = origin + door_point
-
-            grid.origin = ivec3(origin.x, map.height_at(road_point) - 1, origin.y)
-
-            points = list(shape.get_points_2d(grid))
-            is_free = True
-            water_amt = 0
-            total_height_diff = 0
-
-            for point in points:
-                # water check
-                if map.water[point.x][point.y]:
-                    water_amt += 1
-
-                # freeness check
-                if map.buildings[point.x][point.y] != None:
-                    is_free = False
-                    break
-
-                # urban check
-                if urban_only and (
-                    not map.districts[point.x][point.y]
-                    or not map.districts[point.x][point.y].is_urban
-                ):
-                    is_free = False
-                    break
-
-                total_height_diff += abs(grid.origin.y - map.height_at(point))
-
-            if WATER_THRESHOLD <= water_amt / len(points):
-                is_free = False
-
-            avg_height_diff = total_height_diff / len(points)
-            if avg_height_diff >= MAX_AVG_HEIGHT_DIFF:
-                is_free = False
-
-            if not is_free:
-                continue
-
-            # build
-            place(editor, shape, grid, rng, map, style)
-            return
+            if success:
+                return True
 
 
-def nearest_road(start_point: ivec2, map: Map) -> ivec2:
+# Attempts to place building, returns success status
+def attempt_building_placement_at_offset(
+    editor: Editor,
+    rng: RNG,
+    map: Map,
+    start_point: ivec2,
+    offset: ivec2,
+    outside_direction: LegacyDirection,
+    shape: BuildingShape,
+    style: str,
+    urban_only: bool,
+) -> bool:
+    grid = Grid()
+    origin = start_point + ivec2(
+        offset.x * grid.dimensions.x, offset.y * grid.dimensions.z
+    )
+
+    # We have to find the proper height for the door to be at ground level
+    door_point = ivec2(*door_points[outside_direction])
+    door_point.x = (
+        (grid.dimensions.x // 2 + 1)
+        if door_point.x == 0.5
+        else door_point.x * (grid.dimensions.x - 1)
+    )
+    door_point.y = (
+        (grid.dimensions.z // 2 + 1)
+        if door_point.y == 0.5
+        else door_point.y * (grid.dimensions.z - 1)
+    )
+
+    road_point = nearest_road(origin + door_point, map)
+
+    # Usually we should be able to find the nearest road, but otherwise we can default to the door height
+    if road_point is None:
+        road_point = origin + door_point
+
+    grid.origin = ivec3(origin.x, map.height_at(road_point) - 1, origin.y)
+
+    if not can_place_shape(shape, grid, map, urban_only):
+        return False
+
+    # build
+    place(editor, shape, grid, rng, map, style)
+    return True
+
+
+def can_place_shape(shape: BuildingShape, grid: Grid, map: Map, urban_only: bool):
+    points = list(shape.get_points_2d(grid))
+    water_amt = 0
+    total_height_diff = 0
+
+    for point in points:
+        # water check
+        if map.water[point.x][point.y]:
+            water_amt += 1
+
+        # freeness check
+        if map.buildings[point.x][point.y] is not None:
+            return False
+
+        # urban check
+        if urban_only and (
+            not map.districts[point.x][point.y]
+            or not map.districts[point.x][point.y].is_urban
+        ):
+            return False
+
+        total_height_diff += abs(grid.origin.y - map.height_at(point))
+
+    if WATER_THRESHOLD <= water_amt / len(points):
+        return False
+
+    avg_height_diff = total_height_diff / len(points)
+    if avg_height_diff >= MAX_AVG_HEIGHT_DIFF:
+        return False
+
+    return True
+
+
+def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
     queue = [start_point]
     visited = set()
     limit = 100

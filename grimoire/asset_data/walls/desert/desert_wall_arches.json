@@ -1,7 +1,7 @@
 {
     "name" : "desert_wall_arches",
     "type" : "wall",
-    "filepath" : "assets/walls/desert/desert_wall_arches.nbt",
+    "filepath" : "grimoire/assets/walls/desert/desert_wall_arches.nbt",
     "origin" : [0, -1, 0],
     "facing" : "x_minus",
     "palette" : "desert_dark_prismarine",

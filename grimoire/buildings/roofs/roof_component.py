@@ -1,13 +1,12 @@
-from core.structures.nbt.nbt_asset import NBTAsset
-from core.assets.asset import asset_defaults
-from core.structures.legacy_directions import x_minus
+from ...core.structures.nbt.nbt_asset import NBTAsset
+from ...core.assets.asset import asset_defaults
+from ...core.structures.legacy_directions import x_minus
 
 # Roof Component Types
 SIDE = "side"
 CORNER = "corner"
 INNER = "inner"  # inner corner
 
-# FIXME: Unused constants
 UPPER_SIDE = "upper_side"
 UPPER_CORNER = "upper_corner"
 UPPER_INNER = "upper_inner"

@@ -3,8 +3,8 @@ import sys
 sys.path[0] = sys.path[0].removesuffix("\\industries")
 
 import random
-from core.assets.asset import Asset, asset_defaults
-from industries import biomes
+from ..core.assets.asset import Asset, asset_defaults
+from ..industries import biomes
 
 
 class Industry(Asset):
@@ -44,7 +44,6 @@ def get_primary_industries(district_biomes: list[str]):
     return eligibile_primary_industries
 
 
-# FIXME: Unused function
 def find_secondary_industries(district_primary_industries: list[str]):
     eligible_secondary_industries = []
     for industry in SecondaryIndustry.all():

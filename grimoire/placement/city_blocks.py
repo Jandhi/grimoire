@@ -1,51 +1,30 @@
-from districts.district import District
+from ..districts.district import District
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3, distance2
-from core.utils.sets.set_operations import (
-    calculate_stretch,
+from ..core.utils.sets.set_operations import (
     find_edges,
     find_outer_direction,
 )
-from core.utils.sets.find_outer_points import find_outer_and_inner_points
-from core.noise.rng import RNG
-from core.structures.legacy_directions import cardinal, get_ivec2, to_text
-from core.utils.bounds import is_in_bounds2d
-from core.utils.vectors import point_3d, y_ivec3
-from grimoire.core.maps import Map
-from core.maps import CITY_WALL, CITY_ROAD
-from placement.building_placement import place_building
+from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
+from ..core.noise.rng import RNG
+from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.utils.bounds import is_in_bounds2d
+from ..core.utils.vectors import point_3d, y_ivec3
+from ..core.maps import Map
+from ..core.maps import CITY_WALL, CITY_ROAD
+from ..placement.building_placement import place_building
 
-MAXIMUM_SIZE = 2000
 
-UNSPLITTABLE_SIZE = 100
-MAXIMUM_STRETCH_RATIO = 5
 EDGE_THICKNESS = 1
-DESIRED_BLOCK_SIZE = 500  # FIXME: Unused variable; Should perhaps be used below?
+DESIRED_BLOCK_SIZE = 120
 MINIMUM_BLOCK_SZE = 100
-
-
-# FIXME: Function is unused
-def block_is_admissible(points: set[ivec2]) -> bool:
-    # We will automatically pass this as it should not be split again
-    if len(points) <= UNSPLITTABLE_SIZE:
-        return True
-
-    if len(points) > MAXIMUM_SIZE:
-        return False
-
-    stretch = calculate_stretch(points)
-
-    return (
-        stretch.x / stretch.y <= MAXIMUM_STRETCH_RATIO
-        and stretch.y / stretch.x <= MAXIMUM_STRETCH_RATIO
-    )
 
 
 def generate_bubbles(
     rng: RNG,
     districts: list[District],
     map: Map,
-    desired_block_size=1200,  # NOTE: Perhaps this should use DESIRED_BLOCK_SIZE?
+    desired_block_size=DESIRED_BLOCK_SIZE,
     minimum_point_distance=15,
 ) -> list[ivec2]:
     points = []
@@ -62,7 +41,7 @@ def generate_bubbles(
 
         while trials < max_trials and district_points_generated < desired_point_amount:
             trials += 1
-            point = rng.pop(district_points)  # choose random point in district
+            point = rng.pop(district_points)  # choose random point in districts
 
             if any(
                 distance2(point, other) < minimum_point_distance for other in points
@@ -80,11 +59,11 @@ def generate_bubbles(
 
 def bubble_out(
     bubbles: list[ivec2], map: Map
-) -> tuple[list[set[ivec2]], list[list[int]], dict[int, dict[int, int]]]:
-    block_index_map = [
+) -> tuple[list[set[ivec2]], list[list[int | None]], dict[int, dict[int, int]]]:
+    block_index_map: list[list[int | None]] = [
         [None for _ in range(len(map.districts[0]))] for _ in range(len(map.districts))
     ]
-    blocks = [set() for _ in bubbles]
+    blocks: list[set[ivec2]] = [set() for _ in bubbles]
     num_blocks = len(blocks)
     block_adjacency = {
         block: {other: 0 for other in range(num_blocks)} for block in range(num_blocks)
@@ -105,12 +84,12 @@ def bubble_out(
         if map.water[vec.x][vec.y]:
             return False
 
-        return district != None and district.is_urban
+        return district is not None and district.is_urban
 
     while queue:
         point = queue.pop(0)
         block_index = block_index_map[point.x][point.y]
-        block: set[ivec3] = blocks[block_index]
+        block: set[ivec2] = blocks[block_index]
 
         for direction in cardinal:
             neighbour = point + get_ivec2(direction)
@@ -129,7 +108,7 @@ def bubble_out(
                 continue
 
             neighbour_block_index = block_index_map[neighbour.x][neighbour.y]
-            if neighbour_block_index != None:
+            if neighbour_block_index is not None:
                 block_adjacency[block_index][neighbour_block_index] += 1
                 block_adjacency[neighbour_block_index][block_index] += 1
                 continue

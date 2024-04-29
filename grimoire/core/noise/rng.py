@@ -1,8 +1,8 @@
-from core.noise.hash import hash, hash_string
-from core.noise.seed import Seed
+from .hash import hash, hash_string
+from .seed import Seed
 
 
-# determenistic random number generator with state
+# deterministic random number generator with state
 class RNG(Seed):
     # string_seed allows for a generator to easily be created from some world seed and unique name
     # e.g. RNG(world_seed, 'streets') will generate entirely different from RNG(world_seed, 'districts')
@@ -10,7 +10,7 @@ class RNG(Seed):
         self.seed = seed
         self.state = 0
 
-        if string_seed != None:
+        if string_seed is not None:
             self.seed = hash_string(seed, string_seed)
 
     def next(self) -> int:

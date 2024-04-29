@@ -1,6 +1,6 @@
 {
     "name" : "1x1_room_1",
-    "filepath" : "assets/rooms/onebyone/1x1_room_1.nbt",
+    "filepath" : "grimoire/assets/rooms/onebyone/1x1_room_1.nbt",
     "type" : "room",
     "origin" : [-1, 0, -1],
     "do_not_place" : "glass",

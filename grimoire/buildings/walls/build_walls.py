@@ -1,10 +1,10 @@
-from buildings.building_plan import BuildingPlan
-from buildings.legacycell import LegacyCell
-from core.structures.legacy_directions import cardinal, Direction, up
+from ..building_plan import BuildingPlan
+from ..legacycell import LegacyCell
+from ...core.structures.legacy_directions import cardinal, LegacyDirection, up
 from gdpc.editor import Editor
-from buildings.walls.wall import Wall, LOWER, UPPER
-from core.noise.rng import RNG
-from core.structures.grid import Grid
+from .wall import Wall, LOWER, UPPER
+from ...core.noise.rng import RNG
+from ...core.structures.grid import Grid
 
 NOT_ROOF = "not_roof"
 ONLY_ROOF = "only_roof"
@@ -18,7 +18,11 @@ def build_walls(plan: BuildingPlan, editor: Editor, walls: list[Wall], rng: RNG)
 
 
 def build_wall(
-    cell: LegacyCell, direction: Direction, editor: Editor, walls: list[Wall], rng: RNG
+    cell: LegacyCell,
+    direction: LegacyDirection,
+    editor: Editor,
+    walls: list[Wall],
+    rng: RNG,
 ):
     has_door = cell.has_door(direction)
 
@@ -46,5 +50,4 @@ def build_wall(
         print("Could not find suitable wall, skipped")
         return
 
-    # FIXME: `wall` is Wall instead of NBTAsset
     grid.build(editor, wall, cell.plan.palette, cell.position, direction)
