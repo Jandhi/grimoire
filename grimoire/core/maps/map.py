@@ -12,7 +12,7 @@ from grimoire.core.utils.sets.set_operations import find_outline
 class Map:
     water: list[list[bool]]
     districts: list[list[District | None]]
-    buildings: list[list[str]]
+    buildings: list[list[str | None]]
     height: list[list[int]]
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads

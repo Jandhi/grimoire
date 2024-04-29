@@ -1,6 +1,6 @@
 from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.buildings.legacycell import LegacyCell
-from grimoire.core.structures.legacy_directions import cardinal, Direction, up
+from grimoire.core.structures.legacy_directions import cardinal, LegacyDirection, up
 from gdpc.editor import Editor
 from grimoire.buildings.walls.wall import Wall, LOWER, UPPER
 from grimoire.core.noise.rng import RNG
@@ -18,7 +18,11 @@ def build_walls(plan: BuildingPlan, editor: Editor, walls: list[Wall], rng: RNG)
 
 
 def build_wall(
-    cell: LegacyCell, direction: Direction, editor: Editor, walls: list[Wall], rng: RNG
+    cell: LegacyCell,
+    direction: LegacyDirection,
+    editor: Editor,
+    walls: list[Wall],
+    rng: RNG,
 ):
     has_door = cell.has_door(direction)
 

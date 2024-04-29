@@ -1,28 +1,28 @@
 # Allows code to be run in root directory
 import sys
 
-sys.path[0] = sys.path[0].removesuffix("\\buildings\\story_tests")
+sys.path[0] = sys.path[0].removesuffix("\\tests\\uncategorized\\test_build_on_grid")
 
 SEED = 1293786
 
 # Actual file
 from gdpc.editor import Editor
-from core.structures.grid import Grid
-from buildings.walls.wall import Wall
+from grimoire.core.structures.grid import Grid
+from grimoire.buildings.walls.wall import Wall
 
 # from buildings.roofs.roof import Roof
-from buildings.rooms.room import Room
+from grimoire.buildings.rooms.room import Room
 
 
-from core.assets.load_assets import load_assets
-from core.structures.legacy_directions import cardinal
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.structures.legacy_directions import cardinal
 
-from palette.palette import Palette
-from buildings.roofs.roof import Roof
+from grimoire.palette.palette import Palette
+from grimoire.buildings.roofs.roof import Roof
 
 editor = Editor(buffering=True, caching=True)
 
-from core.noise.rng import RNG
+from grimoire.core.noise.rng import RNG
 
 from gdpc.vector_tools import ivec3
 
