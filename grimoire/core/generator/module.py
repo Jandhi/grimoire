@@ -4,7 +4,7 @@ from colored import Fore, Style
 
 from .benchmarking import Benchmark
 from .settings import GeneratorSettings
-from ..logs.logger import Logger, LoggerSettings, LoggingLevel
+from ..logger import Logger, LoggerSettings, LoggingLevel
 from ..noise.global_seed import GlobalSeed
 from ..noise.rng import RNG
 

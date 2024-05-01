@@ -2,12 +2,36 @@
 """Runs the Grimoire generator."""
 
 import argparse as ap
+import logging
 import sys
 from logging import warn
 from traceback import format_exc
 from typing import Literal
 
-# TODO: Setup logger
+from colored import Fore, Style
+
+# ==== LOGGING SETUP ====
+
+logging.addLevelName(
+    logging.DEBUG,
+    f"{Fore.dark_gray} {logging.getLevelName(logging.DEBUG)} {Style.reset}",
+)
+logging.addLevelName(
+    logging.INFO,
+    f"{Fore.cyan} {logging.getLevelName(logging.INFO)} {Style.reset}",
+)
+logging.addLevelName(
+    logging.WARNING,
+    f"{Fore.yellow} {logging.getLevelName(logging.WARNING)} {Style.reset}",
+)
+logging.addLevelName(
+    logging.ERROR,
+    f"{Fore.light_red} {logging.getLevelName(logging.ERROR)} {Style.reset}",
+)
+logging.addLevelName(
+    logging.CRITICAL,
+    f"{Fore.red} {logging.getLevelName(logging.CRITICAL)} {Style.reset}",
+)
 
 # ==== ARGUMENT HANDLING ====
 argparser = ap.ArgumentParser(

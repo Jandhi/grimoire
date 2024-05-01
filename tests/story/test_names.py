@@ -2,7 +2,7 @@
 import sys
 
 from grimoire.core.generator.test import TestModule
-from grimoire.core.logs.logger import LoggerSettings, LoggingLevel
+from grimoire.core.logger import LoggerSettings, LoggingLevel
 from grimoire.core.noise.global_seed import GlobalSeed
 from grimoire.story.names.name_generator import NamingSchema, NameGenerator
 
