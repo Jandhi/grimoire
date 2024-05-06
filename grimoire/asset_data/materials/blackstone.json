@@ -1,0 +1,6 @@
+{
+  "name" : "blackstone",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "lighter" : "smooth_basalt"
+}

@@ -10,14 +10,14 @@ from gdpc.geometry import line3D
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.core.utils.geometry import get_outer_points
-from grimoire.core.maps.map import Map
+from grimoire.core.maps import Map
 from grimoire.core.assets.load_assets import load_assets
 from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.plateau import plateau
-from grimoire.palette.palette import Palette
+from grimoire.palette import Palette
 from grimoire.core.noise.rng import RNG
 from grimoire.districts.wall import order_wall_points, build_wall_standard_with_inner
-from grimoire.core.maps.building_map import BUILDING, GATE
+from grimoire.core.maps import BUILDING, GATE
 from grimoire.core.utils.bounds import area_2d
 from grimoire.paths.route_highway import route_highway, fill_out_highway
 from grimoire.paths.build_highway import build_highway
@@ -28,7 +28,7 @@ SEED = 77273
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
-load_assets("assets")
+load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 

@@ -1,0 +1,6 @@
+{
+  "name" : "andesite",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "darker" : "cobblestone"
+}

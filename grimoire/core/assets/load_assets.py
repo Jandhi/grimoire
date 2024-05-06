@@ -1,5 +1,6 @@
 import sys
 
+from ..logger import LoggerSettings
 from ...core.assets.asset import Asset
 from ...core.assets.asset_validation_state import AssetValidationState
 from glob import glob
@@ -37,7 +38,9 @@ class AssetLoader(Module):
                 cls = Asset.get_construction_type(data["type"])
 
                 if cls is None:
-                    self.log.error(f'Could not find class {data["type"]}')
+                    self.log.error(
+                        f'Error in file {name}. Could not find class {data["type"]}'
+                    )
                     continue
 
                 data["type"] = cls.type_name
@@ -63,5 +66,8 @@ class AssetLoader(Module):
         permute_shapes()  # varies the building shapes into all rotations and mirrors
 
 
-def load_assets(root_directory) -> None:
-    AssetLoader().load_assets(root_directory)
+def load_assets(root_directory, logging_settings: LoggerSettings | None = None) -> None:
+    loader = AssetLoader()
+    if logging_settings is not None:
+        loader.set_module_logger_settings(logging_settings)
+    loader.load_assets(root_directory)

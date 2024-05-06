@@ -1,3 +1,6 @@
+from ..core.materials.dithering import DitheringPattern
+from ..core.materials.gradient import Gradient
+from ..core.materials.material import BasicMaterial, Material, MaterialParameters
 from ..core.noise.rng import RNG
 from ..core.noise.random import randrange
 from gdpc import Editor, Block
@@ -175,7 +178,7 @@ def build_wall_standard(
     water_map: dict,
     palette: Palette,
 ) -> list[Gate]:
-    wall_points = add_wall_points_height(wall_points, wall_dict, world_slice)
+    wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
@@ -192,6 +195,11 @@ def build_wall_standard(
     full_block = fix_block_name(f"{stone}")
     stairs = fix_block_name(f"{stone}_stairs")
 
+    # temp
+    material: BasicMaterial = Material.find("cyan_terracotta")
+    gradient = Gradient(0, perlin_strength=1 / 2)
+    rng = RNG(0)
+
     for i, wall_point in enumerate(wall_points):
         point = wall_point[0]
         if wall_point[2] == "water":
@@ -201,7 +209,23 @@ def build_wall_standard(
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                editor.placeBlock((point.x, y, point.z), Block(full_block))
+                material.build(
+                    editor,
+                    MaterialParameters(
+                        position=ivec3(point.x, y, point.z),
+                        shade=gradient.calculate_shade(
+                            ivec3(point.x, y, point.z),
+                            (y - height_map[point.x, point.z])
+                            / (point.y - height_map[point.x, point.z]),
+                        ),
+                        age=0,
+                        moisture=0,
+                    ),
+                    rng,
+                    DitheringPattern.random_ease_quint,
+                )
+
+                # editor.placeBlock((point.x, y, point.z), Block(full_block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
             editor.placeBlock(

@@ -28,6 +28,15 @@ def load_types():
     # BUILDING SHAPE
     from ...buildings.building_shape import BuildingShape
 
+    # Material
+    from grimoire.core.materials.material import (
+        Material,
+        BasicMaterial,
+        CompositeMaterial,
+    )
+
+    _ = (Material, BasicMaterial, CompositeMaterial)
+
     _ = BuildingShape
 
     # PAINT PALETTES
@@ -44,3 +53,8 @@ def load_types():
     from ...core.structures.asset_structure import AssetStructure
 
     _ = AssetStructure
+
+    # GATE
+    from grimoire.districts.gate import Gate
+
+    _ = Gate

@@ -19,7 +19,7 @@ SEED = 0xBABAB00E
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
-load_assets("assets")
+load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)

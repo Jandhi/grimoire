@@ -1,0 +1,7 @@
+{
+  "name" : "cobbled_deepslate",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "lighter" : "cyan_terracotta",
+  "darker" : "smooth_basalt"
+}
