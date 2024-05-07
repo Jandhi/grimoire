@@ -13,11 +13,14 @@ class District:
     edges : set[ivec3]
     adjacencies_total : int
     is_urban : bool
+    is_border : bool
 
     roughness: float
     biome_dict: dict[str, int]
     water_percentage: float
     forested_percentage: float
+    surface_blocks: dict[str, int]
+    gradient: float
 
     palettes : list[Palette]
 
@@ -34,11 +37,14 @@ class District:
         self.edges     = set()
         self.adjacencies_total = 0
         self.is_urban = is_urban
+        self.is_border = False
         self.palettes = []
         self.roughness = 0
         self.biome_dict = {}
         self.water_percentage = 0
         self.forested_percentage = 0
+        self.surface_blocks = {}
+        self.gradient = 0
 
         self.add_point(origin)
 

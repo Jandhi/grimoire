@@ -38,7 +38,7 @@ print("World slice reloaded!")
 
 water_map = get_water_map(world_slice)
 map = Map(world_slice)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
+districts, district_map = generate_districts(SEED, build_rect, world_slice, map)
 map.districts = district_map
 
 if DO_TERRAFORMING:
@@ -62,7 +62,7 @@ if DO_TERRAFORMING:
     map.world = world_slice
     map.correct_district_heights(districts)
 
-#draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)
+draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)
 
 for district in districts:
     x = district.origin.x
@@ -71,4 +71,4 @@ for district in districts:
     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
     #editor.placeBlock((x, y, z), Block('sea_lantern'))
     district_analyze(district, map)
-    print(f"ID: {district.id}   SUM: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness} BIOMES: {district.biome_dict}")
+    print(f"ID: {district.id}   Area: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness}    GRADIENT: {district.gradient}     BIOMES: {district.biome_dict}  BLOCKS: {district.surface_blocks}")

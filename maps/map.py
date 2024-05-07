@@ -16,7 +16,8 @@ class Map:
     water : list[list[bool]]
     districts : list[list[District]]
     buildings : list[list[str]]
-    height : list[list[int]]
+    height : list[list[int]] # height map based on MOTION_BLOCKING_NO_LEAVES
+    leaf_height : list[list[int]] # height map based on MOTION_BLOCKING
     #new height map to be height map based on no trees/structures etc
     world : WorldSlice
     near_wall : list[list[bool]] # specifically used for routing roads 
@@ -29,7 +30,7 @@ class Map:
         self.buildings = get_building_map(world_slice)
         self.biome = get_biome_map(world_slice)
         self.block, self.water = get_block_and_water_map(world_slice)
-        self.copy_heightmap()
+        self.copy_heightmaps()
 
     def correct_district_heights(self, districts : list[District]):
         for district in districts:
@@ -43,9 +44,13 @@ class Map:
     def height_at(self, point : ivec2):
         return self.world.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
     
-    def copy_heightmap(self):
+    def copy_heightmaps(self):
         size = self.world.rect.size
         self.height = [[self.height_at(ivec2(x, y)) for y in range(size.y)] for x in range(size.x)]
+        self.leaf_height = [[self.height_at_include_leaf(ivec2(x, y)) for y in range(size.y)] for x in range(size.x)]
+
+    def height_at_include_leaf(self, point : ivec2):
+        return self.world.heightmaps['MOTION_BLOCKING'][point.x][point.y]
     
     def make_3d(self, point : ivec2):
         return ivec3(point.x, self.height_at(point), point.y)

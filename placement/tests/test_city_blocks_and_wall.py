@@ -78,7 +78,7 @@ if DO_TERRAFORMING:
     map.correct_district_heights(districts)
 # done
 
-map.copy_heightmap()
+map.copy_heightmaps()
 
 # ground
 def place_at_ground(x, z, block_name):

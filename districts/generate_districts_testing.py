@@ -5,9 +5,11 @@ from structures.legacy_directions import cardinal, vector
 from gdpc import WorldSlice
 from districts.adjacency import establish_adjacency
 from districts.merging_districts import merge_down
+from maps.map import Map
+from districts.district_analyze import district_analyze
 
 # from districts.adjacency import establish_adjacency, get_neighbours
-
+CHUNK_SIZE = 16
 TARGET_POINTS_GENERATED = 36
 TARGET_DISTRICT_AMT = 10
 OUTER_POINTS_MIN_DISTANCE = 10
@@ -17,7 +19,7 @@ INNER_DISTRICTS_AMOUNT_RATIO = 0.5
 INNER_DISTRICTS_TARGET_AREA = 0.3 # The ratio of area where inner districts spawn
 CHOKEPOINT_ADJACENCY_RATIO = 0.3 # If this percent or less of an urban district touches other urban district, it is pruned
 
-def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, water_map : list[list[bool]]) -> tuple[list[District], list[list[District]]]:
+def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, map : Map):
     districts = spawn_districts(seed, build_rect, world_slice)
     district_map : list[list[District]] = [[None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
 
@@ -25,16 +27,18 @@ def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, 
         origin = district.origin
         district_map[origin.x][origin.z] = district
 
-    bubble_out(world_slice, districts, district_map, water_map)
+    bubble_out(world_slice, districts, district_map, map.water)
     
     for i in range(0, 2):
         district_map = [[None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
-        recalculate_center_point(world_slice, districts, district_map, water_map)
+        recalculate_center_point(world_slice, districts, district_map, map.water)
 
-        bubble_out(world_slice, districts, district_map, water_map)
+        bubble_out(world_slice, districts, district_map, map.water)
     
     establish_adjacency(world_slice, district_map)
-    merge_down(districts, district_map, TARGET_DISTRICT_AMT)
+    for district in districts:
+        district_analyze(district, map)
+    merge_down(districts, district_map, TARGET_DISTRICT_AMT, map)
     
 
     # remeasure adjacency after
@@ -124,36 +128,55 @@ def get_neighbours(point : ivec3, world_slice : WorldSlice) -> list[ivec3]:
     return neighbours
     
 def spawn_districts(seed : int, build_rect : Rect, world_slice : WorldSlice) -> list[District]:
-    inner_district_num = int(INNER_DISTRICTS_AMOUNT_RATIO * float(TARGET_POINTS_GENERATED))
-    outer_district_num = TARGET_POINTS_GENERATED - inner_district_num
 
-    # The inner length ratio r is the proportion of the sides of an area the inner region occupies
-    # The inner district's x spans from (1 - r) / 2 * x to 1 - (1 - r) / 2 * x
+    rects = []
 
-    inner_ratio = INNER_DISTRICTS_TARGET_AREA ** 0.5
-    outer_ratio = (1 - inner_ratio) / 2
-    
-    build_rect.size.x
-
-    inner_rect = Rect(
-        offset = ivec2(
-            x = int(outer_ratio * build_rect.size.x),
-            y = int(outer_ratio * build_rect.size.y),
-        ),
-        size = ivec2(
-            x = int(inner_ratio * build_rect.size.x),
-            y = int(inner_ratio * build_rect.size.y),
+    for i in range(int(build_rect.size.x / CHUNK_SIZE) * int(build_rect.size.y / CHUNK_SIZE)):
+        rect = Rect(
+            offset = ivec2(
+                x = int((i // CHUNK_SIZE) * CHUNK_SIZE),
+                y = int((i % CHUNK_SIZE) * CHUNK_SIZE),
+            ),
+            size = ivec2(
+                x = int(CHUNK_SIZE),
+                y = int(CHUNK_SIZE),
+            )
         )
-    )
+        rects.append(rect)
 
-    print(f'Attempting to generate {inner_district_num} inner districts and {outer_district_num} outer districts')
     rng = RNG(seed, 'get_origins')
 
+    points = generate_district_points(rng, rects, world_slice)
 
-    inner_points = generate_inner_district_points(inner_district_num, rng, inner_rect, world_slice)
-    outer_points = generate_outer_district_points(outer_district_num, rng, build_rect, outer_ratio, inner_rect, world_slice)
+    return [District(origin=pt, is_urban=False) for pt in points]
 
-    return [District(origin=pt, is_urban=True) for pt in inner_points] + [District(origin=pt, is_urban=False) for pt in outer_points]
+def generate_district_points(rng : RNG, rect: list[Rect], world_slice : WorldSlice) -> list[ivec3]:
+    points = []
+    
+    for i in range(len(rect)):
+        trials = 0
+
+        while True:
+            trials += 1
+
+            if trials > RETRIES:
+                print(f'Failed to place inner point {i}, retries exceeded')
+                break
+
+            x = rng.randint(int(rect[i].size.x)) + rect[i].offset.x
+            z = rng.randint(int(rect[i].size.y)) + rect[i].offset.y
+
+            trial_point = ivec3(
+                x,
+                world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z],
+                z,
+            )
+
+            if all(distance(other_point, trial_point) >= INNER_POINTS_MIN_DISTANCE for other_point in points):
+                points.append(trial_point) # success!
+                break
+    
+    return points
 
 def generate_inner_district_points(inner_district_num : int, rng : RNG, inner_rect: Rect, world_slice : WorldSlice) -> list[ivec3]:
     points = []

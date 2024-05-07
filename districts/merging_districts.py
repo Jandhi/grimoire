@@ -1,9 +1,11 @@
 from districts.district import District
+from districts.district_analyze import district_analyze
+from maps.map import Map
 
-RURAL_SIZE_RATIO = 3 # we expect rural districts to be this times larger in area than urban ones
+RURAL_SIZE_RATIO = 3 # NOTE: not currently used, we expect rural districts to be this times larger in area than urban ones
 
 # Merges districts until we have a target number reached
-def merge_down(districts : list[District], district_map : list[list[District]], target_number : int):
+def merge_down(districts : list[District], district_map : list[list[District]], target_number : int, map: Map):
 
     identities = {district : district for district in districts} # tracks whether a district is truly itself
     district_count = len(districts)
@@ -32,6 +34,7 @@ def merge_down(districts : list[District], district_map : list[list[District]], 
             continue
 
         merge(parent, child, districts, identities)
+        district_analyze(parent, map) # NOTE: could optimize by moving the calcucations in merge and using the district numbers instead of recalculating
         district_count -= 1
 
     fix_map_and_edges(district_map, districts, identities)
@@ -44,7 +47,7 @@ def find_smallest_adjusted_district(districts : list[District], ignore : set[Dis
         if district in ignore:
             continue
 
-        if get_adjusted_area(district) < area:
+        if district.area < area:
             smallest = district
             area = district.area
 
@@ -52,7 +55,7 @@ def find_smallest_adjusted_district(districts : list[District], ignore : set[Dis
 
 def get_best_merge_candidate(district : District, options : list[District]) -> District:
     best = None
-    best_score = -1
+    best_score = 0.33 #NOTE: minimum score to beat else it won't be merged with any neighbour, to test this value
     candidate_scores = {}
 
     for option in options:
@@ -73,8 +76,24 @@ def get_best_merge_candidate(district : District, options : list[District]) -> D
     return best 
 
 def get_candidate_score(district : District, candidate : District) -> float:
-    return 1000.0 * district.get_adjacency_ratio(candidate)  / float(get_adjusted_area(candidate)) 
+    #NOTE: option to add some hard limits to scores, where below a certain score in a category it is flat out rejected
+
+    adjacency_score = 1000.0 * district.get_adjacency_ratio(candidate)  / float(candidate.area) 
     
+    biome_score = 1 - sum(abs(district.biome_dict[key]/district.area - candidate.biome_dict.get(key,0)/candidate.area)
+                            for key in district.biome_dict.keys())/len(district.biome_dict.keys())
+    
+    water_score = 1 - abs(district.water_percentage - candidate.water_percentage)
+
+    forest_score = 1 - abs(district.forested_percentage - candidate.forested_percentage)
+
+    gradient_score = 1 - abs(district.gradient - candidate.gradient)/2
+
+    roughness_score = 1 / (abs(district.roughness - candidate.roughness) + 1)
+
+    return (adjacency_score * 3 + biome_score + water_score + forest_score + gradient_score + roughness_score)/8
+
+# NOTE: Not currently used
 def get_adjusted_area(district :  District) -> int:
     if district.is_urban:
         return district.area
