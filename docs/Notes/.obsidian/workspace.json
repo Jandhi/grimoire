@@ -4,35 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "3d96a208ec30a551",
+        "id": "051f1a383cb00e29",
         "type": "tabs",
         "children": [
           {
-            "id": "05b7f7444338d95a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "README.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "58af8accd939ced5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Decorating TODO.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "f3ab5443f0e8acb6",
+            "id": "e043584079160c9b",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -42,57 +18,8 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "0cf502a789286a92",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "GDPC Improvements.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "974a7f2e4e201a09",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meeting.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "ced20d6e064a49a9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Path Generation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "ce3ec46d9762a7be",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Decorations.md",
-                "mode": "source",
-                "source": false
-              }
-            }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -121,7 +48,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "tag:#materials",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -142,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "1cc4e703cc79988e",
@@ -220,15 +146,28 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f3ab5443f0e8acb6",
+  "active": "09a367566069b051",
   "lastOpenFiles": [
+    "Jan's Notes/Materials System.md",
+    "Jan's Notes/Images/2024-04-30_23.10.17.png",
+    "Jan's Notes/Images/2024-04-30_23.08.13.png",
+    "Jan's Notes/Images/2024-04-30_16.59.40.png",
+    "Jan's Notes/Images/2024-04-30_16.55.42.png",
+    "Jan's Notes/Images/2024-04-30_14.37.00.png",
+    "Jan's Notes/Images/2024-04-30_14.33.10.png",
+    "Jan's Notes/Images",
+    "Jan's Notes/Images/2024-04-30_14.31.11.png",
+    "GDPC Improvements.md",
+    "Jan's Notes",
+    "Decorations.md",
+    "Decorating TODO.md",
+    "James' Old Notes/Criteria.md",
+    "James' Old Notes/Master Plan.md",
+    "James' Old Notes/Construction.md",
     "Path Generation.md",
     "Meeting.md",
-    "GDPC Improvements.md",
-    "Decorating TODO.md",
-    "README.md",
     "Refectoring TODO.md",
-    "Decorations.md",
+    "README.md",
     "James' Old Notes/Token Palettes.md",
     "James' Old Notes/Temp (Waterway detection).md",
     "James' Old Notes/Temp (Structures).md",
@@ -241,9 +180,6 @@
     "James' Old Notes/Pasted image 20240420101450.png",
     "James' Old Notes/Pasted image 20240419143155.png",
     "James' Old Notes/Meeting.md",
-    "James' Old Notes/Master Plan.md",
-    "James' Old Notes/Criteria.md",
-    "James' Old Notes/Construction.md",
     "James' Old Notes/Cell Maps.md",
     "James' Old Notes",
     "Welcome.md"

@@ -32,7 +32,7 @@ class MaterialParameters:
 class Material(Asset):
     dithering_pattern: DitheringPattern
 
-    def build(
+    def place_block(
         self,
         editor: Editor,
         parameters: MaterialParameters,
@@ -122,7 +122,7 @@ class BasicMaterial(Material):
                 root = list(root.submaterials.keys())[0]
         self.moisture_range = moisture_range
 
-    def build(
+    def place_block(
         self,
         editor: Editor,
         parameters: MaterialParameters,
@@ -201,14 +201,14 @@ class CompositeMaterial(Material):
     def random_submaterial(self, rng: RNG) -> Material:
         return rng.choose_weighted(self.submaterials)
 
-    def build(
+    def place_block(
         self,
         editor: Editor,
         parameters: MaterialParameters,
         rng: RNG,
         dithering_pattern: DitheringPattern | None = None,
     ):
-        return self.random_submaterial(rng).build(
+        return self.random_submaterial(rng).place_block(
             editor,
             parameters,
             rng,

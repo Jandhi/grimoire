@@ -2,6 +2,5 @@
   "name" : "stone",
   "type" : "material",
   "dithering_pattern" : "random",
-  "lighter" : "cobblestone",
-  "darker" : "cyan_terracotta"
+  "darker" : "andesite"
 }

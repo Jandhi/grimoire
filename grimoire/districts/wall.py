@@ -1,11 +1,13 @@
 from ..core.materials.dithering import DitheringPattern
-from ..core.materials.gradient import Gradient
+from ..core.materials.gradient import Gradient, GradientAxis, PerlinSettings
 from ..core.materials.material import BasicMaterial, Material, MaterialParameters
 from ..core.noise.rng import RNG
 from ..core.noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
+
+from ..core.structures.directions import Axes
 from ..core.structures.legacy_directions import (
     north,
     get_ivec2,
@@ -196,12 +198,18 @@ def build_wall_standard(
     stairs = fix_block_name(f"{stone}_stairs")
 
     # temp
-    material: BasicMaterial = Material.find("cyan_terracotta")
-    gradient = Gradient(0, perlin_strength=1 / 2)
+    material: BasicMaterial = Material.find("cobblestone")
+    material.dithering_pattern = DitheringPattern.random_ease_cubic
+
     rng = RNG(0)
 
     for i, wall_point in enumerate(wall_points):
         point = wall_point[0]
+        gradient = Gradient(
+            0,
+            axes=(GradientAxis.y(height_map[point.x, point.z], point.y),),
+            perlin_settings=PerlinSettings(8, 6, 2, 0.3),
+        )
         if wall_point[2] == "water":
             continue
         else:
@@ -209,15 +217,11 @@ def build_wall_standard(
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                material.build(
+                material.place_block(
                     editor,
                     MaterialParameters(
                         position=ivec3(point.x, y, point.z),
-                        shade=gradient.calculate_shade(
-                            ivec3(point.x, y, point.z),
-                            (y - height_map[point.x, point.z])
-                            / (point.y - height_map[point.x, point.z]),
-                        ),
+                        shade=gradient.calculate_shade(ivec3(point.x, y, point.z)),
                         age=0,
                         moisture=0,
                     ),
@@ -263,7 +267,7 @@ def build_wall_standard(
                             new_pt.y + height_modifier
                         )
 
-    flatten_walkway(walkway_list, walkway_dict, editor, palett=palette)
+    flatten_walkway(walkway_list, walkway_dict, editor, palette=palette)
     return add_gates(wall_points, editor, world_slice, True, None, palette=palette)
 
 

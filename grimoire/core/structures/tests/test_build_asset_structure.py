@@ -55,4 +55,4 @@ build_nbt(
 
 # market
 test_market = Market(ivec3(area.middle.x, y, area.middle.z))
-test_market.build(editor)
+test_market.place_block(editor)

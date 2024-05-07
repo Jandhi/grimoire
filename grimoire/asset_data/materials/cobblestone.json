@@ -3,5 +3,5 @@
   "type" : "material",
   "dithering_pattern" : "random",
   "lighter" : "andesite",
-  "darker" : "stone"
+  "darker" : "cobbled_deepslate"
 }

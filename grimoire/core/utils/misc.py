@@ -1,5 +1,5 @@
 # For generally random helpful functions
-from typing import TypeVar
+from typing import TypeVar, Iterable, Collection
 
 from gdpc import Editor, Block, WorldSlice
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
@@ -16,6 +16,9 @@ def is_water(point: ivec3, world_slice: WorldSlice):
 T = TypeVar("T")
 
 
-def average(*items: T) -> T:
-    lst = list(*items)
-    return sum(lst) / len(lst)
+def average(items: Collection[T]) -> T:
+    return sum(items) / len(items)
+
+
+def lerp(a: T, b: T, t: float) -> T:
+    return a * (1.0 - t) + b * t

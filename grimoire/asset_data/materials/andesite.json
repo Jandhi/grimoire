@@ -2,5 +2,6 @@
   "name" : "andesite",
   "type" : "material",
   "dithering_pattern" : "random",
-  "darker" : "cobblestone"
+  "darker" : "cobblestone",
+  "lighter" : "stone"
 }
