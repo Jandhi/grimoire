@@ -77,9 +77,9 @@ class MaterialPathTest(EditingTestModule):
             y = self.world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x, z] - 1
             pos = ivec3(x, y, z)
 
-            build_val = gradient.calculate_shade(pos, 1 - dist / max_dist)
+            shade_val = gradient.calculate_shade(pos, 1 - dist / max_dist)
 
-            if build_val < 0.5:
+            if shade_val < 0.5:
                 continue
 
             material.place_block(
@@ -87,7 +87,7 @@ class MaterialPathTest(EditingTestModule):
                 MaterialParameters(
                     position=pos,
                     age=0,
-                    shade=gradient.calculate_shade(pos, 1 - dist / max_dist),
+                    shade=shade_val,
                     moisture=0,
                 ),
                 self.rng,
