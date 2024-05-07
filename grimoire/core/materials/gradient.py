@@ -45,7 +45,7 @@ class GradientAxis:
 
 class Gradient:
     default_perlin_settings = PerlinSettings(
-        base_octaves=50, noise_layers=6, add_ratio=1.7, strength=0.333
+        base_octaves=27, noise_layers=6, add_ratio=1.7, strength=0.3
     )
 
     def __init__(
