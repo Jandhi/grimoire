@@ -1,0 +1,10 @@
+{
+  "name" : "blackstone",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "lighter" : "smooth_basalt",
+   "block" : "blackstone",
+  "stairs" : "blackstone_stairs",
+  "slab" : "blackstone_slab",
+  "wall" : "blackstone_wall"
+}

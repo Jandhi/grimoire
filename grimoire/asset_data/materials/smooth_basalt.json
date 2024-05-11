@@ -1,7 +1,0 @@
-{
-  "name" : "smooth_basalt",
-  "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter" : "cobbled_deepslate",
-  "darker" : "blackstone"
-}

@@ -207,9 +207,8 @@ def build_wall_standard(
         point = wall_point[0]
         gradient = Gradient(
             0,
-            axes=(GradientAxis.y(height_map[point.x, point.z], point.y),),
-            perlin_settings=PerlinSettings(8, 6, 2, 0.3),
-        )
+            PerlinSettings(8, 6, 2, 0.3),
+        ).with_axis(GradientAxis.y(height_map[point.x, point.z], point.y))
         if wall_point[2] == "water":
             continue
         else:

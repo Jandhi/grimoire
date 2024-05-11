@@ -1,6 +1,6 @@
 {
     "name" : "wall_palette",
-    "type" : "palette",
+    "type" : "legacy_palette",
     "primary_wood" : "oak",
     "secondary_wood" : "spruce",
     "primary_stone" : "stone_brick",

@@ -1,7 +1,7 @@
 {
     "name" : "japanese_dark_mangrove",
     "tags" : ["japanese"], 
-    "type" : "palette",
+    "type" : "legacy_palette",
     "primary_wood" : "dark_oak",
     "secondary_wood" : "spruce",
     "primary_stone" : "mangrove_plank",

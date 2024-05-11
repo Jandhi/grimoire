@@ -7,7 +7,7 @@ from ..core.assets.asset import Asset, asset_defaults
     primary_stone="cobblestone",
     primary_stone_accent="stone_brick",
 )
-class Palette(Asset):
+class LegacyPalette(Asset):
     primary_wood: str
     secondary_wood: str
     primary_stone: str

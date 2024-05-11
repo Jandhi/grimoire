@@ -1,6 +1,6 @@
 {
     "name" : "viking_palette",
-    "type" : "palette",
+    "type" : "legacy_palette",
     "primary_wood" : "dark_oak",
     "secondary_wood" : "oak",
     "primary_stone" : "cobblestone",

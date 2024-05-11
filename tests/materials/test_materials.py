@@ -37,7 +37,7 @@ class MaterialsTest(EditingTestModule):
         self.load_world()
 
         material: BasicMaterial = Material.find("cobblestone")
-        gradient = Gradient(0, (GradientAxis.x(0, self.build_rect.size.x - 1),))
+        gradient = Gradient(13).with_axis(GradientAxis.x(0, self.build_rect.size.x - 1))
         material.dithering_pattern = DitheringPattern.random_ease_cubic
 
         for x in range(self.build_rect.size.x):

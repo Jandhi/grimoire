@@ -1,7 +1,0 @@
-{
-  "name" : "cobblestone",
-  "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter" : "andesite",
-  "darker" : "cobbled_deepslate"
-}

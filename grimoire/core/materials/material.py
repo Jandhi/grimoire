@@ -78,6 +78,12 @@ class BasicMaterial(Material):
     more_moist: Material | None
     less_moist: Material | None
 
+    # BLOCK TYPES
+    block: str
+    stairs: str
+    slab: str
+    fence: str
+
     def on_link(self) -> None:
         # shade
         lighter_amt = 0

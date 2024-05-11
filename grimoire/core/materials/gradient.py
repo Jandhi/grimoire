@@ -51,10 +51,9 @@ class Gradient:
     def __init__(
         self,
         seed,
-        axes: tuple[GradientAxis] | None = None,
         perlin_settings: PerlinSettings = None,
     ):
-        self.axes = axes or []
+        self.axes = []
 
         if perlin_settings is None:
             perlin_settings = Gradient.default_perlin_settings
@@ -65,6 +64,11 @@ class Gradient:
             PerlinNoise(octaves=self.perlin_settings.base_octaves * 2**i, seed=seed)
             for i in range(self.perlin_settings.noise_layers)
         ]
+
+    # Builder pattern to add axes to the gradient
+    def with_axis(self, axis: GradientAxis) -> "Gradient":
+        self.axes.append(axis)
+        return self
 
     def calculate_gradient_val(self, pos: ivec3) -> float:
         if len(self.axes) == 0:
