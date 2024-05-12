@@ -59,7 +59,7 @@ def get_best_merge_candidate(district : District, options : list[District]) -> D
     candidate_scores = {}
 
     for option in options:
-        if district.is_urban != option.is_urban: # don't merge different types of districts!
+        if district.is_border != option.is_border : # don't merge different types of districts!
             continue
 
         score = get_candidate_score(district, option)

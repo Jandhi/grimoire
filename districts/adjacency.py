@@ -2,9 +2,10 @@ from gdpc import WorldSlice
 from districts.district import District
 from structures.legacy_directions import cardinal, get_ivec2, vector
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3, Box
+from maps.map import Map
 
 # Tells the districts what neighbours they have and why
-def establish_adjacency(world_slice : WorldSlice, district_map : list[list[District]]):
+def establish_adjacency(world_slice : WorldSlice, district_map : list[list[District]], map : Map):
     build_box = world_slice.box
     rect = Rect((0, 0), (build_box.size.x, build_box.size.z)) # rect of build area, with (0, 0) as corner
     for x in range(build_box.size.x):
@@ -14,7 +15,7 @@ def establish_adjacency(world_slice : WorldSlice, district_map : list[list[Distr
                 continue
 
             district = district_map[x][z]
-            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            y = map.height_no_tree[x][z]
 
             if x == 0 or z == 0: # label edge districts as non-urban
                 district.is_urban = False
@@ -24,7 +25,7 @@ def establish_adjacency(world_slice : WorldSlice, district_map : list[list[Distr
                     district.is_urban = False
                     continue
 
-                point_height = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
+                point_height = map.height_no_tree[point.x][point.y]
 
                 if abs(y - point_height) > 1: # impassable, not neighbours
                     continue
@@ -42,14 +43,14 @@ def establish_adjacency(world_slice : WorldSlice, district_map : list[list[Distr
                 district.add_adjacency(point_district)
                 point_district.add_adjacency(district)
 
-    find_edges(world_slice, district_map)
+    find_edges(world_slice, district_map, map)
 
-def find_edges(world_slice : WorldSlice, district_map : list[list[District]]):
+def find_edges(world_slice : WorldSlice, district_map : list[list[District]], map : Map):
     build_box = world_slice.box
     rect = Rect((0, 0), (build_box.size.x, build_box.size.z)) # rect of build area, with (0, 0) as corner
     for x in range(rect.size.x):
         for z in range(rect.size.y):
-            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            y = map.height_no_tree[x][z]
             point = ivec3(x, y, z)
             district = district_map[x][z]
             

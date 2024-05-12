@@ -12,9 +12,10 @@ from terrain.logger import log_trees
 from terrain.smooth_edges import smooth_edges
 from terrain.plateau import plateau
 from maps.map import Map
-from districts.district_analyze import district_analyze
+from districts.district_analyze import district_analyze, district_classification
+from districts.tests.place_colors import get_color_differentiated
 
-SEED = 752
+SEED = 754
 
 DO_TERRAFORMING = False
 
@@ -62,13 +63,19 @@ if DO_TERRAFORMING:
     map.world = world_slice
     map.correct_district_heights(districts)
 
-draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)
 
 for district in districts:
     x = district.origin.x
     z = district.origin.z
 
-    y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
+    #y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
     #editor.placeBlock((x, y, z), Block('sea_lantern'))
     district_analyze(district, map)
-    print(f"ID: {district.id}   Area: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness}    GRADIENT: {district.gradient}     BIOMES: {district.biome_dict}  BLOCKS: {district.surface_blocks}")
+    block = get_color_differentiated(district, districts, False)
+
+    print(f"BLock: {block}  ID: {district.id}   Area: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness}    GRADIENT: {district.gradient}") #    BIOMES: {district.biome_dict}  BLOCKS: {district.surface_blocks}")
+
+
+district_classification(districts)
+
+draw_districts(districts, build_rect, district_map, map, world_slice, editor)

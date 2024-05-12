@@ -1,7 +1,8 @@
 from gdpc import WorldSlice, Editor, Block
+from maps.map import Map
 
-def place_relative_to_ground(x : int, y : int, z : int, block_name : str, world_slice : WorldSlice, editor : Editor):
-    y_offset = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] - 1
+def place_relative_to_ground(x : int, y : int, z : int, block_name : str, map : Map, editor : Editor):
+    y_offset = map.height_no_tree[x][z] - 1
     editor.placeBlock((x, y + y_offset, z), Block(block_name))
 
 colors = [

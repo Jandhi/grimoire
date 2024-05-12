@@ -13,6 +13,7 @@ class District:
     edges : set[ivec3]
     adjacencies_total : int
     is_urban : bool
+    type: str #URBAN/RURAL/OFF-LIMITS
     is_border : bool
 
     roughness: float
@@ -22,9 +23,7 @@ class District:
     surface_blocks: dict[str, int]
     gradient: float
 
-    palettes : list[Palette]
-
-    def __init__(self, origin : ivec3, is_urban : bool) -> None:
+    def __init__(self, origin : ivec3) -> None:
         self.id = District.id_counter
         District.id_counter += 1
         
@@ -36,7 +35,7 @@ class District:
         self.points_2d = set()
         self.edges     = set()
         self.adjacencies_total = 0
-        self.is_urban = is_urban
+        self.is_urban = False
         self.is_border = False
         self.palettes = []
         self.roughness = 0

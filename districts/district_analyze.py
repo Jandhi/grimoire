@@ -1,6 +1,5 @@
 from gdpc import Block
 from maps.map import Map
-from terrain.logger import TREE_AND_LEAF_BLOCKS
 from gdpc.vector_tools import ivec2, ivec3
 from districts.district import District
 import math
@@ -26,19 +25,19 @@ def district_analyze(district: District, map: Map):
         root_mean_square_height += pow(point.y - average_height, 2)
         #ugly code to prevent from crashing on getting out of bounds error
         try:
-            n1 = map.height_at(ivec2(point.x + 1, point.z))
+            n1 = map.height_no_tree[point.x][point.z]
         except:
             n1 = point.y
         try:
-            n2 = map.height_at(ivec2(point.x - 1, point.z))
+            n2 = map.height_no_tree[point.x][point.z]
         except:
             n2 = point.y
         try:
-            n3 = map.height_at(ivec2(point.x, point.z + 1))
+            n3 = map.height_no_tree[point.x][point.z]
         except:
             n3 = point.y
         try:
-            n4 = map.height_at(ivec2(point.x, point.z - 1))
+            n4 = map.height_no_tree[point.x][point.z]
         except:
             n4 = point.y
         neighbour_height += (abs(point.y - n1) + abs(point.y - n2) + abs(point.y - n3) + abs(point.y - n4)) / 4
@@ -60,5 +59,21 @@ def district_analyze(district: District, map: Map):
     district.gradient = neighbour_height/number_of_points #average difference of neighbour block height 
     district.water_percentage = water_blocks/number_of_points
     district.forested_percentage = leaf_blocks/number_of_points
-    
-    district.border = False #TO DO
+
+def district_classification(districts: list[District]):
+
+    #determine if district unbuildable
+    for district in districts:
+        if district.is_border:
+            district.type = 'OFF-LIMITS'
+        elif district.roughness > 6 or district.gradient > 1.0:
+            district.type = 'OFF-LIMITS'
+         
+        else:
+            district.type = 'URBAN'
+
+    #select prime urban spot
+
+    #expand out city
+
+    #rest is rural
