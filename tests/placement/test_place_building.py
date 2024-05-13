@@ -7,7 +7,7 @@ sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from grimoire.core.maps import Map
-from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.assets.asset_loader import load_assets
 from grimoire.placement.building_placement import place_building
 from grimoire.core.structures.legacy_directions import z_plus
 from grimoire.core.noise.rng import RNG

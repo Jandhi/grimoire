@@ -5,7 +5,7 @@ from ..building_plan import BuildingPlan
 from ...core.structures.grid import Grid
 from ...core.structures.legacy_directions import north, south, east, west, up
 from ...core.utils.vectors import y_ivec3
-from ...core.structures.nbt.build_nbt import build_nbt
+from ...core.structures.nbt.build_nbt import build_nbt_legacy
 from ...core.structures.transformation import Transformation
 from ...core.noise.rng import RNG
 
@@ -36,7 +36,7 @@ def build_roof(
 
         # northwest
         if cell.has_neighbour(north) and cell.has_neighbour(west):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 inner,
                 cell.plan.palette,
@@ -45,7 +45,7 @@ def build_roof(
                 ),
             )
         elif not cell.has_neighbour(north) and not cell.has_neighbour(west):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 corner,
                 cell.plan.palette,
@@ -54,7 +54,7 @@ def build_roof(
                 ),
             )
         elif cell.has_neighbour(north) and not cell.has_neighbour(west):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -64,7 +64,7 @@ def build_roof(
                 ),
             )
         else:
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -77,7 +77,7 @@ def build_roof(
 
         # northeast
         if cell.has_neighbour(north) and cell.has_neighbour(east):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 inner,
                 cell.plan.palette,
@@ -87,7 +87,7 @@ def build_roof(
                 ),
             )
         elif not cell.has_neighbour(north) and not cell.has_neighbour(east):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 corner,
                 cell.plan.palette,
@@ -97,7 +97,7 @@ def build_roof(
                 ),
             )
         elif cell.has_neighbour(north) and not cell.has_neighbour(east):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -107,7 +107,7 @@ def build_roof(
                 ),
             )
         else:
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -120,7 +120,7 @@ def build_roof(
 
         # southwest
         if cell.has_neighbour(south) and cell.has_neighbour(west):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 inner,
                 cell.plan.palette,
@@ -130,7 +130,7 @@ def build_roof(
                 ),
             )
         elif not cell.has_neighbour(south) and not cell.has_neighbour(west):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 corner,
                 cell.plan.palette,
@@ -140,7 +140,7 @@ def build_roof(
                 ),
             )
         elif cell.has_neighbour(south) and not cell.has_neighbour(west):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -150,7 +150,7 @@ def build_roof(
                 ),
             )
         else:
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -163,7 +163,7 @@ def build_roof(
 
         # southeast
         if cell.has_neighbour(south) and cell.has_neighbour(east):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 inner,
                 cell.plan.palette,
@@ -173,7 +173,7 @@ def build_roof(
                 ),
             )
         elif not cell.has_neighbour(south) and not cell.has_neighbour(east):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 corner,
                 cell.plan.palette,
@@ -183,7 +183,7 @@ def build_roof(
                 ),
             )
         elif cell.has_neighbour(south) and not cell.has_neighbour(east):
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -193,7 +193,7 @@ def build_roof(
                 ),
             )
         else:
-            build_nbt(
+            build_nbt_legacy(
                 editor,
                 side,
                 cell.plan.palette,
@@ -205,7 +205,7 @@ def build_roof(
             )
 
         # northeast
-        build_nbt(
+        build_nbt_legacy(
             editor,
             corner,
             cell.plan.palette,
@@ -215,7 +215,7 @@ def build_roof(
         )
 
         # southwest
-        build_nbt(
+        build_nbt_legacy(
             editor,
             corner,
             cell.plan.palette,
@@ -225,7 +225,7 @@ def build_roof(
         )
 
         # southeast
-        build_nbt(
+        build_nbt_legacy(
             editor,
             corner,
             cell.plan.palette,

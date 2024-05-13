@@ -1,9 +1,9 @@
 from .legacy_directions import left, right, opposites
-from .nbt.build_nbt import build_nbt
+from .nbt.build_nbt import build_nbt_legacy
 from .transformation import Transformation
 from gdpc.editor import Editor
 from .nbt.nbt_asset import NBTAsset
-from ...palette import Palette
+from grimoire.core.styling.legacy_palette import LegacyPalette
 from gdpc.vector_tools import ivec3, ivec2
 from collections.abc import Iterator
 
@@ -56,14 +56,14 @@ class Grid:
         self,
         editor: Editor,
         asset: NBTAsset,
-        palette: Palette,
+        palette: LegacyPalette,
         grid_coordinate: ivec3,
         facing: str = None,
     ):
         coords = self.grid_to_local(grid_coordinate) + self.origin
 
         if facing is None or not hasattr(asset, "facing") or asset.facing == facing:
-            return build_nbt(
+            return build_nbt_legacy(
                 editor,
                 asset,
                 palette,
@@ -73,7 +73,7 @@ class Grid:
             )
 
         if right[asset.facing] == facing:
-            return build_nbt(
+            return build_nbt_legacy(
                 editor,
                 asset,
                 palette,
@@ -84,7 +84,7 @@ class Grid:
             )
 
         if left[asset.facing] == facing:
-            return build_nbt(
+            return build_nbt_legacy(
                 editor,
                 asset,
                 palette,
@@ -96,7 +96,7 @@ class Grid:
             )
 
         if opposites[asset.facing] == facing:
-            return build_nbt(
+            return build_nbt_legacy(
                 editor,
                 asset,
                 palette,

@@ -3,10 +3,10 @@ from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
 from ..core.structures.legacy_directions import north, east, south, vector, ivec3_to_dir
 from ..core.utils.geometry import is_straight_not_diagonal_ivec2
-from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.build_nbt import build_nbt_legacy
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
-from ..palette import Palette
+from grimoire.core.styling.legacy_palette import LegacyPalette
 
 
 # Class to track gate assets
@@ -25,7 +25,7 @@ def add_gates(
     world_slice: WorldSlice,
     is_thin: bool,
     inner_wall_dict: dict,
-    palette: Palette,
+    palette: LegacyPalette,
     palisade: bool = False,
 ) -> list[Gate]:
     distance_to_next_gate = 30  # minimum
@@ -39,7 +39,7 @@ def add_gates(
         type="gate",
         filepath="grimoire/asset_data/city_wall/gates/basic_wide_gate.nbt",
         origin=(3, 1, 3),
-        palette=Palette.find("wall_palette"),
+        palette=LegacyPalette.find("wall_palette"),
     )
 
     basic_thin_gate = NBTAsset.construct(
@@ -47,7 +47,7 @@ def add_gates(
         type="gate",
         filepath="grimoire/asset_data/city_wall/gates/basic_thin_gate.nbt",
         origin=(1, 1, 3),
-        palette=Palette.find("wall_palette"),
+        palette=LegacyPalette.find("wall_palette"),
     )
 
     basic_palisade_gate = NBTAsset.construct(
@@ -55,7 +55,7 @@ def add_gates(
         type="gate",
         filepath="grimoire/asset_data/city_wall/gates/basic_palisade_gate.nbt",
         origin=(1, 1, 2),
-        palette=Palette.find("wall_palette"),
+        palette=LegacyPalette.find("wall_palette"),
     )
 
     for i, wall_point in enumerate(wall_list):
@@ -111,7 +111,7 @@ def add_gates(
                     )
                     gates.append(Gate(location, dir))
 
-                    build_nbt(
+                    build_nbt_legacy(
                         editor=editor,
                         asset=basic_palisade_gate,
                         transformation=Transformation(
@@ -170,7 +170,7 @@ def add_gates(
                         )
                         gates.append(Gate(location, ivec3_to_dir(dir)))
 
-                        build_nbt(
+                        build_nbt_legacy(
                             editor=editor,
                             asset=basic_thin_gate,
                             transformation=Transformation(
@@ -226,7 +226,7 @@ def add_gates(
                                 )
                                 gates.append(Gate(location, ivec3_to_dir(dir)))
 
-                                build_nbt(
+                                build_nbt_legacy(
                                     editor=editor,
                                     asset=basic_wide_gate,
                                     transformation=Transformation(

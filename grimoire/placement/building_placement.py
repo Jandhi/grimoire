@@ -1,13 +1,5 @@
 import contextlib
-from gdpc.vector_tools import ivec2, ivec3, vec2
-from ..core.maps import Map
 from ..core.structures.legacy_directions import (
-    z_minus,
-    z_plus,
-    x_minus,
-    x_plus,
-    cardinal,
-    get_ivec2,
     LegacyDirection,
 )
 
@@ -33,10 +25,10 @@ from ..core.structures.legacy_directions import (
 )
 from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
-from ..palette import fix_block_name
+from grimoire.core.styling.legacy_palette import fix_block_name
 
 from ..core.maps import Map
-from ..palette import Palette
+from grimoire.core.styling.legacy_palette import LegacyPalette
 
 offsets = {
     z_minus: [ivec2(0, 0), ivec2(-1, 0)],
@@ -221,10 +213,10 @@ def place(
     editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
 ):
     district = map.districts[grid.origin.x][grid.origin.z]
-    palette: Palette = (
+    palette: LegacyPalette = (
         rng.choose(district.palettes)
         if district
-        else Palette.find("japanese_dark_blackstone")
+        else LegacyPalette.find("japanese_dark_blackstone")
     )
 
     plan = BuildingPlan(shape.points, grid, palette)

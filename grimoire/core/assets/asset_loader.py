@@ -8,7 +8,7 @@ import json
 from colored import Style, Fore
 
 from ...core.assets.load_types import load_types
-from ...core.assets.link_assets import link_assets
+from ...core.assets.asset_linker import AssetLinker
 from ...buildings.building_shape import permute_shapes
 from ...core.generator.module import Module
 
@@ -60,7 +60,9 @@ class AssetLoader(Module):
                         f"while loading {Fore.light_blue}{path}{Style.reset}. Object has non-annotated fields: {validation_state.surplus_args}"
                     )
 
-        link_assets()
+        linker = AssetLinker()
+        linker.log.settings = self.log.settings
+        linker.link_assets()
 
         # Extra steps for special assets
         permute_shapes()  # varies the building shapes into all rotations and mirrors

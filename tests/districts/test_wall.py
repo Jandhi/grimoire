@@ -11,12 +11,11 @@ from grimoire.districts.generate_districts import generate_districts
 from grimoire.core.utils.geometry import get_outer_points
 from grimoire.districts.wall import (
     order_wall_points,
-    build_wall_standard_with_inner,
     build_wall_standard,
 )
 from grimoire.core.noise.rng import RNG
-from grimoire.palette import Palette
-from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.styling.legacy_palette import LegacyPalette
+from grimoire.core.assets.asset_loader import load_assets
 
 SEED = 7
 
@@ -85,7 +84,7 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = Palette.find("japanese_dark_blackstone")
+palette = LegacyPalette.find("japanese_dark_blackstone")
 
 # uncomment one of these to story one of the three wall types
 

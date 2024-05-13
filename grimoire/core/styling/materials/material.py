@@ -1,18 +1,15 @@
 from dataclasses import dataclass
-from enum import Enum
-from typing import Union
 
 from gdpc import Editor, Block
 from glm import ivec3
 
 from grimoire.core.assets.asset import Asset, asset_defaults, default_subtype
-from grimoire.core.materials.dithering import (
+from grimoire.core.noise.hash import recursive_hash, hash_string
+from grimoire.core.noise.seed import Seed
+from grimoire.core.styling.blockform import BlockForm
+from grimoire.core.styling.materials.dithering import (
     DitheringPattern,
-    calculate_dither_regular,
-    calculate_dither_random,
 )
-from grimoire.core.noise.global_seed import GlobalSeed
-from grimoire.core.noise.rng import RNG
 
 
 @dataclass
@@ -28,6 +25,9 @@ class MaterialParameters:
     # 0 for no moisture, 1 for most moisture
     moisture: float
 
+    # dithering pattern, optional
+    dithering_pattern: DitheringPattern | None
+
 
 class Material(Asset):
     dithering_pattern: DitheringPattern
@@ -35,10 +35,17 @@ class Material(Asset):
     def place_block(
         self,
         editor: Editor,
+        form: BlockForm,
+        states: dict[str, str] | None,
+        data: str | None,
         parameters: MaterialParameters,
-        rng: RNG,
-        dithering_pattern: DitheringPattern | None = None,
     ):
+        pass
+
+    def has_block(self, block: Block) -> bool:
+        pass
+
+    def get_id(self, form: BlockForm, parameters: MaterialParameters) -> str | None:
         pass
 
 
@@ -79,10 +86,7 @@ class BasicMaterial(Material):
     less_moist: Material | None
 
     # BLOCK TYPES
-    block: str
-    stairs: str
-    slab: str
-    fence: str
+    blocks: dict[BlockForm, str]
 
     def on_link(self) -> None:
         # shade
@@ -131,23 +135,36 @@ class BasicMaterial(Material):
     def place_block(
         self,
         editor: Editor,
+        form: BlockForm,
+        states: dict[str, str],
+        data: str | None,
         parameters: MaterialParameters,
-        rng: RNG,
-        dithering_pattern: DitheringPattern | None = None,
     ):
-        material = self.traverse(
-            parameters,
-            rng,
-            self.dithering_pattern if dithering_pattern is None else dithering_pattern,
+        block_id = self.get_id(form, parameters)
+        editor.placeBlock(
+            parameters.position,
+            Block(
+                id=block_id,
+                states=states,
+                data=data,
+            ),
         )
-        block = Block(id=material.name)
-        editor.placeBlock(parameters.position, block)
 
     def traverse(
-        self, params: MaterialParameters, rng: RNG, dithering_pattern: DitheringPattern
+        self,
+        params: MaterialParameters,
     ) -> "BasicMaterial":
+        dithering_pattern = (
+            params.dithering_pattern
+            if params.dithering_pattern is not None
+            else self.dithering_pattern
+        )
+
         shade_index = self.calculate_index(
-            params.shade, self.shade_range, params.position, rng, dithering_pattern
+            params.shade,
+            self.shade_range,
+            params.position,
+            dithering_pattern,
         )
         material = self
 
@@ -166,7 +183,7 @@ class BasicMaterial(Material):
                 material = material.darker
 
         age_index = self.calculate_index(
-            params.age, self.age_range, params.position, rng, dithering_pattern
+            params.age, self.age_range, params.position, dithering_pattern
         )
         for _ in range(age_index):
             if material.older is None:
@@ -174,13 +191,9 @@ class BasicMaterial(Material):
             material = material.older
 
         moist_index = self.calculate_index(
-            params.moisture,
-            self.moisture_range,
-            params.position,
-            rng,
-            dithering_pattern,
+            params.moisture, self.moisture_range, params.position, dithering_pattern
         )
-        for _ in range(age_index):
+        for _ in range(moist_index):
             if material.more_moist is None:
                 break
             material = material.more_moist
@@ -192,34 +205,61 @@ class BasicMaterial(Material):
         value: float,
         dimension_range: int,
         position: ivec3,
-        rng: RNG,
         dithering_pattern: DitheringPattern,
     ) -> int:
         if dimension_range == 1:
             return 0
 
-        return dithering_pattern.calculate_index(value, dimension_range, position, rng)
+        return dithering_pattern.calculate_index(
+            value,
+            dimension_range,
+            position,
+            Seed(recursive_hash(hash_string(0, self.name), *position)),
+        )
+
+    def has_block(self, block: Block) -> bool:
+        form = BlockForm.get_form(block)
+
+        return form in self.blocks.keys()
+
+    def get_id(self, form: BlockForm, parameters: MaterialParameters) -> str | None:
+        material = self.traverse(parameters)
+
+        if form in material.blocks:
+            return material.blocks[form]
+
+        return None
 
 
 class CompositeMaterial(Material):
     submaterials: dict[Material, int]
 
-    def random_submaterial(self, rng: RNG) -> Material:
-        return rng.choose_weighted(self.submaterials)
+    def random_submaterial(self, seed: Seed) -> Material:
+        return seed.choose_weighted(self.submaterials)
 
     def place_block(
         self,
         editor: Editor,
+        form: BlockForm,
+        states: dict[str, str] | None,
+        data: str | None,
         parameters: MaterialParameters,
-        rng: RNG,
-        dithering_pattern: DitheringPattern | None = None,
     ):
-        return self.random_submaterial(rng).place_block(
-            editor,
-            parameters,
-            rng,
-            self.dithering_pattern if dithering_pattern is None else dithering_pattern,
+        seed = Seed(recursive_hash(hash_string(0, self.name), *parameters.position))
+        return self.random_submaterial(seed).place_block(
+            editor, form, states, data, parameters
         )
+
+    def has_block(self, block: Block) -> bool:
+        return any([material.has_block(block) for material in self.submaterials])
+
+    def get_id(
+        self,
+        form: BlockForm,
+        parameters: MaterialParameters,
+    ) -> str | None:
+        seed = Seed(recursive_hash(hash_string(0, self.name), *parameters.position))
+        return self.random_submaterial(seed).get_id(form, parameters)
 
 
 def calculate_shade():

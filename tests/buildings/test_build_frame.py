@@ -9,12 +9,12 @@ sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
 from grimoire.core.structures.grid import Grid
-from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.assets.asset_loader import load_assets
 from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.buildings.walls.build_walls import build_walls
 from grimoire.core.noise.rng import RNG
 from grimoire.buildings.walls.wall import Wall
-from grimoire.palette import Palette
+from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.buildings.build_floor import build_floor
 
 SEED = 243
@@ -35,7 +35,7 @@ load_assets("assets")
 
 shape = random_shape(SEED)
 
-palette = Palette.find("japanese_dark_blackstone")
+palette = LegacyPalette.find("japanese_dark_blackstone")
 plan = BuildingPlan(shape, grid, palette)
 
 build_floor(plan, editor)

@@ -4,8 +4,10 @@
   "dithering_pattern" : "random",
   "darker" : "cobblestone",
   "lighter" : "stone",
-  "block" : "andesite",
-  "stairs" : "andesite_stairs",
-  "slab" : "andesite_slab",
-  "wall" : "andesite_wall"
+  "blocks" : {
+    "block": "andesite",
+    "stairs": "andesite_stairs",
+    "slab": "andesite_slab",
+    "wall": "andesite_wall"
+  }
 }

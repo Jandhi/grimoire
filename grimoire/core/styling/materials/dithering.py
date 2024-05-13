@@ -2,7 +2,7 @@ from enum import Enum
 
 from glm import ivec3
 
-from grimoire.core.noise.rng import RNG
+from grimoire.core.noise.seed import Seed
 from grimoire.core.utils.easings import ease_in_out_cubic, ease_in_out_quint
 
 
@@ -18,7 +18,7 @@ class DitheringPattern(Enum):
         value: float,
         dimension_range: int,
         position: ivec3,
-        rng: RNG,
+        seed: Seed,
     ):
         if self == DitheringPattern.none:
             step_size = 1.0 / dimension_range
@@ -28,16 +28,16 @@ class DitheringPattern(Enum):
             return calculate_dither_regular(value, dimension_range, position)
 
         if self == DitheringPattern.random:
-            return calculate_dither_random(value, dimension_range, rng)
+            return calculate_dither_random(value, dimension_range, seed)
 
         if self == DitheringPattern.random_ease_cubic:
             return calculate_dither_random(
-                value, dimension_range, rng, ease_in_out_cubic
+                value, dimension_range, seed, ease_in_out_cubic
             )
 
         if self == DitheringPattern.random_ease_quint:
             return calculate_dither_random(
-                value, dimension_range, rng, ease_in_out_quint
+                value, dimension_range, seed, ease_in_out_quint
             )
 
 
@@ -59,7 +59,7 @@ def calculate_dither_regular(value: float, range: int, position: ivec3) -> int:
     return index
 
 
-def calculate_dither_random(value: float, range: int, rng: RNG, easing=None) -> int:
+def calculate_dither_random(value: float, range: int, seed: Seed, easing=None) -> int:
     step_size = 1.0 / (range - 1)  # each step is a range from A to B
 
     if easing is None:
@@ -71,7 +71,7 @@ def calculate_dither_random(value: float, range: int, rng: RNG, easing=None) -> 
     remainder = easing((value / step_size) - index)
     percent_chance = int(remainder * 100)
 
-    if rng.percent(percent_chance):
+    if seed.percent(percent_chance):
         return index + 1
     else:
         return index

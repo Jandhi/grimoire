@@ -2,28 +2,27 @@
 import sys
 
 from grimoire.core.structures.directions import Directions2D
-from grimoire.core.utils.bounds import is_in_bounds, is_in_bounds2d
-from grimoire.core.utils.easings import ease_out_quad
+from grimoire.core.styling.blockform import BlockForm
+from grimoire.core.utils.bounds import is_in_bounds2d
 
 sys.path[0] = sys.path[0].removesuffix("tests\\materials")
 
 # Start of real file
 
-from gdpc import Editor
 from glm import ivec3, ivec2
 
-from grimoire.core.generator.test import TestModule, run_test, EditingTestModule
+from grimoire.core.generator.test import run_test, EditingTestModule
 from grimoire.core.logger import LoggerSettings, LoggingLevel
-from grimoire.core.materials.dithering import DitheringPattern
-from grimoire.core.materials.gradient import Gradient, GradientAxis, PerlinSettings
+from grimoire.core.styling.materials.dithering import DitheringPattern
+from grimoire.core.styling.materials.gradient import Gradient, PerlinSettings
 from grimoire.core.noise.global_seed import GlobalSeed
-from grimoire.core.noise.perlin.perlin_noise import PerlinNoise
-from grimoire.core.noise.rng import RNG
-from grimoire.core.utils.misc import average
 
-from grimoire.core.materials.material import Material, BasicMaterial, MaterialParameters
-from grimoire.buildings.walls.wall import Wall
-from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.styling.materials.material import (
+    Material,
+    BasicMaterial,
+    MaterialParameters,
+)
+from grimoire.core.assets.asset_loader import load_assets
 
 
 @run_test
@@ -42,7 +41,6 @@ class MaterialPathTest(EditingTestModule):
 
         material: BasicMaterial = Material.find("cobblestone")
         gradient = Gradient(254, perlin_settings=PerlinSettings(23, 6, 1.6, 0.3))
-        material.dithering_pattern = DitheringPattern.random_ease_cubic
 
         path = []
         for i in range(5, min(self.build_rect.size.x, self.build_rect.size.y) - 5):
@@ -84,11 +82,14 @@ class MaterialPathTest(EditingTestModule):
 
             material.place_block(
                 self.editor,
+                BlockForm.block,
+                {},
+                None,
                 MaterialParameters(
                     position=pos,
                     age=0,
                     shade=shade_val,
                     moisture=0,
+                    dithering_pattern=DitheringPattern.random_ease_cubic,
                 ),
-                self.rng,
             )

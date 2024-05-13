@@ -1,13 +1,20 @@
-from ..core.materials.dithering import DitheringPattern
-from ..core.materials.gradient import Gradient, GradientAxis, PerlinSettings
-from ..core.materials.material import BasicMaterial, Material, MaterialParameters
+from grimoire.core.styling.materials.dithering import DitheringPattern
+from grimoire.core.styling.materials.gradient import (
+    Gradient,
+    GradientAxis,
+    PerlinSettings,
+)
+from grimoire.core.styling.materials.material import (
+    BasicMaterial,
+    Material,
+    MaterialParameters,
+)
 from ..core.noise.rng import RNG
 from ..core.noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
 
-from ..core.structures.directions import Axes
 from ..core.structures.legacy_directions import (
     north,
     get_ivec2,
@@ -18,6 +25,8 @@ from ..core.structures.legacy_directions import (
     cardinal,
     opposite,
 )
+from grimoire.core.styling.legacy_palette import LegacyPalette
+from ..core.styling.blockform import BlockForm
 from ..core.utils.geometry import (
     get_neighbours_in_set,
     is_straight_ivec2,
@@ -25,12 +34,11 @@ from ..core.utils.geometry import (
     get_outer_points,
 )
 from ..core.utils.misc import is_water
-from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.build_nbt import build_nbt_legacy
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
-from ..palette import Palette
-from ..palette import fix_block_name
 from ..districts.gate import add_gates, Gate
+from grimoire.core.styling.legacy_palette import fix_block_name
 
 
 def get_wall_points(inner_points, world_slice):
@@ -128,7 +136,7 @@ def build_wall_palisade(
     world_slice: WorldSlice,
     water_map: dict,
     rng: RNG,
-    palette: Palette,
+    palette: LegacyPalette,
 ) -> list[Gate]:
     wood = palette.secondary_wood
 
@@ -178,7 +186,7 @@ def build_wall_standard(
     editor: Editor,
     world_slice: WorldSlice,
     water_map: dict,
-    palette: Palette,
+    palette: LegacyPalette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -218,14 +226,16 @@ def build_wall_standard(
             for y in range(height_map[point.x, point.z], point.y + 1):
                 material.place_block(
                     editor,
+                    BlockForm.block,
+                    {},
+                    None,
                     MaterialParameters(
                         position=ivec3(point.x, y, point.z),
                         shade=gradient.calculate_shade(ivec3(point.x, y, point.z)),
                         age=0,
                         moisture=0,
+                        dithering_pattern=DitheringPattern.random_ease_quint,
                     ),
-                    rng,
-                    DitheringPattern.random_ease_quint,
                 )
 
                 # editor.placeBlock((point.x, y, point.z), Block(full_block))
@@ -278,7 +288,7 @@ def build_wall_standard_with_inner(
     world_slice: WorldSlice,
     water_map: dict,
     rng: RNG,
-    palette: Palette,
+    palette: LegacyPalette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -500,7 +510,10 @@ NEIGHBOURS = [
 
 
 def flatten_walkway(
-    walkway_list: list[ivec2], walkway_dict: dict, editor: Editor, palette: Palette
+    walkway_list: list[ivec2],
+    walkway_dict: dict,
+    editor: Editor,
+    palette: LegacyPalette,
 ):
     wood = palette.secondary_wood
 
@@ -626,7 +639,7 @@ def add_towers(
     walkway_dict: dict,
     editor: Editor,
     rng: RNG,
-    palette: Palette,
+    palette: LegacyPalette,
 ):
     distance_to_next_tower = 80  # minimum
     tower_possible = randrange(
@@ -637,7 +650,7 @@ def add_towers(
         type="tower",
         filepath="grimoire/asset_data/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
-        palette=Palette.find("wall_palette"),
+        palette=LegacyPalette.find("wall_palette"),
     )
 
     # blocks
@@ -667,7 +680,7 @@ def add_towers(
                             )
 
                 # build tower
-                build_nbt(
+                build_nbt_legacy(
                     editor=editor,
                     asset=tower,
                     transformation=Transformation(

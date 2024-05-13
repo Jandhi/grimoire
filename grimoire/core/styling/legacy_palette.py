@@ -1,4 +1,4 @@
-from .core.assets.asset import Asset, asset_defaults
+from grimoire.core.assets.asset import Asset, asset_defaults
 from gdpc.lookup import WOOD_TYPES
 
 
@@ -11,7 +11,7 @@ PLURALS = ["brick", "plank", "tile"]
     primary_stone="cobblestone",
     primary_stone_accent="stone_brick",
 )
-class Palette(Asset):
+class LegacyPalette(Asset):
     primary_wood: str  # FIXME: Unused variable
     secondary_wood: str
     primary_stone: str
@@ -20,7 +20,9 @@ class Palette(Asset):
     fields = ["primary_wood", "secondary_wood", "primary_stone", "primary_stone_accent"]
 
 
-def palette_swap(block_name: str, input_palette: Palette, output_palette: Palette):
+def palette_swap(
+    block_name: str, input_palette: LegacyPalette, output_palette: LegacyPalette
+):
     replacements = {
         getattr(input_palette, key): getattr(output_palette, key)
         for key in input_palette.fields
