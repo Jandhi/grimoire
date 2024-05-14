@@ -1,0 +1,16 @@
+- [ ] Windmill
+- [ ] Water Train Station
+- [ ] Locomotive
+- [ ] Boat
+- [ ] Beaver Lodge
+- [ ] Granary
+- [ ] Watermill
+- [ ] Fountain
+- [ ] Tower
+- [ ] Deer
+- [ ] Tree Field
+- [ ] Ruin
+- [ ] Fox
+- [ ] Boar
+- [ ] Bear
+- [ ] Swan Pond
