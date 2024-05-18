@@ -1,6 +1,7 @@
-from gdpc import WorldSlice
-from gdpc.vector_tools import ivec3, ivec2
 from typing import Iterator
+
+from gdpc import WorldSlice
+from gdpc.vector_tools import ivec2, ivec3
 
 
 def is_in_bounds(point: ivec3, world_slice: WorldSlice) -> bool:

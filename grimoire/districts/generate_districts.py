@@ -1,7 +1,7 @@
 from ..core.noise.rng import RNG
 from ..districts.district import District
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
-from ..core.structures.legacy_directions import cardinal, vector
+from ..core.structures.legacy_directions import CARDINAL, vector
 from gdpc import WorldSlice
 from ..districts.adjacency import establish_adjacency
 from ..districts.merging_districts import merge_down
@@ -96,7 +96,7 @@ def get_neighbours(point: ivec3, world_slice: WorldSlice) -> list[ivec3]:
     neighbours = []
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         delta = vector(direction)
         neighbour = point + delta
 

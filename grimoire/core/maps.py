@@ -1,3 +1,4 @@
+import itertools
 from ..districts.district import District
 from gdpc import WorldSlice
 from gdpc.block import Block
@@ -6,14 +7,28 @@ from gdpc.vector_tools import ivec2, ivec3
 from .utils.bounds import is_in_bounds
 from .utils.bounds import is_in_bounds2d
 from .utils.sets.set_operations import find_outline
+from enum import Enum, auto
 
 
-HIGHWAY = "highway"  # FIXME: Unused variable
-CITY_ROAD = "city_road"
-BUILDING = "building"
-WALL = "Wall"  # FIXME: Unused variable
-CITY_WALL = "city_wall"
-GATE = "gate"
+class DevelopmentType(Enum):
+    """
+    An enumeration of development types for different structures in a city.
+
+    Attributes:
+        HIGHWAY: UNUSED
+        WALL: UNUSED
+        CITY_ROAD: Represents a city road (surrounding city blocks).
+        BUILDING: Is occupied by a building.
+        CITY_WALL: Is occupied by a city wall.
+        GATE: Is occupied by a gate in the city wall.
+    """
+
+    HIGHWAY = auto()  # FIXME: Unused value
+    WALL = auto()  # FIXME: Unused value
+    CITY_ROAD = auto()
+    BUILDING = auto()
+    CITY_WALL = auto()
+    GATE = auto()
 
 
 def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
@@ -43,13 +58,12 @@ def get_water_map(world_slice: WorldSlice):
 
     water_map = [[False for _ in range(size.y)] for _ in range(size.x)]
 
-    for x in range(size.x):
-        for z in range(size.y):
-            y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
-            block: Block = world_slice.getBlock((x, y - 1, z))
+    for x, z in itertools.product(range(size.x), range(size.y)):
+        y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
+        block: Block = world_slice.getBlock((x, y - 1, z))
 
-            if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
-                water_map[x][z] = True
+        if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
+            water_map[x][z] = True
 
     return water_map
 
@@ -58,7 +72,7 @@ def get_water_map(world_slice: WorldSlice):
 class Map:
     water: list[list[bool]]
     districts: list[list[District | None]]
-    buildings: list[list[str | None]]
+    buildings: list[list[DevelopmentType | None]]
     height: list[list[int]]
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads

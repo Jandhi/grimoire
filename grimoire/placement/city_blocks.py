@@ -1,19 +1,16 @@
-from ..districts.district import District
-from gdpc import Editor, Block
-from gdpc.vector_tools import ivec2, ivec3, distance2
-from ..core.utils.sets.set_operations import (
-    find_edges,
-    find_outer_direction,
-)
-from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
-from ..core.noise.rng import RNG
-from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
-from ..core.utils.bounds import is_in_bounds2d
-from ..core.utils.vectors import point_3d, y_ivec3
-from ..core.maps import Map
-from ..core.maps import CITY_WALL, CITY_ROAD
-from ..placement.building_placement import place_building
+from gdpc import Block, Editor
+from gdpc.vector_tools import distance2, ivec2, ivec3
 
+from ..core.maps import DevelopmentType, Map
+from ..core.noise.rng import RNG
+from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
+from ..core.utils.bounds import is_in_bounds2d
+from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
+from ..core.utils.sets.set_operations import find_edges, find_outer_direction
+from ..core.utils.shapes import Shape2D
+from ..core.utils.vectors import point_3d, y_ivec3
+from ..districts.district import District
+from ..placement.building_placement import place_building
 
 EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 120
@@ -27,7 +24,7 @@ def generate_bubbles(
     desired_block_size=DESIRED_BLOCK_SIZE,
     minimum_point_distance=15,
 ) -> list[ivec2]:
-    points = []
+    points: list[ivec2] = []
 
     for district in districts:
         if not district.is_urban:
@@ -48,7 +45,7 @@ def generate_bubbles(
             ):
                 continue
 
-            if map.buildings[point.x][point.y] == CITY_WALL:
+            if map.buildings[point.x][point.y] == DevelopmentType.CITY_WALL:
                 continue
 
             district_points_generated += 1
@@ -78,7 +75,7 @@ def bubble_out(
     def is_eligible(vec: ivec2):
         district = map.districts[vec.x][vec.y]
 
-        if map.buildings[vec.x][vec.y] == CITY_WALL:
+        if map.buildings[vec.x][vec.y] == DevelopmentType.CITY_WALL:
             return False
 
         if map.water[vec.x][vec.y]:
@@ -91,7 +88,7 @@ def bubble_out(
         block_index = block_index_map[point.x][point.y]
         block: set[ivec2] = blocks[block_index]
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point + get_ivec2(direction)
 
             if not is_in_bounds2d(neighbour, map.world):
@@ -155,13 +152,25 @@ def merge_small_blocks(
 
 
 def place_buildings(
-    editor: Editor,
-    block: set[ivec2],
-    map: Map,
-    rng: RNG,
+    editor,
+    block,
+    map,
+    rng,
     style="japanese",
     is_debug=False,
 ):
+    """
+    Places buildings on the map edges based on the provided parameters.
+
+    Args:
+        editor: The Editor object for placing blocks.
+        block: A set of 2D vectors representing the building blocks.
+        map: The Map object representing the game map.
+        rng: The RNG object for random number generation.
+        style: The style of the buildings (default is "japanese").
+        is_debug: A boolean indicating whether debug mode is enabled (default is False).
+    """
+
     edges = find_edges(block)
 
     for edge in edges:
@@ -179,7 +188,7 @@ def place_buildings(
 def add_city_blocks(
     editor: Editor,
     districts: list[District],
-    map: Map,
+    city_map: Map,
     seed: int,
     style="japanese",
     is_debug=False,
@@ -194,13 +203,13 @@ def add_city_blocks(
     outer_urban_area, inner_urban_area = find_outer_and_inner_points(urban_area, 3)
 
     for point in outer_urban_area:
-        map.buildings[point.x][point.y] = CITY_WALL
+        city_map.buildings[point.x][point.y] = DevelopmentType.CITY_WALL
 
-    bubbles = generate_bubbles(rng, districts, map)
-    blocks, block_map, block_adjacency = bubble_out(bubbles, map)
-    blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
+    bubbles = generate_bubbles(rng, districts, city_map)
+    blocks, block_map = merge_small_blocks(*bubble_out(bubbles, city_map))
 
-    inners = []
+    inners: list[set[ivec2]] = []
+    outers = []
 
     for i, block in enumerate(blocks):
         if len(block) < MINIMUM_BLOCK_SZE:
@@ -209,14 +218,14 @@ def add_city_blocks(
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:
-            map.buildings[point.x][point.y] = CITY_ROAD
+            city_map.buildings[point.x][point.y] = DevelopmentType.CITY_ROAD
 
         if is_debug:
             for point in outer | outer_urban_area:
                 editor.placeBlock(
                     ivec3(
                         point.x,
-                        map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
+                        city_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
                             point.y
                         ]
                         - 1,
@@ -227,10 +236,32 @@ def add_city_blocks(
 
         block_rng = RNG(seed, f"block {i}")
         inners.append(inner)
+        outers.append(outer)
 
     # Has to be done after all inners are found
-    for i, block in enumerate(blocks):
-        if i >= len(inners):
-            continue
+    for block, inner, outer in zip(blocks, inners, outers):
+        place_buildings(editor, inner, city_map, block_rng, style, is_debug)
+        decorate_city_block(editor, city_map, block, inner, outer, block_rng, style)
 
-        place_buildings(editor, inners[i], map, block_rng, style, is_debug)
+
+def decorate_city_block(
+    editor: Editor,
+    city_map: Map,
+    block: set[ivec2],
+    inner: set[ivec2],
+    outer: set[ivec2],
+    block_rng: RNG,
+    style: str,
+):
+
+    # scan the city block
+        # if an empty space is found
+            # move east until a non-empty space is found
+            # move clockwise along the circumference
+                # if this edge is occupied by a new type, start a new counter in the counter list with its type
+                # else, increment the current counter
+            # flood fill the remaining space, determining its size (and largest rectangular space?)
+            # select an appropriate Nook type
+            # manifest the Nook
+
+    raise NotImplementedError()

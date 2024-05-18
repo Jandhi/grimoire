@@ -2,7 +2,7 @@
 
 Various individual structures will need to be generated to populate areas: the more adaptive, the better.
 Structures are defined as finite objects that may be placed in an environment with little regard to topology.
-See [[Temp (Continuous Structures)]] for generating continuous objects
+See [[James' Notes/James' Old Notes/Temp (Continuous Structures)]] for generating continuous objects
 
 ## Residence
 - [ ] Inhabited cave

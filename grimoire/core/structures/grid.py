@@ -1,4 +1,4 @@
-from .legacy_directions import left, right, opposites
+from .legacy_directions import left, right, OPPOSITES
 from .nbt.build_nbt import build_nbt
 from .transformation import Transformation
 from gdpc.editor import Editor
@@ -95,7 +95,7 @@ class Grid:
                 ),
             )
 
-        if opposites[asset.facing] == facing:
+        if OPPOSITES[asset.facing] == facing:
             return build_nbt(
                 editor,
                 asset,

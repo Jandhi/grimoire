@@ -15,7 +15,7 @@ from grimoire.buildings.rooms.room import Room
 
 
 from grimoire.core.assets.load_assets import load_assets
-from grimoire.core.structures.legacy_directions import cardinal
+from grimoire.core.structures.legacy_directions import CARDINAL
 
 from grimoire.palette import Palette
 from grimoire.buildings.roofs.roof import Roof
@@ -54,7 +54,7 @@ palette: Palette = Palette.find("japanese_dark_blackstone")
 lower_wall: Wall = Wall.find(style["lower"])
 upper_wall: Wall = Wall.find(style["upper"])
 
-for direction in cardinal:
+for direction in CARDINAL:
     # FIXME: `lower_wall` and `upper_wall` are Wall instead of NBTAsset
     grid.build(editor, lower_wall, palette, ivec3(0, 0, 0), direction)
     grid.build(editor, upper_wall, palette, ivec3(0, 1, 0), direction)

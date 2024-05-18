@@ -8,91 +8,18 @@
         "type": "tabs",
         "children": [
           {
-            "id": "05b7f7444338d95a",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "README.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "58af8accd939ced5",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Decorating TODO.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
             "id": "f3ab5443f0e8acb6",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Refectoring TODO.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "0cf502a789286a92",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "GDPC Improvements.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "974a7f2e4e201a09",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Meeting.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "ced20d6e064a49a9",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Path Generation.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "ce3ec46d9762a7be",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Decorations.md",
+                "file": "James' Notes/Decorations.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -142,8 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "1cc4e703cc79988e",
@@ -159,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Refectoring TODO.md",
+                "file": "James' Notes/Decorations.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -176,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "Refectoring TODO.md",
+                "file": "James' Notes/Decorations.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -199,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Refectoring TODO.md"
+                "file": "James' Notes/Decorations.md"
               }
             }
           }
@@ -220,32 +146,41 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "f3ab5443f0e8acb6",
+  "active": "09a367566069b051",
   "lastOpenFiles": [
-    "Path Generation.md",
-    "Meeting.md",
-    "GDPC Improvements.md",
     "Decorating TODO.md",
-    "README.md",
+    "James' Notes/Decorations.md",
     "Refectoring TODO.md",
-    "Decorations.md",
-    "James' Old Notes/Token Palettes.md",
-    "James' Old Notes/Temp (Waterway detection).md",
-    "James' Old Notes/Temp (Structures).md",
-    "James' Old Notes/Temp (Structure Detection).md",
-    "James' Old Notes/Temp (Settlement Location).md",
-    "James' Old Notes/Temp (Districts).md",
-    "James' Old Notes/Temp (Continuous Structures).md",
-    "James' Old Notes/Property.md",
-    "James' Old Notes/Project Charter.md",
-    "James' Old Notes/Pasted image 20240420101450.png",
-    "James' Old Notes/Pasted image 20240419143155.png",
-    "James' Old Notes/Meeting.md",
-    "James' Old Notes/Master Plan.md",
-    "James' Old Notes/Criteria.md",
-    "James' Old Notes/Construction.md",
-    "James' Old Notes/Cell Maps.md",
-    "James' Old Notes",
-    "Welcome.md"
+    "James' Notes/Building analysis/Building analysis - Anno 1800.md",
+    "James' Notes/James' Old Notes 1/Token Palettes.md",
+    "James' Notes/James' Old Notes 1/Temp (Waterway detection).md",
+    "James' Notes/James' Old Notes 1/Temp (Structures).md",
+    "James' Notes/James' Old Notes 1/Temp (Structure Detection).md",
+    "James' Notes/James' Old Notes 1/Temp (Settlement Location).md",
+    "James' Notes/James' Old Notes 1/Temp (Districts).md",
+    "James' Notes/James' Old Notes 1/Temp (Continuous Structures).md",
+    "James' Notes/James' Old Notes 1/Property.md",
+    "James' Notes/James' Old Notes 1/Project Charter.md",
+    "James' Notes/James' Old Notes 1/Pasted image 20240420101450.png",
+    "James' Notes/James' Old Notes 1/Pasted image 20240419143155.png",
+    "James' Notes/James' Old Notes 1/Meeting.md",
+    "James' Notes/James' Old Notes 1/Master Plan.md",
+    "James' Notes/James' Old Notes 1/Criteria.md",
+    "James' Notes/James' Old Notes 1/Construction.md",
+    "James' Notes/James' Old Notes 1/Cell Maps.md",
+    "James' Notes/James' Old Notes 1",
+    "James' Notes/Building analysis/Building analysis - Age of Empires II.md",
+    "James' Notes/Building analysis/Building analysis - Islanders.md",
+    "James' Notes/Building analysis/Building analysis - Timberborn.md",
+    "James' Notes/Building analysis/Building analysis - Urbek.md",
+    "James' Notes/James' Old Notes/Temp (Districts).md",
+    "Path Generation.md",
+    "James' Notes/Building analysis/Building analysis - Dorfromantik.md",
+    "James' Notes/James' Old Notes/Temp (Structures).md",
+    "James' Notes",
+    "James' Notes/Building analysis",
+    "James' Notes/James' Old Notes/Pasted image 20240420101450.png",
+    "James' Notes/James' Old Notes/Pasted image 20240419143155.png",
+    "James' Notes/James' Old Notes"
   ]
 }

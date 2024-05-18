@@ -4,13 +4,13 @@ from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
 from ..core.structures.legacy_directions import (
-    north,
+    NORTH,
     get_ivec2,
     right,
     to_text,
     ivec2_to_dir,
     vector,
-    cardinal,
+    CARDINAL,
     opposite,
 )
 from ..core.utils.geometry import (
@@ -180,7 +180,7 @@ def build_wall_standard(
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
-    previous_dir = north
+    previous_dir = NORTH
 
     walkway_list = (
         []
@@ -258,7 +258,7 @@ def build_wall_standard_with_inner(
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
-    previous_dir = north
+    previous_dir = NORTH
 
     walkway_list = (
         []
@@ -505,7 +505,7 @@ def flatten_walkway(
     # 2nd pass to add stairs based on first pass changes
     for key in walkway_dict:
         height = walkway_dict[key]
-        for direction in cardinal:
+        for direction in CARDINAL:
             delta = get_ivec2(direction)
             neighbour = key + delta
             if walkway_dict.get(neighbour) is None:

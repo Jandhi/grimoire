@@ -1,6 +1,6 @@
 from gdpc import WorldSlice
 from ..districts.district import District
-from ..core.structures.legacy_directions import cardinal, vector
+from ..core.structures.legacy_directions import CARDINAL, vector
 from gdpc.vector_tools import Rect, ivec2, ivec3
 
 
@@ -64,7 +64,7 @@ def find_edges(world_slice: WorldSlice, district_map: list[list[District]]):
             if district is None:
                 continue
 
-            for direction in cardinal:
+            for direction in CARDINAL:
                 neighbour = point + vector(direction)
 
                 if (

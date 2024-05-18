@@ -1,13 +1,13 @@
 from gdpc.vector_tools import ivec2
 from gdpc import WorldSlice
-from ..structures.legacy_directions import cardinal, get_ivec2
+from ..structures.legacy_directions import CARDINAL, get_ivec2
 
 
 # finds the neighbours points of a point in a set
 def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         delta = get_ivec2(direction)
         neighbour = point + delta
 
@@ -21,7 +21,7 @@ def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
 def get_neighbours_not_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         delta = get_ivec2(direction)
         neighbour = point + delta
 

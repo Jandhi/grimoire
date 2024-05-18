@@ -1,7 +1,7 @@
 **Feature branch: `None`**
 
 For the sake of this issue, artificial features are objects that are continuous in nature and directly adapt to the surrounding topology.
-For finite objects, see [[Temp (Structures)]]
+For finite objects, see [[James' Notes/James' Old Notes/Temp (Structures)]]
 Many of these objects may be part of an area, see #10 
 
 ## Transport

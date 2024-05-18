@@ -3,7 +3,7 @@ from gdpc.vector_tools import ivec3
 from .roof_component import RoofComponent, CORNER, INNER, SIDE
 from ..building_plan import BuildingPlan
 from ...core.structures.grid import Grid
-from ...core.structures.legacy_directions import north, south, east, west, up
+from ...core.structures.legacy_directions import NORTH, SOUTH, EAST, WEST, UP
 from ...core.utils.vectors import y_ivec3
 from ...core.structures.nbt.build_nbt import build_nbt
 from ...core.structures.transformation import Transformation
@@ -29,13 +29,13 @@ def build_roof(
 
     # northwest
     for cell in plan.cells:
-        if cell.has_neighbour(up):
+        if cell.has_neighbour(UP):
             continue
 
         coords = grid.grid_to_local(cell.position + y_ivec3(1)) + grid.origin
 
         # northwest
-        if cell.has_neighbour(north) and cell.has_neighbour(west):
+        if cell.has_neighbour(NORTH) and cell.has_neighbour(WEST):
             build_nbt(
                 editor,
                 inner,
@@ -44,7 +44,7 @@ def build_roof(
                     offset=coords + ivec3(0, 0, 0),
                 ),
             )
-        elif not cell.has_neighbour(north) and not cell.has_neighbour(west):
+        elif not cell.has_neighbour(NORTH) and not cell.has_neighbour(WEST):
             build_nbt(
                 editor,
                 corner,
@@ -53,7 +53,7 @@ def build_roof(
                     offset=coords + ivec3(0, 0, 0),
                 ),
             )
-        elif cell.has_neighbour(north) and not cell.has_neighbour(west):
+        elif cell.has_neighbour(NORTH) and not cell.has_neighbour(WEST):
             build_nbt(
                 editor,
                 side,
@@ -76,7 +76,7 @@ def build_roof(
             )
 
         # northeast
-        if cell.has_neighbour(north) and cell.has_neighbour(east):
+        if cell.has_neighbour(NORTH) and cell.has_neighbour(EAST):
             build_nbt(
                 editor,
                 inner,
@@ -86,7 +86,7 @@ def build_roof(
                     mirror=(True, False, False),
                 ),
             )
-        elif not cell.has_neighbour(north) and not cell.has_neighbour(east):
+        elif not cell.has_neighbour(NORTH) and not cell.has_neighbour(EAST):
             build_nbt(
                 editor,
                 corner,
@@ -96,7 +96,7 @@ def build_roof(
                     mirror=(True, False, False),
                 ),
             )
-        elif cell.has_neighbour(north) and not cell.has_neighbour(east):
+        elif cell.has_neighbour(NORTH) and not cell.has_neighbour(EAST):
             build_nbt(
                 editor,
                 side,
@@ -119,7 +119,7 @@ def build_roof(
             )
 
         # southwest
-        if cell.has_neighbour(south) and cell.has_neighbour(west):
+        if cell.has_neighbour(SOUTH) and cell.has_neighbour(WEST):
             build_nbt(
                 editor,
                 inner,
@@ -129,7 +129,7 @@ def build_roof(
                     mirror=(False, False, True),
                 ),
             )
-        elif not cell.has_neighbour(south) and not cell.has_neighbour(west):
+        elif not cell.has_neighbour(SOUTH) and not cell.has_neighbour(WEST):
             build_nbt(
                 editor,
                 corner,
@@ -139,7 +139,7 @@ def build_roof(
                     mirror=(False, False, True),
                 ),
             )
-        elif cell.has_neighbour(south) and not cell.has_neighbour(west):
+        elif cell.has_neighbour(SOUTH) and not cell.has_neighbour(WEST):
             build_nbt(
                 editor,
                 side,
@@ -162,7 +162,7 @@ def build_roof(
             )
 
         # southeast
-        if cell.has_neighbour(south) and cell.has_neighbour(east):
+        if cell.has_neighbour(SOUTH) and cell.has_neighbour(EAST):
             build_nbt(
                 editor,
                 inner,
@@ -172,7 +172,7 @@ def build_roof(
                     mirror=(True, False, True),
                 ),
             )
-        elif not cell.has_neighbour(south) and not cell.has_neighbour(east):
+        elif not cell.has_neighbour(SOUTH) and not cell.has_neighbour(EAST):
             build_nbt(
                 editor,
                 corner,
@@ -182,7 +182,7 @@ def build_roof(
                     mirror=(True, False, True),
                 ),
             )
-        elif cell.has_neighbour(south) and not cell.has_neighbour(east):
+        elif cell.has_neighbour(SOUTH) and not cell.has_neighbour(EAST):
             build_nbt(
                 editor,
                 side,

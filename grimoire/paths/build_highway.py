@@ -1,11 +1,11 @@
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec3, ivec2
 <<<<<<< HEAD
-from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
 from ..core.utils.bounds import is_in_bounds2d
 from ..core.maps.map import Map
 =======
-from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
 from ..core.utils.bounds import is_in_bounds2d
 from ..core.maps import Map
 >>>>>>> 02c25de9b7a9820350b4fc39db5440fab0975558
@@ -25,7 +25,7 @@ def build_highway(
         master_points.add(point_2d)
         final_point_heights[point_2d] = point.y
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point_2d + get_ivec2(direction)
 
             if not is_in_bounds2d(neighbour, world_slice):
@@ -62,7 +62,7 @@ def get_block(point: ivec2, final_point_heights: dict[ivec2, int]) -> Block:
     y_in_dir = {}
     y = final_point_heights[point]
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         dv = get_ivec2(direction)
 
         if point + dv not in final_point_heights:

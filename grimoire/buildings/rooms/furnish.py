@@ -9,14 +9,14 @@ from ...palette import Palette
 from .room import Room
 from ...core.structures.grid import Grid
 from ...core.structures.legacy_directions import (
-    cardinal,
+    CARDINAL,
     vector as get_ivec3,
     right,
-    up,
-    north,
-    east,
-    south,
-    west,
+    UP,
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST,
 )
 
 ROOM_LIST = [
@@ -63,7 +63,7 @@ def is_corner(cell_to_check: ivec3, cells_to_fill: list) -> tuple:
     ]
 
     test = []
-    for direction in cardinal:
+    for direction in CARDINAL:
         neighbor = cell_to_check + get_ivec3(direction)
         if neighbor in cells_to_fill:
             test.append("open")
@@ -84,7 +84,7 @@ def build_start(
 ) -> list:
     start_connections = []
     start = rng.choose(cells_to_fill)
-    for direction in cardinal:
+    for direction in CARDINAL:
         neighbor = start + get_ivec3(direction)
         if neighbor in cells_to_fill or direction in cells[ivec3(*start)].doors:
             start_connections.append("open")
@@ -126,7 +126,7 @@ def build_staircase(
         for potential_start in cells_to_fill
         if (
             is_corner(potential_start, cells_to_fill)[0]
-            and potential_start + get_ivec3(up) in cells_to_fill
+            and potential_start + get_ivec3(UP) in cells_to_fill
             and potential_start not in cells_with_rooms
             and list(potential_start)[1] == level
         )
@@ -148,7 +148,7 @@ def build_staircase(
         for potential_start in cells_to_fill
         if (
             is_corner(potential_start, cells_to_fill)[0]
-            and potential_start + get_ivec3(up) in cells_to_fill
+            and potential_start + get_ivec3(UP) in cells_to_fill
             and potential_start not in cells_with_rooms
             and list(potential_start)[1] == level
         )
@@ -170,10 +170,10 @@ def build_staircase(
     room_to_build, room_facing, connections = rng.choose(potential_rooms)
 
     cells_with_rooms.append((start, connections))
-    cells_with_rooms.append((start + get_ivec3(up), connections))
+    cells_with_rooms.append((start + get_ivec3(UP), connections))
 
     # clear floor for stair
-    top_stair_origin = grid.grid_to_world(start + get_ivec3(up))
+    top_stair_origin = grid.grid_to_world(start + get_ivec3(UP))
     for x in range(1, grid.width - 1):
         for z in range(1, grid.depth - 1):
             editor.placeBlock(top_stair_origin + ivec3(x, 0, z), Block("air"))
@@ -181,7 +181,7 @@ def build_staircase(
     grid.build(editor, room_to_build, palette, start, facing=room_facing)
     room_to_build: Room = Room.find("staircase_corner_upper")
     grid.build(
-        editor, room_to_build, palette, start + get_ivec3(up), facing=room_facing
+        editor, room_to_build, palette, start + get_ivec3(UP), facing=room_facing
     )
 
     return cells_with_rooms
@@ -190,7 +190,7 @@ def build_staircase(
 def get_neighbors(rooms: list, inside_cells: list) -> set:
     neighbors = set()
     for room in rooms:
-        for direction in cardinal:
+        for direction in CARDINAL:
             new_cell = room + get_ivec3(direction)
             if new_cell not in rooms and new_cell in inside_cells:
                 neighbors.add(new_cell)
@@ -219,36 +219,36 @@ def populate_floor(
         for neighbor in get_neighbors([x for x, y in rooms_on_floor], cells_on_floor):
             north_con, east_con, south_con, west_con = None, None, None, None
             for c, conns in rooms_on_floor:
-                for direction in cardinal:
+                for direction in CARDINAL:
                     if neighbor + get_ivec3(direction) == c:
-                        if direction == north:
+                        if direction == NORTH:
                             north_con = conns[2]
-                        elif direction == east:
+                        elif direction == EAST:
                             east_con = conns[3]
-                        elif direction == south:
+                        elif direction == SOUTH:
                             south_con = conns[0]
-                        elif direction == west:
+                        elif direction == WEST:
                             west_con = conns[1]
 
-            for direction in cardinal:
+            for direction in CARDINAL:
                 if (neighbor + get_ivec3(direction)) not in cells_on_floor:
-                    if direction == north:
+                    if direction == NORTH:
                         north_con = "wall"
-                    elif direction == east:
+                    elif direction == EAST:
                         east_con = "wall"
-                    elif direction == south:
+                    elif direction == SOUTH:
                         south_con = "wall"
-                    elif direction == west:
+                    elif direction == WEST:
                         west_con = "wall"
 
             # DOOR CHECK
-            if north in cells[ivec3(*neighbor)].doors:
+            if NORTH in cells[ivec3(*neighbor)].doors:
                 north_con = "open"
-            if south in cells[ivec3(*neighbor)].doors:
+            if SOUTH in cells[ivec3(*neighbor)].doors:
                 south_con = "open"
-            if east in cells[ivec3(*neighbor)].doors:
+            if EAST in cells[ivec3(*neighbor)].doors:
                 east_con = "open"
-            if west in cells[ivec3(*neighbor)].doors:
+            if WEST in cells[ivec3(*neighbor)].doors:
                 west_con = "open"
 
             new_conns = [north_con, east_con, south_con, west_con]
@@ -339,7 +339,7 @@ def build_one_by_one(
         upper_room: Room = Room.find(upper_pick)
 
         grid.build(editor, lower_room, palette, cell)
-        grid.build(editor, upper_room, palette, cell + get_ivec3(up))
+        grid.build(editor, upper_room, palette, cell + get_ivec3(UP))
 
 
 def furnish(

@@ -1,14 +1,14 @@
 from .block import Block
 from .legacy_directions import (
-    x_plus,
-    x_minus,
-    y_plus,
-    y_minus,
-    z_plus,
-    z_minus,
+    X_PLUS,
+    X_MINUS,
+    Y_PLUS,
+    Y_MINUS,
+    Z_PLUS,
+    Z_MINUS,
     from_text,
     to_text,
-    directions,
+    DIRECTIONS,
 )
 from .structure import Structure
 from .nbt.nbt_asset import NBTAsset
@@ -16,38 +16,38 @@ from gdpc.vector_tools import ivec3
 
 # region Transformation dictionaries
 x_mirror = {
-    x_plus: x_minus,
-    x_minus: x_plus,
-    y_plus: y_plus,
-    y_minus: y_minus,
-    z_plus: z_plus,
-    z_minus: z_minus,
+    X_PLUS: X_MINUS,
+    X_MINUS: X_PLUS,
+    Y_PLUS: Y_PLUS,
+    Y_MINUS: Y_MINUS,
+    Z_PLUS: Z_PLUS,
+    Z_MINUS: Z_MINUS,
 }
 y_mirror = {
-    x_plus: x_plus,
-    x_minus: x_minus,
-    y_plus: y_minus,
-    y_minus: y_plus,
-    z_plus: z_plus,
-    z_minus: z_minus,
+    X_PLUS: X_PLUS,
+    X_MINUS: X_MINUS,
+    Y_PLUS: Y_MINUS,
+    Y_MINUS: Y_PLUS,
+    Z_PLUS: Z_PLUS,
+    Z_MINUS: Z_MINUS,
 }
 z_mirror = {
-    x_plus: x_plus,
-    x_minus: x_minus,
-    y_plus: y_plus,
-    y_minus: y_minus,
-    z_plus: z_minus,
-    z_minus: z_plus,
+    X_PLUS: X_PLUS,
+    X_MINUS: X_MINUS,
+    Y_PLUS: Y_PLUS,
+    Y_MINUS: Y_MINUS,
+    Z_PLUS: Z_MINUS,
+    Z_MINUS: Z_PLUS,
 }
 mirror_dicts = (x_mirror, y_mirror, z_mirror)
 
 diagonal_mirror = {
-    x_plus: z_plus,
-    x_minus: z_minus,
-    y_plus: y_plus,
-    y_minus: y_minus,
-    z_plus: x_plus,
-    z_minus: x_minus,
+    X_PLUS: Z_PLUS,
+    X_MINUS: Z_MINUS,
+    Y_PLUS: Y_PLUS,
+    Y_MINUS: Y_MINUS,
+    Z_PLUS: X_PLUS,
+    Z_MINUS: X_MINUS,
     "x": "z",
     "z": "x",
 }
@@ -89,7 +89,7 @@ class Transformation:
         properties = {}
 
         for pname, pvalue in block.properties.items():
-            direction_names = [to_text(direction) for direction in directions]
+            direction_names = [to_text(direction) for direction in DIRECTIONS]
 
             if pname in direction_names:
                 properties[self.apply_to_text(pname)] = pvalue

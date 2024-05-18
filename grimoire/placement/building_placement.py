@@ -1,15 +1,7 @@
 import contextlib
+
+from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
-from ..core.maps import Map
-from ..core.structures.legacy_directions import (
-    z_minus,
-    z_plus,
-    x_minus,
-    x_plus,
-    cardinal,
-    get_ivec2,
-    LegacyDirection,
-)
 
 from ..buildings.build_floor import build_floor
 from ..buildings.building_plan import BuildingPlan
@@ -20,36 +12,32 @@ from ..buildings.roofs.roof_component import RoofComponent
 from ..buildings.rooms.furnish import furnish
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
-from ..core.maps import CITY_ROAD, CITY_WALL
+from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
 from ..core.structures.grid import Grid
 from ..core.structures.legacy_directions import (
-    cardinal,
+    LegacyDirection,
+    CARDINAL,
     get_ivec2,
-    x_minus,
-    x_plus,
-    z_minus,
-    z_plus,
+    X_MINUS,
+    X_PLUS,
+    Z_MINUS,
+    Z_PLUS,
 )
-from gdpc import Block, Editor
-from gdpc.vector_tools import ivec2, ivec3, vec2
-from ..palette import fix_block_name
-
-from ..core.maps import Map
-from ..palette import Palette
+from ..palette import Palette, fix_block_name
 
 offsets = {
-    z_minus: [ivec2(0, 0), ivec2(-1, 0)],
-    x_minus: [ivec2(0, 0), ivec2(0, -1)],
-    x_plus: [ivec2(-1, -1), ivec2(-1, 0)],
-    z_plus: [ivec2(-1, -1), ivec2(0, -1)],
+    Z_MINUS: [ivec2(0, 0), ivec2(-1, 0)],
+    X_MINUS: [ivec2(0, 0), ivec2(0, -1)],
+    X_PLUS: [ivec2(-1, -1), ivec2(-1, 0)],
+    Z_PLUS: [ivec2(-1, -1), ivec2(0, -1)],
 }
 
 door_points = {
-    z_minus: vec2(0.5, 0),
-    z_plus: vec2(0.5, 1),
-    x_plus: vec2(1, 0.5),
-    x_minus: vec2(0, 0.5),
+    Z_MINUS: vec2(0.5, 0),
+    Z_PLUS: vec2(0.5, 1),
+    X_PLUS: vec2(1, 0.5),
+    X_MINUS: vec2(0, 0.5),
 }
 
 WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
@@ -155,7 +143,9 @@ def attempt_building_placement_at_offset(
     return True
 
 
-def can_place_shape(shape: BuildingShape, grid: Grid, map: Map, urban_only: bool):
+def can_place_shape(
+    shape: BuildingShape, grid: Grid, map: Map, urban_only: bool
+) -> bool:
     points = list(shape.get_points_2d(grid))
     water_amt = 0
     total_height_diff = 0
@@ -182,10 +172,7 @@ def can_place_shape(shape: BuildingShape, grid: Grid, map: Map, urban_only: bool
         return False
 
     avg_height_diff = total_height_diff / len(points)
-    if avg_height_diff >= MAX_AVG_HEIGHT_DIFF:
-        return False
-
-    return True
+    return avg_height_diff < MAX_AVG_HEIGHT_DIFF
 
 
 def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
@@ -203,12 +190,12 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
             return None
 
         if map.is_in_bounds2d(point) and map.buildings[point.x][point.y] in [
-            CITY_ROAD,
-            CITY_WALL,
+            DevelopmentType.CITY_ROAD,
+            DevelopmentType.CITY_WALL,
         ]:
             return point
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point + get_ivec2(direction)
 
             if map.is_in_bounds2d(neighbour) and neighbour not in visited:
@@ -231,7 +218,7 @@ def place(
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
     for point in shape.get_points_2d(grid):
-        map.buildings[point.x][point.y] = plan
+        map.buildings[point.x][point.y] = plan  # FIXME: Incompatible type
 
     # Clear the area
     for point in shape.get_points(grid):

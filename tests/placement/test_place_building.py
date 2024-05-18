@@ -9,7 +9,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from grimoire.core.maps import Map
 from grimoire.core.assets.load_assets import load_assets
 from grimoire.placement.building_placement import place_building
-from grimoire.core.structures.legacy_directions import z_plus
+from grimoire.core.structures.legacy_directions import Z_PLUS
 from grimoire.core.noise.rng import RNG
 
 
@@ -31,4 +31,4 @@ map = Map(world_slice)
 rng = RNG(SEED)
 
 editor.placeBlock(ivec3(50, -50, 50), Block("glowstone"))
-place_building(editor, ivec2(50, 50), map, z_plus, rng, False)
+place_building(editor, ivec2(50, 50), map, Z_PLUS, rng, False)

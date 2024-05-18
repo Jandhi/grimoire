@@ -17,7 +17,7 @@
 - [x] Identify Stakeholders
 - [ ] Define [[Project Scope]]
 - [ ] Describe [[Deliverables]]
-- [ ] Create [[Project Charter]]
+- [ ] Create [[James' Notes/James' Old Notes/Project Charter]]
 - [ ] Develop project plan
 - [ ] Assemble project team
 - [ ] Establish communication plan
