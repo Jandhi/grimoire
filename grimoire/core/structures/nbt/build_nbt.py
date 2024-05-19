@@ -1,17 +1,27 @@
+from gdpc import Block
 from gdpc.editor import Editor
 from gdpc.vector_tools import ivec3
 
-from ....palette import Palette, palette_swap
+from grimoire.core.styling.legacy_palette import LegacyPalette, palette_swap
 from .convert_nbt import convert_nbt
 from .nbt_asset import NBTAsset
 from ..transformation import Transformation
+from ...styling.palette import Palette
+
+
+def build_nbt(
+    editor,
+    asset,
+    palette: Palette,
+):
+    pass
 
 
 # Constructs an NBTAsset given an editor and transformation
-def build_nbt(
+def build_nbt_legacy(
     editor: Editor,
     asset: NBTAsset,
-    palette: Palette = None,
+    palette: LegacyPalette = None,
     transformation: Transformation = None,
     place_air: bool = False,
     allow_non_solid_replacement: bool = False,
@@ -27,18 +37,20 @@ def build_nbt(
         block = transformed_palette[palette_index]
 
         if (
-            block.name in asset.do_not_place
-            or block.name.removeprefix("minecraft:") in asset.do_not_place
+            block.id in asset.do_not_place
+            or block.id.removeprefix("minecraft:") in asset.do_not_place
         ):
             continue
 
-        if block.name == "minecraft:air" and not place_air:
+        if block.id == "minecraft:air" and not place_air:
             continue
 
         # don't swap if either are null
         if asset.palette and palette:
-            block = block.copy()  # I do this to avoid doubly swapping palettes
-            block.name = palette_swap(block.name, asset.palette, palette)
+            block = Block(
+                block.id, block.states.copy(), block.data
+            )  # I do this to avoid doubly swapping palettes
+            block.id = palette_swap(block.id, asset.palette, palette)
 
         x, y, z = transformation.apply_to_point(
             point=pos, structure=structure, asset=asset
@@ -46,20 +58,17 @@ def build_nbt(
 
         # Doesn't allow non-solid blocks to replace blocks
         if (not allow_non_solid_replacement) and any(
-            blocktype in block.name
-            for blocktype in ("stairs", "slab", "walls", "fence")
+            blocktype in block.id for blocktype in ("stairs", "slab", "walls", "fence")
         ):
             curr_block = editor.getBlock(position=(x, y, z))
 
             if "air" not in curr_block.id:
                 continue
 
-        if block.name == "minecraft:barrier":
-            block.name = "minecraft:air"
+        if block.id == "minecraft:barrier":
+            block.id = "minecraft:air"
 
-        editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block(nbt))
-
-        editor.placeBlock(position=(x, y, z), block=block.to_gdpc_block(nbt))
+        editor.placeBlock(position=(x, y, z), block=block)
 
     for pos, entity in structure.entities.items():
         id = entity[0]

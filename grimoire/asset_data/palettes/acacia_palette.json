@@ -1,6 +1,6 @@
 {
     "name" : "acacia_palette",
-    "type" : "palette",
+    "type" : "legacy_palette",
     "primary_wood" : "acacia",
     "secondary_wood" : "birch",
     "primary_stone" : "sandstone",

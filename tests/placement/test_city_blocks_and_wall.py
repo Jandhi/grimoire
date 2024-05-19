@@ -1,24 +1,24 @@
 # Allows code to be run in root directory
 import sys
 
+from glm import ivec2
+
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
 # Actual file
 from gdpc import Block, Editor
 from gdpc.geometry import line3D
-from gdpc.vector_tools import ivec2
 
-from grimoire.core.assets.load_assets import load_assets
-from grimoire.core.maps import DevelopmentType
-from grimoire.core.maps import Map
+from grimoire.core.assets.asset_loader import load_assets
+from grimoire.core.maps import BUILDING, GATE, DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.structures.legacy_directions import get_ivec2
+from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.core.utils.bounds import area_2d
 from grimoire.core.utils.geometry import get_outer_points
 from grimoire.core.utils.vectors import y_ivec3
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.districts.wall import build_wall_standard_with_inner, order_wall_points
-from grimoire.palette.palette import Palette
 from grimoire.paths.build_highway import build_highway
 from grimoire.paths.route_highway import fill_out_highway, route_highway
 from grimoire.placement.city_blocks import add_city_blocks
@@ -29,7 +29,7 @@ SEED = 77273
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
-load_assets("assets")
+load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 
@@ -50,7 +50,7 @@ world_map.districts = district_map
 
 # set up palettes
 eligible_palettes = list(
-    filter(lambda palette: "desert" in palette.tags, Palette.all())
+    filter(lambda palette: "desert" in palette.tags, LegacyPalette.all())
 )
 rng = RNG(SEED, "palettes")
 
@@ -137,7 +137,7 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = Palette.find("desert_dark_prismarine")
+palette = LegacyPalette.find("desert_dark_prismarine")
 
 # can use either test_blocks for more urban or test_blocks_dirt for dirty ground
 # replace_ground(inner_points, test_blocks, rng, map.water)

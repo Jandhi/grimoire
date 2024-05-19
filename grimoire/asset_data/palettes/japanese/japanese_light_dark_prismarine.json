@@ -1,7 +1,7 @@
 {
     "name" : "japanese_light_dark_prismarine",
     "tags" : ["japanese"], 
-    "type" : "palette",
+    "type" : "legacy_palette",
     "primary_wood" : "birch",
     "secondary_wood" : "oak",
     "primary_stone" : "dark_prismarine",

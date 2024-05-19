@@ -1,4 +1,14 @@
-from typing import Iterator
+from typing import Iterator, TypeVar
+
+from gdpc import WorldSlice
+from gdpc.vector_tools import ivec2, ivec3
+
+T = TypeVar("T")
+
+
+def clamp(value: T, minimum: T, maximum: T) -> T:
+    return min(maximum, max(minimum, value))
+
 
 from gdpc import WorldSlice
 from gdpc.vector_tools import ivec2, ivec3

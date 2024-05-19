@@ -1,8 +1,20 @@
+from grimoire.core.styling.materials.dithering import DitheringPattern
+from grimoire.core.styling.materials.gradient import (
+    Gradient,
+    GradientAxis,
+    PerlinSettings,
+)
+from grimoire.core.styling.materials.material import (
+    BasicMaterial,
+    Material,
+    MaterialParameters,
+)
 from ..core.noise.rng import RNG
 from ..core.noise.random import randrange
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
+
 from ..core.structures.legacy_directions import (
     NORTH,
     get_ivec2,
@@ -13,6 +25,8 @@ from ..core.structures.legacy_directions import (
     CARDINAL,
     opposite,
 )
+from grimoire.core.styling.legacy_palette import LegacyPalette
+from ..core.styling.blockform import BlockForm
 from ..core.utils.geometry import (
     get_neighbours_in_set,
     is_straight_ivec2,
@@ -20,12 +34,11 @@ from ..core.utils.geometry import (
     get_outer_points,
 )
 from ..core.utils.misc import is_water
-from ..core.structures.nbt.build_nbt import build_nbt
+from ..core.structures.nbt.build_nbt import build_nbt_legacy
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
-from ..palette import Palette
-from ..palette import fix_block_name
 from ..districts.gate import add_gates, Gate
+from grimoire.core.styling.legacy_palette import fix_block_name
 
 
 def get_wall_points(inner_points, world_slice):
@@ -123,7 +136,7 @@ def build_wall_palisade(
     world_slice: WorldSlice,
     water_map: dict,
     rng: RNG,
-    palette: Palette,
+    palette: LegacyPalette,
 ) -> list[Gate]:
     wood = palette.secondary_wood
 
@@ -173,9 +186,9 @@ def build_wall_standard(
     editor: Editor,
     world_slice: WorldSlice,
     water_map: dict,
-    palette: Palette,
+    palette: LegacyPalette,
 ) -> list[Gate]:
-    wall_points = add_wall_points_height(wall_points, wall_dict, world_slice)
+    wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
@@ -192,8 +205,18 @@ def build_wall_standard(
     full_block = fix_block_name(f"{stone}")
     stairs = fix_block_name(f"{stone}_stairs")
 
+    # temp
+    material: BasicMaterial = Material.find("cobblestone")
+    material.dithering_pattern = DitheringPattern.random_ease_cubic
+
+    rng = RNG(0)
+
     for i, wall_point in enumerate(wall_points):
         point = wall_point[0]
+        gradient = Gradient(
+            0,
+            PerlinSettings(8, 6, 2, 0.3),
+        ).with_axis(GradientAxis.y(height_map[point.x, point.z], point.y))
         if wall_point[2] == "water":
             continue
         else:
@@ -201,7 +224,21 @@ def build_wall_standard(
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                editor.placeBlock((point.x, y, point.z), Block(full_block))
+                material.place_block(
+                    editor,
+                    BlockForm.block,
+                    {},
+                    None,
+                    MaterialParameters(
+                        position=ivec3(point.x, y, point.z),
+                        shade=gradient.calculate_shade(ivec3(point.x, y, point.z)),
+                        age=0,
+                        moisture=0,
+                        dithering_pattern=DitheringPattern.random_ease_quint,
+                    ),
+                )
+
+                # editor.placeBlock((point.x, y, point.z), Block(full_block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
             editor.placeBlock(
@@ -239,7 +276,7 @@ def build_wall_standard(
                             new_pt.y + height_modifier
                         )
 
-    flatten_walkway(walkway_list, walkway_dict, editor, palett=palette)
+    flatten_walkway(walkway_list, walkway_dict, editor, palette=palette)
     return add_gates(wall_points, editor, world_slice, True, None, palette=palette)
 
 
@@ -251,7 +288,7 @@ def build_wall_standard_with_inner(
     world_slice: WorldSlice,
     water_map: dict,
     rng: RNG,
-    palette: Palette,
+    palette: LegacyPalette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -473,7 +510,10 @@ NEIGHBOURS = [
 
 
 def flatten_walkway(
-    walkway_list: list[ivec2], walkway_dict: dict, editor: Editor, palette: Palette
+    walkway_list: list[ivec2],
+    walkway_dict: dict,
+    editor: Editor,
+    palette: LegacyPalette,
 ):
     wood = palette.secondary_wood
 
@@ -599,7 +639,7 @@ def add_towers(
     walkway_dict: dict,
     editor: Editor,
     rng: RNG,
-    palette: Palette,
+    palette: LegacyPalette,
 ):
     distance_to_next_tower = 80  # minimum
     tower_possible = randrange(
@@ -610,7 +650,7 @@ def add_towers(
         type="tower",
         filepath="grimoire/asset_data/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
-        palette=Palette.find("wall_palette"),
+        palette=LegacyPalette.find("wall_palette"),
     )
 
     # blocks
@@ -640,7 +680,7 @@ def add_towers(
                             )
 
                 # build tower
-                build_nbt(
+                build_nbt_legacy(
                     editor=editor,
                     asset=tower,
                     transformation=Transformation(
