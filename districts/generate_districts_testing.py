@@ -1,5 +1,5 @@
 from noise.rng import RNG
-from districts.district import District
+from districts.district import District, SuperDistrict
 from gdpc.vector_tools import Rect, ivec2, distance, ivec3
 from structures.legacy_directions import cardinal, vector
 from gdpc import WorldSlice
@@ -36,20 +36,29 @@ def generate_districts(seed : int, build_rect : Rect, world_slice : WorldSlice, 
         bubble_out(districts, district_map, map)
     
     establish_adjacency(world_slice, district_map, map)
+    super_districts: list[SuperDistrict] = []
+    super_district_map : list[list[District]] = [[None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)]
     for district in districts:
         district_analyze(district, map)
-    merge_down(districts, district_map, TARGET_DISTRICT_AMT, map)
-    
+        #create a super_district parent for it 
+        super_district = SuperDistrict(district)
+        super_districts.append(super_district)
+    for super_district in super_districts:
+        for point in super_district.points_2d:
+            super_district_map[point.x][point.y] = super_district
+    establish_adjacency(world_slice, super_district_map, map)
+    merge_down(super_districts, super_district_map, TARGET_DISTRICT_AMT, map)
 
     # remeasure adjacency after
-    for district in districts:
+    for district in super_districts:
         district.adjacency = {}
         district.adjacencies_total = 0
-    establish_adjacency(world_slice, district_map, map)
+        district.edges = set()
+    establish_adjacency(world_slice, super_district_map, map)
 
     prune_urban_chokepoints(districts)
 
-    return (districts, district_map)
+    return (districts, district_map, super_districts, super_district_map)
 
 def recalculate_center_point(world_slice : WorldSlice, districts : list[District], district_map : list[list[District]]):
     print("finding center point again")
@@ -61,7 +70,8 @@ def recalculate_center_point(world_slice : WorldSlice, districts : list[District
         district_map[origin.x][origin.z] = district
     
 
-
+#TODO (eventually): change way bubble out works so that each district is guaranteed to contain blocks that most walkable to its center 
+#(no claiming then gradually fulfiling the claim, rather gradually fulfilling the claim before grabbing the point)
 def bubble_out(districts : list[District], district_map : list[list[District]], map : Map):
     #additional value added which defines how many iterations needed to claim the block
     queue = [[district.origin, 0] for district in districts]

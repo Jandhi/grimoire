@@ -12,7 +12,7 @@ from terrain.logger import log_trees
 from terrain.smooth_edges import smooth_edges
 from terrain.plateau import plateau
 from maps.map import Map
-from districts.district_analyze import district_analyze, district_classification
+from districts.district_analyze import district_analyze, district_classification, super_district_classification
 from districts.tests.place_colors import get_color_differentiated
 
 SEED = 754
@@ -39,7 +39,7 @@ print("World slice reloaded!")
 
 water_map = get_water_map(world_slice)
 map = Map(world_slice)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, map)
+districts, district_map, super_districts, super_district_map = generate_districts(SEED, build_rect, world_slice, map)
 map.districts = district_map
 
 if DO_TERRAFORMING:
@@ -63,19 +63,29 @@ if DO_TERRAFORMING:
     map.world = world_slice
     map.correct_district_heights(districts)
 
+SUPER_DISTRICT = True
 
-for district in districts:
-    x = district.origin.x
-    z = district.origin.z
+if SUPER_DISTRICT:
 
-    #y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
-    #editor.placeBlock((x, y, z), Block('sea_lantern'))
-    district_analyze(district, map)
-    block = get_color_differentiated(district, districts, False)
+    for district in super_districts:
+        district_analyze(district, map)
+        block = get_color_differentiated(district, super_districts, False)
 
-    print(f"BLock: {block}  ID: {district.id}   Area: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness}    GRADIENT: {district.gradient}") #    BIOMES: {district.biome_dict}  BLOCKS: {district.surface_blocks}")
+        print(f"BLock: {block}  ID: {district.id}   Area: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness}    GRADIENT: {district.gradient}") #    BIOMES: {district.biome_dict}  BLOCKS: {district.surface_blocks}")
+
+    district_classification(districts)
+    super_district_classification(super_districts)
+
+    draw_districts(super_districts, build_rect, super_district_map, map, super_district_map, editor)
+
+else:
+    for district in districts:
+        district_analyze(district, map)
+        block = get_color_differentiated(district, districts, False)
+
+        print(f"BLock: {block}  ID: {district.id}   Area: {len(district.points)}  WATER: {district.water_percentage}   FOREST: {district.forested_percentage}    ROUGHNESS: {district.roughness}    GRADIENT: {district.gradient}") #    BIOMES: {district.biome_dict}  BLOCKS: {district.surface_blocks}")
 
 
-district_classification(districts)
+    district_classification(districts)
 
-draw_districts(districts, build_rect, district_map, map, world_slice, editor)
+    draw_districts(district, build_rect, district_map, map, super_district_map, editor)

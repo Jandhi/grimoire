@@ -1,5 +1,5 @@
-from districts.district import District
-from districts.district_analyze import district_analyze
+from districts.district import District, SuperDistrict
+from districts.district_analyze import district_analyze, get_candidate_score
 from maps.map import Map
 
 RURAL_SIZE_RATIO = 3 # NOTE: not currently used, we expect rural districts to be this times larger in area than urban ones
@@ -71,27 +71,9 @@ def get_best_merge_candidate(district : District, options : list[District]) -> D
     output = f'\tConsidering options for {district}: '
     for candidate, score in candidate_scores.items():
         output += f'({candidate}: {score}) '
-    print(output)
+    #print(output)
 
     return best 
-
-def get_candidate_score(district : District, candidate : District) -> float:
-    #NOTE: option to add some hard limits to scores, where below a certain score in a category it is flat out rejected
-
-    adjacency_score = 1000.0 * district.get_adjacency_ratio(candidate)  / float(candidate.area) 
-    
-    biome_score = 1 - sum(abs(district.biome_dict[key]/district.area - candidate.biome_dict.get(key,0)/candidate.area)
-                            for key in district.biome_dict.keys())/len(district.biome_dict.keys())
-    
-    water_score = 1 - abs(district.water_percentage - candidate.water_percentage)
-
-    forest_score = 1 - abs(district.forested_percentage - candidate.forested_percentage)
-
-    gradient_score = 1 - abs(district.gradient - candidate.gradient)/2
-
-    roughness_score = 1 / (abs(district.roughness - candidate.roughness) + 1)
-
-    return (adjacency_score * 3 + biome_score + water_score + forest_score + gradient_score + roughness_score)/8
 
 # NOTE: Not currently used
 def get_adjusted_area(district :  District) -> int:
@@ -104,7 +86,13 @@ def get_adjusted_area(district :  District) -> int:
 # NOTE: this will create outdated edges (between parent and child). 
 # Edges should be scanned for again after the merging process.
 def merge(parent : District, child : District, districts : list[District], identities : dict[District, District]):
-    print(f'\tMerging {child} into {parent}')
+    #print(f'\tMerging {child} into {parent}')
+
+    if not isinstance(child, SuperDistrict):
+        parent.districts.append(child)
+    else:
+        for district in child.districts:
+            parent.districts.append(district)
 
     districts.remove(child)
     identities[child] = parent
@@ -128,7 +116,7 @@ def merge(parent : District, child : District, districts : list[District], ident
 
     parent.adjacency.pop(child)
 
-    # switch child for parent in other districts
+    # switch child for parent in other districts, is this just removed?
     for district in districts:
         if district == parent:
             continue
