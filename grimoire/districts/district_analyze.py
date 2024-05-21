@@ -1,11 +1,11 @@
 from gdpc import Block
 from ..core.maps import Map
 from gdpc.vector_tools import ivec2, ivec3
-from districts.district import District, SuperDistrict
+from ..districts.district import District, SuperDistrict
 import math
 
 URBAN_SIZE = 800 #max number of urban districts
-BEST_SCORE = 0.65 #score needed to become urban in relation to prime urban district
+BEST_SCORE = 0.6 #score needed to become urban in relation to prime urban district
 
 def district_analyze(district: District, map: Map):
     average = district.average()

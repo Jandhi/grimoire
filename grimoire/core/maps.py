@@ -6,7 +6,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from .utils.bounds import is_in_bounds
 from .utils.bounds import is_in_bounds2d
 from .utils.sets.set_operations import find_outline
-
+from ..terrain.tree_cutter import TREE_BLOCKS
 
 HIGHWAY = "highway"  # FIXME: Unused variable
 CITY_ROAD = "city_road"
@@ -15,6 +15,36 @@ WALL = "Wall"  # FIXME: Unused variable
 CITY_WALL = "city_wall"
 GATE = "gate"
 
+def get_biome_map(world_slice : WorldSlice):
+    size = world_slice.rect.size
+
+    biome_map = [[False for _ in range(size.y)] for _ in range(size.x)]
+
+    for x in range(size.x):
+        for z in range(size.y):
+            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            biome = world_slice.getBiome((x, y, z))
+
+            biome_map[x][z] = biome
+
+    return biome_map
+
+def get_block_and_water_map(world_slice : WorldSlice) -> tuple[list[list[Block]], list[list[bool]]]:
+    size = world_slice.rect.size
+
+    block_map = [[False for _ in range(size.y)] for _ in range(size.x)]
+    water_map = [[False for _ in range(size.y)] for _ in range(size.x)]
+
+    for x in range(size.x):
+        for z in range(size.y):
+            y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z]
+            block : Block = world_slice.getBlock((x, y - 1, z))
+
+            if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
+                water_map[x][z] = True
+            block_map[x][z] = block
+
+    return block_map, water_map
 
 def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
     """
@@ -59,17 +89,22 @@ class Map:
     water: list[list[bool]]
     districts: list[list[District | None]]
     buildings: list[list[str | None]]
-    height: list[list[int]]
+    height: list[list[int]] # height map based on MOTION_BLOCKING_NO_LEAVES
+    height_no_tree: list[list[int]] # custom height map based on MOTION_BLOCKING_NO_LEAVES and ignoring wood blocks
+    leaf_height: list[list[int]] # height map based on MOTION_BLOCKING
     world: WorldSlice
-    near_wall: list[list[bool]]  # specifically used for routing roads
+    near_wall: list[list[bool]] # specifically used for routing roads 
+    biome: list[list[str]]
+    block: list[list[Block]]
 
     def __init__(self, world_slice: WorldSlice) -> None:
         size = world_slice.rect.size
         self.world = world_slice
         self.districts = self.empty_map()
-        self.water = get_water_map(world_slice)
         self.buildings = get_building_map(world_slice)
-        self.copy_heightmap()
+        self.biome = get_biome_map(world_slice)
+        self.block, self.water = get_block_and_water_map(world_slice)
+        self.copy_heightmaps(world_slice)
         self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
 
     def correct_district_heights(self, districts: list[District]):
@@ -82,14 +117,41 @@ class Map:
     def empty_map(self):
         size = self.world.rect.size
         return [[None for _ in range(size.y)] for _ in range(size.x)]
+    
+    def block_at(self, point: ivec2) -> Block:
+        return self.block[point.x][point.y]
+
+    def biome_at(self, point: ivec2) -> str:
+        return self.biome[point.x][point.y]
+
+    def water_at(self, point: ivec2) -> bool:
+        return self.water[point.x][point.y]
 
     def height_at(self, point: ivec2):
         return self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
+    
+    def height_at_include_leaf(self, point : ivec2):
+        return self.world.heightmaps['MOTION_BLOCKING'][point.x][point.y]
 
-    def copy_heightmap(self):
+    def height_at_not_tree(self, point : ivec2, world_slice : WorldSlice):
+        height = self.world.heightmaps['MOTION_BLOCKING_NO_LEAVES'][point.x][point.y]
+        block = world_slice.getBlock((point.x,height-1,point.y)).id
+        while block in TREE_BLOCKS:
+            height = height - 1
+            block = world_slice.getBlock((point.x,height-1,point.y)).id
+
+        return height
+
+    def copy_heightmaps(self, world_slice : WorldSlice):
         size = self.world.rect.size
         self.height = [
             [self.height_at(ivec2(x, y)) for y in range(size.y)] for x in range(size.x)
+        ]
+        self.leaf_height = [
+            [self.height_at_include_leaf(ivec2(x, y)) for y in range(size.y)] for x in range(size.x)
+        ]
+        self.height_no_tree = [
+            [self.height_at_not_tree(ivec2(x, y), world_slice) for y in range(size.y)] for x in range(size.x)
         ]
 
     def make_3d(self, point: ivec2):

@@ -1,19 +1,18 @@
 # Allows code to be run in root directory
 import sys
-sys.path[0] = sys.path[0].removesuffix('\\districts\\tests')
+sys.path[0] = sys.path[0].removesuffix("tests\\districts")
 
 # Actual file
+from grimoire.core.maps import get_water_map, Map
+from tests.districts.draw_districts import draw_districts
+from grimoire.districts.generate_districts import generate_districts
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
-from districts.generate_districts_testing import generate_districts
-from maps.water_map import get_water_map
-from districts.tests.draw_districts import draw_districts
-from terrain.logger import log_trees
-from terrain.smooth_edges import smooth_edges
-from terrain.plateau import plateau
-from maps.map import Map
-from districts.district_analyze import district_analyze, district_classification, super_district_classification
-from districts.tests.place_colors import get_color_differentiated
+from grimoire.terrain.tree_cutter import log_trees
+from grimoire.terrain.smooth_edges import smooth_edges
+from grimoire.terrain.plateau import plateau
+from grimoire.districts.district_analyze import district_analyze, district_classification, super_district_classification
+from tests.districts.place_colors import get_color_differentiated
 
 SEED = 754
 
