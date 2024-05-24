@@ -3,17 +3,16 @@ import sys
 
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
-# Actual file
 from gdpc import Editor
+
+from grimoire.core.assets.asset_loader import load_assets
+from grimoire.core.maps import Map
+from grimoire.core.noise.rng import RNG
+from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.placement.city_blocks import add_city_blocks
-from grimoire.core.maps import Map
-from grimoire.core.assets.asset_loader import load_assets
-from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.plateau import plateau
-from grimoire.core.styling.palette.legacy_palette import LegacyPalette
-from grimoire.core.noise.rng import RNG
-
+from grimoire.terrain.smooth_edges import smooth_edges
 
 SEED = 0xBABAB00E
 DO_TERRAFORMING = False
@@ -46,7 +45,7 @@ for district in districts:
         LegacyPalette.find("dwarven"),
     ]
 
-    for i in range(3):
+    for _ in range(3):
         district.palettes.append(rng.pop(palettes))
 
 # plateau stuff

@@ -97,7 +97,7 @@ class Map:
         size = self.world.rect.size
         return [[None for _ in range(size.y)] for _ in range(size.x)]
 
-    def height_at(self, point: ivec2):
+    def height_at(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
 
     def copy_heightmap(self):
