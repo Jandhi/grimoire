@@ -3,14 +3,18 @@ import sys
 
 from glm import ivec2
 
+from grimoire.districts.district import District
+
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
 # Actual file
+import itertools
+
 from gdpc import Block, Editor
 from gdpc.geometry import line3D
 
 from grimoire.core.assets.asset_loader import load_assets
-from grimoire.core.maps import BUILDING, GATE, DevelopmentType, Map
+from grimoire.core.maps import DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.structures.legacy_directions import get_ivec2
 from grimoire.core.styling.legacy_palette import LegacyPalette
@@ -42,8 +46,8 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 world_map = Map(world_slice)
-districts, district_map = generate_districts(
-    SEED, build_rect, world_slice, world_map.water
+districts, district_map, _, _ = generate_districts(
+    SEED, build_rect, world_slice, world_map
 )
 world_map.districts = district_map
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
@@ -85,30 +89,28 @@ if DO_TERRAFORMING:
     world_map.correct_district_heights(districts)
 # done
 
-world_map.copy_heightmap()
+world_map._copy_heightmaps(world_slice)
 
 
 # ground
-def place_at_ground(x, z, block_name):
+def place_at_ground(x, z, block_name) -> None:
     y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
     editor.placeBlock((x, y - 1, z), Block(block_name))
 
 
 def replace_ground(
-    points: list[ivec2], block_dict: dict[any, int], rng: RNG, water_map
-):
+    points: list[ivec2], block_dict: dict[Block, int], rng: RNG, water_map
+) -> None:
     for point in points:
         if (
             water_map[point.x][point.y] == False
             and world_map.buildings[point.x][point.y] != DevelopmentType.BUILDING
         ):
-            block = rng.choose_weighted(block_dict)
+            block: Block = rng.choose_weighted(block_dict)
             place_at_ground(point.x, point.y, block)
 
 
-import itertools
-
-test_blocks = {
+test_blocks: dict[str, int] = {
     "stone": 3,
     "cobblestone": 2,
     "stone_bricks": 8,
@@ -116,14 +118,14 @@ test_blocks = {
     "gravel": 1,
 }
 
-test_blocks_dirt = {
+test_blocks_dirt: dict[str, int] = {
     "rooted_dirt": 3,
     "dirt": 4,
     "podzol": 2,
     "coarse_dirt": 3,
 }
 
-inner_points = []
+inner_points: list[ivec2] = []
 
 for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)):
     district = district_map[x][z]
@@ -134,7 +136,7 @@ for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)
         inner_points.append(ivec2(x, z))
 
 wall_points, wall_dict = get_outer_points(inner_points, world_slice)
-wall_points_list = order_wall_points(wall_points, wall_dict)
+wall_points_list: list[list[ivec2]] = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
 palette = LegacyPalette.find("desert_dark_prismarine")
@@ -161,7 +163,7 @@ for wall_points in wall_points_list:
 # gates = build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # gates = build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 
-world_map.calculate_near_wall(districts)
+world_map._calculate_near_wall(districts)
 
 for gate in gates:
     size = ivec2(12, 12)

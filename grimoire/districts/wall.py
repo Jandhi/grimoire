@@ -286,7 +286,7 @@ def build_wall_standard_with_inner(
     inner_points: list[ivec2],
     editor: Editor,
     world_slice: WorldSlice,
-    water_map: dict,
+    water_map: list[list[bool]],
     rng: RNG,
     palette: LegacyPalette,
 ) -> list[Gate]:
