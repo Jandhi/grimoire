@@ -10,14 +10,14 @@ from gdpc.geometry import line3D
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.core.utils.geometry import get_outer_points
-from grimoire.core.maps.map import Map
+from grimoire.core.maps import Map
 from grimoire.core.assets.load_assets import load_assets
 from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.plateau import plateau
 from grimoire.palette.palette import Palette
 from grimoire.core.noise.rng import RNG
 from grimoire.districts.wall import order_wall_points, build_wall_standard_with_inner
-from grimoire.core.maps.building_map import BUILDING, GATE
+from grimoire.core.maps import BUILDING, GATE
 from grimoire.core.utils.bounds import area_2d
 from grimoire.paths.route_highway import route_highway, fill_out_highway
 from grimoire.paths.build_highway import build_highway
@@ -54,7 +54,7 @@ rng = RNG(SEED, "palettes")
 for district in districts:
     palettes = eligible_palettes.copy()
 
-    for i in range(3):
+    for _ in range(3):
         district.palettes.append(rng.pop(palettes))
 
 # plateau stuff
@@ -101,6 +101,8 @@ def replace_ground(
             place_at_ground(point.x, point.y, block)
 
 
+import itertools
+
 test_blocks = {
     "stone": 3,
     "cobblestone": 2,
@@ -118,14 +120,13 @@ test_blocks_dirt = {
 
 inner_points = []
 
-for x in range(build_rect.size.x):
-    for z in range(build_rect.size.y):
-        district = district_map[x][z]
+for x, z in itertools.product(range(build_rect.size.x), range(build_rect.size.y)):
+    district = district_map[x][z]
 
-        if district is None:
-            continue
-        elif district.is_urban:
-            inner_points.append(ivec2(x, z))
+    if district is None:
+        continue
+    elif district.is_urban:
+        inner_points.append(ivec2(x, z))
 
 wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)

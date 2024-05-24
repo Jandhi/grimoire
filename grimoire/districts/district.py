@@ -1,5 +1,14 @@
+from enum import Enum, auto
+
 from gdpc.vector_tools import ivec2, ivec3
+
 from ..palette import Palette
+
+
+class DistrictType(Enum):
+    URBAN = auto()
+    RURAL = auto()
+    OFF_LIMITS = auto()
 
 
 class District:
@@ -10,15 +19,15 @@ class District:
     origin: ivec3
     sum: ivec3
     area: int
-    adjacency: dict[any, int]
+    adjacency: dict["District", int]
     edges: set[ivec3]
     adjacencies_total: int
     is_urban: bool
-    type: str #URBAN/RURAL/OFF-LIMITS
-    is_border : bool
+    type: DistrictType
+    is_border: bool
     parent_id: int
 
-    palettes : list[Palette]
+    palettes: list[Palette]
     roughness: float
     biome_dict: dict[str, int]
     water_percentage: float
@@ -47,42 +56,42 @@ class District:
         self.forested_percentage = 0
         self.surface_blocks = {}
         self.gradient = 0
-        self.type = None
-        self.parent_id = None
+        self.type: DistrictType | None = None
+        self.parent_id: int | None = None
 
-        self.add_point(origin)
+        self._add_point(origin)
 
-    def recenter(self, origin) -> None:
+    def _recenter(self, origin) -> None:
 
         self.origin = origin
         self.sum = ivec3(0, 0, 0)
         self.area = 0
         self.adjacency = {}
-        self.points    = set()
+        self.points = set()
         self.points_2d = set()
-        self.edges     = set()
+        self.edges = set()
         self.adjacencies_total = 0
         self.palettes = []
 
-        self.add_point(origin)
+        self._add_point(origin)
 
-    def add_point(self, point: ivec3):
+    def _add_point(self, point: ivec3) -> None:
         self.points.add(point)
         self.points_2d.add(ivec2(point.x, point.z))
         self.sum += point
         self.area += 1
 
-    def add_adjacency(self, district):
+    def _add_adjacency(self, district: "District") -> None:
         if district not in self.adjacency:
             self.adjacency[district] = 0
 
         self.adjacencies_total += 1
         self.adjacency[district] += 1
 
-    def get_adjacency(self, district):
+    def get_adjacency(self, district) -> int:
         return 0 if district not in self.adjacency else self.adjacency[district]
 
-    def get_adjacent_districts(self) -> list:
+    def get_adjacent_districts(self) -> list["District"]:
         return list(self.adjacency.keys())
 
     def get_adjacency_ratio(self, district) -> float:
@@ -96,7 +105,7 @@ class District:
 
 
 class SuperDistrict(District):
-    districts : list[District]
+    districts: list[District]
 
     def __init__(self, district: District) -> None:
         self.districts = [district]
@@ -104,9 +113,9 @@ class SuperDistrict(District):
         self.sum = district.sum
         self.area = district.area
         self.adjacency = {}
-        self.points    = district.points.copy()
+        self.points = district.points.copy()
         self.points_2d = district.points_2d.copy()
-        self.edges     = set()
+        self.edges = set()
         self.adjacencies_total = 0
         self.is_urban = district.is_urban
         self.is_border = district.is_border
@@ -119,11 +128,11 @@ class SuperDistrict(District):
         self.gradient = district.gradient
         self.type = district.type
 
-        #child gets parent set
+        # child gets parent set
         district.parent_id = self.id
 
-    def get_subtypes(self): 
-        subtypes = dict()
+    def get_subtypes(self) -> dict[DistrictType, int]:
+        subtypes: dict[DistrictType, int] = {}
         for district in self.districts:
             if district.type not in subtypes:
                 subtypes[district.type] = 1
@@ -131,7 +140,10 @@ class SuperDistrict(District):
                 subtypes[district.type] += 1
         return subtypes
 
-    def get_subtypes_score(self):
-        subtypes = self.get_subtypes()
-        score = (subtypes.get('OFF-LIMITS', 0)*2 + subtypes.get('RURAL', 0)*1 + subtypes.get('URBAN', 0)*0) / len(self.districts)
-        return score
+    def get_subtypes_score(self) -> float:
+        subtypes: dict[DistrictType, int] = self.get_subtypes()
+        return (
+            subtypes[DistrictType.OFF_LIMITS] * 2
+            + subtypes[DistrictType.RURAL] * 1
+            # NOTE: This is unnecessary: + subtypes[DistrictType.URBAN] * 0
+        ) / len(self.districts)
