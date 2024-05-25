@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import AbstractSet, Iterable, Iterator
 
-from gdpc.vector_tools import ivec2, ivec3
+from gdpc.vector_tools import ivec2, ivec3, Rect, Box
 
 
 @dataclass
@@ -126,6 +126,12 @@ class Shape2D(set):
         raise NotImplementedError()
 
     def __eq__(self, value: object, /) -> bool:
+        raise NotImplementedError()
+
+    def to_boundry_rect(self) -> Rect:
+        return Rect(self.begin, self.end - self.begin)
+
+    def get_largest_rect(self) -> Rect:
         raise NotImplementedError()
 
 
@@ -256,4 +262,10 @@ class Shape3D(set):
         raise NotImplementedError()
 
     def __eq__(self, value: object, /) -> bool:
+        raise NotImplementedError()
+
+    def to_box(self) -> Box:
+        return Box(self.begin, self.end - self.begin)
+
+    def get_largest_box(self) -> Box:
         raise NotImplementedError()

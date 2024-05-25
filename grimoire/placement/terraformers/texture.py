@@ -37,6 +37,17 @@ def _pave_area(
     return
 
 
+def pave_over_area(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+) -> None:
+    # TODO: Get materials from surrounding streets, then set `fill_blocks`
+    return _pave_area(editor, area, edges, city_map, _rng)
+
+
 def grass_patch_area(
     editor: Editor,
     area: Shape2D,
