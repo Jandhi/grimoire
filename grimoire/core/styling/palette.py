@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 from gdpc import Block
 
@@ -7,6 +7,14 @@ from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.colors import MinecraftColor
 from grimoire.core.styling.materials.dithering import DitheringPattern
 from grimoire.core.styling.materials.material import Material, MaterialParameters
+
+
+class BuildStyle(Enum):
+    # I think this is the strongest one, so probably used in most environments
+    JAPANESE = auto()
+    VIKING = auto()  # Pretty weak I think so we could avoid, but we can story it
+    DESERT = auto()  # Decentish variety I think
+    DWARVEN = auto()
 
 
 class MaterialRole(Enum):
@@ -36,11 +44,14 @@ class Palette(Asset):
     secondary_color: MinecraftColor
 
     def find_role(self, block: Block) -> MaterialRole | None:
-        for role in self.resolution_priority.order:
-            if self.materials[role].has_block(block):
-                return role
-
-        return None
+        return next(
+            (
+                role
+                for role in self.resolution_priority.order
+                if self.materials[role].has_block(block)
+            ),
+            None,
+        )
 
     def find_block_id(
         self,

@@ -4,6 +4,7 @@ from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
 
 from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
+from grimoire.core.styling.palette import BuildStyle
 
 from ..buildings.build_floor import build_floor
 from ..buildings.building_plan import BuildingPlan
@@ -53,7 +54,7 @@ def place_building(
     map: Map,
     outside_direction: str,
     rng: RNG,
-    style: str = "japanese",
+    style: BuildStyle = BuildStyle.JAPANESE,
     urban_only=True,
 ) -> bool:
     # A building can always be placed with the door to the left or right of the original spot

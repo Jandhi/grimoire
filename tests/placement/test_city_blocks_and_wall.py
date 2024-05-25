@@ -3,6 +3,7 @@ import sys
 
 from glm import ivec2
 
+from grimoire.core.styling.palette import BuildStyle
 from grimoire.districts.district import District
 
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
@@ -54,7 +55,7 @@ world_map.districts = district_map
 
 # set up palettes
 eligible_palettes = list(
-    filter(lambda palette: "desert" in palette.tags, LegacyPalette.all())
+    filter(lambda palette: BuildStyle.DESERT in palette.tags, LegacyPalette.all())
 )
 rng = RNG(SEED, "palettes")
 

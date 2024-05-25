@@ -3,7 +3,7 @@ from gdpc.vector_tools import Rect, distance, ivec2, ivec3
 
 from ..core.maps import Map
 from ..core.noise.rng import RNG
-from ..core.structures.legacy_directions import CARDINAL, cardinal, vector
+from ..core.structures.legacy_directions import CARDINAL, vector
 from ..districts.district import District
 from .adjacency import establish_adjacency
 from .district import District, SuperDistrict
@@ -160,7 +160,7 @@ def get_neighbours(point: ivec3, map: Map, district: District) -> list[ivec3]:
     return neighbours
 
 
-def spawn_districts(seed: int, build_rect: Rect, map: Map) -> list[District]:
+def spawn_districts(seed: int, build_rect: Rect, city_map: Map) -> list[District]:
 
     rects: list[Rect] = []
 
@@ -181,12 +181,12 @@ def spawn_districts(seed: int, build_rect: Rect, map: Map) -> list[District]:
 
     rng = RNG(seed, "get_origins")
 
-    points = generate_district_points(rng, rects, map)
+    points = generate_district_points(rng, rects, city_map)
 
     return [District(origin=pt) for pt in points]
 
 
-def generate_district_points(rng: RNG, rect: list[Rect], map: Map) -> list[ivec3]:
+def generate_district_points(rng: RNG, rect: list[Rect], city_map: Map) -> list[ivec3]:
     points: list[ivec3] = []
 
     for i in range(len(rect)):
@@ -204,7 +204,7 @@ def generate_district_points(rng: RNG, rect: list[Rect], map: Map) -> list[ivec3
 
             trial_point = ivec3(
                 x,
-                map.height_no_tree[x][z],
+                city_map.height_no_tree[x][z],
                 z,
             )
 

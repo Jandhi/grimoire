@@ -4,7 +4,7 @@ from gdpc import WorldSlice
 from gdpc.vector_tools import Box, Rect, ivec2, ivec3
 
 from ..core.maps import Map
-from ..core.structures.legacy_directions import CARDINAL, cardinal, vector
+from ..core.structures.legacy_directions import CARDINAL, vector
 from ..districts.district import District
 
 

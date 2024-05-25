@@ -1,6 +1,8 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.styling.palette import BuildStyle
+
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
 from gdpc import Editor
@@ -34,15 +36,15 @@ map.districts = district_map
 
 # set up palettes
 eligible_palettes = list(
-    filter(lambda palette: "desert" in palette.tags, LegacyPalette.all())
+    filter(lambda palette: BuildStyle.DESERT in palette.tags, LegacyPalette.all())
 )
 rng = RNG(SEED, "palettes")
 
 for district in districts:
     palettes = [
-        LegacyPalette.find("dwarven"),
-        LegacyPalette.find("dwarven"),
-        LegacyPalette.find("dwarven"),
+        LegacyPalette.find(BuildStyle.DWARVEN),
+        LegacyPalette.find(BuildStyle.DWARVEN),
+        LegacyPalette.find(BuildStyle.DWARVEN),
     ]
 
     for _ in range(3):

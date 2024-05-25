@@ -9,6 +9,7 @@ from glm import ivec2
 from grimoire.core.maps import DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.materials.material import Material
+from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
 from grimoire.core.utils.shapes import Shape2D
 from grimoire.districts.district import DistrictType
@@ -71,11 +72,11 @@ class Nook:
         self,
         district_types: DistrictType | Iterable[DistrictType] | None = None,
         exposure_types: ExposureType | Iterable[ExposureType] | None = None,
-        min_rect: Rect | None = None,
-        max_rect: Rect | None = None,
+        styles: BuildStyle | Iterable[BuildStyle] | None = None,
         min_area: int | None = None,
         max_area: int | None = None,
-        styles: str | Iterable[str] | None = None,
+        min_rect: Rect | None = None,
+        max_rect: Rect | None = None,
         terraformers: (
             Iterable[
                 Callable[
@@ -109,11 +110,11 @@ class Nook:
     ) -> None:
         self.district_types = district_types
         self.exposure_types = exposure_types
-        self.min_rect = min_rect
-        self.max_rect = max_rect
+        self.styles = styles
         self.min_area = min_area
         self.max_area = max_area
-        self.styles = styles
+        self.min_rect = min_rect
+        self.max_rect = max_rect
         self.terraformers = terraformers
         self.decorators = decorators
 
@@ -263,12 +264,14 @@ def _set_from_type_iterable(
 
 
 for nook in ALL_NOOKS:
-    NOOKS_BY_STYLE: dict[str, set[Nook]]  # TODO: Assign values
     NOOKS_BY_DISTRICT: dict[DistrictType, set[Nook]] = _set_from_type_iterable(
         DistrictType, nook, nook.district_types
     )
     NOOKS_BY_EXPOSURE: dict[ExposureType, set[Nook]] = _set_from_type_iterable(
         ExposureType, nook, nook.exposure_types
+    )
+    NOOKS_BY_STYLE: dict[str, set[Nook]] = _set_from_type_iterable(
+        BuildStyle, nook, nook.styles
     )
 
 
@@ -291,7 +294,7 @@ def eliminate_nooks_based_on_largest_rect(nook_set, area: Shape2D) -> set[Nook]:
 def find_suitable_nooks(
     district_types: DistrictType | Iterable[DistrictType] | None = None,
     exposure_types: ExposureType | Iterable[ExposureType] | None = None,
-    styles: str | Iterable[str] | None = None,
+    styles: BuildStyle | Iterable[BuildStyle] | None = None,
     area: Shape2D | None = None,
 ) -> set[Nook]:
     """
@@ -348,10 +351,12 @@ def find_suitable_nooks(
 
     _district_types: list[DistrictType] | None = to_list_or_none(district_types)
     _exposure_types: list[ExposureType] | None = to_list_or_none(exposure_types)
+    _styles: list[BuildStyle] | None = to_list_or_none(styles)
 
     type_sets: list[tuple[list[T] | None, dict[T, set[Nook]]]] = [
         (_district_types, NOOKS_BY_DISTRICT),
         (_exposure_types, NOOKS_BY_EXPOSURE),
+        (_styles, NOOKS_BY_STYLE),
     ]
 
     final_set: set[Nook] | None = None

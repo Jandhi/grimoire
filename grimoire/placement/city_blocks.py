@@ -1,6 +1,8 @@
 from gdpc import Block, Editor
 from gdpc.vector_tools import distance2, ivec2, ivec3
 
+from grimoire.core.styling.palette import BuildStyle
+
 from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
 from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
@@ -156,7 +158,7 @@ def place_buildings(
     block,
     map,
     rng,
-    style="japanese",
+    style=BuildStyle.JAPANESE,
     is_debug=False,
 ):
     """
@@ -167,7 +169,7 @@ def place_buildings(
         block: A set of 2D vectors representing the building blocks.
         map: The Map object representing the game map.
         rng: The RNG object for random number generation.
-        style: The style of the buildings (default is "japanese").
+        style: The style of the buildings (default is BuildStyle.JAPANESE).
         is_debug: A boolean indicating whether debug mode is enabled (default is False).
     """
 
@@ -190,7 +192,7 @@ def add_city_blocks(
     districts: list[District],
     city_map: Map,
     seed: int,
-    style="japanese",
+    style=BuildStyle.JAPANESE,
     is_debug=False,
 ):
     rng = RNG(seed, "add_city_blocks")
@@ -255,13 +257,13 @@ def decorate_city_block(
 ):
 
     # scan the city block
-        # if an empty space is found
-            # move east until a non-empty space is found
-            # move clockwise along the circumference
-                # if this edge is occupied by a new type, start a new counter in the counter list with its type
-                # else, increment the current counter
-            # flood fill the remaining space, determining its size (and largest rectangular space?)
-            # select an appropriate Nook type
-            # manifest the Nook
+    # if an empty space is found
+    # move east until a non-empty space is found
+    # move clockwise along the circumference
+    # if this edge is occupied by a new type, start a new counter in the counter list with its type
+    # else, increment the current counter
+    # flood fill the remaining space, determining its size (and largest rectangular space?)
+    # select an appropriate Nook type
+    # manifest the Nook
 
     raise NotImplementedError()
