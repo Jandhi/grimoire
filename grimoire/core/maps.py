@@ -149,6 +149,10 @@ class Map:
     def _copy_heightmaps(self, world_slice: WorldSlice) -> None:
         size: ivec2 = self.world.rect.size
 
+        self.height, self.leaf_height, self.height_no_tree = [
+            [[0 for _ in range(size.y)] for _ in range(size.x)] for _ in range(3)
+        ]
+
         for x, y in itertools.product(range(size.x), range(size.y)):
             self.height[x][y] = self.height_at(ivec2(x, y))
             self.leaf_height[x][y] = self.height_at_include_leaf(ivec2(x, y))

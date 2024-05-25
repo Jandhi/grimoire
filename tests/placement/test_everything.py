@@ -5,7 +5,7 @@ import time
 sys.path[0] = sys.path[0].removesuffix("\\tests\\placement")
 
 # Actual file
-from gdpc import Editor, Box
+from gdpc import Box, Editor
 from gdpc.lookup import GRANULARS
 from glm import ivec2
 
@@ -14,18 +14,18 @@ from grimoire.core.maps import Map, get_build_map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
 from grimoire.districts.district_painter import (
-    replace_ground_smooth,
     plant_forest,
     replace_ground,
+    replace_ground_smooth,
 )
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.districts.paint_palette import PaintPalette
 from grimoire.districts.wall import (
+    build_wall_standard_with_inner,
     get_wall_points,
     order_wall_points,
-    build_wall_standard_with_inner,
 )
-from grimoire.industries.biomes import snowy, rocky, desert, forest
+from grimoire.industries.biomes import desert, forest, rocky, snowy
 from grimoire.industries.industry import get_district_biomes
 from grimoire.palette import Palette
 from grimoire.placement.city_blocks import add_city_blocks
@@ -33,7 +33,6 @@ from grimoire.terrain.forest import Forest
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
-
 
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
@@ -66,9 +65,11 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice reloaded!")
 
-map = Map(world_slice)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
-map.districts = district_map
+city_map = Map(world_slice)
+districts, district_map, _, _ = generate_districts(
+    SEED, build_rect, world_slice, city_map
+)
+city_map.districts = district_map
 
 styles = [
     "japanese",  # I think this is the strongest one, so probably used in most environments
@@ -131,20 +132,22 @@ if DO_TERRAFORMING:
         if not district.is_urban:
             continue
 
-        plateau(district, district_map, world_slice, editor, map.water)
+        plateau(district, district_map, world_slice, editor, city_map.water)
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    map.world = world_slice
+    city_map.world = world_slice
 
-    smooth_edges(build_rect, districts, district_map, world_slice, editor, map.water)
+    smooth_edges(
+        build_rect, districts, district_map, world_slice, editor, city_map.water
+    )
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    map.world = world_slice
-    map.correct_district_heights(districts)
+    city_map.world = world_slice
+    city_map.correct_district_heights(districts)
 # done
 
 print("sleepy time to reduce http traffic")
@@ -175,7 +178,13 @@ urban_road: PaintPalette = (
     else PaintPalette.find("urban_road")
 )
 replace_ground_smooth(
-    inner_points, urban_road.palette, rng, map.water, build_map, editor, world_slice
+    inner_points,
+    urban_road.palette,
+    rng,
+    city_map.water,
+    build_map,
+    editor,
+    world_slice,
 )
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
@@ -187,7 +196,7 @@ replace_ground_smooth(
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
+add_city_blocks(editor, districts, city_map, SEED, style=style, is_debug=False)
 
 # WALL
 
@@ -200,7 +209,7 @@ for wall_points in wall_points_list:
         inner_points,
         editor,
         world_slice,
-        map.water,
+        city_map.water,
         rng,
         palette,
     )
@@ -237,7 +246,7 @@ for district in districts:
                 list(inner_district_points),
                 choice,
                 rng,
-                map.water,
+                city_map.water,
                 build_map,
                 editor,
                 world_slice,
@@ -248,7 +257,7 @@ for district in districts:
                 list(inner_district_points),
                 farmland.palette,
                 rng,
-                map.water,
+                city_map.water,
                 build_map,
                 editor,
                 world_slice,
@@ -259,7 +268,7 @@ for district in districts:
                 list(inner_district_points),
                 choice.palette,
                 rng,
-                map.water,
+                city_map.water,
                 build_map,
                 editor,
                 world_slice,
@@ -270,7 +279,7 @@ for district in districts:
                 list(outer_district_points),
                 rural_road.palette,
                 rng,
-                map.water,
+                city_map.water,
                 build_map,
                 editor,
                 world_slice,
