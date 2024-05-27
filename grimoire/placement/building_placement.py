@@ -108,7 +108,7 @@ def attempt_building_placement_at_offset(
     offset: ivec2,
     outside_direction: LegacyDirection,
     shape: BuildingShape,
-    style: str,
+    style: BuildStyle,
     urban_only: bool,
 ) -> bool:
     grid = Grid()
@@ -207,7 +207,7 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
 
 
 def place(
-    editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
+    editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: BuildStyle
 ):
     district = map.districts[grid.origin.x][grid.origin.z]
     palette: LegacyPalette = (

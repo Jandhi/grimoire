@@ -16,8 +16,6 @@ from grimoire.districts.district import DistrictType
 from grimoire.placement.terraformers.texture import grass_patch_area, pave_over_area
 from grimoire.placement.terraformers.topology import flatten_area_up
 
-styles: list[str]
-
 
 class DevelopmentPattern:
 

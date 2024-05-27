@@ -4,7 +4,7 @@ colored==2.2.4
 contourpy==1.2.1
 cycler==0.12.1
 fonttools==4.52.1
-gdpc==7.1.0
+gdpc==7.2.0
 idna==3.7
 imageio==2.34.1
 kiwisolver==1.4.5

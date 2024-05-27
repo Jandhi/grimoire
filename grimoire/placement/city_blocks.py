@@ -1,17 +1,34 @@
+import itertools
+from typing import Generator
+
 from gdpc import Block, Editor
-from gdpc.vector_tools import distance2, ivec2, ivec3
+from gdpc.vector_tools import (
+    CARDINALS_2D,
+    EAST_2D,
+    Rect,
+    distance2,
+    ivec2,
+    ivec3,
+    neighbors2D,
+)
 
 from grimoire.core.styling.palette import BuildStyle
+from grimoire.placement.nooks import (
+    ExposureType,
+    Nook,
+    find_suitable_nooks,
+    identify_exposure_type_from_edging_pattern,
+)
 
 from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
-from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
+from ..core.structures.legacy_directions import to_text
 from ..core.utils.bounds import is_in_bounds2d
 from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
 from ..core.utils.sets.set_operations import find_edges, find_outer_direction
 from ..core.utils.shapes import Shape2D
 from ..core.utils.vectors import point_3d, y_ivec3
-from ..districts.district import District
+from ..districts.district import District, DistrictType
 from ..placement.building_placement import place_building
 
 EDGE_THICKNESS = 1
@@ -90,8 +107,8 @@ def bubble_out(
         block_index = block_index_map[point.x][point.y]
         block: set[ivec2] = blocks[block_index]
 
-        for direction in CARDINAL:
-            neighbour = point + get_ivec2(direction)
+        for direction in CARDINALS_2D:
+            neighbour = point + direction
 
             if not is_in_bounds2d(neighbour, map.world):
                 continue
@@ -253,17 +270,97 @@ def decorate_city_block(
     inner: set[ivec2],
     outer: set[ivec2],
     block_rng: RNG,
-    style: str,
-):
+    style: BuildStyle,
+) -> None:
+    SCAN_STEP: int = 4
+
+    inner_shape = Shape2D(inner)
+
+    # the grid to be scanned for potential Nook locations
+    scan_grid: Generator[ivec2, None, None] = (
+        ivec2(x, y)
+        for x, y in itertools.product(
+            range(inner_shape.begin.x, inner_shape.end.x, SCAN_STEP),
+            range(inner_shape.begin.y, inner_shape.end.y, SCAN_STEP),
+        )
+    )
 
     # scan the city block
-    # if an empty space is found
-    # move east until a non-empty space is found
-    # move clockwise along the circumference
-    # if this edge is occupied by a new type, start a new counter in the counter list with its type
-    # else, increment the current counter
-    # flood fill the remaining space, determining its size (and largest rectangular space?)
-    # select an appropriate Nook type
-    # manifest the Nook
+    for scan_position in scan_grid:
+        # if an empty space is found
+        if city_map.buildings[scan_position] is None:
+            outer_shape = Shape2D(outer)
+            bounds = Rect(outer_shape.begin - 1, outer_shape.end + 1)
+            edge: dict[ivec2, set[DevelopmentType]] = map_developments_at_edge(
+                outer, city_map, bounds
+            )
+            pattern: list[tuple[set[DevelopmentType], int]] = edge_to_pattern(
+                scan_position, edge, bounds
+            )
+            # flood fill the remaining space, determining its area
+            area: Shape2D = None  # FIXME
 
-    raise NotImplementedError()
+            # select an appropriate Nook type and manifest it
+            exposure: ExposureType = identify_exposure_type_from_edging_pattern(pattern)
+            nook: Nook = block_rng.choose(
+                find_suitable_nooks(
+                    district_types=DistrictType.URBAN,
+                    exposure_types=exposure,
+                    styles=style,
+                    area=area,
+                )
+            )
+            nook.manifest(editor, area, edge, city_map, block_rng)
+
+
+def map_developments_at_edge(
+    edge: set[ivec2], city_map: Map, bounds: Rect
+) -> dict[ivec2, set[DevelopmentType]]:
+    development_set: dict[ivec2, set[DevelopmentType]] = {}
+    for point in edge:
+        for neighbor in neighbors2D(point, bounds):
+            if development := city_map.buildings[neighbor.x][neighbor.y]:
+                development_set[point].add(development)
+
+    return development_set
+
+
+def edge_to_pattern(
+    start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
+) -> list[tuple[set[DevelopmentType], int]]:
+
+    pattern: list[tuple[set[DevelopmentType], int]] = []
+
+    for _ in range(100):
+        if start in edge:
+            break
+        start += EAST_2D
+
+    current: ivec2 = start
+    visited: set[ivec2] = set()
+
+    for _ in range(len(edge)):
+
+        # find next point
+        for neighbor in neighbors2D(
+            current, bounds
+        ):  # TODO: Replace with ORDERED_CARDINALS_AND_DIAGONALS_2D
+            if neighbor in edge and neighbor not in visited:
+                current = neighbor
+                break
+            raise NotImplementedError()
+        else:
+            raise RuntimeError("Edge has a dead end!")
+
+        # update pattern
+        if edge[current] == pattern[-1][0]:
+            pattern[-1] = (pattern[-1][0], pattern[-1][1] + 1)
+        else:
+            pattern.append((edge[current], 1))
+
+        # save progress and check for completion
+        visited.add(current)
+        if current == start:
+            break
+
+    return pattern

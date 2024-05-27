@@ -87,7 +87,7 @@ def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
     return [[False for _ in range(size.y + buffer)] for _ in range(size.x + buffer)]
 
 
-def get_building_map(world_slice: WorldSlice) -> list[list[str | None]]:
+def get_building_map(world_slice: WorldSlice) -> list[list[DevelopmentType | None]]:
     size: ivec2 = world_slice.rect.size
     return [[None for _ in range(size.y)] for _ in range(size.x)]
 
@@ -102,7 +102,7 @@ def get_water_map(world_slice: WorldSlice) -> list[list[bool]]:
 class Map:
     water: list[list[bool]]
     districts: list[list[District | None]]
-    buildings: list[list[str | None]]
+    buildings: list[list[DevelopmentType | None]]
     height: list[list[int]]  # height map based on MOTION_BLOCKING_NO_LEAVES
     height_no_tree: list[
         list[int]
