@@ -75,7 +75,7 @@ class MaterialPathTest(EditingTestModule):
             y = self.world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x, z] - 1
             pos = ivec3(x, y, z)
 
-            shade_val = gradient.calculate_shade(pos, 1 - dist / max_dist)
+            shade_val = gradient.calculate_value(pos, 1 - dist / max_dist)
 
             if shade_val < 0.5:
                 continue

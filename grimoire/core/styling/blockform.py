@@ -11,17 +11,11 @@ class BlockForm(Enum):
     fence = "fence"
     door = "door"
     trapdoor = "trapdoor"
+    sign = "sign"
 
     @staticmethod
     def get_form(block: Block) -> "BlockForm":
-        for form in (
-            BlockForm.stairs,
-            BlockForm.slab,
-            BlockForm.wall,
-            BlockForm.fence,
-            BlockForm.door,
-            BlockForm.trapdoor,
-        ):
+        for form in BlockForm:
             if form.value in block.id:
                 return form
 

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Callable
 
 from gdpc import Editor, Block
 from glm import ivec3
@@ -10,6 +11,7 @@ from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.materials.dithering import (
     DitheringPattern,
 )
+from grimoire.core.utils.strings import trim_minecraft_label
 
 
 @dataclass
@@ -29,6 +31,25 @@ class MaterialParameters:
     dithering_pattern: DitheringPattern | None
 
 
+@dataclass
+class MaterialParameterFunction:
+    shade_func: Callable[[ivec3], float] | None
+    age_func: Callable[[ivec3], float] | None
+    moisture_func: Callable[[ivec3], float] | None
+    dithering_pattern: DitheringPattern | None
+
+    def eval(self, position: ivec3) -> MaterialParameters:
+        return MaterialParameters(
+            position=position,
+            shade=0.5 if self.shade_func is None else self.shade_func(position),
+            age=0 if self.age_func is None else self.age_func(position),
+            moisture=(
+                0 if self.moisture_func is None else self.moisture_func(position)
+            ),
+            dithering_pattern=None,
+        )
+
+
 class Material(Asset):
     dithering_pattern: DitheringPattern
 
@@ -43,6 +64,9 @@ class Material(Asset):
         pass
 
     def has_block(self, block: Block) -> bool:
+        pass
+
+    def has_form(self, form: BlockForm) -> bool:
         pass
 
     def get_id(self, form: BlockForm, parameters: MaterialParameters) -> str | None:
@@ -63,6 +87,7 @@ CALCULATE_RANGE = -1
     younger=None,
     more_moist=None,
     less_moist=None,
+    dithering_pattern=None,
 )
 class BasicMaterial(Material):
     # Range
@@ -218,8 +243,9 @@ class BasicMaterial(Material):
         )
 
     def has_block(self, block: Block) -> bool:
-        form = BlockForm.get_form(block)
+        return trim_minecraft_label(block.id) in self.blocks.values()
 
+    def has_form(self, form: BlockForm) -> bool:
         return form in self.blocks.keys()
 
     def get_id(self, form: BlockForm, parameters: MaterialParameters) -> str | None:
@@ -252,6 +278,9 @@ class CompositeMaterial(Material):
 
     def has_block(self, block: Block) -> bool:
         return any([material.has_block(block) for material in self.submaterials])
+
+    def has_form(self, form: BlockForm) -> bool:
+        return any([material.has_form(form) for material in self.submaterials])
 
     def get_id(
         self,

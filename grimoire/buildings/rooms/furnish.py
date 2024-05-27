@@ -5,7 +5,6 @@ from gdpc.vector_tools import ivec3
 
 from ..legacycell import LegacyCell
 from ...core.noise.rng import RNG
-from grimoire.core.styling.legacy_palette import LegacyPalette
 from .room import Room
 from ...core.structures.grid import Grid
 from ...core.structures.legacy_directions import (
@@ -18,6 +17,7 @@ from ...core.structures.legacy_directions import (
     south,
     west,
 )
+from ...core.styling.palette import Palette
 
 ROOM_LIST = [
     "kitchen_no_window_small",
@@ -79,7 +79,7 @@ def build_start(
     rng: RNG,
     grid: Grid,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> list:
     start_connections = []
@@ -118,7 +118,7 @@ def build_staircase(
     rng: RNG,
     grid: Grid,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> list:
     possible_starts = [
@@ -140,7 +140,7 @@ def build_staircase(
     rng: RNG,
     grid: Grid,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> list:
     possible_starts = [
@@ -205,7 +205,7 @@ def populate_floor(
     rng: RNG,
     grid: Grid,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> list:
     rooms_on_floor = [
@@ -322,7 +322,7 @@ def build_one_by_one(
     rng: RNG,
     grid: Grid,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> None:
     if num_levels == 1:
@@ -347,7 +347,7 @@ def furnish(
     rng: RNG,
     grid: Grid,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
     cells: dict[ivec3, LegacyCell],
 ) -> None:
     number_of_floors = max(y for (x, y, z) in cells_to_fill) + 1

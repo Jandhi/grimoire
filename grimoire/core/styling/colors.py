@@ -1,4 +1,7 @@
-class MinecraftColor:
+from enum import Enum
+
+
+class MinecraftColor(Enum):
     white = "white"
     light_gray = "light_gray"
     gray = "gray"

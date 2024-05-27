@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec2, ivec3
 
-from grimoire.core.styling.legacy_palette import LegacyPalette
+from grimoire.core.styling.palette import Palette
 
 
 class District:
@@ -16,7 +16,7 @@ class District:
     adjacencies_total: int
     is_urban: bool
 
-    palettes: list[LegacyPalette]
+    palettes: list[Palette]
 
     def __init__(self, origin: ivec3, is_urban: bool) -> None:
         self.id = District.id_counter

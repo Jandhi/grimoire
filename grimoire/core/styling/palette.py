@@ -13,18 +13,66 @@ class MaterialRole(Enum):
     primary_wall = "primary_wall"
     secondary_wall = "secondary_wall"
 
+    primary_roof = "primary_roof"
+    secondary_roof = "secondary_roof"
+
     primary_stone = "primary_stone"
     secondary_stone = "secondary_stone"
 
     primary_wood = "primary_wood"
     secondary_wood = "secondary_wood"
 
+    pillar = "pillar"
 
-class ResolutionPriority:
+
+class _ResolutionPriority:
     order: list[MaterialRole]
+    next_in_line: dict[MaterialRole, MaterialRole]
+
+    def __init__(
+        self, order: list[MaterialRole], next_in_line: dict[MaterialRole, MaterialRole]
+    ):
+        self.order = order
+        self.next_in_line = next_in_line
 
     def get_next_in_line(self, role: MaterialRole) -> MaterialRole | None:
-        pass
+        if role in self.next_in_line:
+            return self.next_in_line[role]
+
+        return None
+
+
+class ResolutionPriority(Enum):
+    stone = _ResolutionPriority(
+        order=[
+            MaterialRole.pillar,
+            MaterialRole.primary_wall,
+            MaterialRole.secondary_wall,
+            MaterialRole.primary_roof,
+            MaterialRole.secondary_roof,
+            MaterialRole.primary_stone,
+            MaterialRole.secondary_stone,
+            MaterialRole.primary_wood,
+            MaterialRole.secondary_wood,
+        ],
+        next_in_line={
+            MaterialRole.primary_wall: MaterialRole.primary_stone,
+            MaterialRole.secondary_wall: MaterialRole.secondary_stone,
+            MaterialRole.primary_roof: MaterialRole.primary_stone,
+            MaterialRole.secondary_roof: MaterialRole.secondary_stone,
+            MaterialRole.primary_stone: MaterialRole.primary_wood,
+            MaterialRole.secondary_stone: MaterialRole.secondary_wood,
+            MaterialRole.primary_wood: MaterialRole.primary_stone,
+            MaterialRole.secondary_wood: MaterialRole.secondary_stone,
+            MaterialRole.pillar: MaterialRole.primary_stone,
+        },
+    )
+
+    def order(self) -> list[MaterialRole]:
+        return self.value.order
+
+    def get_next_in_line(self, role: MaterialRole) -> MaterialRole | None:
+        return self.value.get_next_in_line(role)
 
 
 class Palette(Asset):
@@ -36,8 +84,8 @@ class Palette(Asset):
     secondary_color: MinecraftColor
 
     def find_role(self, block: Block) -> MaterialRole | None:
-        for role in self.resolution_priority.order:
-            if self.materials[role].has_block(block):
+        for role in self.resolution_priority.order():
+            if role in self.materials and self.materials[role].has_block(block):
                 return role
 
         return None
@@ -48,13 +96,23 @@ class Palette(Asset):
         parameters: MaterialParameters,
         role: MaterialRole,
     ) -> str | None:
+        checked_roles = set()
+
         while True:
+            if role not in self.materials.keys():
+                return None
+
             material = self.materials[role]
 
             block_id = material.get_id(form, parameters)
 
             if block_id is not None:
                 return block_id
+
+            # Already checked this role before, in cycle
+            if role in checked_roles:
+                return None
+            checked_roles.add(role)
 
             # Block not found in this role, check next
             role = self.resolution_priority.get_next_in_line(role)

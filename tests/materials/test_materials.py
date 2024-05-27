@@ -50,7 +50,7 @@ class MaterialsTest(EditingTestModule):
                     None,
                     MaterialParameters(
                         position=ivec3(x, 4, z),
-                        shade=gradient.calculate_shade(
+                        shade=gradient.calculate_value(
                             ivec3(x, 4, z),
                         ),
                         age=0,

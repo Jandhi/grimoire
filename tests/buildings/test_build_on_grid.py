@@ -28,7 +28,13 @@ from gdpc.vector_tools import ivec3
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 3, area.begin.z)
-grid = Grid()
+grid = Grid(
+    origin=ivec3(
+        x=area.size.x // 2,
+        y=-61,
+        z=area.size.z // 2,
+    )
+)
 load_assets("grimoire\\asset_data")
 
 rng = RNG(SEED, "get_origins")

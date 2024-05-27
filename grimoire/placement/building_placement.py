@@ -29,6 +29,9 @@ from grimoire.core.styling.legacy_palette import fix_block_name
 
 from ..core.maps import Map
 from grimoire.core.styling.legacy_palette import LegacyPalette
+from ..core.styling.blockform import BlockForm
+from ..core.styling.materials.material import MaterialParameters
+from ..core.styling.palette import MaterialRole, Palette
 
 offsets = {
     z_minus: [ivec2(0, 0), ivec2(-1, 0)],
@@ -213,7 +216,7 @@ def place(
     editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
 ):
     district = map.districts[grid.origin.x][grid.origin.z]
-    palette: LegacyPalette = (
+    palette: Palette = (
         rng.choose(district.palettes)
         if district
         else LegacyPalette.find("japanese_dark_blackstone")
@@ -248,9 +251,21 @@ def place(
         grid_height = grid.origin.y
 
         for y_coord in range(world_height, grid_height):
+            stone = palette.find_block_id(
+                BlockForm.block,
+                MaterialParameters(
+                    position=ivec3(point.x, y_coord, point.y),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.primary_stone,
+            )
+
             editor.placeBlock(
                 ivec3(point.x, y_coord, point.y),
-                Block(fix_block_name(palette.primary_stone)),
+                Block(fix_block_name(stone)),
             )
 
     # FIXME: this suppression is a last resort, and should not be used in the future

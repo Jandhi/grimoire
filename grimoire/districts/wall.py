@@ -25,8 +25,8 @@ from ..core.structures.legacy_directions import (
     cardinal,
     opposite,
 )
-from grimoire.core.styling.legacy_palette import LegacyPalette
 from ..core.styling.blockform import BlockForm
+from ..core.styling.palette import Palette, MaterialRole
 from ..core.utils.geometry import (
     get_neighbours_in_set,
     is_straight_ivec2,
@@ -34,7 +34,7 @@ from ..core.utils.geometry import (
     get_outer_points,
 )
 from ..core.utils.misc import is_water
-from ..core.structures.nbt.build_nbt import build_nbt_legacy
+from ..core.structures.nbt.build_nbt import build_nbt_legacy, build_nbt
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
 from ..districts.gate import add_gates, Gate
@@ -123,11 +123,14 @@ def build_wall(
     world_slice: WorldSlice,
     rng: RNG,
     wall_type: str,
+    palette: Palette,
 ) -> list[Gate]:
     if wall_type == "palisade":
-        return build_wall_palisade(wall_points, editor, world_slice, rng)
+        return build_wall_palisade(wall_points, editor, world_slice, rng, palette)
     elif wall_type == "standard":
-        return build_wall_standard(wall_points, wall_dict, editor, world_slice, rng)
+        return build_wall_standard(
+            wall_points, wall_dict, editor, world_slice, rng, palette
+        )
 
 
 def build_wall_palisade(
@@ -136,9 +139,8 @@ def build_wall_palisade(
     world_slice: WorldSlice,
     water_map: dict,
     rng: RNG,
-    palette: LegacyPalette,
+    palette: Palette,
 ) -> list[Gate]:
-    wood = palette.secondary_wood
 
     # TODO cleanup the wall_points here to match the format mostly in the other build wall functions, then readress the build gate and can make it cleaner
     new_wall_points = []
@@ -166,12 +168,36 @@ def build_wall_palisade(
             for y in range(point[1], point[1] + point[3]):
                 # interface.placeBlock(point[0],y,point[2], 'minecraft:stone_bricks')
                 # interface.placeBlock(point[0],point[1] + point[3], point[2], 'minecraft:stone_brick_wall')
-                editor.placeBlock(
-                    (point[0], y, point[2]), Block(f"minecraft:{wood}_log")
+
+                wood = palette.find_block_id(
+                    BlockForm.block,
+                    MaterialParameters(
+                        position=ivec3(point[0], y, point[2]),
+                        age=0,
+                        shade=0.5,
+                        moisture=0,
+                        dithering_pattern=None,
+                    ),
+                    MaterialRole.pillar,
                 )
+
+                editor.placeBlock((point[0], y, point[2]), Block(wood))
+
+            wood = palette.find_block_id(
+                BlockForm.fence,
+                MaterialParameters(
+                    position=ivec3(point[0], point[1] + point[3], point[2]),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.secondary_wood,
+            )
+
             editor.placeBlock(
                 (point[0], point[1] + point[3], point[2]),
-                Block(f"minecraft:{wood}_fence"),
+                Block(wood),
             )
 
     return add_gates(
@@ -186,7 +212,7 @@ def build_wall_standard(
     editor: Editor,
     world_slice: WorldSlice,
     water_map: dict,
-    palette: LegacyPalette,
+    palette: Palette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -199,11 +225,6 @@ def build_wall_standard(
         []
     )  # idea is to get this list and then get the new inner points of hte wall, how do I get height to those
     walkway_dict: dict = {}
-
-    # blocks
-    stone = palette.primary_stone
-    full_block = fix_block_name(f"{stone}")
-    stairs = fix_block_name(f"{stone}_stairs")
 
     # temp
     material: BasicMaterial = Material.find("cobblestone")
@@ -231,7 +252,7 @@ def build_wall_standard(
                     None,
                     MaterialParameters(
                         position=ivec3(point.x, y, point.z),
-                        shade=gradient.calculate_shade(ivec3(point.x, y, point.z)),
+                        shade=gradient.calculate_value(ivec3(point.x, y, point.z)),
                         age=0,
                         moisture=0,
                         dithering_pattern=DitheringPattern.random_ease_quint,
@@ -241,9 +262,22 @@ def build_wall_standard(
                 # editor.placeBlock((point.x, y, point.z), Block(full_block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
+
+            block = palette.find_block_id(
+                BlockForm.stairs,
+                MaterialParameters(
+                    position=ivec3(point.x, point.y + 1, point.z),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.primary_stone,
+            )
+
             editor.placeBlock(
                 (point.x, point.y + 1, point.z),
-                Block(f"{stairs}[facing={to_text(right[previous_dir])}]"),
+                Block(f"{block}[facing={to_text(right[previous_dir])}]"),
             )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
@@ -288,7 +322,7 @@ def build_wall_standard_with_inner(
     world_slice: WorldSlice,
     water_map: dict,
     rng: RNG,
-    palette: LegacyPalette,
+    palette: Palette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
@@ -304,11 +338,6 @@ def build_wall_standard_with_inner(
 
     inner_wall_list = []
     inner_wall_dict: dict = {}
-
-    # blocks
-    stone = palette.primary_stone
-    full_block = fix_block_name(f"{stone}")
-    stairs = fix_block_name(f"{stone}_stairs")
 
     for i, wall_point in enumerate(wall_points):
         point = wall_point[0]
@@ -331,12 +360,37 @@ def build_wall_standard_with_inner(
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                editor.placeBlock((point.x, y, point.z), Block(full_block))
+                block = palette.find_block_id(
+                    BlockForm.block,
+                    MaterialParameters(
+                        position=ivec3(point.x, y, point.z),
+                        age=0,
+                        shade=0.5,
+                        moisture=0,
+                        dithering_pattern=None,
+                    ),
+                    MaterialRole.primary_stone,
+                )
+
+                editor.placeBlock((point.x, y, point.z), Block(block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
+
+            block = palette.find_block_id(
+                BlockForm.stairs,
+                MaterialParameters(
+                    position=ivec3(point.x, point.y + 1, point.z),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.primary_stone,
+            )
+
             editor.placeBlock(
                 (point.x, point.y + 1, point.z),
-                Block(f"{stairs}[facing={to_text(right[previous_dir])}]"),
+                Block(f"{block}[facing={to_text(right[previous_dir])}]"),
             )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
@@ -361,9 +415,19 @@ def build_wall_standard_with_inner(
                             )
                         if fill_in:
                             for y in range(height_map[new_pt.x, new_pt.z], point.y):
-                                editor.placeBlock(
-                                    (new_pt.x, y, new_pt.z), Block(full_block)
+                                block = palette.find_block_id(
+                                    BlockForm.block,
+                                    MaterialParameters(
+                                        position=ivec3(new_pt.x, y, new_pt.z),
+                                        age=0,
+                                        shade=0.5,
+                                        moisture=0,
+                                        dithering_pattern=None,
+                                    ),
+                                    MaterialRole.primary_stone,
                                 )
+
+                                editor.placeBlock((new_pt.x, y, new_pt.z), Block(block))
                             if water_map[new_pt.x][new_pt.z] == True:
                                 fill_water(
                                     ivec2(new_pt.x, new_pt.z),
@@ -405,9 +469,19 @@ def build_wall_standard_with_inner(
                                 )
                     if fill_in:
                         for y in range(height_map[new_pt.x, new_pt.z], point.y):
-                            editor.placeBlock(
-                                (new_pt.x, y, new_pt.z), Block(full_block)
+                            block = palette.find_block_id(
+                                BlockForm.block,
+                                MaterialParameters(
+                                    position=ivec3(new_pt.x, y, new_pt.z),
+                                    age=0,
+                                    shade=0.5,
+                                    moisture=0,
+                                    dithering_pattern=None,
+                                ),
+                                MaterialRole.primary_stone,
                             )
+
+                            editor.placeBlock((new_pt.x, y, new_pt.z), Block(block))
                         if water_map[new_pt.x][new_pt.z] == True:
                             fill_water(
                                 ivec2(new_pt.x, new_pt.z),
@@ -424,7 +498,19 @@ def build_wall_standard_with_inner(
                 True  # can put something else here if needed
             )
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
-                editor.placeBlock((pt.x, y, pt.z), Block(full_block))
+                block = palette.find_block_id(
+                    BlockForm.block,
+                    MaterialParameters(
+                        position=ivec3(pt.x, y, pt.z),
+                        age=0,
+                        shade=0.5,
+                        moisture=0,
+                        dithering_pattern=None,
+                    ),
+                    MaterialRole.primary_stone,
+                )
+
+                editor.placeBlock((pt.x, y, pt.z), Block(block))
             if (
                 water_map[pt.x][pt.z] == True
             ):  # behaviour is to place inner wall into water til floor
@@ -447,7 +533,7 @@ def add_wall_points_directionality(
         ivec2_point = ivec2(point.x, point.z)
         neighbours = get_neighbours_in_set(ivec2_point, inner_points)
         for neighbour in neighbours:
-            if wall_dict.get(neighbour) != True:
+            if not wall_dict.get(neighbour):
                 enhanced_point[1].append(ivec2_to_dir(neighbour - ivec2_point))
 
         enhanced_wall_points.append(enhanced_point)
@@ -513,10 +599,8 @@ def flatten_walkway(
     walkway_list: list[ivec2],
     walkway_dict: dict,
     editor: Editor,
-    palette: LegacyPalette,
+    palette: Palette,
 ):
-    wood = palette.secondary_wood
-
     for point in walkway_list:
         walkway_dict[point] = average_neighbour_height(point.x, point.y, walkway_dict)
 
@@ -527,19 +611,53 @@ def flatten_walkway(
             or not 0.25 < height % 1 <= 0.5
             and not 0.5 < height % 1 <= 0.75
         ):
-            editor.placeBlock(
-                (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab")
+            slab = palette.find_block_id(
+                BlockForm.slab,
+                MaterialParameters(
+                    position=ivec3(key.x, round(height), key.y),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.secondary_wood,
             )
+
+            editor.placeBlock((key.x, round(height), key.y), Block(slab))
             walkway_dict[key] = round(height)
         elif 0.25 < height % 1 <= 0.5:
+            slab = palette.find_block_id(
+                BlockForm.slab,
+                MaterialParameters(
+                    position=ivec3(key.x, round(height), key.y),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.secondary_wood,
+            )
+
             editor.placeBlock(
-                (key.x, round(height), key.y), Block(f"minecraft:{wood}_slab[type=top]")
+                (key.x, round(height), key.y), Block(f"minecraft:{slab}[type=top]")
             )
             walkway_dict[key] = round(height) + 0.49
         else:
+            slab = palette.find_block_id(
+                BlockForm.slab,
+                MaterialParameters(
+                    position=ivec3(key.x, round(height) - 1, key.y),
+                    age=0,
+                    shade=0.5,
+                    moisture=0,
+                    dithering_pattern=None,
+                ),
+                MaterialRole.secondary_wood,
+            )
+
             editor.placeBlock(
                 (key.x, round(height) - 1, key.y),
-                Block(f"minecraft:{wood}_slab[type=top]"),
+                Block(f"minecraft:{slab}[type=top]"),
             )
             walkway_dict[key] = round(height) - 0.51
     # 2nd pass to add stairs based on first pass changes
@@ -552,16 +670,38 @@ def flatten_walkway(
                 continue
             elif height % 1 == 0:  # bottom slab
                 if walkway_dict.get(neighbour) - height >= 1:
+                    stairs = palette.find_block_id(
+                        BlockForm.stairs,
+                        MaterialParameters(
+                            position=ivec3(key.x, round(height), key.y),
+                            age=0,
+                            shade=0.5,
+                            moisture=0,
+                            dithering_pattern=None,
+                        ),
+                        MaterialRole.secondary_wood,
+                    )
+
                     editor.placeBlock(
                         (key.x, round(height), key.y),
-                        Block(f"minecraft:{wood}_stairs[facing={to_text(direction)}]"),
+                        Block(f"minecraft:{stairs}[facing={to_text(direction)}]"),
                     )
             elif walkway_dict.get(neighbour) - height <= -1:
+                stairs = palette.find_block_id(
+                    BlockForm.stairs,
+                    MaterialParameters(
+                        position=ivec3(key.x, round(height), key.y),
+                        age=0,
+                        shade=0.5,
+                        moisture=0,
+                        dithering_pattern=None,
+                    ),
+                    MaterialRole.secondary_wood,
+                )
+
                 editor.placeBlock(
                     (key.x, round(height), key.y),
-                    Block(
-                        f"minecraft:{wood}_stairs[facing={to_text(opposite(direction))}]"
-                    ),
+                    Block(f"minecraft:{stairs}[facing={to_text(opposite(direction))}]"),
                 )
 
     return walkway_dict
@@ -587,7 +727,7 @@ def average_neighbour_height(x: int, z: int, walkway_dict: dict) -> int:
         height_sum += height * weight
         total_weight += weight
 
-    return height_sum / total_weight
+    return height_sum // total_weight
 
 
 WATER_CHECK = 5  # the water the distance the wall will build across
@@ -639,23 +779,19 @@ def add_towers(
     walkway_dict: dict,
     editor: Editor,
     rng: RNG,
-    palette: LegacyPalette,
+    palette: Palette,
 ):
     distance_to_next_tower = 80  # minimum
     tower_possible = randrange(
-        rng.value(), 0, distance_to_next_tower / 2
+        rng.value(), 0, distance_to_next_tower // 2
     )  # counter if 0, allow a tower to be built
     tower = NBTAsset.construct(
         name="tower",
         type="tower",
         filepath="grimoire/asset_data/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
-        palette=LegacyPalette.find("wall_palette"),
+        palette=Palette.find("wall_palette"),
     )
-
-    # blocks
-    stone = palette.primary_stone
-    full_block = fix_block_name(f"{stone}")
 
     for point in walkway_list:
         if tower_possible == 0:
@@ -675,12 +811,24 @@ def add_towers(
                             height == point_height + 5
                             or walkway_dict.get(neighbour) is None
                         ):
+                            block = palette.find_block_id(
+                                BlockForm.block,
+                                MaterialParameters(
+                                    position=ivec3(neighbour.x, height, neighbour.y),
+                                    age=0,
+                                    shade=0.5,
+                                    moisture=0,
+                                    dithering_pattern=None,
+                                ),
+                                MaterialRole.primary_stone,
+                            )
+
                             editor.placeBlock(
-                                (neighbour.x, height, neighbour.y), Block(full_block)
+                                (neighbour.x, height, neighbour.y), Block(block)
                             )
 
                 # build tower
-                build_nbt_legacy(
+                build_nbt(
                     editor=editor,
                     asset=tower,
                     transformation=Transformation(

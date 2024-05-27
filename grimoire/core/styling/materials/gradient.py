@@ -70,22 +70,23 @@ class Gradient:
         self.axes.append(axis)
         return self
 
-    def calculate_gradient_val(self, pos: ivec3) -> float:
+    # Calculates the gradient value without perlin noise
+    def calculate_gradient_value(self, pos: ivec3) -> float:
         if len(self.axes) == 0:
             return 0.5
 
         return average([axis.find_gradient_value(pos) for axis in self.axes])
 
-    # We average shading across its orthogonal neighbours
-    def calculate_shade(self, pos: ivec3, grad_val: float = None):
-        shade_val = average(
+    # We average the value across its orthogonal neighbours
+    def calculate_value(self, pos: ivec3, grad_val: float = None):
+        value = average(
             [
-                self.calculate_point_shade(pos + d, grad_val)
+                self.calculate_point_value(pos + d, grad_val)
                 for d in [Directions.Zero] + Directions.Orthogonal
             ]
         )
 
-        return shade_val
+        return value
 
     # Make a vec appear between 0 and 1
     def normalize_vec(self, vec: ivec3) -> vec3:
@@ -95,7 +96,7 @@ class Gradient:
             float(vec.z) / 256.0,
         )
 
-    def calculate_point_shade(self, pos: ivec3, grad_val: float = None):
+    def calculate_point_value(self, pos: ivec3, grad_val: float = None):
         perlin_val = 0.5 + sum(
             self.noises[i](list(self.normalize_vec(pos)))
             / (self.perlin_settings.add_ratio**i)
@@ -103,13 +104,13 @@ class Gradient:
         )
 
         grad_val = (
-            grad_val if grad_val is not None else self.calculate_gradient_val(pos)
+            grad_val if grad_val is not None else self.calculate_gradient_value(pos)
         )
 
-        shade_val = clamp(
+        point_value = clamp(
             lerp(grad_val, perlin_val, self.perlin_settings.strength),
             0.0,
             1.0,
         )
 
-        return shade_val
+        return point_value
