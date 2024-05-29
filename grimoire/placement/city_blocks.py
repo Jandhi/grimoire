@@ -1,5 +1,5 @@
 import itertools
-from typing import Generator
+from typing import Generator, Iterable
 
 from gdpc import Block, Editor
 from gdpc.vector_tools import (
@@ -34,6 +34,8 @@ from ..placement.building_placement import place_building
 EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 120
 MINIMUM_BLOCK_SZE = 100
+
+LOOP_LIMIT = 100  # prevents uncontrolled loops from going on too long
 
 
 def generate_bubbles(
@@ -275,6 +277,8 @@ def decorate_city_block(
     SCAN_STEP: int = 4
 
     inner_shape = Shape2D(inner)
+    outer_shape = Shape2D(outer)
+    bounds = outer_shape.to_boundry_rect()
 
     # the grid to be scanned for potential Nook locations
     scan_grid: Generator[ivec2, None, None] = (
@@ -285,21 +289,17 @@ def decorate_city_block(
         )
     )
 
-    # scan the city block
+    # scan the city block to find a nook
     for scan_position in scan_grid:
         # if an empty space is found
         if city_map.buildings[scan_position] is None:
-            outer_shape = Shape2D(outer)
-            bounds = Rect(outer_shape.begin - 1, outer_shape.end + 1)
-            edge: dict[ivec2, set[DevelopmentType]] = map_developments_at_edge(
-                outer, city_map, bounds
+            nook_edge, nook_shape = discover_nook(scan_position, outer_shape, city_map)
+            surrounging_developments: dict[ivec2, set[DevelopmentType]] = (
+                map_developments_at_edge(nook_edge, city_map, bounds)
             )
             pattern: list[tuple[set[DevelopmentType], int]] = edge_to_pattern(
-                scan_position, edge, bounds
+                scan_position, surrounging_developments, bounds
             )
-            # flood fill the remaining space, determining its area
-            area: Shape2D = None  # FIXME
-
             # select an appropriate Nook type and manifest it
             exposure: ExposureType = identify_exposure_type_from_edging_pattern(pattern)
             nook: Nook = block_rng.choose(
@@ -307,10 +307,72 @@ def decorate_city_block(
                     district_types=DistrictType.URBAN,
                     exposure_types=exposure,
                     styles=style,
-                    area=area,
+                    area=nook_shape,
                 )
             )
-            nook.manifest(editor, area, edge, city_map, block_rng)
+            nook.manifest(editor, nook_shape, nook_edge, city_map, block_rng)
+
+
+def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
+    """Find the extent of a potential Nook in a city block, starting at a free space."""
+    development_map: list[list[DevelopmentType | None]] = city_map.buildings
+
+    if development_map[start.x][start.y] is not None:
+        raise ValueError(
+            f"Start ({start}) must be unoccupied in the city map (is {development_map[start.x][start.y]})"
+        )
+
+    edge: set[ivec2] = set()
+    shape = Shape2D()
+
+    # move east, populating map and shape with Nook until something else is reached
+
+    for _ in range(LOOP_LIMIT):
+        if development_map[start.x + 1][start.y]:
+            break  # next step would be out-of-bounds
+        start += EAST_2D
+    else:
+        raise RuntimeError(f"Ran over edge sequence limit of {LOOP_LIMIT}!")
+
+    next_position = current_position = start
+
+    # trace the edge
+    for _ in range(LOOP_LIMIT):
+        # check all neighbors
+        for neighbor in neighbors2D(
+            current_position, city_block_shape.to_boundry_rect()
+        ):
+            neighbor_development: DevelopmentType | None = development_map[neighbor.x][
+                neighbor.y
+            ]
+
+            # is adjacent to something else, and not yet documented
+            if neighbor_development:
+                edge.add(current_position)
+                continue
+
+            # pick the next position to check, if it's free and undocumented
+            if next_position == current_position and neighbor not in edge | shape:
+                next_position = neighbor
+
+        # could not find a candidate for next
+        if next_position == current_position:
+            raise NotImplementedError(
+                f"Ah, I need a smarter way of dealing with dead ends! Or maybe we've finished? (Crashed at {current_position})"
+            )
+
+        # this has no developed neighbours
+        if current_position not in edge:
+            shape.add(current_position)
+
+        # looped around to the start
+        if current_position == start:
+            break
+
+    else:
+        raise RuntimeError(f"Ran over edge sequence limit of {LOOP_LIMIT}!")
+
+    return edge, shape
 
 
 def map_developments_at_edge(
@@ -331,36 +393,43 @@ def edge_to_pattern(
 
     pattern: list[tuple[set[DevelopmentType], int]] = []
 
-    for _ in range(100):
+    for _ in range(LOOP_LIMIT):
         if start in edge:
             break
         start += EAST_2D
 
+    for current in determine_edge_sequence(start, bounds, edge, limit=len(edge)):
+
+        if not pattern or edge[current] != pattern[-1][0]:  # new pattern segment
+            pattern.append((edge[current], 1))
+            continue
+        pattern[-1] = (pattern[-1][0], pattern[-1][1] + 1)  # extend current segment
+
+    return pattern
+
+
+def determine_edge_sequence(
+    start: ivec2, bounds: Rect, edge: Iterable[ivec2], limit: int = LOOP_LIMIT
+) -> Generator[ivec2, itertools.Any, None]:
+
     current: ivec2 = start
     visited: set[ivec2] = set()
 
-    for _ in range(len(edge)):
-
+    for _ in range(limit):
         # find next point
-        for neighbor in neighbors2D(
-            current, bounds
-        ):  # TODO: Replace with ORDERED_CARDINALS_AND_DIAGONALS_2D
+        for neighbor in neighbors2D(current, bounds):
             if neighbor in edge and neighbor not in visited:
                 current = neighbor
+                visited.add(current)
                 break
-            raise NotImplementedError()
         else:
-            raise RuntimeError("Edge has a dead end!")
+            raise RuntimeError(f"Edge has a dead end at {current}!")
 
-        # update pattern
-        if edge[current] == pattern[-1][0]:
-            pattern[-1] = (pattern[-1][0], pattern[-1][1] + 1)
-        else:
-            pattern.append((edge[current], 1))
+        yield current
 
-        # save progress and check for completion
-        visited.add(current)
+        # looped around to the start
         if current == start:
             break
 
-    return pattern
+    else:
+        raise RuntimeError(f"Ran over edge sequence limit of {limit}!")

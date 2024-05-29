@@ -328,7 +328,7 @@ def find_suitable_nooks(
     def update_final_set(
         final_set: set[Nook] | None, update_set: set[Nook] | None
     ) -> set[Nook] | None:
-        """Update the final set based on the update set.
+        """Update the final set of Nooks with the update set.
 
         Arguments:
             final_set: The current final set
