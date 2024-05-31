@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, auto
 
 from gdpc import Block
 
@@ -10,19 +10,19 @@ from grimoire.core.styling.materials.material import Material, MaterialParameter
 
 
 class MaterialRole(Enum):
-    PRIMARY_WALL = "primary_wall"
-    SECONDARY_WALL = "secondary_wall"
+    PRIMARY_WALL = auto()
+    SECONDARY_WALL = auto()
 
-    PRIMARY_ROOF = "primary_roof"
-    SECONDARY_ROOF = "secondary_roof"
+    PRIMARY_ROOF = auto()
+    SECONDARY_ROOF = auto()
 
-    PRIMARY_STONE = "primary_stone"
-    SECONDARY_STONE = "secondary_stone"
+    PRIMARY_STONE = auto()
+    SECONDARY_STONE = auto()
 
-    PRIMARY_WOOD = "primary_wood"
-    SECONDARY_WOOD = "secondary_wood"
+    PRIMARY_WOOD = auto()
+    SECONDARY_WOOD = auto()
 
-    PILLAR = "pillar"
+    PILLAR = auto()
 
 
 class _ResolutionPriority:
@@ -70,7 +70,7 @@ class ResolutionPriority(Enum):
         },
     )
 
-    def order(self) -> list[MaterialRole]:
+    def order(self) -> tuple[MaterialRole, ...]:
         return self.value.order
 
     def get_next_in_line(self, role: MaterialRole) -> MaterialRole | None:
@@ -86,11 +86,16 @@ class Palette(Asset):
     secondary_color: MinecraftColor
 
     def find_role(self, block: Block) -> MaterialRole | None:
-        for role in self.resolution_priority.order():
-            if role in self.materials and self.materials[role].has_block(block):
-                return role
+        role_order = (
+            role
+            for role in self.resolution_priority.order()
+            if role in self.materials and self.materials[role].has_block(block)
+        )
 
-        return None
+        return next(
+            role_order,
+            None,
+        )
 
     def find_block_id(
         self,

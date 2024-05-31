@@ -1,18 +1,18 @@
-from enum import Enum
+from enum import Enum, auto
 from typing import Callable
 
 from glm import ivec3
 
 from grimoire.core.noise.seed import Seed
-from grimoire.core.utils.easings import ease_in_out_cubic, ease_in_out_quint
+from grimoire.core.utils.easings import ease_in_out
 
 
 class DitheringPattern(Enum):
-    NONE = "none"
-    RANDOM = "random"
-    RANDOM_EASE_CUBIC = "random_ease_cubic"
-    RANDOM_EASE_QUINT = "random_ease_quint"
-    REGULAR = "regular"
+    NONE = auto()
+    RANDOM = auto()
+    RANDOM_EASE_CUBIC = auto()
+    RANDOM_EASE_QUINT = auto()
+    REGULAR = auto()
 
     def calculate_index(
         self,
@@ -33,12 +33,12 @@ class DitheringPattern(Enum):
 
         if self == DitheringPattern.RANDOM_EASE_CUBIC:
             return calculate_dither_random(
-                value, dimension_range, seed, ease_in_out_cubic
+                value, dimension_range, seed, lambda x: ease_in_out(x, 3)
             )
 
         if self == DitheringPattern.RANDOM_EASE_QUINT:
             return calculate_dither_random(
-                value, dimension_range, seed, ease_in_out_quint
+                value, dimension_range, seed, lambda x: ease_in_out(x, 5)
             )
 
 
@@ -72,7 +72,4 @@ def calculate_dither_random(
     remainder = easing((value / step_size) - index)
     percent_chance = int(remainder * 100)
 
-    if seed.percent(percent_chance):
-        return index + 1
-    else:
-        return index
+    return index + 1 if seed.percent(percent_chance) else index

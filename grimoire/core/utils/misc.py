@@ -21,4 +21,5 @@ def average(items: Collection[T]) -> T:
 
 
 def lerp(a: T, b: T, t: float) -> T:
+    """Linear Interpolation between a and b, with t as the interpolation factor"""
     return a * (1.0 - t) + b * t

@@ -252,10 +252,7 @@ class BasicMaterial(Material):
     def get_id(self, form: BlockForm, parameters: MaterialParameters) -> str | None:
         material = self.traverse(parameters)
 
-        if form in material.blocks:
-            return material.blocks[form]
-
-        return None
+        return material.blocks[form] if form in material.blocks else None
 
 
 class CompositeMaterial(Material):

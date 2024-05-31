@@ -1,22 +1,22 @@
-from enum import Enum
+from enum import Enum, auto
 
 from gdpc import Block
 
 
 class BlockForm(Enum):
-    BLOCK = "block"
-    STAIRS = "stairs"
-    SLAB = "slab"
-    WALL = "wall"
-    FENCE = "fence"
-    DOOR = "door"
-    TRAPDOOR = "trapdoor"
-    SIGN = "sign"
+    BLOCK = auto()
+    STAIRS = auto()
+    SLAB = auto()
+    WALL = auto()
+    FENCE = auto()
+    DOOR = auto()
+    TRAPDOOR = auto()
+    SIGN = auto()
 
     @staticmethod
     def get_form(block: Block) -> "BlockForm":
         for form in BlockForm:
-            if form.value in block.id:
+            if form.name in block.id:
                 return form
 
         # We assume otherwise it is a whole block

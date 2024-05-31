@@ -1,20 +1,20 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class MinecraftColor(Enum):
-    WHITE = "white"
-    LIGHT_GRAY = "light_gray"
-    GRAY = "gray"
-    BLACK = "black"
-    BROWN = "brown"
-    RED = "red"
-    ORANGE = "orange"
-    YELLOW = "yellow"
-    LIME = "lime"
-    GREEN = "green"
-    CYAN = "cyan"
-    LIGHT_BLUE = "light_blue"
-    BLUE = "blue"
-    PURPLE = "purple"
-    MAGENTA = "magenta"
-    PINK = "pink"
+    WHITE = auto()
+    LIGHT_GRAY = auto()
+    GRAY = auto()
+    BLACK = auto()
+    BROWN = auto()
+    RED = auto()
+    ORANGE = auto()
+    YELLOW = auto()
+    LIME = auto()
+    GREEN = auto()
+    CYAN = auto()
+    LIGHT_BLUE = auto()
+    BLUE = auto()
+    PURPLE = auto()
+    MAGENTA = auto()
+    PINK = auto()
