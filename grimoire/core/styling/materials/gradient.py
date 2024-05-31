@@ -3,7 +3,7 @@ import dataclasses
 
 from glm import ivec3, vec3
 
-from grimoire.core.noise.perlin.perlin_noise import PerlinNoise
+from perlin_noise import PerlinNoise
 from grimoire.core.structures.directions import Directions, Axis, Axes
 from grimoire.core.utils.bounds import clamp
 from grimoire.core.utils.misc import average, lerp
@@ -79,14 +79,12 @@ class Gradient:
 
     # We average the value across its orthogonal neighbours
     def calculate_value(self, pos: ivec3, grad_val: float = None):
-        value = average(
+        return average(
             [
                 self.calculate_point_value(pos + d, grad_val)
                 for d in [Directions.Zero] + Directions.Orthogonal
             ]
         )
-
-        return value
 
     # Make a vec appear between 0 and 1
     def normalize_vec(self, vec: ivec3) -> vec3:
@@ -107,10 +105,8 @@ class Gradient:
             grad_val if grad_val is not None else self.calculate_gradient_value(pos)
         )
 
-        point_value = clamp(
+        return clamp(
             lerp(grad_val, perlin_val, self.perlin_settings.strength),
             0.0,
             1.0,
         )
-
-        return point_value

@@ -21,7 +21,7 @@ def build_roof(
     rng = RNG(seed, "build_roof")
 
     shade_gradient = Gradient(
-        seed=GlobalSeed.get(),
+        seed=rng.next(),
         perlin_settings=PerlinSettings(
             base_octaves=27, noise_layers=6, add_ratio=1.7, strength=0.2
         ),
@@ -36,7 +36,7 @@ def build_roof(
         shade_func=lambda point: shade_gradient.calculate_value(point),
         age_func=lambda point: 0,
         moisture_func=lambda point: 0,
-        dithering_pattern=DitheringPattern.random,
+        dithering_pattern=DitheringPattern.RANDOM,
     )
 
     def roof_is_shape(shape: str):

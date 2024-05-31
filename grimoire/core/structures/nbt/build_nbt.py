@@ -21,6 +21,9 @@ def build_nbt(
     allow_non_solid_replacement: bool = False,
     material_params_func: MaterialParameterFunction | None = None,
 ):
+    """Constructs an NBTAsset given an editor and transformation
+    If given a palette, will palette swap using the structure's own palette and the given palette
+    """
     structure = convert_nbt(asset.filepath)
     transformation = transformation or Transformation()  # construct default value
 
@@ -31,13 +34,12 @@ def build_nbt(
         nbt = palette_index_and_nbt[1]
         block = transformed_palette[palette_index]
 
-        if (
-            block.id in asset.do_not_place
-            or block.id.removeprefix("minecraft:") in asset.do_not_place
-        ):
-            continue
+        if not block.id.startswith("minecraft"):
+            block.id = f"minecraft:{block.id}"
 
-        if block.id == "minecraft:air" and not place_air:
+        if block.id in asset.do_not_place or (
+            block.id == "minecraft:air" and not place_air
+        ):
             continue
 
         x, y, z = transformation.apply_to_point(
@@ -79,6 +81,9 @@ def build_nbt(
 
         if block.id == "minecraft:barrier":
             block.id = "minecraft:air"
+
+        if block.id == "minecraft:structure_void":
+            continue
 
         editor.placeBlock(position=(x, y, z), block=block)
 

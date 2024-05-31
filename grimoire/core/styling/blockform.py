@@ -4,14 +4,14 @@ from gdpc import Block
 
 
 class BlockForm(Enum):
-    block = "block"
-    stairs = "stairs"
-    slab = "slab"
-    wall = "wall"
-    fence = "fence"
-    door = "door"
-    trapdoor = "trapdoor"
-    sign = "sign"
+    BLOCK = "block"
+    STAIRS = "stairs"
+    SLAB = "slab"
+    WALL = "wall"
+    FENCE = "fence"
+    DOOR = "door"
+    TRAPDOOR = "trapdoor"
+    SIGN = "sign"
 
     @staticmethod
     def get_form(block: Block) -> "BlockForm":
@@ -21,4 +21,4 @@ class BlockForm(Enum):
 
         # We assume otherwise it is a whole block
         # This may not necessarily be the case, but it's a *good enough* metric
-        return BlockForm.block
+        return BlockForm.BLOCK

@@ -170,7 +170,7 @@ def build_wall_palisade(
                 # interface.placeBlock(point[0],point[1] + point[3], point[2], 'minecraft:stone_brick_wall')
 
                 wood = palette.find_block_id(
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     MaterialParameters(
                         position=ivec3(point[0], y, point[2]),
                         age=0,
@@ -178,13 +178,13 @@ def build_wall_palisade(
                         moisture=0,
                         dithering_pattern=None,
                     ),
-                    MaterialRole.pillar,
+                    MaterialRole.PILLAR,
                 )
 
                 editor.placeBlock((point[0], y, point[2]), Block(wood))
 
             wood = palette.find_block_id(
-                BlockForm.fence,
+                BlockForm.FENCE,
                 MaterialParameters(
                     position=ivec3(point[0], point[1] + point[3], point[2]),
                     age=0,
@@ -192,7 +192,7 @@ def build_wall_palisade(
                     moisture=0,
                     dithering_pattern=None,
                 ),
-                MaterialRole.secondary_wood,
+                MaterialRole.SECONDARY_WOOD,
             )
 
             editor.placeBlock(
@@ -228,7 +228,7 @@ def build_wall_standard(
 
     # temp
     material: BasicMaterial = Material.find("cobblestone")
-    material.dithering_pattern = DitheringPattern.random_ease_cubic
+    material.dithering_pattern = DitheringPattern.RANDOM_EASE_CUBIC
 
     rng = RNG(0)
 
@@ -247,7 +247,7 @@ def build_wall_standard(
             for y in range(height_map[point.x, point.z], point.y + 1):
                 material.place_block(
                     editor,
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     {},
                     None,
                     MaterialParameters(
@@ -255,7 +255,7 @@ def build_wall_standard(
                         shade=gradient.calculate_value(ivec3(point.x, y, point.z)),
                         age=0,
                         moisture=0,
-                        dithering_pattern=DitheringPattern.random_ease_quint,
+                        dithering_pattern=DitheringPattern.RANDOM_EASE_QUINT,
                     ),
                 )
 
@@ -264,7 +264,7 @@ def build_wall_standard(
                 previous_dir = wall_point[1][0]
 
             block = palette.find_block_id(
-                BlockForm.stairs,
+                BlockForm.STAIRS,
                 MaterialParameters(
                     position=ivec3(point.x, point.y + 1, point.z),
                     age=0,
@@ -272,7 +272,7 @@ def build_wall_standard(
                     moisture=0,
                     dithering_pattern=None,
                 ),
-                MaterialRole.primary_stone,
+                MaterialRole.PRIMARY_STONE,
             )
 
             editor.placeBlock(
@@ -361,7 +361,7 @@ def build_wall_standard_with_inner(
 
             for y in range(height_map[point.x, point.z], point.y + 1):
                 block = palette.find_block_id(
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     MaterialParameters(
                         position=ivec3(point.x, y, point.z),
                         age=0,
@@ -369,7 +369,7 @@ def build_wall_standard_with_inner(
                         moisture=0,
                         dithering_pattern=None,
                     ),
-                    MaterialRole.primary_stone,
+                    MaterialRole.PRIMARY_STONE,
                 )
 
                 editor.placeBlock((point.x, y, point.z), Block(block))
@@ -377,7 +377,7 @@ def build_wall_standard_with_inner(
                 previous_dir = wall_point[1][0]
 
             block = palette.find_block_id(
-                BlockForm.stairs,
+                BlockForm.STAIRS,
                 MaterialParameters(
                     position=ivec3(point.x, point.y + 1, point.z),
                     age=0,
@@ -385,7 +385,7 @@ def build_wall_standard_with_inner(
                     moisture=0,
                     dithering_pattern=None,
                 ),
-                MaterialRole.primary_stone,
+                MaterialRole.PRIMARY_STONE,
             )
 
             editor.placeBlock(
@@ -416,7 +416,7 @@ def build_wall_standard_with_inner(
                         if fill_in:
                             for y in range(height_map[new_pt.x, new_pt.z], point.y):
                                 block = palette.find_block_id(
-                                    BlockForm.block,
+                                    BlockForm.BLOCK,
                                     MaterialParameters(
                                         position=ivec3(new_pt.x, y, new_pt.z),
                                         age=0,
@@ -424,7 +424,7 @@ def build_wall_standard_with_inner(
                                         moisture=0,
                                         dithering_pattern=None,
                                     ),
-                                    MaterialRole.primary_stone,
+                                    MaterialRole.PRIMARY_STONE,
                                 )
 
                                 editor.placeBlock((new_pt.x, y, new_pt.z), Block(block))
@@ -470,7 +470,7 @@ def build_wall_standard_with_inner(
                     if fill_in:
                         for y in range(height_map[new_pt.x, new_pt.z], point.y):
                             block = palette.find_block_id(
-                                BlockForm.block,
+                                BlockForm.BLOCK,
                                 MaterialParameters(
                                     position=ivec3(new_pt.x, y, new_pt.z),
                                     age=0,
@@ -478,7 +478,7 @@ def build_wall_standard_with_inner(
                                     moisture=0,
                                     dithering_pattern=None,
                                 ),
-                                MaterialRole.primary_stone,
+                                MaterialRole.PRIMARY_STONE,
                             )
 
                             editor.placeBlock((new_pt.x, y, new_pt.z), Block(block))
@@ -499,7 +499,7 @@ def build_wall_standard_with_inner(
             )
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
                 block = palette.find_block_id(
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     MaterialParameters(
                         position=ivec3(pt.x, y, pt.z),
                         age=0,
@@ -507,7 +507,7 @@ def build_wall_standard_with_inner(
                         moisture=0,
                         dithering_pattern=None,
                     ),
-                    MaterialRole.primary_stone,
+                    MaterialRole.PRIMARY_STONE,
                 )
 
                 editor.placeBlock((pt.x, y, pt.z), Block(block))
@@ -612,7 +612,7 @@ def flatten_walkway(
             and not 0.5 < height % 1 <= 0.75
         ):
             slab = palette.find_block_id(
-                BlockForm.slab,
+                BlockForm.SLAB,
                 MaterialParameters(
                     position=ivec3(key.x, round(height), key.y),
                     age=0,
@@ -620,14 +620,14 @@ def flatten_walkway(
                     moisture=0,
                     dithering_pattern=None,
                 ),
-                MaterialRole.secondary_wood,
+                MaterialRole.SECONDARY_WOOD,
             )
 
             editor.placeBlock((key.x, round(height), key.y), Block(slab))
             walkway_dict[key] = round(height)
         elif 0.25 < height % 1 <= 0.5:
             slab = palette.find_block_id(
-                BlockForm.slab,
+                BlockForm.SLAB,
                 MaterialParameters(
                     position=ivec3(key.x, round(height), key.y),
                     age=0,
@@ -635,7 +635,7 @@ def flatten_walkway(
                     moisture=0,
                     dithering_pattern=None,
                 ),
-                MaterialRole.secondary_wood,
+                MaterialRole.SECONDARY_WOOD,
             )
 
             editor.placeBlock(
@@ -644,7 +644,7 @@ def flatten_walkway(
             walkway_dict[key] = round(height) + 0.49
         else:
             slab = palette.find_block_id(
-                BlockForm.slab,
+                BlockForm.SLAB,
                 MaterialParameters(
                     position=ivec3(key.x, round(height) - 1, key.y),
                     age=0,
@@ -652,7 +652,7 @@ def flatten_walkway(
                     moisture=0,
                     dithering_pattern=None,
                 ),
-                MaterialRole.secondary_wood,
+                MaterialRole.SECONDARY_WOOD,
             )
 
             editor.placeBlock(
@@ -671,7 +671,7 @@ def flatten_walkway(
             elif height % 1 == 0:  # bottom slab
                 if walkway_dict.get(neighbour) - height >= 1:
                     stairs = palette.find_block_id(
-                        BlockForm.stairs,
+                        BlockForm.STAIRS,
                         MaterialParameters(
                             position=ivec3(key.x, round(height), key.y),
                             age=0,
@@ -679,7 +679,7 @@ def flatten_walkway(
                             moisture=0,
                             dithering_pattern=None,
                         ),
-                        MaterialRole.secondary_wood,
+                        MaterialRole.SECONDARY_WOOD,
                     )
 
                     editor.placeBlock(
@@ -688,7 +688,7 @@ def flatten_walkway(
                     )
             elif walkway_dict.get(neighbour) - height <= -1:
                 stairs = palette.find_block_id(
-                    BlockForm.stairs,
+                    BlockForm.STAIRS,
                     MaterialParameters(
                         position=ivec3(key.x, round(height), key.y),
                         age=0,
@@ -696,7 +696,7 @@ def flatten_walkway(
                         moisture=0,
                         dithering_pattern=None,
                     ),
-                    MaterialRole.secondary_wood,
+                    MaterialRole.SECONDARY_WOOD,
                 )
 
                 editor.placeBlock(
@@ -812,7 +812,7 @@ def add_towers(
                             or walkway_dict.get(neighbour) is None
                         ):
                             block = palette.find_block_id(
-                                BlockForm.block,
+                                BlockForm.BLOCK,
                                 MaterialParameters(
                                     position=ivec3(neighbour.x, height, neighbour.y),
                                     age=0,
@@ -820,7 +820,7 @@ def add_towers(
                                     moisture=0,
                                     dithering_pattern=None,
                                 ),
-                                MaterialRole.primary_stone,
+                                MaterialRole.PRIMARY_STONE,
                             )
 
                             editor.placeBlock(

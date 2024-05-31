@@ -2,3 +2,8 @@
 .idea/
 **/.idea/**
 docs/Notes/.obsidian
+docs/.obsidian/workspace.json
+docs/.obsidian/app.json
+docs/.obsidian/appearance.json
+docs/.obsidian/core-plugins-migration.json
+docs/.obsidian/core-plugins.json

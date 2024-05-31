@@ -1,16 +1,16 @@
+from gdpc.editor import Editor
 from glm import ivec3
 
-from ..building_plan import BuildingPlan
-from ..legacycell import LegacyCell
 from ...core.noise.global_seed import GlobalSeed
-from ...core.structures.legacy_directions import cardinal, LegacyDirection, up
-from gdpc.editor import Editor
-from .wall import Wall, LOWER, UPPER
 from ...core.noise.rng import RNG
 from ...core.structures.grid import Grid
+from ...core.structures.legacy_directions import LegacyDirection, cardinal, up
 from ...core.styling.materials.dithering import DitheringPattern
 from ...core.styling.materials.gradient import Gradient, GradientAxis, PerlinSettings
 from ...core.styling.materials.material import MaterialParameterFunction
+from ..building_plan import BuildingPlan
+from ..legacycell import LegacyCell
+from .wall import LOWER, UPPER, Wall
 
 NOT_ROOF = "not_roof"
 ONLY_ROOF = "only_roof"
@@ -31,7 +31,7 @@ def build_walls(plan: BuildingPlan, editor: Editor, walls: list[Wall], rng: RNG)
         shade_func=lambda point: shade_gradient.calculate_value(point),
         age_func=lambda point: 0,
         moisture_func=lambda point: 0,
-        dithering_pattern=DitheringPattern.random,
+        dithering_pattern=DitheringPattern.RANDOM,
     )
 
     for cell in plan.cells:

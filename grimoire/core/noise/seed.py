@@ -7,10 +7,10 @@ T = TypeVar("T")
 # Class that wraps the seed value
 class Seed:
     def __init__(self, value) -> None:
-        self.__value = value
+        self._value = value
 
     def value(self) -> int:
-        return self.__value
+        return self._value
 
     # random.py functions
     def randint(self, max: int) -> int:

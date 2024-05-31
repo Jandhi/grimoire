@@ -10,27 +10,29 @@ from grimoire.core.styling.materials.material import Material, MaterialParameter
 
 
 class MaterialRole(Enum):
-    primary_wall = "primary_wall"
-    secondary_wall = "secondary_wall"
+    PRIMARY_WALL = "primary_wall"
+    SECONDARY_WALL = "secondary_wall"
 
-    primary_roof = "primary_roof"
-    secondary_roof = "secondary_roof"
+    PRIMARY_ROOF = "primary_roof"
+    SECONDARY_ROOF = "secondary_roof"
 
-    primary_stone = "primary_stone"
-    secondary_stone = "secondary_stone"
+    PRIMARY_STONE = "primary_stone"
+    SECONDARY_STONE = "secondary_stone"
 
-    primary_wood = "primary_wood"
-    secondary_wood = "secondary_wood"
+    PRIMARY_WOOD = "primary_wood"
+    SECONDARY_WOOD = "secondary_wood"
 
-    pillar = "pillar"
+    PILLAR = "pillar"
 
 
 class _ResolutionPriority:
-    order: list[MaterialRole]
+    order: tuple[MaterialRole, ...]
     next_in_line: dict[MaterialRole, MaterialRole]
 
     def __init__(
-        self, order: list[MaterialRole], next_in_line: dict[MaterialRole, MaterialRole]
+        self,
+        order: tuple[MaterialRole, ...],
+        next_in_line: dict[MaterialRole, MaterialRole],
     ):
         self.order = order
         self.next_in_line = next_in_line
@@ -43,28 +45,28 @@ class _ResolutionPriority:
 
 
 class ResolutionPriority(Enum):
-    stone = _ResolutionPriority(
-        order=[
-            MaterialRole.pillar,
-            MaterialRole.primary_wall,
-            MaterialRole.secondary_wall,
-            MaterialRole.primary_roof,
-            MaterialRole.secondary_roof,
-            MaterialRole.primary_stone,
-            MaterialRole.secondary_stone,
-            MaterialRole.primary_wood,
-            MaterialRole.secondary_wood,
-        ],
+    STONE = _ResolutionPriority(
+        order=(
+            MaterialRole.PILLAR,
+            MaterialRole.PRIMARY_WALL,
+            MaterialRole.SECONDARY_WALL,
+            MaterialRole.PRIMARY_ROOF,
+            MaterialRole.SECONDARY_ROOF,
+            MaterialRole.PRIMARY_STONE,
+            MaterialRole.SECONDARY_STONE,
+            MaterialRole.PRIMARY_WOOD,
+            MaterialRole.SECONDARY_WOOD,
+        ),
         next_in_line={
-            MaterialRole.primary_wall: MaterialRole.primary_stone,
-            MaterialRole.secondary_wall: MaterialRole.secondary_stone,
-            MaterialRole.primary_roof: MaterialRole.primary_stone,
-            MaterialRole.secondary_roof: MaterialRole.secondary_stone,
-            MaterialRole.primary_stone: MaterialRole.primary_wood,
-            MaterialRole.secondary_stone: MaterialRole.secondary_wood,
-            MaterialRole.primary_wood: MaterialRole.primary_stone,
-            MaterialRole.secondary_wood: MaterialRole.secondary_stone,
-            MaterialRole.pillar: MaterialRole.primary_stone,
+            MaterialRole.PRIMARY_WALL: MaterialRole.PRIMARY_STONE,
+            MaterialRole.SECONDARY_WALL: MaterialRole.SECONDARY_STONE,
+            MaterialRole.PRIMARY_ROOF: MaterialRole.PRIMARY_STONE,
+            MaterialRole.SECONDARY_ROOF: MaterialRole.SECONDARY_STONE,
+            MaterialRole.PRIMARY_STONE: MaterialRole.PRIMARY_WOOD,
+            MaterialRole.SECONDARY_STONE: MaterialRole.SECONDARY_WOOD,
+            MaterialRole.PRIMARY_WOOD: MaterialRole.PRIMARY_STONE,
+            MaterialRole.SECONDARY_WOOD: MaterialRole.SECONDARY_STONE,
+            MaterialRole.PILLAR: MaterialRole.PRIMARY_STONE,
         },
     )
 

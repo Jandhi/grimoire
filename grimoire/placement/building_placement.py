@@ -260,7 +260,7 @@ def place(
 
             for y_coord in range(world_height, grid_height):
                 stone = palette.find_block_id(
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     MaterialParameters(
                         position=ivec3(point.x, y_coord, point.y),
                         age=0,
@@ -268,7 +268,7 @@ def place(
                         moisture=0,
                         dithering_pattern=None,
                     ),
-                    MaterialRole.primary_stone,
+                    MaterialRole.PRIMARY_STONE,
                 )
 
                 editor.placeBlock(

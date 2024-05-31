@@ -37,57 +37,57 @@ def ease_in_out_quad(t):
 
 
 def ease_in_cubic(t):
-    return t * t * t
+    return t**3
 
 
 def ease_out_cubic(t):
     t -= 1
-    return t * t * t + 1
+    return t**3 + 1
 
 
 def ease_in_out_cubic(t):
     t *= 2
     if t < 1:
-        return t * t * t / 2
+        return t**3 / 2
     else:
         t -= 2
-        return (t * t * t + 2) / 2
+        return (t**3 + 2) / 2
 
 
 def ease_in_quart(t):
-    return t * t * t * t
+    return t**4
 
 
 def ease_out_quart(t):
     t -= 1
-    return -(t * t * t * t - 1)
+    return -(t**4 - 1)
 
 
 def ease_in_out_quart(t):
     t *= 2
     if t < 1:
-        return t * t * t * t / 2
+        return t**4 / 2
     else:
         t -= 2
-        return -(t * t * t * t - 2) / 2
+        return -(t**4 - 2) / 2
 
 
 def ease_in_quint(t):
-    return t * t * t * t * t
+    return t**5
 
 
 def ease_out_quint(t):
     t -= 1
-    return t * t * t * t * t + 1
+    return t**5 + 1
 
 
 def ease_in_out_quint(t):
     t *= 2
     if t < 1:
-        return t * t * t * t * t / 2
+        return t * 5 / 2
     else:
         t -= 2
-        return (t * t * t * t * t + 2) / 2
+        return (t**5 + 2) / 2
 
 
 def ease_in_expo(t):

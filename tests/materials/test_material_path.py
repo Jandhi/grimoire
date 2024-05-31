@@ -42,9 +42,10 @@ class MaterialPathTest(EditingTestModule):
         material: BasicMaterial = Material.find("cobblestone")
         gradient = Gradient(254, perlin_settings=PerlinSettings(23, 6, 1.6, 0.3))
 
-        path = []
-        for i in range(5, min(self.build_rect.size.x, self.build_rect.size.y) - 5):
-            path.append(ivec2(i, i))
+        path = [
+            ivec2(i, i)
+            for i in range(5, min(self.build_rect.size.x, self.build_rect.size.y) - 5)
+        ]
 
         points = [(point, 0) for point in path]
         visited = set(path)
@@ -82,7 +83,7 @@ class MaterialPathTest(EditingTestModule):
 
             material.place_block(
                 self.editor,
-                BlockForm.block,
+                BlockForm.BLOCK,
                 {},
                 None,
                 MaterialParameters(
@@ -90,6 +91,6 @@ class MaterialPathTest(EditingTestModule):
                     age=0,
                     shade=shade_val,
                     moisture=0,
-                    dithering_pattern=DitheringPattern.random_ease_cubic,
+                    dithering_pattern=DitheringPattern.RANDOM_EASE_CUBIC,
                 ),
             )

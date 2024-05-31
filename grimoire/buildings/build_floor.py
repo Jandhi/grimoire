@@ -9,6 +9,9 @@ from ..core.styling.palette import MaterialRole
 
 
 def build_floor(plan: BuildingPlan, editor: Editor, build_ceiling=True):
+    """
+    Builds the flooring for all cells in a buildingPlan
+    """
     grid: Grid = plan.grid
 
     for cell in plan.cells:
@@ -19,7 +22,7 @@ def build_floor(plan: BuildingPlan, editor: Editor, build_ceiling=True):
             for z in range(grid.depth):
                 pos = cell_pos + ivec3(x, 0, z)
                 block_id = plan.palette.find_block_id(
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     MaterialParameters(
                         position=pos,
                         age=0,
@@ -27,7 +30,7 @@ def build_floor(plan: BuildingPlan, editor: Editor, build_ceiling=True):
                         moisture=0,
                         dithering_pattern=None,
                     ),
-                    MaterialRole.secondary_wood,
+                    MaterialRole.SECONDARY_WOOD,
                 )
                 block = Block(block_id)
 

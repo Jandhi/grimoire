@@ -45,7 +45,7 @@ class MaterialsTest(EditingTestModule):
 
                 material.place_block(
                     self.editor,
-                    BlockForm.block,
+                    BlockForm.BLOCK,
                     {},
                     None,
                     MaterialParameters(
@@ -55,6 +55,6 @@ class MaterialsTest(EditingTestModule):
                         ),
                         age=0,
                         moisture=0,
-                        dithering_pattern=DitheringPattern.random_ease_quint,
+                        dithering_pattern=DitheringPattern.RANDOM_EASE_QUINT,
                     ),
                 )

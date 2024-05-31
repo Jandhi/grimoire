@@ -1,3 +1,4 @@
+import abc
 from dataclasses import dataclass
 from typing import Callable
 
@@ -11,7 +12,7 @@ from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.materials.dithering import (
     DitheringPattern,
 )
-from grimoire.core.utils.strings import trim_minecraft_label
+from grimoire.core.utils.strings import trim_minecraft_namespace
 
 
 @dataclass
@@ -243,7 +244,7 @@ class BasicMaterial(Material):
         )
 
     def has_block(self, block: Block) -> bool:
-        return trim_minecraft_label(block.id) in self.blocks.values()
+        return trim_minecraft_namespace(block.id) in self.blocks.values()
 
     def has_form(self, form: BlockForm) -> bool:
         return form in self.blocks.keys()
@@ -277,10 +278,10 @@ class CompositeMaterial(Material):
         )
 
     def has_block(self, block: Block) -> bool:
-        return any([material.has_block(block) for material in self.submaterials])
+        return any(material.has_block(block) for material in self.submaterials)
 
     def has_form(self, form: BlockForm) -> bool:
-        return any([material.has_form(form) for material in self.submaterials])
+        return any(material.has_form(form) for material in self.submaterials)
 
     def get_id(
         self,
@@ -289,7 +290,3 @@ class CompositeMaterial(Material):
     ) -> str | None:
         seed = Seed(recursive_hash(hash_string(0, self.name), *parameters.position))
         return self.random_submaterial(seed).get_id(form, parameters)
-
-
-def calculate_shade():
-    pass
