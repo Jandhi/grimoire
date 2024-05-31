@@ -17,7 +17,7 @@ SEED = 0x44444
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
-load_assets("assets")
+load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
@@ -30,5 +30,5 @@ print("World slice loaded!")
 map = Map(world_slice)
 rng = RNG(SEED)
 
-editor.placeBlock(ivec3(50, -50, 50), Block("glowstone"))
-place_building(editor, ivec2(50, 50), map, z_plus, rng, False)
+editor.placeBlock(ivec3(50, 100, 50), Block("glowstone"))
+place_building(editor, ivec2(50, 50), map, z_plus, rng, urban_only=False)

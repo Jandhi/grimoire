@@ -212,6 +212,9 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
     return None
 
 
+PLACE_BASEMENT_CONSTANT = 2.5
+
+
 def place(
     editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
 ):
@@ -227,6 +230,51 @@ def place(
 
     for point in shape.get_points_2d(grid):
         map.buildings[point.x][point.y] = plan
+
+    for cell in plan.cells:
+        if cell.position.y != 0:
+            continue
+
+        height_sum = 0
+        height_count = 0
+        grid_height = grid.origin.y
+
+        for point in plan.grid.get_points_at_2d(
+            ivec2(cell.position.x, cell.position.y)
+        ):
+            world_height = map.height_at(point)
+
+            height_sum += grid_height - world_height
+            height_count += 1
+
+        avg_height = height_sum / height_count
+
+        if avg_height > PLACE_BASEMENT_CONSTANT:
+            plan.add_cell(cell.position - ivec3(0, 1, 0))
+            grid_height = grid.origin.y - grid.height
+
+        for point in plan.grid.get_points_at_2d(
+            ivec2(cell.position.x, cell.position.y)
+        ):
+            world_height = map.height_at(point)
+
+            for y_coord in range(world_height, grid_height):
+                stone = palette.find_block_id(
+                    BlockForm.block,
+                    MaterialParameters(
+                        position=ivec3(point.x, y_coord, point.y),
+                        age=0,
+                        shade=0.5,
+                        moisture=0,
+                        dithering_pattern=None,
+                    ),
+                    MaterialRole.primary_stone,
+                )
+
+                editor.placeBlock(
+                    ivec3(point.x, y_coord, point.y),
+                    Block(fix_block_name(stone)),
+                )
 
     # Clear the area
     for point in shape.get_points(grid):
@@ -245,28 +293,6 @@ def place(
     walls = list(filter(lambda wall: style in wall.tags, Wall.all().copy()))
 
     build_walls(plan, editor, walls, rng)
-
-    for point in shape.get_points_2d(grid):
-        world_height = map.height_at(point)
-        grid_height = grid.origin.y
-
-        for y_coord in range(world_height, grid_height):
-            stone = palette.find_block_id(
-                BlockForm.block,
-                MaterialParameters(
-                    position=ivec3(point.x, y_coord, point.y),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
-                MaterialRole.primary_stone,
-            )
-
-            editor.placeBlock(
-                ivec3(point.x, y_coord, point.y),
-                Block(fix_block_name(stone)),
-            )
 
     # FIXME: this suppression is a last resort, and should not be used in the future
     with contextlib.suppress(Exception):

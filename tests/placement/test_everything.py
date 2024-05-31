@@ -2,6 +2,8 @@
 import sys
 import time
 
+from grimoire.core.styling.palette import Palette
+
 sys.path[0] = sys.path[0].removesuffix("\\tests\\placement")
 
 # Actual file
@@ -27,7 +29,6 @@ from grimoire.districts.wall import (
 )
 from grimoire.industries.biomes import snowy, rocky, desert, forest
 from grimoire.industries.industry import get_district_biomes
-from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.forest import Forest
 from grimoire.terrain.plateau import plateau
@@ -115,9 +116,7 @@ elif max(biome_counters) == desert_counter:
 else:
     style = "dwarven"
 # set up palettes
-eligible_palettes = list(
-    filter(lambda palette: style in palette.tags, LegacyPalette.all())
-)
+eligible_palettes = list(filter(lambda palette: style in palette.tags, Palette.all()))
 rng = RNG(SEED, "palettes")
 
 for district in districts:
