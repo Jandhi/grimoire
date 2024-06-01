@@ -1,5 +1,5 @@
 import itertools
-from typing import Generator, Iterable
+from typing import Any, Generator, Iterable
 
 from gdpc import Block, Editor
 from gdpc.vector_tools import (
@@ -410,7 +410,7 @@ def edge_to_pattern(
 
 def determine_edge_sequence(
     start: ivec2, bounds: Rect, edge: Iterable[ivec2], limit: int = LOOP_LIMIT
-) -> Generator[ivec2, itertools.Any, None]:
+) -> Generator[ivec2, Any, None]:
 
     current: ivec2 = start
     visited: set[ivec2] = set()

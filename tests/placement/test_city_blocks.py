@@ -31,7 +31,7 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 map = Map(world_slice)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
+districts, district_map, _, _ = generate_districts(SEED, build_rect, world_slice, map)
 map.districts = district_map
 
 # set up palettes

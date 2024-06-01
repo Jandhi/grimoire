@@ -251,13 +251,13 @@ def _set_from_type_iterable(
     if values is None:  # add the nook to all sets
         for nook_type_set in nook_type_dict.values():
             nook_type_set.add(nook)
-    elif type(values) is nook_type_iter:  # add the nook to a single set
-        nook_type_dict[nook.district_types].add(nook)
-    elif type(values) is Iterable:  # add the nook to multiple sets
+    elif isinstance(values, Iterable):  # add the nook to multiple sets
         for nook_type in values:
             nook_type_dict[nook_type].add(nook)
+    elif values in nook_type_iter:  # add the nook to a single set
+        nook_type_dict[nook.district_types].add(nook)
     else:
-        raise ValueError(f"{nook.district_types} is not a valid type for evaluation!")
+        raise ValueError(f"{values} is not a valid type for evaluation!")
     return nook_type_dict
 
 
