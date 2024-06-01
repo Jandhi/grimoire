@@ -4,7 +4,7 @@ from gdpc.vector_tools import distance, ivec3
 from grimoire.districts.district import District
 
 from ..core.maps import Map
-from ..core.structures.legacy_directions import ALL_8, all_8, vector
+from ..core.structures.legacy_directions import ALL_8, vector
 from ..core.utils.bounds import is_in_bounds
 from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
 

@@ -11,6 +11,12 @@ class DistrictType(Enum):
     OFF_LIMITS = auto()
 
 
+class DistrictType(Enum):
+    URBAN = auto()
+    RURAL = auto()
+    OFF_LIMITS = auto()
+
+
 class District:
     id_counter = 0
     id: int

@@ -27,7 +27,7 @@ def generate_districts(
 ) -> tuple[
     list[District], list[list[District]], list[SuperDistrict], list[list[District]]
 ]:
-    districts: list[District] = spawn_districts(seed, build_rect, city_map)
+    districts: list[District] = spawn_districts(seed, build_rect, map)
     district_map: list[list[District]] = [
         [None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)
     ]

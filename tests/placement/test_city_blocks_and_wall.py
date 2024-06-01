@@ -90,7 +90,7 @@ if DO_TERRAFORMING:
     world_map.correct_district_heights(districts)
 # done
 
-world_map._copy_heightmaps(world_slice)
+map.copy_heightmaps()
 
 
 # ground
@@ -111,7 +111,7 @@ def replace_ground(
             place_at_ground(point.x, point.y, block)
 
 
-test_blocks: dict[str, int] = {
+test_blocks = {
     "stone": 3,
     "cobblestone": 2,
     "stone_bricks": 8,

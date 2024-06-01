@@ -70,6 +70,43 @@ def get_block_and_water_map(
     return block_map, water_map
 
 
+def get_biome_map(world_slice: WorldSlice) -> list[list[str]]:
+    size: ivec2 = world_slice.rect.size
+
+    biome_map: list[list[str]] = [["" for _ in range(size.y)] for _ in range(size.x)]
+
+    for x, z in itertools.product(range(size.x), range(size.y)):
+        y: int = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
+        biome: str = world_slice.getBiome((x, y, z))
+
+        biome_map[x][z] = biome
+
+    return biome_map
+
+
+def get_block_and_water_map(
+    world_slice: WorldSlice,
+) -> tuple[list[list[Block]], list[list[bool]]]:
+    size: ivec2 = world_slice.rect.size
+
+    block_map: list[list[Block]] = [
+        [None for _ in range(size.y)] for _ in range(size.x)
+    ]
+    water_map: list[list[bool]] = [
+        [False for _ in range(size.y)] for _ in range(size.x)
+    ]
+
+    for x, z in itertools.product(range(size.x), range(size.y)):
+        y: int = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
+        block: Block = world_slice.getBlock((x, y - 1, z))
+
+        if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
+            water_map[x][z] = True
+        block_map[x][z] = block
+
+    return block_map, water_map
+
+
 def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
     """
     Returns a 2D list representing a build map with dimensions extended by the specified buffer size in the x and z directions.
