@@ -1,10 +1,11 @@
 import abc
 import dataclasses
 
+from gdpc.vector_tools import DIRECTIONS_3D
 from glm import ivec3, vec3
 
 from perlin_noise import PerlinNoise
-from grimoire.core.structures.directions import Directions, Axis, Axes
+from grimoire.core.structures.axis import Axis, Axes
 from grimoire.core.utils.bounds import clamp
 from grimoire.core.utils.misc import average, lerp
 
@@ -82,7 +83,7 @@ class Gradient:
         return average(
             [
                 self.calculate_point_value(pos + d, grad_val)
-                for d in [Directions.Zero] + Directions.Orthogonal
+                for d in {ivec3(0, 0, 0)} | DIRECTIONS_3D
             ]
         )
 

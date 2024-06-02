@@ -1,7 +1,8 @@
 # Allows code to be run in root directory
 import sys
 
-from grimoire.core.structures.directions import Directions2D
+from gdpc.vector_tools import CARDINALS_2D
+
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.utils.bounds import is_in_bounds2d
 
@@ -58,7 +59,7 @@ class MaterialPathTest(EditingTestModule):
             if dist == max_dist:
                 continue
 
-            for d in Directions2D.Cardinal:
+            for d in CARDINALS_2D:
                 neighbour = point + d
 
                 if neighbour in visited:
