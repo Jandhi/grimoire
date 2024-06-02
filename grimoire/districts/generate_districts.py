@@ -41,7 +41,7 @@ def generate_districts(
         ]
         recalculate_center_point(world_slice, districts, district_map)
 
-        bubble_out(districts, district_map, mmain_mapap)
+        bubble_out(districts, district_map, main_map)
 
     establish_adjacency(world_slice, district_map, main_map)
     super_districts: list[SuperDistrict] = []

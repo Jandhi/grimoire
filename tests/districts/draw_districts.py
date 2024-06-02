@@ -4,8 +4,7 @@ from gdpc.vector_tools import Rect, ivec3
 
 from grimoire.core.maps import Map
 from grimoire.districts.district import District, DistrictType, SuperDistrict
-
-from .place_colors import get_color_differentiated, place_relative_to_ground
+from tests.districts.place_colors import place_relative_to_ground
 
 
 def draw_districts(
