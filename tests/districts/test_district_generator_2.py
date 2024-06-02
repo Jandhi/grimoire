@@ -44,12 +44,11 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice reloaded!")
 
-water_map: list[list[bool]] = get_water_map(world_slice)
-map = Map(world_slice)
+main_map = Map(world_slice)
 districts, district_map, super_districts, super_district_map = generate_districts(
-    SEED, build_rect, world_slice, map
+    SEED, build_rect, world_slice, main_map
 )
-map.districts = district_map
+main_map.districts = district_map
 
 if DO_TERRAFORMING:
     print("starting plateauing")
@@ -57,27 +56,29 @@ if DO_TERRAFORMING:
         if not district.is_urban:
             continue
 
-        plateau(district, district_map, world_slice, editor, map.water)
+        plateau(district, district_map, world_slice, editor, main_map.water)
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    map.world = world_slice
+    main_map.world = world_slice
 
-    smooth_edges(build_rect, districts, district_map, world_slice, editor, map.water)
+    smooth_edges(
+        build_rect, districts, district_map, world_slice, editor, main_map.water
+    )
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    map.world = world_slice
-    map.correct_district_heights(districts)
+    main_map.world = world_slice
+    main_map.correct_district_heights(districts)
 
 SUPER_DISTRICT = True
 
 if SUPER_DISTRICT:
 
     for district in super_districts:
-        district_analyze(district, map)
+        district_analyze(district, main_map)
         block = get_color_differentiated(district, super_districts, False)
 
         print(
@@ -88,12 +89,17 @@ if SUPER_DISTRICT:
     super_district_classification(super_districts)
 
     draw_districts(
-        super_districts, build_rect, super_district_map, map, super_district_map, editor
+        super_districts,
+        build_rect,
+        super_district_map,
+        main_map,
+        super_district_map,
+        editor,
     )
 
 else:
     for district in districts:
-        district_analyze(district, map)
+        district_analyze(district, main_map)
         block = get_color_differentiated(district, districts, False)
 
         print(
@@ -102,4 +108,6 @@ else:
 
     district_classification(districts)
 
-    draw_districts(district, build_rect, district_map, map, super_district_map, editor)
+    draw_districts(
+        district, build_rect, district_map, main_map, super_district_map, editor
+    )
