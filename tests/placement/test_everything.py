@@ -172,6 +172,7 @@ palette = rng.choose(eligible_palettes)
 
 build_map = get_build_map(world_slice, 20)
 
+# FIXME: Not guaranteed to find the "urban_road" PaintPalette!
 urban_road: PaintPalette = (
     PaintPalette.find("desert_road")
     if style == "desert"

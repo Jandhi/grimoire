@@ -181,7 +181,7 @@ def spawn_districts(seed: int, build_rect: Rect, map: Map) -> list[District]:
     return [District(origin=pt) for pt in points]
 
 
-def generate_district_points(rng: RNG, rect: list[Rect], map: Map) -> list[ivec3]:
+def generate_district_points(rng: RNG, rect: list[Rect], city_map: Map) -> list[ivec3]:
     points: list[ivec3] = []
 
     for i in range(len(rect)):
@@ -199,7 +199,7 @@ def generate_district_points(rng: RNG, rect: list[Rect], map: Map) -> list[ivec3
 
             trial_point = ivec3(
                 x,
-                map.height_no_tree[x][z],
+                city_map.height_no_tree[x][z],
                 z,
             )
 
