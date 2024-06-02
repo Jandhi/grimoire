@@ -21,8 +21,10 @@ INNER_DISTRICTS_TARGET_AREA = 0.3  # The ratio of area where inner districts spa
 CHOKEPOINT_ADJACENCY_RATIO = 0.3  # If this percent or less of an urban district touches other urban district, it is pruned
 
 
-def generate_districts(seed: int, build_rect: Rect, world_slice: WorldSlice, map: Map):
-    districts = spawn_districts(seed, build_rect, map)
+def generate_districts(
+    seed: int, build_rect: Rect, world_slice: WorldSlice, main_map: Map
+):
+    districts = spawn_districts(seed, build_rect, main_map)
     district_map: list[list[District]] = [
         [None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)
     ]
@@ -31,7 +33,7 @@ def generate_districts(seed: int, build_rect: Rect, world_slice: WorldSlice, map
         origin = district.origin
         district_map[origin.x][origin.z] = district
 
-    bubble_out(districts, district_map, map)
+    bubble_out(districts, district_map, main_map)
 
     for _ in range(2):
         district_map = [
@@ -39,30 +41,30 @@ def generate_districts(seed: int, build_rect: Rect, world_slice: WorldSlice, map
         ]
         recalculate_center_point(world_slice, districts, district_map)
 
-        bubble_out(districts, district_map, map)
+        bubble_out(districts, district_map, mmain_mapap)
 
-    establish_adjacency(world_slice, district_map, map)
+    establish_adjacency(world_slice, district_map, main_map)
     super_districts: list[SuperDistrict] = []
     super_district_map: list[list[District]] = [
         [None for _ in range(build_rect.size.y)] for _ in range(build_rect.size.x)
     ]
     for district in districts:
-        district_analyze(district, map)
+        district_analyze(district, main_map)
         # create a super_district parent for it
         super_district = SuperDistrict(district)
         super_districts.append(super_district)
     for super_district in super_districts:
         for point in super_district.points_2d:
             super_district_map[point.x][point.y] = super_district
-    establish_adjacency(world_slice, super_district_map, map)
-    merge_down(super_districts, super_district_map, TARGET_DISTRICT_AMT, map)
+    establish_adjacency(world_slice, super_district_map, main_map)
+    merge_down(super_districts, super_district_map, TARGET_DISTRICT_AMT, main_map)
 
     # remeasure adjacency after
     for district in super_districts:
         district.adjacency = {}
         district.adjacencies_total = 0
         district.edges = set()
-    establish_adjacency(world_slice, super_district_map, map)
+    establish_adjacency(world_slice, super_district_map, main_map)
 
     prune_urban_chokepoints(districts)
 
@@ -84,7 +86,9 @@ def recalculate_center_point(
 
 # TODO (eventually): change way bubble out works so that each district is guaranteed to contain blocks that most walkable to its center
 # (no claiming then gradually fulfiling the claim, rather gradually fulfilling the claim before grabbing the point)
-def bubble_out(districts: list[District], district_map: list[list[District]], map: Map):
+def bubble_out(
+    districts: list[District], district_map: list[list[District]], main_map: Map
+):
     # additional value added which defines how many iterations needed to claim the block
     queue = [[district.origin, 0] for district in districts]
     water_queue = []
@@ -96,7 +100,7 @@ def bubble_out(districts: list[District], district_map: list[list[District]], ma
 
     # first pass normal queue
     while queue:
-        next_points: list[ivec3] = queue.pop(0)
+        next_points: list[ivec3, int] = queue.pop(0)
         point: ivec3 = next_points[0]
         district: District = district_map[point.x][point.z]
 
@@ -104,14 +108,14 @@ def bubble_out(districts: list[District], district_map: list[list[District]], ma
             queue.append([point, next_points[1] - 1])
             continue
 
-        for neighbour in get_neighbours(point, map, district):
+        for neighbour in get_neighbours(point, main_map, district):
             if neighbour[0] in visited:
                 continue
 
             visited.add(neighbour[0])
             add_point_to_district(neighbour[0], district)
 
-            if map.water[neighbour[0].x][neighbour[0].z]:
+            if main_map.water[neighbour[0].x][neighbour[0].z]:
                 water_queue.append(neighbour[0])
             else:
                 queue.append(neighbour)
@@ -121,7 +125,7 @@ def bubble_out(districts: list[District], district_map: list[list[District]], ma
         point = water_queue.pop(0)
         district = district_map[point.x][point.z]
 
-        for neighbour in get_neighbours(point, map, district):
+        for neighbour in get_neighbours(point, main_map, district):
             if neighbour[0] in visited:
                 continue
 
@@ -131,20 +135,15 @@ def bubble_out(districts: list[District], district_map: list[list[District]], ma
 
 
 # Returns the neighbours of a point on the surface based on walkability
-def get_neighbours(point: ivec3, map: Map, district: District) -> list[ivec3]:
+def get_neighbours(point: ivec3, main_map: Map, district: District) -> list[ivec3, int]:
     neighbours: list[list[ivec3]] = []
-    height_map: list[list[int]] = map.height_no_tree
+    height_map: list[list[int]] = main_map.height_no_tree
 
     for direction in cardinal:
         delta: ivec3 = vector(direction)
         neighbour: ivec3 = point + delta
 
-        if (
-            neighbour.x < 0
-            or neighbour.z < 0
-            or neighbour.x >= len(height_map)
-            or neighbour.z >= len(height_map[0])
-        ):
+        if not main_map.is_in_bounds2d(ivec2(neighbour.x, neighbour.z)):
             # out of bounds
             district.is_border = True  # set is_border to true
             continue
@@ -155,7 +154,7 @@ def get_neighbours(point: ivec3, map: Map, district: District) -> list[ivec3]:
     return neighbours
 
 
-def spawn_districts(seed: int, build_rect: Rect, map: Map) -> list[District]:
+def spawn_districts(seed: int, build_rect: Rect, main_map: Map) -> list[District]:
 
     rects: list[Rect] = []
 
@@ -176,12 +175,12 @@ def spawn_districts(seed: int, build_rect: Rect, map: Map) -> list[District]:
 
     rng = RNG(seed, "get_origins")
 
-    points = generate_district_points(rng, rects, map)
+    points = generate_district_points(rng, rects, main_map)
 
     return [District(origin=pt) for pt in points]
 
 
-def generate_district_points(rng: RNG, rect: list[Rect], map: Map) -> list[ivec3]:
+def generate_district_points(rng: RNG, rect: list[Rect], main_map: Map) -> list[ivec3]:
     points: list[ivec3] = []
 
     for i in range(len(rect)):
@@ -199,7 +198,7 @@ def generate_district_points(rng: RNG, rect: list[Rect], map: Map) -> list[ivec3
 
             trial_point = ivec3(
                 x,
-                map.height_no_tree[x][z],
+                main_map.height_no_tree[x][z],
                 z,
             )
 

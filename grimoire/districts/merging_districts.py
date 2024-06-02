@@ -10,7 +10,7 @@ def merge_down(
     districts: list[District],
     district_map: list[list[District]],
     target_number: int,
-    city_map: Map,
+    main_map: Map,
 ) -> None:
     identities: dict[District, District] = {
         district: district for district in districts
@@ -41,7 +41,7 @@ def merge_down(
 
         merge(parent, child, districts, identities)
         district_analyze(
-            parent, city_map
+            parent, main_map
         )  # NOTE: could optimize by moving the calcucations in merge and using the district numbers instead of recalculating
         district_count -= 1
 
@@ -92,14 +92,6 @@ def get_best_merge_candidate(
     print(output)
 
     return best
-
-
-# NOTE: Not currently used
-def get_adjusted_area(district: District) -> int:
-    if district.is_urban:
-        return district.area
-    else:
-        return district.area // RURAL_SIZE_RATIO
 
 
 # merges child districts into parent

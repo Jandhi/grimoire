@@ -12,7 +12,7 @@ def draw_districts(
     districts: list[District],  # FIXME: Unused
     build_rect: Rect,
     district_map: list[list[District]],
-    city_map: Map,
+    main_map: Map,
     super_district_map: list[list[SuperDistrict]],
     editor,
 ) -> None:
@@ -24,18 +24,15 @@ def draw_districts(
         if district is None:
             continue
 
-        # elif district not in districts:
-        #    district =
-
         # block = get_color_differentiated(district, districts, map.water[x][z])
 
         block: str = get_colour_type(district.type)
-        place_relative_to_ground(x, 0, z, block, city_map, editor)
+        place_relative_to_ground(x, 0, z, block, main_map, editor)
 
-        y: int = city_map.height_no_tree[x][z]
+        y: int = main_map.height_no_tree[x][z]
         if ivec3(x, y, z) in district.edges:
-            place_relative_to_ground(x, -1, z, block, city_map, editor)
-            place_relative_to_ground(x, 0, z, "glass", city_map, editor)
+            place_relative_to_ground(x, -1, z, block, main_map, editor)
+            place_relative_to_ground(x, 0, z, "glass", main_map, editor)
 
 
 def get_colour_type(type: DistrictType) -> str:
