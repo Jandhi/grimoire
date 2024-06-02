@@ -143,7 +143,7 @@ class SuperDistrict(District):
     def get_subtypes_score(self) -> float:
         subtypes: dict[DistrictType, int] = self.get_subtypes()
         return (
-            subtypes[DistrictType.OFF_LIMITS] * 2
-            + subtypes[DistrictType.RURAL] * 1
+            subtypes.get(DistrictType.OFF_LIMITS, 0) * 2  # keyerror
+            + subtypes.get(DistrictType.RURAL, 0) * 1
             # NOTE: This is unnecessary: + subtypes[DistrictType.URBAN] * 0
         ) / len(self.districts)

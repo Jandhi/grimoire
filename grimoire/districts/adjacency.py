@@ -33,7 +33,7 @@ def establish_adjacency(
                 district.is_urban = False
                 continue
 
-            point_height: int = map.height_no_tree[x][z]
+            point_height: int = main_map.height_no_tree[x][z]
 
             if abs(y - point_height) > 1:  # impassable, not neighbours
                 continue
