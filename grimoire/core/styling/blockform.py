@@ -16,7 +16,7 @@ class BlockForm(Enum):
     @staticmethod
     def get_form(block: Block) -> "BlockForm":
         for form in BlockForm:
-            if form.name in block.id:
+            if form.name.lower() in block.id:
                 return form
 
         # We assume otherwise it is a whole block
