@@ -44,6 +44,7 @@ def build_highway(
         if map.districts[x][z] is not None and map.districts[x][z].is_urban:
             continue
 
+        map.highway[x][z] = True
         editor.placeBlock((x, y, z), blocks[point])
 
         if world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] > y:

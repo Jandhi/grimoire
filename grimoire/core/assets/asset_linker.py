@@ -53,7 +53,11 @@ class AssetLinker(Module):
 
     def _get_linked_field(self, asset: Asset, value, field_name: str, field_type: type):
         # If the type is an asset, link it
-        if isinstance(field_type, AssetMeta) and isinstance(value, str):
+        if (
+            hasattr(field_type, "__mro__")
+            and Asset in field_type.__mro__
+            and isinstance(value, str)
+        ):
             return field_type.find(value)
 
         # If the type is a list link the items in that list

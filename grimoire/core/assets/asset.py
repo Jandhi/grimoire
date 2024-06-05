@@ -76,7 +76,7 @@ class Asset(metaclass=AssetMeta):
     defaults: dict[str, dict[str, Any]] = {}
 
     # Tracks all types of assets
-    types: list[AssetMeta] = []
+    types: list[type] = []
 
     # See is_default_subtype_for above
     default_subtype: dict = {}

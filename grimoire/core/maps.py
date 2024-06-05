@@ -62,6 +62,7 @@ class Map:
     height: list[list[int]]
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads
+    highway: list[list[bool]]
 
     def __init__(self, world_slice: WorldSlice) -> None:
         size = world_slice.rect.size
@@ -71,6 +72,7 @@ class Map:
         self.buildings = get_building_map(world_slice)
         self.copy_heightmap()
         self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
+        self.highway = [[False for _ in range(size.y)] for _ in range(size.x)]
 
     def correct_district_heights(self, districts: list[District]):
         for district in districts:

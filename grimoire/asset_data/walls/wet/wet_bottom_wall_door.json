@@ -1,0 +1,11 @@
+{
+    "name" : "wet_bottom_wall_door",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/wet/wet_bottom_wall_door.nbt",
+    "origin" : [1, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "wet",
+    "positions" : ["lower"],
+    "has_door" : true,
+    "tags" : ["wet"]
+}
