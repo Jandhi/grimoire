@@ -8,7 +8,7 @@ from ...core.generator.module import Module
 
 def run_test(cls):
     mod: TestModule = cls()
-    mod.run()
+    mod.run_test()
     return cls
 
 
@@ -20,7 +20,7 @@ class TestModule(Module):
         pass
 
     @Module.main
-    def run(self):
+    def run_test(self):
         if self.catch_errors:
             try:
                 self.test()

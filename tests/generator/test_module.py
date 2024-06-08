@@ -11,6 +11,9 @@ import time
 class TestingModule(Module):
     name: str = "Test"
 
+    def __init__(self):
+        super().__init__(None)
+
     @Module.MainClass
     def test(self):
         self.log.debug("story")

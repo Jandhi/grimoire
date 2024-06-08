@@ -17,6 +17,9 @@ from ...core.generator.module import Module
 
 
 class AssetLoader(Module):
+    def __init__(self, parent: Module):
+        super().__init__(parent)
+
     @Module.main
     def load_assets(self, root_directory):
         self.log.info("Loading Types")
@@ -60,7 +63,7 @@ class AssetLoader(Module):
                         f"while loading {Fore.light_blue}{path}{Style.reset}. Object has non-annotated fields: {validation_state.surplus_args}"
                     )
 
-        linker = AssetLinker()
+        linker = AssetLinker(self)
         linker.log.settings = self.log.settings
         linker.link_assets()
 
@@ -68,8 +71,12 @@ class AssetLoader(Module):
         permute_shapes()  # varies the building shapes into all rotations and mirrors
 
 
-def load_assets(root_directory, logging_settings: LoggerSettings | None = None) -> None:
-    loader = AssetLoader()
+def load_assets(
+    root_directory,
+    logging_settings: LoggerSettings | None = None,
+    parent_module: Module | None = None,
+) -> None:
+    loader = AssetLoader(parent_module)
     if logging_settings is not None:
         loader.set_module_logger_settings(logging_settings)
     loader.load_assets(root_directory)

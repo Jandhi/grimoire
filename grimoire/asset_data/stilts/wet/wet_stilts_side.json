@@ -1,0 +1,16 @@
+{
+    "name" : "wet_stilts_side",
+    "type" : "stilt_component",
+    "component_type" : "edge",
+    "filepath" : "grimoire/asset_data/stilts/wet/wet_stilts_side.nbt",
+    "origin" : [0, 0, 0],
+    "facing" : "x_minus",
+    "palette" : "wet",
+    "tags" : ["wet"],
+    "submodules" : [
+        {
+            "name" : "stilt_placer",
+            "position" : [4, 1, 3]
+        }
+    ]
+}

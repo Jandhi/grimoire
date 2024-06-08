@@ -9,10 +9,11 @@ from .legacy_directions import (
     from_text,
     to_text,
     directions,
+    right,
 )
 from .structure import Structure
 from .nbt.nbt_asset import NBTAsset
-from gdpc.vector_tools import ivec3
+from gdpc.vector_tools import ivec3, rotate3D
 
 # region Transformation dictionaries
 x_mirror = {
@@ -60,12 +61,14 @@ class Transformation:
     def __init__(
         self,
         offset: ivec3 = None,
+        rotations: int = 0,
         mirror: tuple[bool, bool, bool] = None,
         diagonal_mirror: bool = False,
     ) -> None:
         self.offset = offset or ivec3(0, 0, 0)
         self.mirror = mirror or (False, False, False)
         self.diagonal_mirror = diagonal_mirror
+        self.rotations = rotations
 
     # Expects text to be in targets
     def apply_to_text(self, text: str) -> str:
@@ -78,6 +81,9 @@ class Transformation:
 
         if self.diagonal_mirror:
             direction = diagonal_mirror[direction]
+
+        for i in range(self.rotations):
+            direction = right[direction]
 
         return to_text(direction)
 
@@ -96,7 +102,9 @@ class Transformation:
             elif prop_value in direction_names:
                 properties[prop_name] = self.apply_to_text(prop_value)
             # For axes
-            elif prop_value in ("x", "z") and self.diagonal_mirror:
+            elif prop_value in ("x", "z") and (
+                self.diagonal_mirror or self.rotations % 2 == 1
+            ):
                 properties[prop_name] = {"x": "z", "z": "x"}[prop_value]
             # For right and left
             elif prop_value in ("right", "left") and self.mirror[2]:
@@ -110,30 +118,20 @@ class Transformation:
     def apply_to_point(
         self,
         point: ivec3,
-        structure: Structure,
         asset: NBTAsset,
     ) -> ivec3:
-        point = ivec3(*point)  # copy point
 
-        # mirroring
-        # for now we will not mirror the origin
+        point -= asset.origin
+
         if self.mirror[0]:  # x mirror
-            point.x = -1 * point.x
+            point = ivec3(-1 * point.x, point.y, point.z)
         if self.mirror[2]:  # z mirror
-            point.z = -1 * point.z
+            point = ivec3(point.x, point.y, -1 * point.z)
 
-        # rotation(ish)
         if self.diagonal_mirror:
             point = ivec3(point.z, point.y, point.x)
 
-        # Shift according to origin
-        origin = self.apply_to_origin(asset.origin)
-        point -= origin
-
-        # translation
-        point += self.offset
-
-        return point
+        return rotate3D(point, self.rotations) + self.offset
 
     def apply_to_origin(self, point: ivec3) -> ivec3:
         origin = ivec3(*point)

@@ -22,7 +22,7 @@ class Benchmark:
     @staticmethod
     def log_results(log: Logger) -> None:
         log.display(f"{Fore.dark_gray}----------{Style.reset}")
-        log.info("BENCHMARK BY CLASS")
+        log.info("BENCHMARK BY MODULE")
 
         longest_name = max(len(name) for name in Benchmark.__time_by_name)
 

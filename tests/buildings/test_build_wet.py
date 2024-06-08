@@ -1,6 +1,14 @@
 # Allows code to be run in root directory
 import sys
 
+from glm import ivec2
+
+from grimoire.buildings.building_plan import BuildingPlan
+from grimoire.buildings.roofs.build_roof import build_roof
+from grimoire.buildings.roofs.roof_component import RoofComponent
+from grimoire.buildings.stilts import build_stilt_frame
+from grimoire.core.logger import LoggerSettings, LoggingLevel
+from grimoire.core.maps import Map
 from grimoire.core.styling.palette import Palette
 
 sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
@@ -26,20 +34,27 @@ editor = Editor(buffering=True, caching=True)
 
 from grimoire.core.noise.rng import RNG
 
-from gdpc.vector_tools import ivec3
+from gdpc.vector_tools import ivec3, CARDINALS
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 3, area.begin.z)
+world_slice = editor.loadWorldSlice()
+
+load_assets(
+    "grimoire\\asset_data", LoggerSettings(minimum_console_level=LoggingLevel.WARNING)
+)
+
+build_map = Map(world_slice)
+
+rng = RNG(SEED, "get_origins")
+
 grid = Grid(
     origin=ivec3(
         x=area.size.x // 2,
-        y=-61,
+        y=build_map.height_at(ivec2(area.size.x // 2, area.size.z // 2)),
         z=area.size.z // 2,
     )
 )
-load_assets("grimoire\\asset_data")
-
-rng = RNG(SEED, "get_origins")
 
 # PALETTE
 palette: Palette = None  # Palette.find("japanese_dark_blackstone")
@@ -56,11 +71,46 @@ upper_walls: list[Wall] = [
     if "wet" in wall.tags and "upper" in wall.positions and not wall.has_door
 ]
 
-for direction in cardinal:
-    # FIXME: `lower_wall` and `upper_wall` are Wall instead of NBTAsset
+shape = [
+    ivec3(0, 0, 0),
+    ivec3(0, 1, 0),
+    ivec3(1, 0, 0),
+    ivec3(-1, 0, 0),
+    ivec3(0, 0, 1),
+    ivec3(0, 0, -1),
+    ivec3(0, 0, 3),
+    ivec3(0, 2, 0),
+    ivec3(2, 0, 0),
+    ivec3(-2, 0, 0),
+    ivec3(0, 0, 2),
+    ivec3(0, 0, -3),
+]
 
-    grid.build(editor, rng.choose(lower_walls), palette, ivec3(0, 0, 0), direction)
-    grid.build(editor, rng.choose(upper_walls), palette, ivec3(0, 1, 0), direction)
+roof_components = [
+    roof_component
+    for roof_component in RoofComponent.all()
+    if "japanese" in roof_component.tags
+]
+plan = BuildingPlan(shape, grid, palette)
+build_roof(plan, editor, roof_components, SEED)
+
+for point in shape:
+    for direction in CARDINALS:
+        if point + direction in shape:
+            continue
+
+        # FIXME: `lower_wall` and `upper_wall` are Wall instead of NBTAsset
+
+        grid.build(
+            editor,
+            rng.choose(lower_walls if point.y == 0 else upper_walls),
+            palette,
+            point,
+            direction,
+        )
+
+build_stilt_frame(editor, rng, grid, palette, shape, build_map)
+
 
 # ROOF
 # roof: Roof = Roof.find(style["roof"])

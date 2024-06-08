@@ -88,6 +88,9 @@ class Map:
     def height_at(self, point: ivec2):
         return self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
 
+    def ocean_floor_at(self, point: ivec2):
+        return self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y]
+
     def copy_heightmap(self):
         size = self.world.rect.size
         self.height = [

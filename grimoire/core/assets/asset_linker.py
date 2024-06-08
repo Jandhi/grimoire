@@ -1,3 +1,4 @@
+import inspect
 import typing
 from enum import Enum
 from typing import Union
@@ -6,11 +7,14 @@ from colored import Style
 from glm import ivec2, ivec3
 
 from .asset import Asset, AssetMeta
-from ..generator.module import Module
+from ..generator.module import Module, find_module, ModuleCall
 from ..logger import LoggingLevel
 
 
 class AssetLinker(Module):
+
+    def __init__(self, parent: Module):
+        super().__init__(parent)
 
     @Module.main
     def link_assets(self):
@@ -48,10 +52,10 @@ class AssetLinker(Module):
             setattr(
                 asset,
                 field_name,
-                self._get_linked_field(asset, value, field_name, field_type),
+                self._get_linked_field(asset.name, value, field_name, field_type),
             )
 
-    def _get_linked_field(self, asset: Asset, value, field_name: str, field_type: type):
+    def _get_linked_field(self, parent: str, value, field_name: str, field_type: type):
         # If the type is an asset, link it
         if (
             hasattr(field_type, "__mro__")
@@ -66,12 +70,12 @@ class AssetLinker(Module):
 
             if not isinstance(value, list):
                 self.log.error(
-                    f"Could not link {asset.name}.{field_name} - is not list type!"
+                    f"Could not link {parent}.{field_name} - is not list type!"
                 )
                 return value
 
             return [
-                self._get_linked_field(asset, item, f"{field_name}[{i}]", t1)
+                self._get_linked_field(parent, item, f"{field_name}[{i}]", t1)
                 for (i, item) in enumerate(value)
             ]
 
@@ -82,14 +86,14 @@ class AssetLinker(Module):
 
             if not isinstance(value, dict):
                 self.log.error(
-                    f"Could not link {asset.name}.{field_name} - is not dict type!"
+                    f"Could not link {parent}.{field_name} - is not dict type!"
                 )
                 return value
 
             return {
                 self._get_linked_field(
-                    asset, key, f"{field_type}{{key {i}}}", t1
-                ): self._get_linked_field(asset, val, f"{field_type}{{value {i}}}", t2)
+                    parent, key, f"{field_type}{{key {i}}}", t1
+                ): self._get_linked_field(parent, val, f"{field_type}{{value {i}}}", t2)
                 for (i, (key, val)) in enumerate(value.items())
             }
 
@@ -102,7 +106,7 @@ class AssetLinker(Module):
             or self._type_eq(field_type, "Optional")
         ) and hasattr(field_type, "__args__"):
             t1 = field_type.__args__[0]
-            return self._get_linked_field(asset, value, field_name, t1)
+            return self._get_linked_field(parent, value, field_name, t1)
 
         # If the type is an enum, find the right field in that enum
         if Enum in field_type.__mro__ and isinstance(value, str):
@@ -115,6 +119,36 @@ class AssetLinker(Module):
         # IF the type is an ivec3, construct it
         if self._type_eq(field_type, "ivec3") and isinstance(value, list):
             return ivec3(*value)
+
+        if self._type_eq(field_type, "ModuleCall") and isinstance(value, dict):
+            if "name" not in value:
+                return value
+
+            module = find_module(value["name"])
+
+            if module is None:
+                return value
+
+            annotations: dict[str, type] = module._main.__annotations__
+
+            arguments = {}
+            for key, val in value.items():
+                if key == "name":
+                    continue
+
+                if key in annotations:
+                    arguments[key] = self._get_linked_field(
+                        f"{module.name}.main", val, key, annotations[key]
+                    )
+                else:
+                    arguments[key] = val
+
+            # Set unfilled arguments to None
+            for key, val in annotations.items():
+                if key not in arguments:
+                    arguments[key] = None
+
+            return ModuleCall(module, arguments)
 
         # Otherwise return own type
         return value

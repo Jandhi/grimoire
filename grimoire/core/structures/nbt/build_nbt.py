@@ -9,18 +9,20 @@ from grimoire.core.styling.legacy_palette import LegacyPalette, palette_swap
 from .convert_nbt import convert_nbt
 from .nbt_asset import NBTAsset
 from ..transformation import Transformation
+from ...maps import Map
 from ...styling.materials.material import MaterialParameters, MaterialParameterFunction
 from ...styling.palette import Palette, swap
 
 
 def build_nbt(
-    editor,
-    asset,
+    editor: Editor,
+    asset: NBTAsset,
     palette: Palette,
     transformation: Transformation = None,
     place_air: bool = False,
     allow_non_solid_replacement: bool = False,
     material_params_func: MaterialParameterFunction | None = None,
+    build_map: Map | None = None,  # Required for some submodule calls
 ):
     """Constructs an NBTAsset given an editor and transformation
     If given a palette, will palette swap using the structure's own palette and the given palette
@@ -43,9 +45,7 @@ def build_nbt(
         ):
             continue
 
-        x, y, z = transformation.apply_to_point(
-            point=pos, structure=structure, asset=asset
-        )
+        x, y, z = transformation.apply_to_point(point=pos, asset=asset)
         position = ivec3(x, y, z)
         material_params = (
             material_params_func.eval(position)
@@ -93,11 +93,30 @@ def build_nbt(
         id = entity[0]
         nbt = entity[1]
 
-        x, y, z = transformation.apply_to_point(
-            point=pos, structure=structure, asset=asset
-        )
+        x, y, z = transformation.apply_to_point(point=pos, asset=asset)
         summon_entity_command = f"summon {id} {x} {y} {z} {nbt}"
         editor.runCommand(summon_entity_command, position=ivec3(x, y, z))
+
+    # RUN SUBMODULES
+    for submodule in asset.submodules:
+        submodule = submodule.clone()  # Clone so we don't overwrite the original object
+
+        if "editor" in submodule.arguments:
+            submodule.arguments["editor"] = editor
+        if "build_map" in submodule.arguments:
+            submodule.arguments["build_map"] = build_map
+        if "palette" in submodule.arguments:
+            submodule.arguments["palette"] = palette
+
+        # TRANSFORM POINTS
+        annotations: dict[str, type] = submodule.module._main.__annotations__
+        for key, val in annotations.items():
+            if val == ivec3:
+                submodule.arguments[key] = transformation.apply_to_point(
+                    submodule.arguments[key], asset
+                )
+
+        submodule.run()
 
 
 # Constructs an NBTAsset given an editor and transformation
@@ -135,9 +154,7 @@ def build_nbt_legacy(
             )  # I do this to avoid doubly swapping palettes
             block.id = palette_swap(block.id, asset.palette, palette)
 
-        x, y, z = transformation.apply_to_point(
-            point=pos, structure=structure, asset=asset
-        )
+        x, y, z = transformation.apply_to_point(point=pos, asset=asset)
 
         # Doesn't allow non-solid blocks to replace blocks
         if (not allow_non_solid_replacement) and any(
@@ -157,8 +174,6 @@ def build_nbt_legacy(
         id = entity[0]
         nbt = entity[1]
 
-        x, y, z = transformation.apply_to_point(
-            point=pos, structure=structure, asset=asset
-        )
+        x, y, z = transformation.apply_to_point(point=pos, asset=asset)
         summon_entity_command = f"summon {id} {x} {y} {z} {nbt}"
         editor.runCommand(summon_entity_command, position=ivec3(x, y, z))

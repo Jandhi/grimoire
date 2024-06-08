@@ -2,6 +2,7 @@ from gdpc.vector_tools import ivec3
 
 from ...assets.asset import Asset, asset_defaults
 from grimoire.core.styling.legacy_palette import LegacyPalette
+from ...generator.module import ModuleCall
 from ...styling.palette import Palette
 
 
@@ -12,6 +13,7 @@ from ...styling.palette import Palette
     do_not_replace=[],
     replace={},
     do_not_place=[],
+    submodules=[],
 )
 class NBTAsset(Asset):
     # The identifier for the jsons to know what NBTAsset this is
@@ -27,3 +29,6 @@ class NBTAsset(Asset):
     do_not_replace: list[str]  # blocks that should not be swapped by palette swapper
     replace: dict[str, str]  # blocks that must be swapped out
     do_not_place: list[str]  # blocks that shouldn't be placed at all
+
+    # SUBMODULES
+    submodules: list[ModuleCall]  # submodules that are called after placement
