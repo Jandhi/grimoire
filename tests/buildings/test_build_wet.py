@@ -109,7 +109,7 @@ for point in shape:
             direction,
         )
 
-build_stilt_frame(editor, rng, grid, palette, shape, build_map)
+build_stilt_frame(editor, rng, palette, plan, build_map)
 
 
 # ROOF

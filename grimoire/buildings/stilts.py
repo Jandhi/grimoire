@@ -12,6 +12,7 @@ from gdpc.vector_tools import (
 )
 from glm import ivec3
 
+from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.core.generator.module import Module
 from grimoire.core.maps import Map
 from grimoire.core.noise.rng import RNG
@@ -41,11 +42,13 @@ class StiltComponent(NBTAsset):
 def build_stilt_frame(
     editor: Editor,
     rng: RNG,
-    grid: Grid,
     palette: Palette | None,
-    building_shape: set[ivec3],
+    building_plan: BuildingPlan,
     build_map: Map,
 ):
+    grid = building_plan.grid
+    building_shape = set(building_plan.shape)
+
     grid.origin += ivec3(0, 2, 0)
 
     points: set[ivec3] = set()
@@ -119,14 +122,24 @@ def build_stilt_frame(
             if point + vec not in points and all(
                 point + rotate3D(vec, i) in points for i in range(1, 4)
             ):
-                grid.build(
-                    editor,
-                    rng.choose(edges),
-                    palette,
-                    point,
-                    facing=name,
-                    build_map=build_map,
-                )
+                if name in building_plan.cell_map[point - vec + ivec3(0, 1, 0)].doors:
+                    grid.build(
+                        editor,
+                        rng.choose(stairs),
+                        palette,
+                        point,
+                        facing=name,
+                        build_map=build_map,
+                    )
+                else:
+                    grid.build(
+                        editor,
+                        rng.choose(edges),
+                        palette,
+                        point,
+                        facing=name,
+                        build_map=build_map,
+                    )
                 placed = True
                 break
         if placed:

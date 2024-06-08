@@ -188,7 +188,7 @@ replace_ground_smooth(
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False)
+add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False, stilts=True)
 
 # WALL
 

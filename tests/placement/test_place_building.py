@@ -31,4 +31,4 @@ map = Map(world_slice)
 rng = RNG(SEED)
 
 editor.placeBlock(ivec3(50, 100, 50), Block("glowstone"))
-place_building(editor, ivec2(50, 50), map, z_plus, rng, urban_only=False)
+place_building(editor, ivec2(50, 50), map, z_plus, rng, urban_only=False, stilts=True)

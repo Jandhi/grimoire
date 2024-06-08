@@ -1,4 +1,6 @@
 import contextlib
+
+from ..buildings.stilts import build_stilt_frame
 from ..core.structures.legacy_directions import (
     LegacyDirection,
 )
@@ -32,6 +34,7 @@ from grimoire.core.styling.legacy_palette import LegacyPalette
 from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.material import MaterialParameters
 from ..core.styling.palette import MaterialRole, Palette
+from ..core.utils.geometry import get_surrounding_points
 
 offsets = {
     z_minus: [ivec2(0, 0), ivec2(-1, 0)],
@@ -61,6 +64,7 @@ def place_building(
     rng: RNG,
     style: str = "japanese",
     urban_only=True,
+    stilts: bool = False,
 ) -> bool:
     # A building can always be placed with the door to the left or right of the original spot
     my_offsets = offsets[outside_direction]
@@ -98,6 +102,8 @@ def place_building(
                 shape,
                 style,
                 urban_only,
+                allow_water=stilts,
+                stilts=stilts,
             )
 
             if success:
@@ -115,11 +121,16 @@ def attempt_building_placement_at_offset(
     shape: BuildingShape,
     style: str,
     urban_only: bool,
+    allow_water: bool = False,
+    stilts: bool = False,
 ) -> bool:
     grid = Grid()
     origin = start_point + ivec2(
         offset.x * grid.dimensions.x, offset.y * grid.dimensions.z
     )
+
+    if stilts:
+        origin += ivec2(3, 3)
 
     # We have to find the proper height for the door to be at ground level
     door_point = ivec2(*door_points[outside_direction])
@@ -142,18 +153,31 @@ def attempt_building_placement_at_offset(
 
     grid.origin = ivec3(origin.x, map.height_at(road_point) - 1, origin.y)
 
-    if not can_place_shape(shape, grid, map, urban_only):
+    if stilts:
+        grid.origin += ivec3(0, 3, 0)
+
+    if not can_place_shape(shape, grid, map, urban_only, allow_water, stilts):
         return False
 
     # build
-    place(editor, shape, grid, rng, map, style)
+    place(editor, shape, grid, rng, map, style, stilts)
     return True
 
 
-def can_place_shape(shape: BuildingShape, grid: Grid, map: Map, urban_only: bool):
-    points = list(shape.get_points_2d(grid))
+def can_place_shape(
+    shape: BuildingShape,
+    grid: Grid,
+    map: Map,
+    urban_only: bool,
+    allow_water: bool = False,
+    stilts: bool = False,
+):
+    points = set(shape.get_points_2d(grid))
     water_amt = 0
     total_height_diff = 0
+
+    if stilts:
+        points |= get_surrounding_points(points, 3)
 
     for point in points:
         # water check
@@ -173,7 +197,7 @@ def can_place_shape(shape: BuildingShape, grid: Grid, map: Map, urban_only: bool
 
         total_height_diff += abs(grid.origin.y - map.height_at(point))
 
-    if WATER_THRESHOLD <= water_amt / len(points):
+    if (WATER_THRESHOLD <= water_amt / len(points)) and not allow_water:
         return False
 
     avg_height_diff = total_height_diff / len(points)
@@ -216,65 +240,75 @@ PLACE_BASEMENT_CONSTANT = 2.5
 
 
 def place(
-    editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
+    editor: Editor,
+    shape: BuildingShape,
+    grid: Grid,
+    rng: RNG,
+    build_map: Map,
+    style: str,
+    stilts: bool = False,
 ):
-    district = map.districts[grid.origin.x][grid.origin.z]
+    district = build_map.districts[grid.origin.x][grid.origin.z]
     palette: Palette = (
         rng.choose(district.palettes)
         if district
-        else LegacyPalette.find("japanese_dark_blackstone")
+        else Palette.find("japanese_dark_blackstone")
     )
 
     plan = BuildingPlan(shape.points, grid, palette)
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
     for point in shape.get_points_2d(grid):
-        map.buildings[point.x][point.y] = plan
+        build_map.buildings[point.x][point.y] = plan
 
-    for cell in plan.cells:
-        if cell.position.y != 0:
-            continue
+    # Basement and foundation
+    if stilts:
+        build_stilt_frame(editor, rng, palette, plan, build_map)
+    else:
+        for cell in plan.cells:
+            if cell.position.y != 0:
+                continue
 
-        height_sum = 0
-        height_count = 0
-        grid_height = grid.origin.y
+            height_sum = 0
+            height_count = 0
+            grid_height = grid.origin.y
 
-        for point in plan.grid.get_points_at_2d(
-            ivec2(cell.position.x, cell.position.y)
-        ):
-            world_height = map.height_at(point)
+            for point in plan.grid.get_points_at_2d(
+                ivec2(cell.position.x, cell.position.y)
+            ):
+                world_height = build_map.height_at(point)
 
-            height_sum += grid_height - world_height
-            height_count += 1
+                height_sum += grid_height - world_height
+                height_count += 1
 
-        avg_height = height_sum / height_count
+            avg_height = height_sum / height_count
 
-        if avg_height > PLACE_BASEMENT_CONSTANT:
-            plan.add_cell(cell.position - ivec3(0, 1, 0))
-            grid_height = grid.origin.y - grid.height
+            if avg_height > PLACE_BASEMENT_CONSTANT:
+                plan.add_cell(cell.position - ivec3(0, 1, 0))
+                grid_height = grid.origin.y - grid.height
 
-        for point in plan.grid.get_points_at_2d(
-            ivec2(cell.position.x, cell.position.y)
-        ):
-            world_height = map.height_at(point)
+            for point in plan.grid.get_points_at_2d(
+                ivec2(cell.position.x, cell.position.y)
+            ):
+                world_height = build_map.height_at(point)
 
-            for y_coord in range(world_height, grid_height):
-                stone = palette.find_block_id(
-                    BlockForm.BLOCK,
-                    MaterialParameters(
-                        position=ivec3(point.x, y_coord, point.y),
-                        age=0,
-                        shade=0.5,
-                        moisture=0,
-                        dithering_pattern=None,
-                    ),
-                    MaterialRole.PRIMARY_STONE,
-                )
+                for y_coord in range(world_height, grid_height):
+                    stone = palette.find_block_id(
+                        BlockForm.BLOCK,
+                        MaterialParameters(
+                            position=ivec3(point.x, y_coord, point.y),
+                            age=0,
+                            shade=0.5,
+                            moisture=0,
+                            dithering_pattern=None,
+                        ),
+                        MaterialRole.PRIMARY_STONE,
+                    )
 
-                editor.placeBlock(
-                    ivec3(point.x, y_coord, point.y),
-                    Block(fix_block_name(stone)),
-                )
+                    editor.placeBlock(
+                        ivec3(point.x, y_coord, point.y),
+                        Block(fix_block_name(stone)),
+                    )
 
     # Clear the area
     for point in shape.get_points(grid):

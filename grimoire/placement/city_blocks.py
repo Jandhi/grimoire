@@ -16,8 +16,8 @@ from ..placement.building_placement import place_building
 
 
 EDGE_THICKNESS = 1
-DESIRED_BLOCK_SIZE = 120
-MINIMUM_BLOCK_SZE = 100
+DESIRED_BLOCK_SIZE = 500  # 120
+MINIMUM_BLOCK_SZE = 100  # 100
 
 
 def generate_bubbles(
@@ -161,6 +161,7 @@ def place_buildings(
     rng: RNG,
     style="japanese",
     is_debug=False,
+    stilts=False,
 ):
     edges = find_edges(block)
 
@@ -173,16 +174,17 @@ def place_buildings(
                 Block("cobblestone_stairs", {"facing": to_text(build_dir)}),
             )
 
-        place_building(editor, edge, map, build_dir, rng, style)
+        place_building(editor, edge, map, build_dir, rng, style, stilts=stilts)
 
 
 def add_city_blocks(
     editor: Editor,
     districts: list[District],
-    map: Map,
+    build_map: Map,
     seed: int,
     style="japanese",
     is_debug=False,
+    stilts=False,
 ):
     rng = RNG(seed, "add_city_blocks")
 
@@ -194,10 +196,10 @@ def add_city_blocks(
     outer_urban_area, inner_urban_area = find_outer_and_inner_points(urban_area, 3)
 
     for point in outer_urban_area:
-        map.buildings[point.x][point.y] = CITY_WALL
+        build_map.buildings[point.x][point.y] = CITY_WALL
 
-    bubbles = generate_bubbles(rng, districts, map)
-    blocks, block_map, block_adjacency = bubble_out(bubbles, map)
+    bubbles = generate_bubbles(rng, districts, build_map)
+    blocks, block_map, block_adjacency = bubble_out(bubbles, build_map)
     blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
 
     inners = []
@@ -209,16 +211,16 @@ def add_city_blocks(
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:
-            map.buildings[point.x][point.y] = CITY_ROAD
+            build_map.buildings[point.x][point.y] = CITY_ROAD
 
         if is_debug:
             for point in outer | outer_urban_area:
                 editor.placeBlock(
                     ivec3(
                         point.x,
-                        map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
-                            point.y
-                        ]
+                        build_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
+                            point.x
+                        ][point.y]
                         - 1,
                         point.y,
                     ),
@@ -233,4 +235,6 @@ def add_city_blocks(
         if i >= len(inners):
             continue
 
-        place_buildings(editor, inners[i], map, block_rng, style, is_debug)
+        place_buildings(
+            editor, inners[i], build_map, block_rng, style, is_debug, stilts
+        )
