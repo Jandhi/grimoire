@@ -8,7 +8,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from ..core.maps import Map
 from ..districts.district import District, DistrictType, SuperDistrict
 
-URBAN_SIZE = 800  # max number of urban districts
+URBAN_SIZE = 3  # max number of urban districts
 BEST_SCORE = 0.6  # score needed to become urban in relation to prime urban district
 
 
