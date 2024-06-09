@@ -1,4 +1,5 @@
 import itertools
+from logging import error
 from typing import Any, Generator, Iterable
 
 from gdpc import Block, Editor
@@ -35,7 +36,7 @@ EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 120
 MINIMUM_BLOCK_SZE = 100
 
-LOOP_LIMIT = 100  # prevents uncontrolled loops from going on too long
+LOOP_LIMIT = 1000  # prevents uncontrolled loops from going on too long
 
 
 def generate_bubbles(
@@ -48,7 +49,7 @@ def generate_bubbles(
     points: list[ivec2] = []
 
     for district in districts:
-        if not district.is_urban:
+        if district.type != DistrictType.URBAN:
             continue
 
         desired_point_amount = district.area // desired_block_size
@@ -102,7 +103,7 @@ def bubble_out(
         if map.water[vec.x][vec.y]:
             return False
 
-        return district is not None and district.is_urban
+        return district is not None and district.type == DistrictType.URBAN
 
     while queue:
         point = queue.pop(0)
@@ -218,7 +219,7 @@ def add_city_blocks(
 
     urban_area: set[ivec2] = set()
     for district in districts:
-        if district.is_urban:
+        if district.type == DistrictType.URBAN:
             urban_area |= district.points_2d
 
     outer_urban_area, inner_urban_area = find_outer_and_inner_points(urban_area, 3)
@@ -292,22 +293,26 @@ def decorate_city_block(
     # scan the city block to find a nook
     for scan_position in scan_grid:
         # if an empty space is found
-        if city_map.buildings[scan_position] is None:
+        if city_map.buildings[scan_position.x][scan_position.y] is None:
             nook_edge, nook_shape = discover_nook(scan_position, outer_shape, city_map)
-            surrounging_developments: dict[ivec2, set[DevelopmentType]] = (
+            if nook_shape.begin == nook_shape.end:
+                continue
+            surrounding_developments: dict[ivec2, set[DevelopmentType]] = (
                 map_developments_at_edge(nook_edge, city_map, bounds)
             )
             pattern: list[tuple[set[DevelopmentType], int]] = edge_to_pattern(
-                scan_position, surrounging_developments, bounds
+                scan_position, surrounding_developments, bounds
             )
             # select an appropriate Nook type and manifest it
             exposure: ExposureType = identify_exposure_type_from_edging_pattern(pattern)
             nook: Nook = block_rng.choose(
-                find_suitable_nooks(
-                    district_types=DistrictType.URBAN,
-                    exposure_types=exposure,
-                    styles=style,
-                    area=nook_shape,
+                list(
+                    find_suitable_nooks(
+                        district_types=DistrictType.URBAN,
+                        exposure_types=exposure,
+                        styles=style,
+                        area=nook_shape,
+                    )
                 )
             )
             nook.manifest(editor, nook_shape, nook_edge, city_map, block_rng)
@@ -328,7 +333,7 @@ def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
     # move east, populating map and shape with Nook until something else is reached
 
     for _ in range(LOOP_LIMIT):
-        if development_map[start.x + 1][start.y]:
+        if len(development_map) <= start.x + 1 or development_map[start.x + 1][start.y]:
             break  # next step would be out-of-bounds
         start += EAST_2D
     else:
@@ -340,7 +345,7 @@ def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
     for _ in range(LOOP_LIMIT):
         # check all neighbors
         for neighbor in neighbors2D(
-            current_position, city_block_shape.to_boundry_rect()
+            current_position, city_block_shape.to_boundry_rect(), diagonal=True
         ):
             neighbor_development: DevelopmentType | None = development_map[neighbor.x][
                 neighbor.y
@@ -382,6 +387,8 @@ def map_developments_at_edge(
     for point in edge:
         for neighbor in neighbors2D(point, bounds):
             if development := city_map.buildings[neighbor.x][neighbor.y]:
+                if point not in development_set:
+                    development_set[point] = set()
                 development_set[point].add(development)
 
     return development_set
@@ -390,6 +397,9 @@ def map_developments_at_edge(
 def edge_to_pattern(
     start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
 ) -> list[tuple[set[DevelopmentType], int]]:
+
+    if edge == dict():
+        return []
 
     pattern: list[tuple[set[DevelopmentType], int]] = []
 
@@ -412,18 +422,24 @@ def determine_edge_sequence(
     start: ivec2, bounds: Rect, edge: Iterable[ivec2], limit: int = LOOP_LIMIT
 ) -> Generator[ivec2, Any, None]:
 
+    if limit == 0:
+        return
+
     current: ivec2 = start
     visited: set[ivec2] = set()
 
     for _ in range(limit):
         # find next point
-        for neighbor in neighbors2D(current, bounds):
+        for neighbor in neighbors2D(current, bounds, diagonal=True):
             if neighbor in edge and neighbor not in visited:
                 current = neighbor
                 visited.add(current)
                 break
         else:
-            raise RuntimeError(f"Edge has a dead end at {current}!")
+            error(f"Edge has a dead end at {current}!")
+
+            # FIXME
+            # raise NotImplementedError(f"Edge has a dead end at {current}!")
 
         yield current
 

@@ -35,7 +35,7 @@ def flatten_area_up(
         None
     """
 
-    goal_y: int = editor.worldSlice.box.end.y  # top of World Slice
+    goal_y: int = city_map.world.box.end.y  # top of World Slice
 
     for position in edges:
         goal_y = max(goal_y, position.y)
@@ -64,7 +64,7 @@ def flatten_area_down(
         None
     """
 
-    goal_y: int = editor.worldSlice.box.end.y  # top of World Slice
+    goal_y: int = city_map.world.box.end.y  # top of World Slice
 
     for position in edges:
         goal_y = min(goal_y, position.y)

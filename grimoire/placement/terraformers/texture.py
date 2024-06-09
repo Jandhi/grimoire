@@ -10,6 +10,8 @@ from grimoire.core.maps import DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.shapes import Shape2D
 
+POLISHED_BLACKSTONE_BRICKS_BLOCKS = [Block(b) for b in POLISHED_BLACKSTONE_BRICKS]
+
 
 def _pave_area(
     editor: Editor,
@@ -17,7 +19,7 @@ def _pave_area(
     _edges: dict[ivec2, set[DevelopmentType]],
     city_map: Map,
     _rng: RNG,
-    fill_blocks: Block | Sequence[Block] = POLISHED_BLACKSTONE_BRICKS,
+    fill_blocks: Block | Sequence[Block] = POLISHED_BLACKSTONE_BRICKS_BLOCKS,
 ) -> None:
     """
     Paves the specified area with the given fill blocks.
@@ -69,7 +71,7 @@ def grass_patch_area(
         None
     """
 
-    SOIL: list[str] = ["minecraft:grass"]
+    SOIL: list[Block] = [Block(b) for b in {"minecraft:grass"}]
 
     _pave_area(editor, area, edges, city_map, _rng, SOIL)
     # TODO: bonemeal(position3D)

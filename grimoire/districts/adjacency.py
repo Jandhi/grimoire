@@ -10,7 +10,7 @@ from ..districts.district import District
 
 # Tells the districts what neighbours they have and why
 def establish_adjacency(
-    world_slice: WorldSlice, district_map: list[list[District]], map: Map
+    world_slice: WorldSlice, district_map: list[list[District]], main_map: Map
 ) -> None:
     build_box: Box = world_slice.box
     rect = Rect(
@@ -23,7 +23,7 @@ def establish_adjacency(
             continue
 
         district: District = district_map[x][z]
-        y: int = map.height_no_tree[x][z]
+        y: int = main_map.height_no_tree[x][z]
 
         if x == 0 or z == 0:  # label edge districts as non-urban
             district.is_urban = False
@@ -33,7 +33,7 @@ def establish_adjacency(
                 district.is_urban = False
                 continue
 
-            point_height: int = map.height_no_tree[x][z]
+            point_height: int = main_map.height_no_tree[x][z]
 
             if abs(y - point_height) > 1:  # impassable, not neighbours
                 continue
@@ -51,11 +51,11 @@ def establish_adjacency(
             district._add_adjacency(point_district)
             point_district._add_adjacency(district)
 
-    find_edges(world_slice, district_map, map)
+    find_edges(world_slice, district_map, main_map)
 
 
 def find_edges(
-    world_slice: WorldSlice, district_map: list[list[District]], city_map: Map
+    world_slice: WorldSlice, district_map: list[list[District]], main_map: Map
 ) -> None:
     build_box: Box = world_slice.box
     rect = Rect(
@@ -63,7 +63,7 @@ def find_edges(
     )  # rect of build area, with (0, 0) as corner
 
     for x, z in itertools.product(range(rect.size.x), range(rect.size.y)):
-        y: int = city_map.height_no_tree[x][z]
+        y: int = main_map.height_no_tree[x][z]
         point = ivec3(x, y, z)
         district: District = district_map[x][z]
 

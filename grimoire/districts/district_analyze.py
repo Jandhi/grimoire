@@ -12,7 +12,7 @@ URBAN_SIZE = 800  # max number of urban districts
 BEST_SCORE = 0.6  # score needed to become urban in relation to prime urban district
 
 
-def district_analyze(district: District, map: Map) -> None:
+def district_analyze(district: District, main_map: Map) -> None:
     average: ivec3 = district.average()
     average_height: int = average.y
     water_blocks = 0
@@ -25,17 +25,24 @@ def district_analyze(district: District, map: Map) -> None:
     root_mean_square_height = 0
 
     for point in district.points:
-        biome: str = map.biome_at(ivec2(point.x, point.z))
-        block: str = map.block_at(ivec2(point.x, point.z)).id
-        water: bool = map.water_at(ivec2(point.x, point.z))
-        leaf_height: int = map.height_at_include_leaf(ivec2(point.x, point.z))
+        biome: str = main_map.biome_at(ivec2(point.x, point.z))
+        block: str = main_map.block_at(ivec2(point.x, point.z)).id
+        water: bool = main_map.water_at(ivec2(point.x, point.z))
+        leaf_height: int = main_map.height_at_include_leaf(ivec2(point.x, point.z))
 
         root_mean_square_height += pow(point.y - average_height, 2)
         # ugly code to prevent from crashing on getting out of bounds error
-        height: int = point.y
-        with contextlib.suppress(IndexError):
-            height = map.height_no_tree[point.x][point.z]
+
+        height: int = main_map.height_no_tree[point.x][point.z]
         n1 = n2 = n3 = n4 = height
+        if main_map.is_in_bounds2d(ivec2(point.x + 1, point.z)):
+            n1 = main_map.height_no_tree[point.x + 1][point.z]
+        if main_map.is_in_bounds2d(ivec2(point.x - 1, point.z)):
+            n2 = main_map.height_no_tree[point.x - 1][point.z]
+        if main_map.is_in_bounds2d(ivec2(point.x, point.z + 1)):
+            n2 = main_map.height_no_tree[point.x][point.z + 1]
+        if main_map.is_in_bounds2d(ivec2(point.x, point.z - 1)):
+            n2 = main_map.height_no_tree[point.x][point.z - 1]
 
         neighbour_height += (
             abs(point.y - n1)
@@ -88,10 +95,9 @@ def _choose_more_urban_district(
 
 def district_classification(districts: list[District]) -> None:
 
-    # select prime urban spot
     prime_urban_district: District | None = None
 
-    # determine if district is unbuildable
+    # determine if district is unbuildable and select prime urban spot
     for district in districts:
 
         if district.is_border or district.roughness > 6 or district.gradient > 1.0:

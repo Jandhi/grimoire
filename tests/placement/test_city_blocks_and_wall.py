@@ -90,7 +90,7 @@ if DO_TERRAFORMING:
     world_map.correct_district_heights(districts)
 # done
 
-map.copy_heightmaps()
+world_map._copy_heightmaps(world_slice)
 
 
 # ground
@@ -149,6 +149,7 @@ palette = LegacyPalette.find("desert_dark_prismarine")
 
 # uncomment one of these to story one of the three wall types
 
+gates: list[Gate] = []
 
 for wall_points in wall_points_list:
     gates = build_wall_standard_with_inner(

@@ -5,9 +5,9 @@ from grimoire.districts.district import District
 
 
 def place_relative_to_ground(
-    x: int, y: int, z: int, block_name: str, city_map: Map, editor: Editor
+    x: int, y: int, z: int, block_name: str, main_map: Map, editor: Editor
 ) -> None:
-    y_offset: int = city_map.height_no_tree[x][z] - 1
+    y_offset: int = main_map.height_no_tree[x][z] - 1
     editor.placeBlock((x, y + y_offset, z), Block(block_name))
 
 

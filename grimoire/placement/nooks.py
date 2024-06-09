@@ -1,5 +1,6 @@
 import itertools
 from enum import Enum, auto
+from logging import warn
 from typing import Any, Callable, Iterable, Sequence, TypeVar
 
 from gdpc.editor import Editor
@@ -200,6 +201,11 @@ def identify_exposure_type_from_edging_pattern(
             raise RuntimeError(
                 f"None of the following elements are covered by development sets!\n\t{segment[0]}"
             )
+
+    if broad_pattern == []:
+        warn("Did not generate a broad pattern. Defaulting to 'COURT'")
+        return ExposureType.COURT
+
     if len(broad_pattern) < 2:  # a single segment
         if broad_pattern[0][0] == PATHS:
             return ExposureType.ISLAND
@@ -366,11 +372,13 @@ def find_suitable_nooks(
         )
 
         if final_set == set():  # There are no more candidates left
-            return final_set
+            final_set = None
+            break
 
     # No candidates were established in the first place. Return an empty set.
     if final_set is None:
-        return set()
+        warn("Could not find suitable Nook. Defaulting to GRASSY_NOOK.")
+        return {GRASSY_NOOK}
 
     if area is not None:
         final_set = eliminate_nooks_based_on_area(final_set, area)
