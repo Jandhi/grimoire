@@ -10,7 +10,7 @@ from ...core.structures.grid import Grid
 from ...core.structures.legacy_directions import (
     CARDINAL,
     vector as get_ivec3,
-    right,
+    RIGHT,
     UP,
     NORTH,
     EAST,
@@ -101,7 +101,7 @@ def build_start(
                 potential_rooms.append((room, to_face, rotate(room.connections, i)))
 
             if i > 0:
-                to_face = right[to_face]
+                to_face = RIGHT[to_face]
 
     room_to_build, room_facing, connections = rng.choose(potential_rooms)
     cells_with_rooms.append((start, connections))
@@ -165,7 +165,7 @@ def build_staircase(
                 potential_rooms.append((room, to_face, rotate(room.connections, i)))
 
             if i > 0:
-                to_face = right[to_face]
+                to_face = RIGHT[to_face]
 
     room_to_build, room_facing, connections = rng.choose(potential_rooms)
 
@@ -295,7 +295,7 @@ def populate_floor(
                                         )
 
                                     if i > 0:
-                                        to_face = right[to_face]
+                                        to_face = RIGHT[to_face]
 
             candidates.append((neighbor, len(potential_rooms), potential_rooms))
 

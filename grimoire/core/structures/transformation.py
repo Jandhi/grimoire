@@ -8,7 +8,7 @@ from .legacy_directions import (
     Z_MINUS,
     from_text,
     to_text,
-    right,
+    RIGHT,
     DIRECTIONS,
 )
 from .structure import Structure
@@ -83,7 +83,7 @@ class Transformation:
             direction = diagonal_mirror[direction]
 
         for i in range(self.rotations):
-            direction = right[direction]
+            direction = RIGHT[direction]
 
         return to_text(direction)
 

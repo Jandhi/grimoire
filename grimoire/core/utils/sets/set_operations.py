@@ -1,7 +1,7 @@
 from gdpc.vector_tools import distance2, ivec2
 
 # TODO: Replace with gdpc functions
-from ...structures.legacy_directions import CARDINAL, get_ivec2, left, right
+from ...structures.legacy_directions import CARDINAL, get_ivec2, LEFT, RIGHT
 
 
 def midpoint(points: set[ivec2]) -> ivec2:
@@ -94,8 +94,8 @@ def find_outer_direction(
     for direction in CARDINAL:
         score = 0
         vector = get_ivec2(direction)
-        left_vector = get_ivec2(left[direction])
-        right_vector = get_ivec2(right[direction])
+        left_vector = get_ivec2(LEFT[direction])
+        right_vector = get_ivec2(RIGHT[direction])
 
         for base_vec in (ivec2(0, 0), left_vector, right_vector):
             for dist in range(5):

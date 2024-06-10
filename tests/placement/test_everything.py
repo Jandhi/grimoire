@@ -2,9 +2,9 @@
 import sys
 import time
 
-from grimoire.core.styling.palette import Palette
+from grimoire.core.styling.palette import Palette, BuildStyle
 
-sys.path[0] = sys.path[0].removesuffix("/tests/placement")
+sys.path[0] = sys.path[0].removesuffix("\\tests\\placement")
 
 # Actual file
 from gdpc import Box, Editor
@@ -208,7 +208,7 @@ replace_ground_smooth(
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, districts, map, SEED, style=style, is_debug=False, stilts=True)
+add_city_blocks(editor, districts, main_map, SEED, style=style, is_debug=False, stilts=True)
 
 # WALL
 

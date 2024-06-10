@@ -22,7 +22,7 @@ from ..core.structures.legacy_directions import (
     get_ivec2,
     ivec2_to_dir,
     opposite,
-    right,
+    RIGHT,
     to_text,
     vector,
 )
@@ -288,7 +288,7 @@ def build_wall_standard(
 
             editor.placeBlock(
                 (point.x, point.y + 1, point.z),
-                Block(f"{block}[facing={to_text(right[previous_dir])}]"),
+                Block(f"{block}[facing={to_text(RIGHT[previous_dir])}]"),
             )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
@@ -298,11 +298,11 @@ def build_wall_standard(
                     h = point.y
                     if prev_h == h - 1 and next_h == h - 1:
                         height_modifier = -1
-                if right[dir] in wall_point[1]:  # add corner bits for walkway
+                if RIGHT[dir] in wall_point[1]:  # add corner bits for walkway
                     for new_pt in (
-                        point + vector(dir) + vector(right[dir]),
-                        point + vector(dir) + vector(right[dir]) * 2,
-                        point + vector(dir) * 2 + vector(right[dir]),
+                        point + vector(dir) + vector(RIGHT[dir]),
+                        point + vector(dir) + vector(RIGHT[dir]) * 2,
+                        point + vector(dir) * 2 + vector(RIGHT[dir]),
                     ):
                         if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                             break
@@ -401,7 +401,7 @@ def build_wall_standard_with_inner(
 
             editor.placeBlock(
                 (point.x, point.y + 1, point.z),
-                Block(f"{block}[facing={to_text(right[previous_dir])}]"),
+                Block(f"{block}[facing={to_text(RIGHT[previous_dir])}]"),
             )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
@@ -411,11 +411,11 @@ def build_wall_standard_with_inner(
                     h = point.y
                     if prev_h == h - 1 and next_h == h - 1:
                         height_modifier = -1
-                if right[dir] in wall_point[1]:  # add corner bits for walkway
+                if RIGHT[dir] in wall_point[1]:  # add corner bits for walkway
                     for new_pt in (
-                        point + vector(dir) + vector(right[dir]),
-                        point + vector(dir) + vector(right[dir]) * 2,
-                        point + vector(dir) * 2 + vector(right[dir]),
+                        point + vector(dir) + vector(RIGHT[dir]),
+                        point + vector(dir) + vector(RIGHT[dir]) * 2,
+                        point + vector(dir) * 2 + vector(RIGHT[dir]),
                     ):
                         if wall_dict.get(ivec2(new_pt.x, new_pt.z)) == True:
                             break
@@ -449,9 +449,9 @@ def build_wall_standard_with_inner(
 
                     # inner wall
                     for wall_pt in (
-                        point + vector(dir) * 2 + vector(right[dir]) * 2,
-                        point + vector(dir) + vector(right[dir]) * 3,
-                        point + vector(dir) * 3 + vector(right[dir]),
+                            point + vector(dir) * 2 + vector(RIGHT[dir]) * 2,
+                            point + vector(dir) + vector(RIGHT[dir]) * 3,
+                        point + vector(dir) * 3 + vector(RIGHT[dir]),
                     ):
                         if (
                             wall_dict.get(ivec2(wall_pt.x, wall_pt.z)) != True

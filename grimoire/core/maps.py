@@ -190,11 +190,6 @@ class Map:
     def ocean_floor_at(self, point: ivec2):
         return self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y]
 
-    def copy_heightmap(self):
-        size = self.world.rect.size
-        self.height = [
-            [self.height_at(ivec2(x, y)) for y in range(size.y)] for x in range(size.x)
-
     def height_at_include_leaf(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING"][point.x][point.y]
 

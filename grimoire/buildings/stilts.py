@@ -16,8 +16,8 @@ from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.core.generator.module import Module
 from grimoire.core.maps import Map
 from grimoire.core.noise.rng import RNG
+from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.grid import Grid
-from grimoire.core.structures.legacy_directions import north, west, south, east
 from grimoire.core.structures.nbt.nbt_asset import NBTAsset
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.materials.dithering import DitheringPattern
@@ -93,10 +93,10 @@ def build_stilt_frame(
 
         # CORNERS
         for vec, name in (
-            (NORTH, north),
-            (EAST, east),
-            (SOUTH, south),
-            (WEST, west),
+            (NORTH, legacy_directions.NORTH),
+            (EAST, legacy_directions.EAST),
+            (SOUTH, legacy_directions.SOUTH),
+            (WEST, legacy_directions.WEST),
         ):
             if point + vec not in points and point + rotate3D(vec, 1) not in points:
                 grid.build(
@@ -114,10 +114,10 @@ def build_stilt_frame(
 
         # EDGES
         for vec, name in (
-            (NORTH, north),
-            (EAST, east),
-            (SOUTH, south),
-            (WEST, west),
+            (NORTH, legacy_directions.NORTH),
+            (EAST, legacy_directions.EAST),
+            (SOUTH, legacy_directions.SOUTH),
+            (WEST, legacy_directions.WEST),
         ):
             if point + vec not in points and all(
                 point + rotate3D(vec, i) in points for i in range(1, 4)
@@ -146,10 +146,10 @@ def build_stilt_frame(
             continue
 
         for vec, name in (
-            (NORTH, north),
-            (EAST, east),
-            (SOUTH, south),
-            (WEST, west),
+            (NORTH, legacy_directions.NORTH),
+            (EAST, legacy_directions.EAST),
+            (SOUTH, legacy_directions.SOUTH),
+            (WEST, legacy_directions.WEST),
         ):
             if point + vec + rotate3D(vec, 1) not in points:
                 grid.build(

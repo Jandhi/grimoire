@@ -97,21 +97,21 @@ def from_text(text: str):
     return TEXT_2_DIRECTION[text]
 
 
-forwards = {NORTH: NORTH, EAST: EAST, SOUTH: SOUTH, WEST: WEST}
-right = {
+FORWARDS = {NORTH: NORTH, EAST: EAST, SOUTH: SOUTH, WEST: WEST}
+RIGHT = {
     NORTH: EAST,
     EAST: SOUTH,
     SOUTH: WEST,
     WEST: NORTH,
 }
-left = {
+LEFT = {
     NORTH: WEST,
     WEST: SOUTH,
     SOUTH: EAST,
     EAST: NORTH,
 }
 
-backwards = OPPOSITES
+BACKWARDS = OPPOSITES
 
 from_ivec2_dict = {
     ivec2(0, -1): NORTH,

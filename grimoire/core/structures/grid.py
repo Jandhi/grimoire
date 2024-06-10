@@ -1,5 +1,4 @@
-
-from .legacy_directions import left, right, opposites, north, west, south, east
+from . import legacy_directions
 from .nbt.build_nbt import build_nbt_legacy, build_nbt
 from .transformation import Transformation
 from gdpc.editor import Editor
@@ -71,13 +70,13 @@ class Grid:
 
         if isinstance(facing, ivec3):
             if facing == NORTH:
-                facing = north
+                facing = legacy_directions.NORTH
             elif facing == EAST:
-                facing = east
+                facing = legacy_directions.EAST
             elif facing == SOUTH:
-                facing = south
+                facing = legacy_directions.SOUTH
             elif facing == WEST:
-                facing = west
+                facing = legacy_directions.WEST
 
         if facing is None or not hasattr(asset, "facing") or asset.facing == facing:
             return build_nbt(
@@ -91,7 +90,7 @@ class Grid:
                 build_map=build_map,
             )
 
-        if right[asset.facing] == facing:
+        if legacy_directions.RIGHT[asset.facing] == facing:
             return build_nbt(
                 editor,
                 asset,
@@ -104,7 +103,7 @@ class Grid:
                 build_map=build_map,
             )
 
-        if left[asset.facing] == facing:
+        if legacy_directions.LEFT[asset.facing] == facing:
             return build_nbt(
                 editor,
                 asset,
@@ -117,7 +116,7 @@ class Grid:
                 build_map=build_map,
             )
 
-        if opposites[asset.facing] == facing:
+        if legacy_directions.OPPOSITES[asset.facing] == facing:
             return build_nbt(
                 editor,
                 asset,

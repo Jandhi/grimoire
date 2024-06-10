@@ -8,7 +8,6 @@ from glm import ivec3
 from ...core.noise.global_seed import GlobalSeed
 from ...core.noise.rng import RNG
 from ...core.structures.grid import Grid
-from ...core.structures.legacy_directions import LegacyDirection, cardinal, up
 from ...core.styling.materials.dithering import DitheringPattern
 from ...core.styling.materials.gradient import Gradient, GradientAxis, PerlinSettings
 from ...core.styling.materials.material import MaterialParameterFunction
