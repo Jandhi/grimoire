@@ -2,24 +2,24 @@
 import sys
 import time
 
-from gdpc.vector_tools import rotate3D, addY, dropY
+from gdpc.vector_tools import dropY, rotate3D, addY
 
 from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.legacy_directions import VECTORS
 from grimoire.core.styling.palette import Palette, BuildStyle
 from grimoire.paths.build_highway import build_highway
-from grimoire.paths.route_highway import fill_out_highway, route_highway
+from grimoire.paths.route_highway import route_highway, fill_out_highway
 from grimoire.paths.signposts import build_signpost
 
 sys.path[0] = sys.path[0].removesuffix("\\tests\\placement")
 
 # Actual file
-from gdpc import Box, Editor, Block
+from gdpc import Box, Editor
 from gdpc.lookup import GRANULARS
-from glm import ivec2
+from glm import ivec2, ivec3
 
 from grimoire.core.assets.asset_loader import load_assets
-from grimoire.core.maps import Map, get_build_map, DevelopmentType
+from grimoire.core.maps import Map, get_build_map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
 from grimoire.districts.district import District, DistrictType, SuperDistrict
@@ -88,7 +88,6 @@ districts, district_map, super_districts, super_district_map = generate_district
     SEED, build_rect, world_slice, main_map
 )
 main_map.districts = district_map
-main_map.super_districts = super_district_map
 
 forest_counter = 0
 desert_counter = 0
@@ -118,11 +117,13 @@ if desert_counter >= len(districts) // 2:
     is_desert = True
 biome_counters = [forest_counter, desert_counter, rocky_counter]
 
-if max(biome_counters) == forest_counter or max(biome_counters) not in [
-    desert_counter,
-    rocky_counter,
-]:
-    style = BuildStyle.JAPANESE
+style = BuildStyle.JAPANESE
+
+# if max(biome_counters) == forest_counter or max(biome_counters) not in [
+#     desert_counter,
+#     rocky_counter,
+# ]:
+#     style = BuildStyle.JAPANESE
 # elif max(biome_counters) == desert_counter:
 #     style = BuildStyle.DESERT
 # else:
@@ -138,33 +139,6 @@ for district in districts:
     for _ in range(min(3, len(eligible_palettes))):
         district.palettes.append(rng.pop(palettes))
 
-# plateau stuff
-if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistricts
-    print("starting plateauing")
-    for district in districts:
-        if not district.is_urban:
-            continue
-
-        plateau(district, district_map, world_slice, editor, main_map.water)
-
-    editor.flushBuffer()  # this is needed to reload the world slice properly
-    print("Reloading worldSlice")
-    world_slice = editor.loadWorldSlice(build_rect)
-    main_map.world = world_slice
-
-    smooth_edges(
-        build_rect, districts, district_map, world_slice, editor, main_map.water
-    )
-
-    editor.flushBuffer()  # this is needed to reload the world slice properly
-    print("Reloading worldSlice")
-    world_slice = editor.loadWorldSlice(build_rect)
-    main_map.world = world_slice
-    main_map.correct_district_heights(districts)
-# done
-
-print("sleepy time to reduce http traffic")
-time.sleep(SLEEP_DELAY)  # to try to reduce http traffic, we'll do a little sleepy time
 
 for district in super_districts:
     district_analyze(district, main_map)
@@ -198,15 +172,6 @@ urban_road: PaintPalette = (
     if style == BuildStyle.DESERT
     else PaintPalette.find("urban_road")
 )
-# replace_ground_smooth(
-#     inner_points,
-#     urban_road.palette,
-#     rng,
-#     main_map.water,
-#     build_map,
-#     editor,
-#     world_slice,
-# )
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
@@ -217,13 +182,7 @@ urban_road: PaintPalette = (
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False)
 
-
-for x in range(main_map.world.rect.size.x):
-    for z in range(main_map.world.rect.size.y):
-        if main_map.buildings[x][z] == DevelopmentType.CITY_ROAD:
-            editor.placeBlock(main_map.make_3d(ivec2(x, z)), Block('red_wool'))
 
 # WALL
 
@@ -286,63 +245,3 @@ rural_road: PaintPalette = PaintPalette.find("rural_road")
 
 options = forests + crops
 
-for super_district in super_districts:
-    if super_district == DistrictType.RURAL:
-        if mountainous and not is_snowy or is_desert:
-            choice_list = rng.choose([[None], [None], [None], [None]])
-        elif is_snowy and not mountainous:
-            choice_list = rng.choose([forests, [None], [None], [None]])
-        else:
-            choice_list = rng.choose([crops, forests, [None], [None]])
-        choice = rng.choose(choice_list)
-
-        outer_district_points, inner_district_points = find_outer_and_inner_points(
-            super_district.points_2d, 4
-        )
-        if isinstance(choice, Forest):  # forest
-            plant_forest(
-                list(inner_district_points),
-                choice,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-                ignore_blocks,
-            )
-        elif isinstance(choice, PaintPalette):  # crops
-            replace_ground(
-                list(inner_district_points),
-                farmland.palette,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-                0,
-                ignore_blocks,
-            )
-            replace_ground(
-                list(inner_district_points),
-                choice.palette,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-                1,
-                ignore_blocks,
-            )
-            replace_ground(
-                list(outer_district_points),
-                rural_road.palette,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-            )
-        else:
-            continue
-
-        time.sleep(5)  # to try to reduce http traffic, we'll do a little sleepy time

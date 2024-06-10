@@ -1,14 +1,14 @@
 from gdpc import Editor
 from gdpc.vector_tools import distance, ivec3
 
-from grimoire.districts.district import District
+from grimoire.districts.district import District, DistrictType
 
 from ..core.maps import Map
 from ..core.structures.legacy_directions import ALL_8, vector
 from ..core.utils.bounds import is_in_bounds
 from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
 
-HEURISTIC_WEIGHT = 1.3
+HEURISTIC_WEIGHT = 3
 
 
 def fill_out_highway(points: list[ivec3]) -> list[ivec3]:
@@ -94,7 +94,7 @@ def route_highway(start: ivec3, end: ivec3, map: Map, editor: Editor, is_debug=F
 
         district_cost = 0
         district_at_last: District | None = map.districts[last.x][last.z]
-        if district_at_last is not None and district_at_last.is_urban:
+        if district_at_last is not None and district_at_last.type == DistrictType.URBAN:
             district_cost += 50
 
         near_wall_cost = 0

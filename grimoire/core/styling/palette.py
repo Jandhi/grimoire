@@ -16,6 +16,9 @@ class BuildStyle(Enum):
     DESERT = auto()  # Decentish variety I think
     DWARVEN = auto()
 
+    WET = auto()
+    NORMAL = auto()
+
 
 class MaterialRole(Enum):
     PRIMARY_WALL = auto()
@@ -94,12 +97,14 @@ class Palette(Asset):
     secondary_color: MinecraftColor
 
     def find_role(self, block: Block) -> MaterialRole | None:
+        role_order = (
+            role
+            for role in self.resolution_priority.order()
+            if role in self.materials and self.materials[role].has_block(block)
+        )
+
         return next(
-            (
-                role
-                for role in self.resolution_priority.order
-                if self.materials[role].has_block(block)
-            ),
+            role_order,
             None,
         )
 

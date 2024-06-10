@@ -6,7 +6,7 @@ from gdpc.block import Block
 from gdpc.lookup import ICE_BLOCKS, WATER_PLANTS, WATERS
 from gdpc.vector_tools import ivec2, ivec3
 
-from ..districts.district import District
+from ..districts.district import District, SuperDistrict
 from ..terrain.tree_cutter import TREE_BLOCKS
 from .utils.bounds import is_in_bounds, is_in_bounds2d
 from .utils.sets.set_operations import find_outline
@@ -139,6 +139,7 @@ def get_water_map(world_slice: WorldSlice) -> list[list[bool]]:
 class Map:
     water: list[list[bool]]
     districts: list[list[District | None]]
+    super_districts: list[list[SuperDistrict | None]]
     buildings: list[list[DevelopmentType | None]]
     height: list[list[int]]  # height map based on MOTION_BLOCKING_NO_LEAVES
     height_no_tree: list[
@@ -155,6 +156,7 @@ class Map:
         size = world_slice.rect.size
         self.world = world_slice
         self.districts = self.empty_map()
+        self.super_districts = self.empty_map()
         self.buildings = get_building_map(world_slice)
         self.biome = get_biome_map(world_slice)
         self.block, self.water = get_block_and_water_map(world_slice)

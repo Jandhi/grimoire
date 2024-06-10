@@ -3,8 +3,11 @@ from gdpc.vector_tools import ivec3
 from ...core.noise.rng import RNG
 from ...core.structures.grid import Grid
 from ...core.structures.legacy_directions import EAST, NORTH, SOUTH, UP, WEST
-from ...core.structures.nbt.build_nbt import build_nbt_legacy
+from ...core.structures.nbt.build_nbt import build_nbt_legacy, build_nbt
 from ...core.structures.transformation import Transformation
+from ...core.styling.materials.dithering import DitheringPattern
+from ...core.styling.materials.gradient import Gradient, PerlinSettings, GradientAxis
+from ...core.styling.materials.material import MaterialParameterFunction
 from ...core.utils.vectors import y_ivec3
 from ..building_plan import BuildingPlan
 from .roof_component import CORNER, INNER, SIDE, RoofComponent

@@ -29,7 +29,7 @@ from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
 from ..core.utils.sets.set_operations import find_edges, find_outer_direction
 from ..core.utils.shapes import Shape2D
 from ..core.utils.vectors import point_3d, y_ivec3
-from ..districts.district import District, DistrictType
+from ..districts.district import District, DistrictType, SuperDistrict
 from ..placement.building_placement import place_building
 
 EDGE_THICKNESS = 1
@@ -41,14 +41,14 @@ LOOP_LIMIT = 1000  # prevents uncontrolled loops from going on too long
 
 def generate_bubbles(
     rng: RNG,
-    districts: list[District],
-    map: Map,
+    super_districts: list[SuperDistrict],
+    build_map: Map,
     desired_block_size=DESIRED_BLOCK_SIZE,
     minimum_point_distance=15,
 ) -> list[ivec2]:
     points: list[ivec2] = []
 
-    for district in districts:
+    for district in super_districts:
         if district.type != DistrictType.URBAN:
             continue
 
@@ -67,7 +67,7 @@ def generate_bubbles(
             ):
                 continue
 
-            if map.buildings[point.x][point.y] == DevelopmentType.CITY_WALL:
+            if build_map.buildings[point.x][point.y] == DevelopmentType.CITY_WALL:
                 continue
 
             district_points_generated += 1
@@ -77,10 +77,10 @@ def generate_bubbles(
 
 
 def bubble_out(
-    bubbles: list[ivec2], map: Map
+    bubbles: list[ivec2], build_map: Map
 ) -> tuple[list[set[ivec2]], list[list[int | None]], dict[int, dict[int, int]]]:
     block_index_map: list[list[int | None]] = [
-        [None for _ in range(len(map.districts[0]))] for _ in range(len(map.districts))
+        [None for _ in range(len(build_map.super_districts[0]))] for _ in range(len(build_map.super_districts))
     ]
     blocks: list[set[ivec2]] = [set() for _ in bubbles]
     num_blocks = len(blocks)
@@ -95,12 +95,12 @@ def bubble_out(
     queue = list(bubbles)
 
     def is_eligible(vec: ivec2):
-        district = map.districts[vec.x][vec.y]
+        district = build_map.super_districts[vec.x][vec.y]
 
-        if map.buildings[vec.x][vec.y] == DevelopmentType.CITY_WALL:
+        if build_map.buildings[vec.x][vec.y] == DevelopmentType.CITY_WALL:
             return False
 
-        if map.water[vec.x][vec.y]:
+        if build_map.water[vec.x][vec.y]:
             return False
 
         return district is not None and district.type == DistrictType.URBAN
@@ -113,13 +113,13 @@ def bubble_out(
         for direction in CARDINALS_2D:
             neighbour = point + direction
 
-            if not is_in_bounds2d(neighbour, map.world):
+            if not is_in_bounds2d(neighbour, build_map.world):
                 continue
 
-            point_y = map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
+            point_y = build_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
                 point.y
             ]
-            neighbour_y = map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
+            neighbour_y = build_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
                 neighbour.x
             ][neighbour.y]
 
@@ -176,7 +176,7 @@ def merge_small_blocks(
 def place_buildings(
     editor,
     block,
-    map,
+    build_map,
     rng,
     style=BuildStyle.JAPANESE,
     is_debug=False,
@@ -188,7 +188,7 @@ def place_buildings(
     Args:
         editor: The Editor object for placing blocks.
         block: A set of 2D vectors representing the building blocks.
-        map: The Map object representing the game map.
+        build_map: The Map object representing the game map.
         rng: The RNG object for random number generation.
         style: The style of the buildings (default is BuildStyle.JAPANESE).
         is_debug: A boolean indicating whether debug mode is enabled (default is False).
@@ -201,16 +201,16 @@ def place_buildings(
 
         if is_debug:
             editor.placeBlock(
-                point_3d(edge, map.world) + y_ivec3(-1),
+                point_3d(edge, build_map.world) + y_ivec3(-1),
                 Block("cobblestone_stairs", {"facing": to_text(build_dir)}),
             )
 
-        place_building(editor, edge, map, build_dir, rng, style, stilts=stilts)
+        place_building(editor, edge, build_map, build_dir, rng, style, stilts=stilts)
 
 
 def add_city_blocks(
     editor: Editor,
-    districts: list[District],
+    super_districts: list[SuperDistrict],
     city_map: Map,
     seed: int,
     style=BuildStyle.JAPANESE,
@@ -220,7 +220,7 @@ def add_city_blocks(
     rng = RNG(seed, "add_city_blocks")
 
     urban_area: set[ivec2] = set()
-    for district in districts:
+    for district in super_districts:
         if district.type == DistrictType.URBAN:
             urban_area |= district.points_2d
 
@@ -229,7 +229,7 @@ def add_city_blocks(
     for point in outer_urban_area:
         city_map.buildings[point.x][point.y] = DevelopmentType.CITY_WALL
 
-    bubbles = generate_bubbles(rng, districts, city_map)
+    bubbles = generate_bubbles(rng, super_districts, city_map)
     blocks, block_map = merge_small_blocks(*bubble_out(bubbles, city_map))
 
     inners: list[set[ivec2]] = []
@@ -261,6 +261,8 @@ def add_city_blocks(
         block_rng = RNG(seed, f"block {i}")
         inners.append(inner)
         outers.append(outer)
+
+
 
     # Has to be done after all inners are found
     for block, inner, outer in zip(blocks, inners, outers):

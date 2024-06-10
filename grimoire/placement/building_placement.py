@@ -41,6 +41,7 @@ from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.material import MaterialParameters
 from ..core.styling.palette import MaterialRole, Palette
 from ..core.utils.geometry import get_surrounding_points
+from ..districts.district import DistrictType
 
 offsets = {
     Z_MINUS: [ivec2(0, 0), ivec2(-1, 0)],
@@ -173,7 +174,7 @@ def attempt_building_placement_at_offset(
 def can_place_shape(
     shape: BuildingShape,
     grid: Grid,
-    map: Map,
+    build_map: Map,
     urban_only: bool,
     allow_water: bool = False,
     stilts: bool = False,
@@ -186,22 +187,25 @@ def can_place_shape(
         points |= get_surrounding_points(points, 3)
 
     for point in points:
+        if not build_map.is_in_bounds2d(point):
+            return False
+
         # water check
-        if map.water[point.x][point.y]:
+        if build_map.water[point.x][point.y]:
             water_amt += 1
 
         # freeness check
-        if map.buildings[point.x][point.y] is not None:
+        if build_map.buildings[point.x][point.y] is not None:
             return False
 
         # urban check
         if urban_only and (
-            not map.districts[point.x][point.y]
-            or not map.districts[point.x][point.y].is_urban
+            not build_map.districts[point.x][point.y]
+            or not build_map.districts[point.x][point.y].type == DistrictType.URBAN
         ):
             return False
 
-        total_height_diff += abs(grid.origin.y - map.height_at(point))
+        total_height_diff += abs(grid.origin.y - build_map.height_at(point))
 
     if (WATER_THRESHOLD <= water_amt / len(points)) and not allow_water:
         return False
@@ -248,7 +252,7 @@ def place(
     grid: Grid,
     rng: RNG,
     build_map: Map,
-    style: str,
+    style: BuildStyle,
     stilts: bool = False,
 ):
     district = build_map.districts[grid.origin.x][grid.origin.z]
@@ -320,14 +324,14 @@ def place(
     build_roof(
         plan,
         editor,
-        [component for component in RoofComponent.all() if style in component.tags],
+        [component for component in RoofComponent.all() if style.name.lower() in component.tags],
         rng.next(),
     )
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = list(filter(lambda wall: style in wall.tags, Wall.all().copy()))
+    walls = list(filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy()))
 
     build_walls(plan, editor, walls, rng)
 
