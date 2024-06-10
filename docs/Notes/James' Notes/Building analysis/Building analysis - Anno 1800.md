@@ -1,0 +1,894 @@
+- [ ] Ornaments
+	- [ ] Old World
+		- [ ] Parks
+			- [ ] Modest
+				- [ ] Grass
+				- [ ] Shrubbery
+				- [ ] Mature Shrubbery
+				- [ ] Mature Tree
+				- [ ] Apple Tree
+				- [ ] Well
+			- [ ] Quaint
+				- [ ] Temperate Grove
+				- [ ] Small Tree
+				- [ ] Poplar Grove
+				- [ ] Poplar
+				- [ ] Flower Bed
+				- [ ] Watering Hole
+				- [ ] Trembling Aspen
+				- [ ] Elm Tree
+			- [ ] Pleasant
+				- [ ] Straight Path
+				- [ ] Straight Hedge
+				- [ ] Entrance
+				- [ ] Garden Benches
+				- [ ] Memorial Statue
+				- [ ] Newsstand
+				- [ ] Fountain Garden
+				- [ ] Garden
+				- [ ] Gazebo Garden
+			- [ ] Elaborate
+				- [ ] Straight Fence
+				- [ ] Archway
+				- [ ] Memorial Garden
+				- [ ] Equestrial Statue Garden
+				- [ ] Cypress
+				- [ ] Tall Cypress
+			- [ ] Luxurious
+				- [ ] Fountain Plaza
+				- [ ] Gazebo Plaza
+		- [ ] Esplanades
+			- [ ] Pleasant
+				- [ ] Paving
+				- [ ] Straight Edge
+				- [ ] Wide Entrance
+				- [ ] Piazza Benches
+				- [ ] Newsstand
+				- [ ] Memorial Statue
+			- [ ] Elaborate
+				- [ ] Straight Fence
+				- [ ] Archway
+			- [ ] Luxurious
+				- [ ] Billboard
+				- [ ] Channel
+				- [ ] Channel Bridge
+				- [ ] Channel Corner
+				- [ ] Channel End
+				- [ ] Channel Fountain
+				- [ ] Columns
+				- [ ] Columns Corner
+				- [ ] Flagpole
+				- [ ] Morris Column
+				- [ ] Mosaic Paving
+				- [ ] World's Fair Gate
+				- [ ] World's Fair Pavillion
+				- [ ] World's Fair Tower
+	- [ ] New World
+		- [ ] Quaint Park
+			- [ ] Straight Path
+			- [ ] Straight Hedge
+			- [ ] Entrance
+			- [ ] Grass
+			- [ ] Philodendron
+			- [ ] Small Tree
+			- [ ] Ferns
+			- [ ] Bush
+			- [ ] Shrub
+			- [ ] Small Palm Tree
+			- [ ] Palm Tree
+			- [ ] Well
+		- [ ] Pleasant Esplanade
+			- [ ] Paving
+			- [ ] Straight Hedge
+			- [ ] Wide Entrance
+			- [ ] Fence
+			- [ ] Archway
+			- [ ] Piazza Benches
+			- [ ] Newsstand
+			- [ ] Memorial Statue
+		- [ ] Luxurious Park
+			- [ ] Straight Fence
+			- [ ] Archway
+			- [ ] Garden Benches
+			- [ ] Memorial Statue
+			- [ ] Newsstand
+			- [ ] Tropical Forest
+			- [ ] Flowering Shrub
+			- [ ] Equestrian Statue Garden
+			- [ ] Watering Hole
+			- [ ] Memorial Garden
+			- [ ] Fountain Garden
+			- [ ] Garden
+			- [ ] Gazebo Garden
+			- [ ] Fountain Plaza
+			- [ ] Gazebo Plaza
+		- [ ] Luxurious Esplanade (same as new world)
+	- [ ] Airship Platform
+		- [ ] Airship platform Café
+		- [ ] Café Tables
+		- [ ] Airship Platform Clock
+		- [ ] Flagpole
+		- [ ] Seating Area
+		- [ ] Covered Seats
+		- [ ] Airport Sign
+		- [ ] Airship Platform Arch
+	- [ ] Amusement Park
+		- [ ] Ferris Wheel
+		- [ ] Roller Coaster
+		- [ ] Ticket Booth
+		- [ ] Ice Cream Stand
+		- [ ] Cotton Candy Stand
+		- [ ] Tin Can Alley
+		- [ ] Shooting Game
+		- [ ] Food Stand
+		- [ ] Beverages Stand
+		- [ ] Strongman Game
+		- [ ] Face in the Hole
+		- [ ] Barrel Organ Player
+		- [ ] Balloon Seller
+		- [ ] Portrait Painter
+		- [ ] "Welcome" Gate
+		- [ ] Bar Table
+	- [ ] Beach
+		- [ ] Sand
+		- [ ] Parasol Picnic
+		- [ ] Private Parasol
+		- [ ] Resort Sunloungers
+		- [ ] Changing Stall
+		- [ ] Boathouse
+		- [ ] Ice Cream Parlour
+		- [ ] Lifeguard Tower
+	- [ ] Botanical
+		- [ ] Iris Garden
+		- [ ] Camellia Garden
+		- [ ] Yellow Daisy Garden
+		- [ ] Red White Petunia Garden
+		- [ ] Hibiscus Garden
+		- [ ] Gentian Garden
+		- [ ] Lily Garden
+		- [ ] Marigold Garden
+		- [ ] Hedge Maze
+		- [ ] Topiary Avenue
+		- [ ] Topiary Garden
+	- [ ] Bright Harvest
+		- [ ] Wooden Fence
+		- [ ] Wooden Fence Entrance
+		- [ ] Flatbed Wagon
+		- [ ] Scarecrow
+		- [ ] Log Pile
+		- [ ] Outhouse
+		- [ ] Signpost
+		- [ ] Hey Bales
+		- [ ] Swing
+		- [ ] Clothesline
+	- [ ] City Lights
+		- [ ] Farmer's Stall
+		- [ ] Florist's Stall
+		- [ ] Grocer's Stall
+		- [ ] Fishmonger's Stall
+		- [ ] Cheese-monger's Stall
+		- [ ] Pizzeria
+		- [ ] Bakery
+		- [ ] Drinks Shack
+		- [ ] Sandwitch Shack
+		- [ ] Couples' Table
+		- [ ] Solitary Table
+		- [ ] Family Table
+		- [ ] Steelwork Fence
+		- [ ] Sandpit and Slide
+		- [ ] Children's Playground
+		- [ ] Water Trough
+		- [ ] Public Timepiece
+		- [ ] Steel Clockhouse
+		- [ ] City Light
+		- [ ] Telephone Box
+		- [ ] Clearwater Pool
+	- [ ] Docklands
+		- [ ] Crimson Lighthouse
+		- [ ] Pale Lighthouse
+		- [ ] Harbour Crane
+		- [ ] Industrial Crane
+		- [ ] Warehouse
+		- [ ] Docked Freighter
+		- [ ] Moored Fraighter
+		- [ ] Loaded Barge
+		- [ ] Bridge (open/close)
+		- [ ] Drydocked Skiffs
+		- [ ] Shelved Rowboats
+		- [ ] Resting Rowboats
+		- [ ] Fish Traps
+		- [ ] Cancased Crates
+		- [ ] Crates o' Goods
+		- [ ] Material Stacks
+		- [ ] Pile of Barrels
+		- [ ] Barrels
+		- [ ] Barrels o' Goods
+		- [ ] Copper-Roofed Kiosk
+		- [ ] Seaside Benches
+		- [ ] Bleak Lamp
+		- [ ] Potted Beech
+		- [ ] Sylvan Bench
+	- [ ] Dragon Garden
+		- [ ] Lantern Street Lights
+		- [ ] Lamp Post
+		- [ ] Lucky Bamboo Lanterns
+		- [ ] New Year's Lantern
+		- [ ] Fortune Coin Stand
+		- [ ] Wishing Tree
+		- [ ] Bronze Bell
+		- [ ] Gong
+		- [ ] Wishing Gate
+		- [ ] New Year Stall
+		- [ ] Peaceful Pagoda
+		- [ ] Enchanted City Wall
+		- [ ] Enchanted City Gate
+		- [ ] Garden of Serenity
+		- [ ] Stone Lion
+		- [ ] Great Dragon
+	- [ ] Eldritch
+		- [ ] Forgotten Abbey
+		- [ ] Dreamspire
+		- [ ] Cathedral Square
+		- [ ] Wishing Well
+		- [ ] Dread Tree
+		- [ ] Twisted Tree
+		- [ ] Gargoyle
+		- [ ] Statue of Lady Morningstar
+		- [ ] Fiery Lantern
+		- [ ] Fire Pit
+		- [ ] Stone Bench
+		- [ ] Nostalgic Pavement
+		- [ ] Ornate Pavement
+		- [ ] Gothic Fence
+		- [ ] Black Gate
+	- [ ] Fiesta
+		- [ ] Public Bench
+		- [ ] Organ Cactus
+		- [ ] Rosy Pincushion
+		- [ ] Fence Post Cactus
+		- [ ] Traditional Path
+		- [ ] Traditional Terracotta
+		- [ ] Fountain of Inspiration
+		- [ ] Sunwell
+		- [ ] Jacaranda Tree
+		- [ ] Palm Tree
+		- [ ] Summer Pavillion
+		- [ ] Mate Stall
+		- [ ] Tropical Fruit Stall
+		- [ ] Market Cart
+		- [ ] Fried Corn Cart
+		- [ ] Mesoan Memorial
+		- [ ] Bright Banners
+		- [ ] Exotic Flower Bed
+		- [ ] Traditional Wall
+		- [ ] Brick Arch
+	- [ ] Grand Gallery
+		- [ ] Old Nate's Workshop
+		- [ ] Platform
+		- [ ] Wooden Platform
+		- [ ] Platform with Stairs
+		- [ ] Platform with Barrel
+		- [ ] Crane
+		- [ ] Long Platform
+		- [ ] Oil Platform
+		- [ ] Junk Pile
+		- [ ] Scrapyard Wall
+		- [ ] Scrapyard Fencing
+		- [ ] Stone Vase
+		- [ ] Graveside Angel
+		- [ ] Obelisk
+		- [ ] Crypt
+		- [ ] Cemetery Lights
+		- [ ] Simple Grave
+		- [ ] Marital Grave
+		- [ ] Divided Grave
+		- [ ] Family Grave
+		- [ ] Well-tended Grave
+		- [ ] Cemetery Cobble
+		- [ ] Graveyard Fencing
+		- [ ] Graveyard Wall
+	- [ ] Hacienda
+		- [ ] Hacienda Wall
+		- [ ] Hacienda Colonnade
+		- [ ] Large Hacienda Gateway
+		- [ ] Small Hacienda Gateway
+		- [ ] Hacienda Pool
+		- [ ] Hacienda Flowerbed
+		- [ ] Hacienda Plam Tree
+		- [ ] Hacienda Crate Stack
+		- [ ] Hacienda Shed
+		- [ ] Hacienda Haystacks
+		- [ ] Hacienda Cart
+	- [ ] Holiday
+		- [ ] Decorated Straight Fence
+		- [ ] Decorated Archway
+		- [ ] Decorated Light Post
+		- [ ] Christmas Standing Table
+		- [ ] Snowman
+		- [ ] Christmas Tree
+		- [ ] Decorated Straight Hedge
+		- [ ] Decorated Entrance
+		- [ ] City Christmas Tree
+		- [ ] Baked Goods Stall
+		- [ ] Mulles Wine Stall
+		- [ ] Christmas Sweets Stall
+		- [ ] Merry-Go-Round
+		- [ ] Pile of Presents
+		- [ ] Father Christmas' Throne
+		- [ ] Paving
+	- [ ] Industrial Zone
+		- [ ] Large Railway Hall
+		- [ ] Small Railway Hall
+		- [ ] Railway Platform
+		- [ ] Coal Tower
+		- [ ] Railway Guard Hut
+		- [ ] Railway Crane
+		- [ ] Oil Tank
+		- [ ] Water Tank
+		- [ ] Railway Signal
+		- [ ] Railway Electric Pole
+		- [ ] Railway Yield Sign
+		- [ ] Elevated Railway Signal
+		- [ ] Railway Warning Sign
+		- [ ] Construction Trailer
+		- [ ] Construction Crane
+		- [ ] Construction Site
+		- [ ] Pile Driver
+		- [ ] Sawing Station
+		- [ ] Sanitary Pipes
+		- [ ] Copper Pipes
+		- [ ] Water Pipes
+		- [ ] Scaffolding
+		- [ ] Construction fence
+		- [ ] Construction Fence Entrance
+		- [ ] Water Pipe Netowrk
+		- [ ] Elevated Water Pipes
+		- [ ] Water Pipe Connector
+		- [ ] Pipe Passageway
+	- [ ] Land of Lions
+		- [ ] Patch of Grass
+		- [ ] Patch of Sand
+		- [ ] Young Sycamore
+		- [ ] Juniper Tree
+		- [ ] Hagenia Shrub
+		- [ ] Shiny-Leaf Buckthorn
+		- [ ] Small Shedyet
+		- [ ] Narrow Shedyet
+		- [ ] Campfire
+		- [ ] Barrels
+		- [ ] Shed
+		- [ ] Tent
+		- [ ] Waycamp
+		- [ ] Shelter
+	- [ ] National Park Ornaments
+		- [ ] Trail Brunch
+		- [ ] Pizza Picnic
+		- [ ] Campsite
+		- [ ] Tent
+		- [ ] Majestic Rock
+		- [ ] Eroded Rock
+		- [ ] "Eagle's Nest" Café
+		- [ ] Ruined Tower
+		- [ ] Feeding Station
+		- [ ] Hiker's Hut
+		- [ ] Campfire
+		- [ ] Observation Point
+		- [ ] Wanderer's Rest
+		- [ ] Gnarly Oak
+		- [ ] Ash
+		- [ ] Trail Sign
+		- [ ] Willow
+		- [ ] Small Wooden Bridge
+		- [ ] Wooden Bridge
+		- [ ] Long Wooden Bridge
+		- [ ] Boardwalk
+		- [ ] Hiking Trail
+		- [ ] Forest Lake
+		- [ ] Grassy Lake
+		- [ ] Grass
+	- [ ] Old Town
+		- [ ] Square Tower
+		- [ ] Town Gatehouse
+		- [ ] Enchanting Tower
+		- [ ] Guard Tower
+		- [ ] The "Hildegarden"
+		- [ ] Banner of the Roses
+		- [ ] Historic Fountain
+		- [ ] Statue of a Woman
+		- [ ] Cobblestone
+		- [ ] Bright Cobblestone
+		- [ ] City Wall (covered)
+		- [ ] City Wall (open)
+		- [ ] Archway
+		- [ ] Large Archway
+	- [ ] Pedestrian Zone
+		- [ ] Canals
+		- [ ] Sewers
+		- [ ] Canal Bridge Small
+		- [ ] Canal Bridge Medium
+		- [ ] Canal Bridge Large
+		- [ ] Enclosed Greenery
+		- [ ] Pedestrian Bridge
+		- [ ] Lamp Archway
+		- [ ] Flag Archway
+		- [ ] Clock Archway
+		- [ ] Underpass
+		- [ ] Underground Toilet
+		- [ ] Pavilion
+		- [ ] Market Hall
+		- [ ] Toilet House
+		- [ ] Pedestrian Zone Entrance
+		- [ ] Enclosed Tree
+		- [ ] Groundplanes
+	- [ ] Seasonal Decorations
+		- [ ] Floral Gate
+		- [ ] Floral Arch
+		- [ ] Flower Sculpture
+		- [ ] Balloon Stand
+		- [ ] Flower Shop
+		- [ ] Flower Pavillion
+		- [ ] Small Wine Stand
+		- [ ] Large Wine Stand
+		- [ ] Wine Festival Table
+		- [ ] Wine Barrel
+		- [ ] Maypole
+		- [ ] Wine Festical Entrance
+		- [ ] Pumpkin Cart
+		- [ ] Pumpkin Barrels
+		- [ ] Bonfire
+		- [ ] Pumpkin Competition
+		- [ ] Cider Stall
+		- [ ] Autumnal Gate
+		- [ ] Ice Rink
+		- [ ] Chestnut Stall
+		- [ ] Christmas Pyramid
+		- [ ] Christmas Arch
+		- [ ] Snow Globe
+		- [ ] Winter Gate
+	- [ ] Tourist Season
+		- [ ] Map with Awning
+		- [ ] Street Map
+		- [ ] Souvenir Shop
+		- [ ] Postcard Vendor
+		- [ ] Iron Tower Kiosk
+		- [ ] Lookout Point
+		- [ ] Photography Nook
+		- [ ] Wooden Pavilion
+		- [ ] Ornate Pavilion
+		- [ ] Yellow Parasol
+		- [ ] Blue Parasol
+		- [ ] Red Parasol
+		- [ ] Green Parasol
+		- [ ] Signpost
+		- [ ] Musician's Stage
+		- [ ] Luggage
+		- [ ] Luggage cart
+		- [ ] Cherry Tree Seat
+		- [ ] Cherry Tree
+		- [ ] Purple Flowerbed
+		- [ ] Red Flowerbed
+		- [ ] Yellow Flowerbed
+	- [ ] The High Life
+		- [ ] Splash Fountains
+		- [ ] Small Spotlight
+		- [ ] Large Spotlight
+		- [ ] Skyscraper Model
+		- [ ] Globe Statue
+		- [ ] Hot-Air Balloon
+		- [ ] City Fountain
+		- [ ] Tower Billboard
+		- [ ] White Cherry
+	- [ ] Twitch Drop
+		- [ ] ... (a bunch of billboards, posts, banners and murals)
+	- [ ] Special
+		- [ ] Fountain square
+		- [ ] Bronze lion
+		- [ ] Chess tables
+		- [ ] Megaphone tower
+		- [ ] Anarchist banner
+		- [ ] Bust of Nathaniel Spoondrift
+		- [ ] The Gears of the Era
+		- [ ] Tribute to the Diving Bell
+		- [ ] Stone Flower Pot
+		- [ ] Outdoor Arcade
+		- [ ] Duck Pond
+		- [ ] Regal Standard
+		- [ ] Pruned Spruce
+		- [ ] Tall Boxwood
+		- [ ] Cascading Fountain
+		- [ ] Iris Girdle Fountain
+		- [ ] Equestrial Statue
+		- [ ] Straight Promenade
+		- [ ] 1602 Memorial
+		- [ ] "All Hallows' Eve" Billboard
+		- [ ] "Merry Christmas" Billboard
+		- [ ] "One Million Pioneers" Monument
+		- [ ] The Shoulders of our Ancestors' Fountain
+		- [ ] Palatial Column
+		- [ ] Ploughman's Glory
+		- [ ] Elephountain
+		- [ ] Traveller's Kiosk
+		- [ ] Cyclopean Anchor
+		- [ ] Endless Skies Memorial
+		- [ ] Eden Burning Bronze/Silver/Gold Reward Tree
+		- [ ] Eden Burning Ceiba Tree
+		- [ ] Ornamental Fountain
+		- [ ] Airship Momument
+		- [ ] Splendid Gateway
+- [ ] Old World Buildings
+	- [ ] Farmer
+		- [ ] Dirt road
+		- [ ] Marketplace
+		- [ ] Farmer residence
+		- [ ] Small warehouse
+		- [ ] Lumberjack's hut
+		- [ ] Sawmill
+		- [ ] Fishery
+		- [ ] Potato Farm
+		- [ ] Schnapps Distillery
+		- [ ] Sheep Farm
+		- [ ] Framework Knitters
+		- [ ] Fire station
+		- [ ] Pub
+	- [ ] Worker
+		- [ ] Paved Street
+		- [ ] Clay Pit
+		- [ ] Brick Factory
+		- [ ] Pig Farm
+		- [ ] Slaughterhouse
+		- [ ] Trade Union
+		- [ ] Grain Farm
+		- [ ] Flour Mill
+		- [ ] Bakery
+		- [ ] Church
+		- [ ] Sailmakers
+		- [ ] Quay
+		- [ ] Sailing Shipyard
+		- [ ] Depot
+		- [ ] Harbourmaster's Office
+		- [ ] Mounted Guns
+		- [ ] Cannon Tower
+		- [ ] Flak Emplacement
+		- [ ] Iron MineCharcoal Kiln
+		- [ ] Furnace
+		- [ ] Steelworks
+		- [ ] Rendering Works
+		- [ ] Soap Factory
+		- [ ] Weapon Factory
+		- [ ] Silo
+		- [ ] Malthouse
+		- [ ] Hop Farm
+		- [ ] Brewery
+		- [ ] Police Station
+		- [ ] School
+	- [ ] Artisan
+		- [ ] Sand Mine
+		- [ ] Glassmakers
+		- [ ] Window Makers
+		- [ ] Cattle Farm
+		- [ ] Red Pepper
+		- [ ] Artisanal Kitchen
+		- [ ] Cannery
+		- [ ] Town Hall
+		- [ ] Flame Tower
+		- [ ] Coal Mine
+		- [ ] Sewing Machine Factory
+		- [ ] Variety Theatre
+		- [ ] Public Mooring
+		- [ ] Repair Crane
+		- [ ] Pier
+		- [ ] Docklands
+		- [ ] Sugar Cane Plantation
+		- [ ] Rum Distillery
+		- [ ] Zoo
+		- [ ] Post Office
+		- [ ] Post Box
+		- [ ] Hunting Cabin
+		- [ ] Cotton Plantation
+		- [ ] Cotton Mill
+		- [ ] Fur Dealer
+		- [ ] Hospital
+		- [ ] University
+		- [ ] Museum
+		- [ ] Rigid Airship Hangar
+		- [ ] Airship Platform
+		- [ ] Bomb Factory
+		- [ ] Sea Mine Factory
+		- [ ] Pamphlet Printer
+		- [ ] Care Package Factory
+		- [ ] Water Drop Factory
+	- [ ] Engineers Buildings
+		- [ ] Limestone Quarry
+		- [ ] Concrete Factory
+		- [ ] Oil Refinery
+		- [ ] Oil Well
+		- [ ] Railway
+		- [ ] Small Oil Harbour
+		- [ ] Oil Store
+		- [ ] Oil Power Plant
+		- [ ] Zinc Mine
+		- [ ] Copper Mine
+		- [ ] Brass Smeltery
+		- [ ] Spectacle Factory
+		- [ ] Commuter Pier
+		- [ ] Steam Shipyard
+		- [ ] Anti-Armour Gun
+		- [ ] Big Betty
+		- [ ] Saltpeter Works
+		- [ ] Dynamite Factory
+		- [ ] Heavy Weapons Factory
+		- [ ] Caoutchouc Plantation
+		- [ ] Bicycle Factory
+		- [ ] Motor Assembly Line
+		- [ ] Fuel Station
+		- [ ] Tractor Barn
+		- [ ] Coffee Plantation
+		- [ ] Coffee Roaster
+		- [ ] Gold Mine
+		- [ ] Goldsmiths
+		- [ ] Clockmakers
+		- [ ] Botanical Garden
+		- [ ] Filament Factory
+		- [ ] Light Bulb Factory
+		- [ ] Bank
+	- [ ] Tourists
+		- [ ] Public Mooring
+		- [ ] Bus Stop
+		- [ ] Hotel
+		- [ ] Restaurant
+		- [ ] Orchard: Jam
+		- [ ] Café
+		- [ ] Orchard: Coconut Oil
+		- [ ] Orchard: Cinnamon
+		- [ ] Chemical Plant: Shampoo
+		- [ ] The Iron Tower
+		- [ ] Orchard: Citrus
+		- [ ] Chemical Plant: Lemonade
+		- [ ] Bar
+		- [ ] Orchard: Camphor Wax
+		- [ ] Chemical Plant: Souveniers
+	- [ ] Investors
+		- [ ] World's Fair
+		- [ ] Palace
+		- [ ] Local Department
+		- [ ] Gas-Fired Power Plant
+		- [ ] Vineyard
+		- [ ] Champagne Cellar
+		- [ ] Tobacco Plantation
+		- [ ] Marquetry Workshop
+		- [ ] Cigar Factory
+		- [ ] Members Club
+		- [ ] Pearl Farm
+		- [ ] Jewellers
+		- [ ] Gramophone Factory
+		- [ ] CoachmakersCab Assembly Line
+		- [ ] Assembly Line: Elevators
+		- [ ] Department Store
+		- [ ] Chemical Plant: Chewing Gum
+		- [ ] Chemical Plant: Ethanol
+		- [ ] Chemical Plant: Celluloid
+		- [ ] Assembly Line: Biscuits
+		- [ ] Orchard: Cherry Wood
+		- [ ] Artisan's Workshop: Cognac
+		- [ ] Orchard: Resin
+		- [ ] Chemical Plant: Lacquer
+		- [ ] Furniture Store
+		- [ ] Assembly Line: Typewriters
+		- [ ] Artisan's Workshop: Billiard Tables
+		- [ ] Artisan's Workshop: Violins
+		- [ ] Drug Store
+		- [ ] Artisan's Workshop: Toys
+		- [ ] Skyline Tower
+	- [ ] Scholars
+		- [ ] Research institute
+		- [ ] Scholar Residence
+		- [ ] Bootmakers
+		- [ ] Tailor's Shop
+		- [ ] Telephone Manufacturer
+		- [ ] Radio Tower
+	- [ ] Jornaleros
+		- [ ] Dirt Road
+		- [ ] Marketplace
+		- [ ] Jornalero Residence
+		- [ ] Small Warehouse
+		- [ ] Lumberjack's Hut
+		- [ ] Sawmill
+		- [ ] Fish oil Factory
+		- [ ] Plantain Plantation
+		- [ ] Fried Plantain Kitchen
+		- [ ] Trade union
+		- [ ] Sugar Cane Plantation
+		- [ ] Rum Distillery
+		- [ ] Cotton Plantation
+		- [ ] Cotton Mill
+		- [ ] Sailmakers
+		- [ ] Quay
+		- [ ] Sailing Shipyard
+		- [ ] Depot
+		- [ ] Harbourmaster's Office
+		- [ ] Repair Crane
+		- [ ] Mounted Guns Flak Emplacement
+		- [ ] Alpaca Farm
+		- [ ] Poncho Darner
+		- [ ] Fire Station
+		- [ ] Pearl Farm
+		- [ ] Chapel
+		- [ ] Police Station
+	- [ ] Obreros
+		- [ ] Paved Street
+		- [ ] Clay Pit
+		- [ ] Brick Factory
+		- [ ] Hacienda
+		- [ ] Cattle Farm
+		- [ ] Corn Farm
+		- [ ] Tortilla Maker
+		- [ ] Town Hall
+		- [ ] Silo
+		- [ ] Post Office
+		- [ ] Post Box
+		- [ ] Bauxite Mine
+		- [ ] Charcoal Kiln
+		- [ ] Aluminium Smelter
+		- [ ] Coffeee Plantation
+		- [ ] Coffee Roaster
+		- [ ] Boxing Arena
+		- [ ] Gold Mine
+		- [ ] Public Mooring
+		- [ ] Pier
+		- [ ] Cannon Tower
+		- [ ] Flame Tower
+		- [ ] Small Oil Harbour
+		- [ ] Oil Store
+		- [ ] Felt Producer
+		- [ ] Bombin Weaver
+		- [ ] Hospital
+		- [ ] Oil Refinery
+		- [ ] Oil Well
+		- [ ] Railway
+		- [ ] Fuel Station
+		- [ ] Tractor Barn
+		- [ ] Rigid Airship Hangar
+		- [ ] Industrial Oil Press
+		- [ ] Helium Extractor
+		- [ ] Bomb Factory
+		- [ ] Sea Mine Factory
+		- [ ] Pamphlet Printer
+		- [ ] Care Package Factory
+		- [ ] Water Drop Factory
+		- [ ] Airship Platform
+		- [ ] Tobacco Plantation
+		- [ ] Marquetry Workshop
+		- [ ] Cigar Factory
+		- [ ] Zoo
+		- [ ] Anti-armour Gun
+		- [ ] Cocoa Plantation
+		- [ ] Sugar Refinery
+		- [ ] Chocolate Factory
+		- [ ] Museum
+		- [ ] Botanical Garden
+	- [ ] Artistas
+		- [ ] Nandu Farm
+		- [ ] Ball Manufactory
+		- [ ] Herb Garden
+		- [ ] Meczal Bar
+		- [ ] Power Station
+		- [ ] Calamari Fishery
+		- [ ] Jalea Kitchen
+		- [ ] Beach
+		- [ ] Ice Cream Factory
+		- [ ] Iron Mine
+		- [ ] Furnace
+		- [ ] Faboratory: Fire Extinguisher
+		- [ ] Orchid Farm
+		- [ ] Perfume Mixer
+		- [ ] Mineral Mine
+		- [ ] Laboratory: Pigments
+		- [ ] Costume Shop
+		- [ ] Samba School
+		- [ ] Arsenal: Police Equipment
+		- [ ] Police Headquarters
+		- [ ] Cable Factory
+		- [ ] Motor Assembly Plant
+		- [ ] Fan Factory
+		- [ ] Chemical Plant: Film Reels
+		- [ ] Cinema
+		- [ ] Laboratory: Medicine
+		- [ ] City hospital
+		- [ ] Scooter Factory
+		- [ ] Grand Stadium
+	- [ ] Explorers
+		- [ ] Arctic Road
+		- [ ] Canteen
+		- [ ] Explorer Shelter
+		- [ ] Small Warehouse
+		- [ ] Charcoal Kiln
+		- [ ] Heater
+		- [ ] Lumberjack's hut
+		- [ ] Sawmill
+		- [ ] Whaling Station
+		- [ ] Caribou Hunting Cabin
+		- [ ] Pemmican Cookhouse
+		- [ ] Ranger Station
+		- [ ] Seal Hunting Docks
+		- [ ] Goos Farm
+		- [ ] Sleeping Bag Factory
+		- [ ] Oil Lamp Factory
+	- [ ] Technicians
+		- [ ] Arctic Airship Hangar
+		- [ ] Depot
+		- [ ] Cannon Tower
+		- [ ] Flak Emplacement
+		- [ ] Flame Tower
+		- [ ] Pier
+		- [ ] Airship Platform
+		- [ ] Post Office
+		- [ ] Airmail Sorting Office
+		- [ ] Arctic Lodge
+		- [ ] Bear Hunting Cabin
+		- [ ] Parka Factory
+		- [ ] Prime Hunting Cabin
+		- [ ] Anti-Armour Gun
+		- [ ] Husky Farm
+		- [ ] Sled Frame Factory
+		- [ ] Husky Sled Factory
+		- [ ] Deep Gold Mine
+		- [ ] Arctic Gas Mine
+	- [ ] Shepherds
+		- [ ] Desert Road
+		- [ ] Marketplace
+		- [ ] Shepherd Residence
+		- [ ] Small Warehouse
+		- [ ] Canal
+		- [ ] Water Pump
+		- [ ] Wanua Woodcutter
+		- [ ] Goat Farm
+		- [ ] Quay
+		- [ ] Depot
+		- [ ] Harbourmaster's Office
+		- [ ] Repair Crane
+		- [ ] Mounted Guns
+		- [ ] Flak Emplacement
+		- [ ] Linseed Farm
+		- [ ] Linen Mill
+		- [ ] Embroiderer
+		- [ ] Musician's Court
+		- [ ] Trade Union
+		- [ ] Fire Station
+		- [ ] Sanga Farm
+		- [ ] Salt Works
+		- [ ] Dry-House
+		- [ ] Hibiscus Farm
+		- [ ] Tea Spicer
+	- [ ] Elders
+		- [ ] Paved Street
+		- [ ] Clay Collector
+		- [ ] Teff Farm
+		- [ ] Brick Dry-House
+		- [ ] Indigo Farm
+		- [ ] Ceramics Workshop
+		- [ ] Tapestry Looms
+		- [ ] Police Station
+		- [ ] Silo
+		- [ ] Spica Farm
+		- [ ] Teff Mill
+		- [ ] Lobster Fishery
+		- [ ] Wat Kitchen
+		- [ ] Pipe Maker
+		- [ ] Town Hall
+		- [ ] Hospital
+		- [ ] Paper Mill
+		- [ ] Luminer
+		- [ ] Railway
+		- [ ] Small Oil Harbour
+		- [ ] Oil Store
+		- [ ] Fuel Station
+		- [ ] Tractor Barn
+		- [ ] Pier
+		- [ ] Cannon Tower
+		- [ ] Flame Tower
+		- [ ] Anti-Armour Gun
+		- [ ] Apiary
+		- [ ] Chandler
+		- [ ] Lanternsmith
+		- [ ] Monastery
+		- [ ] 

@@ -16,10 +16,17 @@ from grimoire.core.noise.rng import RNG
 from grimoire.buildings.walls.wall import Wall
 from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.buildings.build_floor import build_floor
-from grimoire.buildings.roofs.roof_component import RoofComponent
-from grimoire.buildings.roofs.build_roof import build_roof
+from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.buildings.clear_interiors import clear_interiors
+from grimoire.buildings.roofs.build_roof import build_roof
+from grimoire.buildings.roofs.roof_component import RoofComponent
 from grimoire.buildings.rooms.furnish import furnish
+from grimoire.buildings.walls.build_walls import build_walls
+from grimoire.buildings.walls.wall import Wall
+from grimoire.core.assets.asset_loader import load_assets
+from grimoire.core.noise.rng import RNG
+from grimoire.core.structures.grid import Grid
+from grimoire.core.styling.legacy_palette import LegacyPalette
 
 SEED = 654
 
@@ -45,14 +52,14 @@ plan = BuildingPlan(shape, grid, palette)
 build_roof(
     plan,
     editor,
-    [roof for roof in RoofComponent.all() if "japanese" in roof.tags],
+    [roof for roof in RoofComponent.all() if BuildStyle.JAPANESE in roof.tags],
     SEED,
 )
 
 clear_interiors(plan, editor)
 build_floor(plan, editor)
 
-walls = [wall for wall in Wall.all() if "japanese" in wall.tags]
+walls = [wall for wall in Wall.all() if BuildStyle.JAPANESE in wall.tags]
 
 build_walls(plan, editor, walls, RNG(SEED, "build_walls"))
 

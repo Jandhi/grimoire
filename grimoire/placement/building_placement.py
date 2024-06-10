@@ -4,6 +4,11 @@ from ..buildings.stilts import build_stilt_frame
 from ..core.structures.legacy_directions import (
     LegacyDirection,
 )
+from gdpc import Block, Editor
+from gdpc.vector_tools import ivec2, ivec3, vec2
+
+from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
+from grimoire.core.styling.palette import BuildStyle
 
 from ..buildings.build_floor import build_floor
 from ..buildings.building_plan import BuildingPlan
@@ -14,40 +19,41 @@ from ..buildings.roofs.roof_component import RoofComponent
 from ..buildings.rooms.furnish import furnish
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
-from ..core.maps import CITY_ROAD, CITY_WALL
+from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
 from ..core.structures.grid import Grid
 from ..core.structures.legacy_directions import (
-    cardinal,
+    CARDINAL,
+    X_MINUS,
+    X_PLUS,
+    Z_MINUS,
+    Z_PLUS,
+    LegacyDirection,
     get_ivec2,
-    x_minus,
-    x_plus,
-    z_minus,
-    z_plus,
 )
+
 from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
 from grimoire.core.styling.legacy_palette import fix_block_name
 
 from ..core.maps import Map
-from grimoire.core.styling.legacy_palette import LegacyPalette
 from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.material import MaterialParameters
 from ..core.styling.palette import MaterialRole, Palette
 from ..core.utils.geometry import get_surrounding_points
 
 offsets = {
-    z_minus: [ivec2(0, 0), ivec2(-1, 0)],
-    x_minus: [ivec2(0, 0), ivec2(0, -1)],
-    x_plus: [ivec2(-1, -1), ivec2(-1, 0)],
-    z_plus: [ivec2(-1, -1), ivec2(0, -1)],
+    Z_MINUS: [ivec2(0, 0), ivec2(-1, 0)],
+    X_MINUS: [ivec2(0, 0), ivec2(0, -1)],
+    X_PLUS: [ivec2(-1, -1), ivec2(-1, 0)],
+    Z_PLUS: [ivec2(-1, -1), ivec2(0, -1)],
 }
 
 door_points = {
-    z_minus: vec2(0.5, 0),
-    z_plus: vec2(0.5, 1),
-    x_plus: vec2(1, 0.5),
-    x_minus: vec2(0, 0.5),
+    Z_MINUS: vec2(0.5, 0),
+    Z_PLUS: vec2(0.5, 1),
+    X_PLUS: vec2(1, 0.5),
+    X_MINUS: vec2(0, 0.5),
 }
 
 WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
@@ -62,7 +68,7 @@ def place_building(
     map: Map,
     outside_direction: str,
     rng: RNG,
-    style: str = "japanese",
+    style: BuildStyle = BuildStyle.JAPANESE,
     urban_only=True,
     stilts: bool = False,
 ) -> bool:
@@ -119,7 +125,7 @@ def attempt_building_placement_at_offset(
     offset: ivec2,
     outside_direction: LegacyDirection,
     shape: BuildingShape,
-    style: str,
+    style: BuildStyle,
     urban_only: bool,
     allow_water: bool = False,
     stilts: bool = False,
@@ -201,10 +207,7 @@ def can_place_shape(
         return False
 
     avg_height_diff = total_height_diff / len(points)
-    if avg_height_diff >= MAX_AVG_HEIGHT_DIFF:
-        return False
-
-    return True
+    return avg_height_diff < MAX_AVG_HEIGHT_DIFF
 
 
 def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
@@ -222,12 +225,12 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
             return None
 
         if map.is_in_bounds2d(point) and map.buildings[point.x][point.y] in [
-            CITY_ROAD,
-            CITY_WALL,
+            DevelopmentType.CITY_ROAD,
+            DevelopmentType.CITY_WALL,
         ]:
             return point
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point + get_ivec2(direction)
 
             if map.is_in_bounds2d(neighbour) and neighbour not in visited:

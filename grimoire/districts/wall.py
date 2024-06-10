@@ -1,3 +1,7 @@
+from gdpc import Block, Editor, WorldSlice
+from gdpc.vector_tools import ivec2, ivec3
+
+from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
 from grimoire.core.styling.materials.dithering import DitheringPattern
 from grimoire.core.styling.materials.gradient import (
     Gradient,
@@ -9,21 +13,18 @@ from grimoire.core.styling.materials.material import (
     Material,
     MaterialParameters,
 )
-from ..core.noise.rng import RNG
-from ..core.noise.random import randrange
-from gdpc import Editor, Block
-from gdpc.vector_tools import ivec2, ivec3
-from gdpc import WorldSlice
 
+from ..core.noise.random import randrange
+from ..core.noise.rng import RNG
 from ..core.structures.legacy_directions import (
-    north,
+    CARDINAL,
+    NORTH,
     get_ivec2,
+    ivec2_to_dir,
+    opposite,
     right,
     to_text,
-    ivec2_to_dir,
     vector,
-    cardinal,
-    opposite,
 )
 from ..core.styling.blockform import BlockForm
 from ..core.styling.palette import Palette, MaterialRole
@@ -37,8 +38,15 @@ from ..core.utils.misc import is_water
 from ..core.structures.nbt.build_nbt import build_nbt_legacy, build_nbt
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
-from ..districts.gate import add_gates, Gate
-from grimoire.core.styling.legacy_palette import fix_block_name
+from ..core.styling.blockform import BlockForm
+from ..core.utils.geometry import (
+    get_neighbours_in_set,
+    get_outer_points,
+    is_point_surrounded_dict,
+    is_straight_ivec2,
+)
+from ..core.utils.misc import is_water
+from ..districts.gate import Gate, add_gates
 
 
 def get_wall_points(inner_points, world_slice):
@@ -77,6 +85,9 @@ def find_wall_neighbour(current: ivec2, wall_dict: dict, ordered_wall_dict: dict
 def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[ivec2]]:
     list_of_ordered_wall_points: list[list[ivec2]] = []
     reverse_checked = False
+
+    if len(wall_points) < 1:
+        return []
 
     ordered_wall_points: list[ivec2] = [wall_points.pop(0)]
     ordered_wall_dict: dict = {ordered_wall_points[0]: True}
@@ -219,7 +230,7 @@ def build_wall_standard(
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
-    previous_dir = north
+    previous_dir = NORTH
 
     walkway_list = (
         []
@@ -320,7 +331,7 @@ def build_wall_standard_with_inner(
     inner_points: list[ivec2],
     editor: Editor,
     world_slice: WorldSlice,
-    water_map: dict,
+    water_map: list[list[bool]],
     rng: RNG,
     palette: Palette,
 ) -> list[Gate]:
@@ -329,7 +340,7 @@ def build_wall_standard_with_inner(
     wall_points = check_water(wall_points, water_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
-    previous_dir = north
+    previous_dir = NORTH
 
     walkway_list = (
         []
@@ -663,7 +674,7 @@ def flatten_walkway(
     # 2nd pass to add stairs based on first pass changes
     for key in walkway_dict:
         height = walkway_dict[key]
-        for direction in cardinal:
+        for direction in CARDINAL:
             delta = get_ivec2(direction)
             neighbour = key + delta
             if walkway_dict.get(neighbour) is None:

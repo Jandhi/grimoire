@@ -33,7 +33,7 @@ def detect_biome():
                 continue
 
             y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
-            district.add_point(ivec3(x, y, z))
+            district._add_point(ivec3(x, y, z))
     # Placeholder until the gruntwork of 'biome -> primary industry -> secondary industry' web is written
     biomes = industry.get_district_biomes(editor, district)
     print(biomes)

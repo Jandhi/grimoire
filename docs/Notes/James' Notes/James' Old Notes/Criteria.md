@@ -12,7 +12,7 @@ _(Scores that are not displayed:)_
 9. Affected by multiple experienced humans (detailed and holistic execution)
 10. No improvable aspects could be identified
 
-![[Pasted image 20240420101450.png]]
+![[James' Notes/James' Old Notes/Pasted image 20240420101450.png]]
 
 ## Adaptability
 - Do the structures in the settlement adapt to the terrain?

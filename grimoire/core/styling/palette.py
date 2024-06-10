@@ -9,6 +9,14 @@ from grimoire.core.styling.materials.dithering import DitheringPattern
 from grimoire.core.styling.materials.material import Material, MaterialParameters
 
 
+class BuildStyle(Enum):
+    # I think this is the strongest one, so probably used in most environments
+    JAPANESE = auto()
+    VIKING = auto()  # Pretty weak I think so we could avoid, but we can story it
+    DESERT = auto()  # Decentish variety I think
+    DWARVEN = auto()
+
+
 class MaterialRole(Enum):
     PRIMARY_WALL = auto()
     SECONDARY_WALL = auto()
@@ -86,14 +94,12 @@ class Palette(Asset):
     secondary_color: MinecraftColor
 
     def find_role(self, block: Block) -> MaterialRole | None:
-        role_order = (
-            role
-            for role in self.resolution_priority.order()
-            if role in self.materials and self.materials[role].has_block(block)
-        )
-
         return next(
-            role_order,
+            (
+                role
+                for role in self.resolution_priority.order
+                if self.materials[role].has_block(block)
+            ),
             None,
         )
 

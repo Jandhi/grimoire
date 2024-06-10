@@ -4,4 +4,4 @@ When queried, the palette follows the decision tree to find a suitable block giv
 - A **material token** takes an ordered collection of conditions and a material or texture token or a value, and contains material properties
 - A feature token acts like a material token, but fails if its own condition is not met
 
-![[Pasted image 20240419143155.png]]
+![[James' Notes/James' Old Notes/Pasted image 20240419143155.png]]

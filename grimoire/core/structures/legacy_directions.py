@@ -3,65 +3,65 @@ from gdpc.vector_tools import ivec2, ivec3
 LegacyDirection = str
 
 # By Axis
-x_plus = "x_plus"
-x_minus = "x_minus"
-y_plus = "y_plus"
-y_minus = "y_minus"
-z_plus = "z_plus"
-z_minus = "z_minus"
+X_PLUS = "x_plus"
+X_MINUS = "x_minus"
+Y_PLUS = "y_plus"
+Y_MINUS = "y_minus"
+Z_PLUS = "z_plus"
+Z_MINUS = "z_minus"
 
 # By Name
-north = z_minus
-east = x_plus
-south = z_plus
-west = x_minus
-up = y_plus
-down = y_minus
-cardinal = (north, east, south, west)
+NORTH = Z_MINUS
+EAST = X_PLUS
+SOUTH = Z_PLUS
+WEST = X_MINUS
+UP = Y_PLUS
+DOWN = Y_MINUS
+CARDINAL = (NORTH, EAST, SOUTH, WEST)
 
 # Compound Directions
-northeast = f"{north} and {east}"
-northwest = f"{north} and {west}"
-southwest = f"{south} and {west}"
-southeast = f"{south} and {east}"
-all_8 = (north, east, south, west, northeast, northwest, southwest, southeast)
+NORTHEAST = f"{NORTH} and {EAST}"
+NORTHWEST = f"{NORTH} and {WEST}"
+SOUTHWEST = f"{SOUTH} and {WEST}"
+SOUTHEAST = f"{SOUTH} and {EAST}"
+ALL_8 = (NORTH, EAST, SOUTH, WEST, NORTHEAST, NORTHWEST, SOUTHWEST, SOUTHEAST)
 
-directions = (north, east, south, west, up, down)
+DIRECTIONS = (NORTH, EAST, SOUTH, WEST, UP, DOWN)
 
-opposites = {
-    x_plus: x_minus,
-    x_minus: x_plus,
-    y_plus: y_minus,
-    y_minus: y_plus,
-    z_plus: z_minus,
-    z_minus: z_plus,
+OPPOSITES = {
+    X_PLUS: X_MINUS,
+    X_MINUS: X_PLUS,
+    Y_PLUS: Y_MINUS,
+    Y_MINUS: Y_PLUS,
+    Z_PLUS: Z_MINUS,
+    Z_MINUS: Z_PLUS,
 }
 
 
 def opposite(direction):
-    return opposites[direction]
+    return OPPOSITES[direction]
 
 
-vectors = {
-    x_plus: ivec3(1, 0, 0),
-    x_minus: ivec3(-1, 0, 0),
-    y_plus: ivec3(0, 1, 0),
-    y_minus: ivec3(0, -1, 0),
-    z_plus: ivec3(0, 0, 1),
-    z_minus: ivec3(0, 0, -1),
+VECTORS = {
+    X_PLUS: ivec3(1, 0, 0),
+    X_MINUS: ivec3(-1, 0, 0),
+    Y_PLUS: ivec3(0, 1, 0),
+    Y_MINUS: ivec3(0, -1, 0),
+    Z_PLUS: ivec3(0, 0, 1),
+    Z_MINUS: ivec3(0, 0, -1),
 }
 
 for dir1, dir2, compound in (
-    (north, east, northeast),
-    (north, west, northwest),
-    (south, west, southwest),
-    (south, east, southeast),
+    (NORTH, EAST, NORTHEAST),
+    (NORTH, WEST, NORTHWEST),
+    (SOUTH, WEST, SOUTHWEST),
+    (SOUTH, EAST, SOUTHEAST),
 ):
-    vectors[compound] = vectors[dir1] + vectors[dir2]
+    VECTORS[compound] = VECTORS[dir1] + VECTORS[dir2]
 
 
 def vector(direction: LegacyDirection) -> ivec3:
-    return vectors[direction]
+    return VECTORS[direction]
 
 
 def get_ivec2(direction: LegacyDirection) -> ivec2:
@@ -69,55 +69,55 @@ def get_ivec2(direction: LegacyDirection) -> ivec2:
     return ivec2(tup[0], tup[2])
 
 
-text_dict = {
-    north: "north",
-    east: "east",
-    south: "south",
-    west: "west",
-    up: "up",
-    down: "down",
+DIRECTIONS_TEXT = {
+    NORTH: "north",
+    EAST: "east",
+    SOUTH: "south",
+    WEST: "west",
+    UP: "up",
+    DOWN: "down",
 }
 
 
 def to_text(direction):
-    return text_dict[direction]
+    return DIRECTIONS_TEXT[direction]
 
 
-from_text_dict = {
-    "north": north,
-    "east": east,
-    "south": south,
-    "west": west,
-    "up": up,
-    "down": down,
+TEXT_2_DIRECTION = {
+    "north": NORTH,
+    "east": EAST,
+    "south": SOUTH,
+    "west": WEST,
+    "up": UP,
+    "down": DOWN,
 }
 
 
 def from_text(text: str):
-    return from_text_dict[text]
+    return TEXT_2_DIRECTION[text]
 
 
-forwards = {north: north, east: east, south: south, west: west}
+forwards = {NORTH: NORTH, EAST: EAST, SOUTH: SOUTH, WEST: WEST}
 right = {
-    north: east,
-    east: south,
-    south: west,
-    west: north,
+    NORTH: EAST,
+    EAST: SOUTH,
+    SOUTH: WEST,
+    WEST: NORTH,
 }
 left = {
-    north: west,
-    west: south,
-    south: east,
-    east: north,
+    NORTH: WEST,
+    WEST: SOUTH,
+    SOUTH: EAST,
+    EAST: NORTH,
 }
 
-backwards = opposites
+backwards = OPPOSITES
 
 from_ivec2_dict = {
-    ivec2(0, -1): north,
-    ivec2(0, 1): south,
-    ivec2(1, 0): east,
-    ivec2(-1, 0): west,
+    ivec2(0, -1): NORTH,
+    ivec2(0, 1): SOUTH,
+    ivec2(1, 0): EAST,
+    ivec2(-1, 0): WEST,
 }
 
 
@@ -126,10 +126,10 @@ def ivec2_to_dir(iv2: ivec2):
 
 
 from_ivec3_dict = {
-    ivec3(0, 0, -1): north,
-    ivec3(0, 0, 1): south,
-    ivec3(1, 0, 0): east,
-    ivec3(-1, 0, 0): west,
+    ivec3(0, 0, -1): NORTH,
+    ivec3(0, 0, 1): SOUTH,
+    ivec3(1, 0, 0): EAST,
+    ivec3(-1, 0, 0): WEST,
 }
 
 
@@ -138,22 +138,22 @@ def ivec3_to_dir(iv3: ivec3):
 
 
 x_mirror = {
-    x_plus: x_minus,
-    x_minus: x_plus,
-    z_plus: z_plus,
-    z_minus: z_minus,
+    X_PLUS: X_MINUS,
+    X_MINUS: X_PLUS,
+    Z_PLUS: Z_PLUS,
+    Z_MINUS: Z_MINUS,
 }
 
 z_mirror = {
-    x_plus: x_plus,
-    x_minus: x_minus,
-    z_plus: z_minus,
-    z_minus: z_plus,
+    X_PLUS: X_PLUS,
+    X_MINUS: X_MINUS,
+    Z_PLUS: Z_MINUS,
+    Z_MINUS: Z_PLUS,
 }
 
 x_z_flip = {
-    x_plus: z_plus,
-    x_minus: z_minus,
-    z_plus: x_plus,
-    z_minus: x_minus,
+    X_PLUS: Z_PLUS,
+    X_MINUS: Z_MINUS,
+    Z_PLUS: X_PLUS,
+    Z_MINUS: X_MINUS,
 }

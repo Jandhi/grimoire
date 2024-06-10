@@ -1,0 +1,92 @@
+- [ ] Main
+	- [ ] Ancient hearth
+	- [ ] Main warehouse
+- [ ] Roads
+	- [ ] Path
+	- [ ] Paved
+	- [ ] Reinforced
+- [ ] Camps
+	- [ ] Woodcutter
+	- [ ] Stonecutter
+	- [ ] Harvester
+	- [ ] Forager
+	- [ ] Herbalist
+	- [ ] Trapper
+- [ ] Food
+	- [ ] Farm field
+	- [ ] Clay pit
+	- [ ] Forester's hut
+	- [ ] Greenhouse
+	- [ ] Herb garden
+	- [ ] Homestead
+	- [ ] Plantation
+	- [ ] Farm
+	- [ ] Bakery
+	- [ ] Beanery
+	- [ ] Brick oven
+	- [ ] Butcher
+	- [ ] Cellar
+	- [ ] Cookhouse
+	- [ ] Field kitchen
+	- [ ] Granary
+	- [ ] Grill
+	- [ ] Ranch
+	- [ ] Smokehouse
+- [ ] Housing
+	- [ ] Shelter
+	- [ ] House
+- [ ] Industry
+	- [ ] Crude workstation
+	- [ ] Makeshift post
+	- [ ] Geyser Pump
+	- [ ] Rain Collector
+	- [ ] Mine
+	- [ ] Alchemist's
+	- [ ] Apothecary
+	- [ ] Artisan
+	- [ ] Brewery
+	- [ ] Brickyard
+	- [ ] Carpenter
+	- [ ] Clothier
+	- [ ] Cooperage
+	- [ ] Distillery
+	- [ ] Druid's
+	- [ ] Finesmith
+	- [ ] Furnace
+	- [ ] Kiln
+	- [ ] Leatherworker
+	- [ ] Lumber Mill
+	- [ ] Manufactory
+	- [ ] Press
+	- [ ] Provisioner
+	- [ ] Rain Mill
+	- [ ] Rainpunk Foundry
+	- [ ] Scribe
+	- [ ] Smelter
+	- [ ] Smithy
+	- [ ] Stamping Mill
+	- [ ] Supplier
+	- [ ] Teahouse
+	- [ ] Tinctury
+	- [ ] Tinkerer
+	- [ ] Toolshop
+	- [ ] Weaver
+	- [ ] Workshop
+- [ ] City buildings
+	- [ ] Small hearth
+	- [ ] Warehouse
+	- [ ] Trading post
+	- [ ] Blight post
+	- [ ] Hydrant
+	- [ ] Forsaken Altar
+- [ ] Service buildings
+	- [ ] Bath house
+	- [ ] Clan hall
+	- [ ] Explorers' Lodge
+	- [ ] Forum
+	- [ ] Guild house
+	- [ ] Market
+	- [ ] Monastery
+	- [ ] Tavern
+	- [ ] Tea Doctor
+	- [ ] Temple

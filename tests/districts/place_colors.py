@@ -1,14 +1,17 @@
-from gdpc import WorldSlice, Editor, Block
+from gdpc import Block, Editor
+
+from grimoire.core.maps import Map
+from grimoire.districts.district import District
 
 
 def place_relative_to_ground(
-    x: int, y: int, z: int, block_name: str, world_slice: WorldSlice, editor: Editor
-):
-    y_offset = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] - 1
+    x: int, y: int, z: int, block_name: str, main_map: Map, editor: Editor
+) -> None:
+    y_offset: int = main_map.height_no_tree[x][z] - 1
     editor.placeBlock((x, y + y_offset, z), Block(block_name))
 
 
-colors = [
+colors: list[str] = [
     "white",
     "orange",
     "magenta",
@@ -28,13 +31,15 @@ colors = [
 ]
 
 
-def get_color(district, districts):
-    blocks = colors
-    return f"{blocks[districts.calculate_index(district) % len(blocks)]}_wool"
+def get_color(district: District, districts: list[District]) -> str:
+    blocks: list[str] = colors
+    return f"{blocks[districts.index(district) % len(blocks)]}_wool"
 
 
-def get_color_differentiated(district, districts, is_water):
-    blocks = colors
+def get_color_differentiated(
+    district: District, districts: list[District], is_water: bool
+) -> str:
+    blocks: list[str] = colors
     suffix = "_terracotta"
 
     if is_water:
@@ -42,4 +47,4 @@ def get_color_differentiated(district, districts, is_water):
     elif district.is_urban:
         suffix = "_wool"
 
-    return blocks[districts.calculate_index(district) % len(blocks)] + suffix
+    return blocks[districts.index(district) % len(blocks)] + suffix

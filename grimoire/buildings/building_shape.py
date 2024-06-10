@@ -3,14 +3,14 @@ from gdpc.vector_tools import ivec3, ivec2
 from ..core.structures.grid import Grid
 from collections.abc import Iterator
 from ..core.structures.legacy_directions import (
-    z_minus,
+    Z_MINUS,
     x_z_flip as x_z_flip_dict,
     x_mirror as x_mirror_dict,
     z_mirror as z_mirror_dict,
 )
 
 
-@asset_defaults(door_direction=z_minus)
+@asset_defaults(door_direction=Z_MINUS)
 class BuildingShape(Asset):
     points: list[ivec3]
     door_direction: str
