@@ -1,17 +1,16 @@
-import sys
-
-from ..logger import LoggerSettings
-from ...core.assets.asset import Asset
-from ...core.assets.asset_validation_state import AssetValidationState
-from glob import glob
 import json
-from colored import Style, Fore
+import sys
+from glob import glob
 
-from ...core.assets.load_types import load_types
-from ...core.assets.asset_linker import AssetLinker
+from colored import Fore, Style
+
 from ...buildings.building_shape import permute_shapes
+from ...core.assets.asset import Asset
+from ...core.assets.asset_linker import AssetLinker
+from ...core.assets.asset_validation_state import AssetValidationState
+from ...core.assets.load_types import load_types
 from ...core.generator.module import Module
-
+from ..logger import LoggerSettings
 
 # Loads all nbt assets from the assets folder
 

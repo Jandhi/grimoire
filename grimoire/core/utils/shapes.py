@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import AbstractSet, Iterable, Iterator
+from typing import AbstractSet, Iterable
 
-from gdpc.vector_tools import ivec2, ivec3, Rect, Box
+from gdpc.vector_tools import Box, Rect, ivec2, ivec3
 
 
 @dataclass
@@ -96,7 +96,8 @@ class Shape2D(set):
         raise NotImplementedError()
 
     def __or__(self, value: AbstractSet[ivec2], /):
-        raise NotImplementedError()
+        # FIXME: Implemet special behaviour for edge values
+        return super().__or__(value)
 
     def __ior__(self, value: AbstractSet[ivec2], /):
         raise NotImplementedError()

@@ -23,6 +23,7 @@ class DevelopmentType(Enum):
         BUILDING: Is occupied by a building.
         CITY_WALL: Is occupied by a city wall.
         GATE: Is occupied by a gate in the city wall.
+        NOOK: Has been occupied by a Nook.
     """
 
     HIGHWAY = auto()  # FIXME: Unused value
@@ -31,6 +32,7 @@ class DevelopmentType(Enum):
     BUILDING = auto()
     CITY_WALL = auto()
     GATE = auto()
+    NOOK = auto()
 
 
 def get_biome_map(world_slice: WorldSlice) -> list[list[str]]:
@@ -187,7 +189,6 @@ class Map:
 
     def height_at(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
-
 
     def ocean_floor_at(self, point: ivec2):
         return self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y]

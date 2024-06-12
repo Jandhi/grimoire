@@ -69,6 +69,7 @@ class Nook:
 
     def __init__(
         self,
+        name: str,
         district_types: DistrictType | Iterable[DistrictType] | None = None,
         exposure_types: ExposureType | Iterable[ExposureType] | None = None,
         styles: BuildStyle | Iterable[BuildStyle] | None = None,
@@ -107,6 +108,7 @@ class Nook:
             | None
         ) = None,
     ) -> None:
+        self.name = name
         self.district_types = district_types
         self.exposure_types = exposure_types
         self.styles = styles
@@ -138,6 +140,9 @@ class Nook:
         Returns:
             None
         """
+
+        for position in area | edges:
+            city_map.buildings[position.x][position.y] = DevelopmentType.NOOK
 
         # the processing stages and the parameters of the functions in that stage
         STAGES: list[tuple[Iterable[Callable] | None, list]] = [
@@ -172,7 +177,7 @@ def identify_exposure_type_from_edging_pattern(
     development_sets = (PATHS, BUILDINGS)
 
     # TODO: Split this into another function
-    broad_pattern: list[tuple[set[DevelopmentType], int]] = []
+    broad_pattern: list[tuple[frozenset[DevelopmentType], int]] = []
 
     # Meld the pattern into fewer segments
     # NOTE: This is a very basic approach and may have to be improved!
@@ -184,7 +189,7 @@ def identify_exposure_type_from_edging_pattern(
                     if development in development_set:
                         broad_pattern.append(
                             (
-                                development_set,
+                                frozenset(development_set),
                                 segment[1],
                             )
                         )
@@ -202,7 +207,7 @@ def identify_exposure_type_from_edging_pattern(
                 f"None of the following elements are covered by development sets!\n\t{segment[0]}"
             )
 
-    if broad_pattern == []:
+    if not broad_pattern:
         warn("Did not generate a broad pattern. Defaulting to 'COURT'")
         return ExposureType.COURT
 
@@ -228,6 +233,8 @@ def identify_exposure_type_from_edging_pattern(
         return ExposureType.COVE
 
     return ExposureType.CHANNEL
+    return ExposureType.CHANNEL
+    return ExposureType.CHANNEL
 
 
 # ==== Instances ====
@@ -238,10 +245,16 @@ HIGH_EXPOSURE: list[ExposureType] = [
 ]
 LOW_EXPOSURE: list[ExposureType] = [ExposureType.COURT, ExposureType.COVE]
 
-PAVED_NOOK = Nook(exposure_types=HIGH_EXPOSURE, terraformers=[pave_over_area])
-GRASSY_NOOK = Nook(exposure_types=LOW_EXPOSURE, terraformers=[grass_patch_area])
+PAVED_NOOK = Nook(
+    "Paved Nook", exposure_types=HIGH_EXPOSURE, terraformers=[pave_over_area]
+)
+GRASSY_NOOK = Nook(
+    "Grassy Nook", exposure_types=LOW_EXPOSURE, terraformers=[grass_patch_area]
+)
 PLATEAU = Nook(
-    district_types=DistrictType.URBAN, terraformers=[flatten_area_up, pave_over_area]
+    "Plateau",
+    district_types=DistrictType.URBAN,
+    terraformers=[flatten_area_up, pave_over_area],
 )
 
 ALL_NOOKS = {PAVED_NOOK, GRASSY_NOOK, PLATEAU}
