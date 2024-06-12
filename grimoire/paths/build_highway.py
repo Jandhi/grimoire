@@ -54,9 +54,12 @@ def build_highway(
             editor.placeBlock((x, y + 3, z), Block("air"))
 
 
-def get_block(point: ivec2, final_point_heights: dict[ivec2, int]) -> Block:
+def get_block(point: ivec2, final_point_heights: dict[ivec2, int], depth = 0) -> Block:
     y_in_dir = {}
     y = final_point_heights[point]
+
+    if depth > 10:
+        return Block("cobblestone")
 
     for direction in CARDINAL:
         dv = get_ivec2(direction)
@@ -80,7 +83,7 @@ def get_block(point: ivec2, final_point_heights: dict[ivec2, int]) -> Block:
 
     if all(y_in_dir[direction] < y for direction in y_in_dir):
         final_point_heights[point] -= 1
-        return get_block(point, final_point_heights)
+        return get_block(point, final_point_heights, depth + 1)
 
     if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(
         y_in_dir[direction] < y for direction in y_in_dir

@@ -216,7 +216,7 @@ def add_city_blocks(
     style=BuildStyle.JAPANESE,
     is_debug=False,
     stilts=False,
-):
+) -> tuple[list[set[ivec2]], list[set[ivec2]], list[set[ivec2]]]:
     rng = RNG(seed, "add_city_blocks")
 
     urban_area: set[ivec2] = set()
@@ -268,6 +268,8 @@ def add_city_blocks(
     for block, inner, outer in zip(blocks, inners, outers):
         place_buildings(editor, inner, city_map, block_rng, style, is_debug)
         decorate_city_block(editor, city_map, block, inner, outer, block_rng, style)
+
+    return (blocks, inners, outers)
 
 
 def decorate_city_block(

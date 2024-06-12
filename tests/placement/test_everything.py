@@ -50,7 +50,7 @@ from grimoire.terrain.tree_cutter import log_trees
 
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
-LOG_TRESS = True
+LOG_TREES = True
 
 SLEEP_DELAY = 1
 
@@ -74,7 +74,7 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
-if LOG_TRESS:  # TO DO, only log urban
+if LOG_TREES:  # TO DO, only log urban
     log_trees(editor, build_rect, world_slice)
 
 editor.flushBuffer()  # this is needed to reload the world slice properly
@@ -198,15 +198,7 @@ urban_road: PaintPalette = (
     if style == BuildStyle.DESERT
     else PaintPalette.find("urban_road")
 )
-# replace_ground_smooth(
-#     inner_points,
-#     urban_road.palette,
-#     rng,
-#     main_map.water,
-#     build_map,
-#     editor,
-#     world_slice,
-# )
+
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
@@ -217,13 +209,12 @@ urban_road: PaintPalette = (
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-add_city_blocks(editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False)
+(blocks, inners, outers) = add_city_blocks(editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False)
 
+city_roads = set()
 
-for x in range(main_map.world.rect.size.x):
-    for z in range(main_map.world.rect.size.y):
-        if main_map.buildings[x][z] == DevelopmentType.CITY_ROAD:
-            editor.placeBlock(main_map.make_3d(ivec2(x, z)), Block('red_wool'))
+for outer in outers:
+    city_roads |= outer
 
 # WALL
 
@@ -270,6 +261,17 @@ for wall_points in wall_points_list:
             highway = fill_out_highway(highway)
             build_highway(highway, editor, world_slice, main_map)
             build_signpost(editor, highway, main_map, rng)
+
+
+replace_ground_smooth(
+    list(city_roads),
+    urban_road.palette,
+    rng,
+    main_map.water,
+    build_map,
+    editor,
+    world_slice,
+)
 
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
