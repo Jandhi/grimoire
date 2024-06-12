@@ -1,0 +1,9 @@
+{
+    "name" : "1x1_test",
+    "filepath" : "grimoire/asset_data/rooms/furniture/1x1_test.nbt",
+    "type" : "room",
+    "origin" : [0, 0, 0],
+    "do_not_place" : "glass",
+    "facing" : "x_plus"
+}
+

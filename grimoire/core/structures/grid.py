@@ -6,7 +6,7 @@ from .nbt.nbt_asset import NBTAsset
 from ...palette import Palette
 from gdpc.vector_tools import ivec3, ivec2
 from collections.abc import Iterator
-
+from grimoire.core.structures.directions import Directions
 
 # Class to work with grids for buildings
 # Local coordinates are block coordinates relative to origin of house
@@ -58,9 +58,20 @@ class Grid:
         asset: NBTAsset,
         palette: Palette,
         grid_coordinate: ivec3,
-        facing: str = None,
+        facing: ivec3 = None,
     ):
         coords = self.grid_to_local(grid_coordinate) + self.origin
+
+        if facing == ivec3(1, 0, 0):
+            facing = 'x_plus'
+        elif facing == ivec3(-1, 0, 0):
+            facing = 'x_minus'
+        elif facing == ivec3(0, 0, 1):
+            facing = 'z_plus'
+        elif facing == ivec3(0, 0, -1):
+            facing = 'z_minus'
+
+
 
         if facing is None or not hasattr(asset, "facing") or asset.facing == facing:
             return build_nbt(
@@ -118,3 +129,15 @@ class Grid:
         for x in range(self.dimensions.x):
             for z in range(self.dimensions.z):
                 yield ivec2(x, z) + ivec2(dx, dz)
+
+    def get_door_coords(self, dir: ivec3) -> ivec3:
+        if dir == Directions.North:
+            return ivec3(self.dimensions.x // 2, 0, 0)
+        elif dir == Directions.East:
+            return ivec3(0, 0, self.dimensions.z // 2)
+        elif dir == Directions.South:
+            return ivec3(self.dimensions.x // 2, 0, self.dimensions.z)
+        elif dir == Directions.West:
+            return ivec3(self.dimensions.x, 0, self.dimensions.z // 2)
+
+
