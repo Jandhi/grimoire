@@ -14,7 +14,12 @@ from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
 from grimoire.core.utils.shapes import Shape2D
 from grimoire.districts.district import DistrictType
-from grimoire.placement.terraformers.texture import grass_patch_area, pave_over_area
+from grimoire.placement.terraformers.texture import (
+    flagstone_edge,
+    grass_patch_area,
+    pave_over_area,
+    roughen_edge,
+)
 from grimoire.placement.terraformers.topology import flatten_area_up
 
 
@@ -141,7 +146,7 @@ class Nook:
             None
         """
 
-        for position in area | edges:
+        for position in area | set(edges.keys()):
             city_map.buildings[position.x][position.y] = DevelopmentType.NOOK
 
         # the processing stages and the parameters of the functions in that stage
@@ -164,17 +169,21 @@ class Nook:
 def identify_exposure_type_from_edging_pattern(
     pattern: Sequence[tuple[set[DevelopmentType], int]],
 ) -> ExposureType:
-    PATHS: set[DevelopmentType] = {
-        DevelopmentType.CITY_ROAD,
-        DevelopmentType.HIGHWAY,
-        DevelopmentType.GATE,
-    }
-    BUILDINGS: set[DevelopmentType] = {
-        DevelopmentType.BUILDING,
-        DevelopmentType.CITY_WALL,
-        DevelopmentType.WALL,
-    }
-    development_sets = (PATHS, BUILDINGS)
+    PATHS: frozenset[DevelopmentType] = frozenset(
+        {
+            DevelopmentType.CITY_ROAD,
+            DevelopmentType.HIGHWAY,
+            DevelopmentType.GATE,
+        }
+    )
+    BUILDINGS: frozenset[DevelopmentType] = frozenset(
+        {
+            DevelopmentType.BUILDING,
+            DevelopmentType.CITY_WALL,
+            DevelopmentType.WALL,
+        }
+    )
+    development_sets = (PATHS, BUILDINGS, frozenset({DevelopmentType.NOOK}))
 
     # TODO: Split this into another function
     broad_pattern: list[tuple[frozenset[DevelopmentType], int]] = []
@@ -217,13 +226,12 @@ def identify_exposure_type_from_edging_pattern(
         if broad_pattern[0][0] == BUILDINGS:
             return ExposureType.COURT
 
-    # calculate dominant sets
-    totals: dict[set[DevelopmentType], int] = {}
-    for segment in broad_pattern:
-        if segment[0] not in totals:
-            totals[segment[0]] = segment[1]
-        else:
-            totals[segment[0]] += segment[1]
+    totals: dict[frozenset[DevelopmentType], int] = {
+        development_set: 0 for development_set in development_sets
+    }
+
+    for broad_segment in broad_pattern:
+        totals[broad_segment[0]] += broad_segment[1]
 
     if (
         len(broad_pattern) < 4
@@ -233,8 +241,6 @@ def identify_exposure_type_from_edging_pattern(
         return ExposureType.COVE
 
     return ExposureType.CHANNEL
-    return ExposureType.CHANNEL
-    return ExposureType.CHANNEL
 
 
 # ==== Instances ====
@@ -243,21 +249,31 @@ HIGH_EXPOSURE: list[ExposureType] = [
     ExposureType.ISLAND,
     ExposureType.PENINSULA,
 ]
+MIXED_EXPOSURE: list[ExposureType] = [ExposureType.PENINSULA, ExposureType.COVE]
 LOW_EXPOSURE: list[ExposureType] = [ExposureType.COURT, ExposureType.COVE]
 
-PAVED_NOOK = Nook(
-    "Paved Nook", exposure_types=HIGH_EXPOSURE, terraformers=[pave_over_area]
+PATCHY_PAVED_NOOK = Nook(
+    "Patchy Paving",
+    exposure_types=HIGH_EXPOSURE,
+    terraformers=[pave_over_area, roughen_edge],
 )
-GRASSY_NOOK = Nook(
-    "Grassy Nook", exposure_types=LOW_EXPOSURE, terraformers=[grass_patch_area]
+PATCHY_GRASS_NOOK = Nook(
+    "Patchy Grass",
+    exposure_types=LOW_EXPOSURE,
+    terraformers=[grass_patch_area, roughen_edge],
 )
-PLATEAU = Nook(
+GRASSY_YARD_NOOK = Nook(
+    "Grassy Yard",
+    exposure_types=MIXED_EXPOSURE,
+    terraformers=[grass_patch_area, flagstone_edge],
+)
+PLATEAU_NOOK = Nook(
     "Plateau",
     district_types=DistrictType.URBAN,
     terraformers=[flatten_area_up, pave_over_area],
 )
 
-ALL_NOOKS = {PAVED_NOOK, GRASSY_NOOK, PLATEAU}
+ALL_NOOKS = {PATCHY_PAVED_NOOK, PATCHY_GRASS_NOOK, GRASSY_YARD_NOOK, PLATEAU_NOOK}
 
 # ==== Nook Sets ====
 
@@ -391,7 +407,7 @@ def find_suitable_nooks(
     # No candidates were established in the first place. Return an empty set.
     if final_set is None:
         warn("Could not find suitable Nook. Defaulting to GRASSY_NOOK.")
-        return {GRASSY_NOOK}
+        return {PATCHY_GRASS_NOOK}
 
     if area is not None:
         final_set = eliminate_nooks_based_on_area(final_set, area)

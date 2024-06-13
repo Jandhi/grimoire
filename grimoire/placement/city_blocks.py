@@ -1,11 +1,13 @@
 import itertools
+from collections import Counter
 from enum import Enum, auto
-from logging import error
+from logging import error, warn
 from typing import Any, Generator, Iterable
 
 from gdpc import Block, Editor
 from gdpc.vector_tools import (
     CARDINALS_2D,
+    DOWN_3D,
     EAST_2D,
     Rect,
     distance2,
@@ -38,7 +40,7 @@ EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 500  # 120
 MINIMUM_BLOCK_SZE = 100  # 100
 
-LOOP_LIMIT = 1000  # prevents uncontrolled loops from going on too long
+LOOP_LIMIT = 16  # prevents uncontrolled loops from going on too long
 
 
 def generate_bubbles(
@@ -327,7 +329,9 @@ def decorate_city_block(
                     )
                 )
             )
-            nook.manifest(editor, nook_shape, nook_edge, city_map, block_rng)
+            nook.manifest(
+                editor, nook_shape, surrounding_developments, city_map, block_rng
+            )
             print(
                 f"\t\tIt became a Nook ({nook.name}) with the following properties:\n"
                 f"\t\t\t- District Type: {[t.name for t in to_list_or_none(nook.district_types)] if nook.district_types else 'Any'} ({DistrictType.URBAN.name})\n"
@@ -337,10 +341,14 @@ def decorate_city_block(
             )
 
 
-def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
+def discover_nook(
+    start: ivec2, city_block_shape: Shape2D, city_map: Map
+) -> tuple[set[ivec2], Shape2D]:
     """Find the extent of a potential Nook in a city block, starting at a free space."""
 
     development_map: list[list[DevelopmentType | None]] = city_map.buildings
+    valid_rect = city_block_shape.to_rect()
+    bounding_rect = city_block_shape.to_boundry_rect()
 
     if development_map[start.x][start.y] is not None:
         raise ValueError(
@@ -365,12 +373,12 @@ def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
         if development_map[position.x][position.y]:
             continue
 
-        for neighbor in neighbors2D(
-            position, city_block_shape.to_boundry_rect(), diagonal=True
-        ):
+        for neighbor in neighbors2D(position, bounding_rect, diagonal=True):
 
             # has a developed neighbour
-            if development_map[neighbor.x][neighbor.y]:
+            if development_map[neighbor.x][neighbor.y] or not valid_rect.contains(
+                neighbor
+            ):
                 visited.add(neighbor)
                 nook_edge.add(position)
 
@@ -402,15 +410,26 @@ def edge_to_pattern(
     start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
 ) -> list[tuple[set[DevelopmentType], int]]:
 
+    edge_start: ivec2 = ivec2(start)
+
     if not edge:
         return []
 
     pattern: list[tuple[set[DevelopmentType], int]] = []
 
-    for _ in range(LOOP_LIMIT):
-        if start in edge:
-            break
-        start += EAST_2D
+    for direction in CARDINALS_2D:
+        edge_start = ivec2(start)
+        for _ in range(LOOP_LIMIT):
+            if edge_start in edge:
+                break
+            edge_start += direction
+        else:
+            continue
+        break
+    else:
+        raise RuntimeError(
+            f"Could not find an edge to the Nook originating from {start} (intervened at {edge_start})."
+        )
 
     for current in determine_edge_sequence(start, bounds, edge):
 

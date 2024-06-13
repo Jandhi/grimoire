@@ -1,3 +1,4 @@
+from logging import error
 from typing import Sequence
 
 from gdpc.block import Block
@@ -11,7 +12,10 @@ from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.shapes import Shape2D
 
 POLISHED_BLACKSTONE_BRICKS_BLOCKS = [Block(b) for b in POLISHED_BLACKSTONE_BRICKS]
-DEFAULT_FILL = Block("minecraft:gold_block")  # POLISHED_BLACKSTONE_BRICKS_BLOCKS
+DEFAULT_PAVING_FILL = POLISHED_BLACKSTONE_BRICKS_BLOCKS
+DEFAULT_SOIL_FILL = Block("minecraft:grass_block")
+
+# ==== AREAS ONLY ====
 
 
 def _pave_area(
@@ -20,7 +24,7 @@ def _pave_area(
     _edges: dict[ivec2, set[DevelopmentType]],
     city_map: Map,
     _rng: RNG,
-    fill_blocks: Block | Sequence[Block] = POLISHED_BLACKSTONE_BRICKS_BLOCKS,
+    fill_blocks: Block | Sequence[Block] = DEFAULT_PAVING_FILL,
 ) -> None:
     """
     Paves the specified area with the given fill blocks.
@@ -72,16 +76,27 @@ def grass_patch_area(
         None
     """
 
-    SOIL: list[Block] = [Block(b) for b in {"minecraft:green_wool"}]
-
-    _pave_area(editor, area, edges, city_map, _rng, SOIL)
+    _pave_area(editor, area, edges, city_map, _rng, DEFAULT_SOIL_FILL)
     # TODO: bonemeal(position3D)
     return
 
 
+# ==== EDGES ONLY ====
+
+
+def flagstone_edge(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+):
+    return _pave_area(editor, Shape2D(set(edges.keys())), edges, city_map, _rng, fill_blocks=Block("minecraft:smooth_stone"))
+
+
 def roughen_edge(
     editor: Editor,
-    _area: Shape2D,
+    area: Shape2D,
     edges: dict[ivec2, set[DevelopmentType]],
     city_map: Map,
     _rng: RNG,
@@ -105,16 +120,19 @@ def roughen_edge(
         position3D = city_map.make_3d(position)
 
         # get neighboring Blocks which aren't part of the edge
-        neighbour_blocks: set[Block] = {
+        neighbour_blocks: list[Block] = [
             editor.getBlock(city_map.make_3d(neighbour))
-            for neighbour in neighbors2D(position, diagonal=diagonals)
+            for neighbour in neighbors2D(
+                position, area.to_boundry_rect(), diagonal=diagonals
+            )
             if neighbour not in edges
-        }
+        ]
 
         if not neighbour_blocks:  # search diagonals anyway if nothing was found
             if diagonals:  # This is pointless
-                raise RuntimeError("Could not find a non-edge neighbour!")
-            return roughen_edge(editor, _area, edges, city_map, _rng, diagonals=True)
+                error("Could not find a non-edge neighbour!")
+                return
+            return roughen_edge(editor, area, edges, city_map, _rng, diagonals=True)
 
         editor.placeBlock(position3D, neighbour_blocks)
     return

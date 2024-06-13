@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import AbstractSet, Iterable
 
-from gdpc.vector_tools import Box, Rect, ivec2, ivec3
+from gdpc.vector_tools import XY_2D, Box, Rect, ivec2, ivec3
 
 
 @dataclass
@@ -129,8 +129,13 @@ class Shape2D(set):
     def __eq__(self, value: object, /) -> bool:
         raise NotImplementedError()
 
-    def to_boundry_rect(self) -> Rect:
+    def to_rect(self) -> Rect:
+        """Return the shape as a Rect with begin and end inclusive."""
         return Rect(self.begin, self.end - self.begin)
+
+    def to_boundry_rect(self) -> Rect:
+        """Return the shape as a Rect with begin and end exclusive."""
+        return Rect(self.begin - XY_2D, self.end - self.begin + XY_2D)
 
     def get_largest_rect(self) -> Rect:
         raise NotImplementedError()

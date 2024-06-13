@@ -4,7 +4,7 @@ from enum import Enum, auto
 from gdpc import WorldSlice
 from gdpc.block import Block
 from gdpc.lookup import ICE_BLOCKS, WATER_PLANTS, WATERS
-from gdpc.vector_tools import ivec2, ivec3
+from gdpc.vector_tools import addY, ivec2, ivec3
 
 from ..districts.district import District, SuperDistrict
 from ..terrain.tree_cutter import TREE_BLOCKS

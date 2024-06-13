@@ -1,0 +1,3 @@
+
+
+def closed_fencing()

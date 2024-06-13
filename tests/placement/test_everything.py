@@ -57,7 +57,7 @@ DO_RURAL = False
 
 SLEEP_DELAY = 1
 
-editor = Editor(buffering=False, caching=True)
+editor = Editor(buffering=True, caching=True)
 load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
@@ -137,19 +137,13 @@ for district in super_districts:
 
         biomes[biome] += district.biome_dict[biome]
 
-most_prevalent_biome = max(biomes.items(), key=lambda kp : kp[1])[0]
+most_prevalent_biome = max(biomes.items(), key=lambda kp: kp[1])[0]
 
 style = BuildStyle.DESERT
 
-if most_prevalent_biome in [
-
-]:
+# FIXME: Incomplete code!
+if most_prevalent_biome in []:
     style = BuildStyle.WET
-
-if most_prevalent_biome in [
-
-]:
-    style = BuildStyle.DESERT
 
 for x in range(build_rect.size.x):
     for z in range(build_rect.size.y):
@@ -161,9 +155,10 @@ for x in range(build_rect.size.x):
             inner_points.append(ivec2(x, z))
 
 
-
 # set up palettes
-eligible_palettes = list(filter(lambda palette: style.name.lower() in palette.tags, Palette.all()))
+eligible_palettes = list(
+    filter(lambda palette: style.name.lower() in palette.tags, Palette.all())
+)
 rng = RNG(SEED, "palettes")
 
 for district in districts:
@@ -282,6 +277,7 @@ if DO_RURAL:
 
     for super_district in super_districts:
         if super_district == DistrictType.RURAL:
+            # FIXME: Undefined words "mountainous" etc.
             if mountainous and not is_snowy or is_desert:
                 choice_list = rng.choose([[None], [None], [None], [None]])
             elif is_snowy and not mountainous:

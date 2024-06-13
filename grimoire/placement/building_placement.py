@@ -3,6 +3,7 @@ import contextlib
 from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
 
+import grimoire.core.structures.legacy_directions as legacy_directions
 from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
 from grimoire.core.styling.palette import BuildStyle
 
@@ -19,7 +20,6 @@ from ..buildings.walls.wall import Wall
 from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
 from ..core.structures.grid import Grid
-import grimoire.core.structures.legacy_directions as legacy_directions
 from ..core.structures.legacy_directions import (
     CARDINAL,
     X_MINUS,
@@ -51,6 +51,7 @@ door_points = {
 
 WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
 MAX_AVG_HEIGHT_DIFF = 4
+DO_FURNISHING = False
 
 
 # Attempts to place a building at a point
@@ -250,7 +251,7 @@ def place(
     district = build_map.districts[grid.origin.x][grid.origin.z]
     palette: Palette = (
         rng.choose(district.palettes)
-        if district
+        if district and district.palettes
         else Palette.find("japanese_dark_blackstone")
     )
 
@@ -338,7 +339,9 @@ def place(
     for cell in plan.cells:
         for direction in legacy_directions.CARDINAL:
             if cell.has_door(direction):
-                door_coords = grid.get_door_coords(direction) + grid.grid_to_world(cell.position)
+                door_coords = grid.get_door_coords(
+                    legacy_directions.VECTORS[direction]
+                ) + grid.grid_to_world(cell.position)
                 break
 
         if door_coords:
@@ -347,11 +350,5 @@ def place(
     if door_coords is None:
         return
 
-    furnish_building(
-        plan.shape,
-        door_coords,
-        palette,
-        editor,
-        grid,
-        rng
-    )
+    if DO_FURNISHING:
+        furnish_building(plan.shape, door_coords, palette, editor, grid, rng)
