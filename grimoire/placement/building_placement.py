@@ -12,13 +12,14 @@ from ..buildings.building_shape import BuildingShape
 from ..buildings.clear_interiors import clear_interiors
 from ..buildings.roofs.build_roof import build_roof
 from ..buildings.roofs.roof_component import RoofComponent
-from ..buildings.rooms.furnish import furnish
+from ..buildings.rooms.furnish import furnish, furnish_building
 from ..buildings.stilts import build_stilt_frame
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
 from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
 from ..core.structures.grid import Grid
+import grimoire.core.structures.legacy_directions as legacy_directions
 from ..core.structures.legacy_directions import (
     CARDINAL,
     X_MINUS,
@@ -332,13 +333,25 @@ def place(
 
     build_walls(plan, editor, walls, rng)
 
-    # FIXME: this suppression is a last resort, and should not be used in the future
-    with contextlib.suppress(Exception):
-        furnish(
-            [cell.position for cell in plan.cells],
-            rng,
-            grid,
-            editor,
-            palette,
-            plan.cell_map,
-        )
+    door_coords = None
+
+    for cell in plan.cells:
+        for direction in legacy_directions.CARDINAL:
+            if cell.has_door(direction):
+                door_coords = grid.get_door_coords(direction) + grid.grid_to_world(cell.position)
+                break
+
+        if door_coords:
+            break
+
+    if door_coords is None:
+        return
+
+    furnish_building(
+        plan.shape,
+        door_coords,
+        palette,
+        editor,
+        grid,
+        rng
+    )
