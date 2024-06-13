@@ -16,6 +16,3 @@ UPPER_INNER = "upper_inner"
 class RoofComponent(NBTAsset):
     shape: str
     facing: str
-
-    def on_construct(self):
-        super().on_construct()

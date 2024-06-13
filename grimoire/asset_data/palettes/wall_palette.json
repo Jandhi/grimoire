@@ -6,8 +6,8 @@
   "materials" : {
     "primary_wood" : "oak",
     "secondary_wood" : "spruce",
-    "primary_stone" : "bricks2",
-    "secondary_stone" : "bricks3"
+    "primary_stone" : "bricks1",
+    "secondary_stone" : "bricks2"
   },
 
   "primary_color" : "red",

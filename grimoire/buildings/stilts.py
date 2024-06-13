@@ -13,7 +13,7 @@ from gdpc.vector_tools import (
 from glm import ivec3
 
 from grimoire.buildings.building_plan import BuildingPlan
-from grimoire.core.generator.module import Module
+from grimoire.core.generator.generator_module import GeneratorModule
 from grimoire.core.maps import Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.structures import legacy_directions
@@ -179,11 +179,11 @@ def build_stilt_frame(
     grid.origin -= ivec3(0, 2, 0)
 
 
-class StiltPlacer(Module):
-    def __init__(self, parent: Module | None):
+class StiltPlacer(GeneratorModule):
+    def __init__(self, parent: GeneratorModule | None):
         super().__init__(parent)
 
-    @Module.main
+    @GeneratorModule.main
     def place(self, editor: Editor, build_map: Map, position: ivec3, palette: Palette):
         min_y = build_map.ocean_floor_at(dropY(position)) - 3
 

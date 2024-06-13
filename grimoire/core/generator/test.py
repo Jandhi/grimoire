@@ -3,7 +3,7 @@ from abc import ABC
 
 from gdpc import Editor, Rect, WorldSlice
 
-from ...core.generator.module import Module
+from ...core.generator.module import GeneratorModule
 
 
 def run_test(cls):
@@ -12,14 +12,14 @@ def run_test(cls):
     return cls
 
 
-class TestModule(Module):
+class TestModule(GeneratorModule):
     catch_errors: bool = True
 
     @abc.abstractmethod
     def test(self):
         pass
 
-    @Module.main
+    @GeneratorModule.main
     def run_test(self):
         if self.catch_errors:
             try:

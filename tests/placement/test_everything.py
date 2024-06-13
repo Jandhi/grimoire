@@ -90,54 +90,6 @@ districts, district_map, super_districts, super_district_map = generate_district
 main_map.districts = district_map
 main_map.super_districts = super_district_map
 
-forest_counter = 0
-desert_counter = 0
-rocky_counter = 0
-snowy_counter = 0
-mountainous = False
-is_snowy = False
-is_desert = False
-for district in districts:
-    biomes_in_district = get_district_biomes(editor, district)
-    for biome in biomes_in_district:
-        if biome in forest:
-            forest_counter += 1
-        elif biome in desert:
-            desert_counter += 1
-        elif biome in rocky:
-            mountainous = True
-            rocky_counter += 1
-        elif biome in snowy:
-            snowy_counter += 1
-
-if rocky_counter >= len(districts) // 2:
-    mountainous = True
-if snowy_counter >= len(districts) // 2:
-    is_snowy = True
-if desert_counter >= len(districts) // 2:
-    is_desert = True
-biome_counters = [forest_counter, desert_counter, rocky_counter]
-
-if max(biome_counters) == forest_counter or max(biome_counters) not in [
-    desert_counter,
-    rocky_counter,
-]:
-    style = BuildStyle.JAPANESE
-# elif max(biome_counters) == desert_counter:
-#     style = BuildStyle.DESERT
-# else:
-#     style = BuildStyle.DWARVEN
-
-# set up palettes
-eligible_palettes = list(filter(lambda palette: style.name.lower() in palette.tags, Palette.all()))
-rng = RNG(SEED, "palettes")
-
-for district in districts:
-    palettes = eligible_palettes.copy()
-
-    for _ in range(min(3, len(eligible_palettes))):
-        district.palettes.append(rng.pop(palettes))
-
 # plateau stuff
 if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistricts
     print("starting plateauing")
@@ -174,6 +126,27 @@ super_district_classification(super_districts)
 
 inner_points = []
 
+biomes = {}
+for district in super_districts:
+    for biome in district.biome_dict:
+        if biome not in biomes:
+            biomes[biome] = 0
+
+        biomes[biome] += district.biome_dict[biome]
+
+most_prevalent_biome = max(biomes.items(), key=lambda kp : kp[1])[0]
+
+style = BuildStyle.DESERT
+
+if most_prevalent_biome in [
+
+]:
+    style = BuildStyle.WET
+
+if most_prevalent_biome in [
+
+]:
+    style = BuildStyle.DESERT
 
 for x in range(build_rect.size.x):
     for z in range(build_rect.size.y):
@@ -183,6 +156,18 @@ for x in range(build_rect.size.x):
             continue
         elif super_district.type == DistrictType.URBAN:
             inner_points.append(ivec2(x, z))
+
+
+
+# set up palettes
+eligible_palettes = list(filter(lambda palette: style.name.lower() in palette.tags, Palette.all()))
+rng = RNG(SEED, "palettes")
+
+for district in districts:
+    palettes = eligible_palettes.copy()
+
+    for _ in range(min(3, len(eligible_palettes))):
+        district.palettes.append(rng.pop(palettes))
 
 wall_points, wall_dict = get_wall_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)

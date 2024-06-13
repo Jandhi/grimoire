@@ -10,17 +10,17 @@ from colored import Style, Fore
 from ...core.assets.load_types import load_types
 from ...core.assets.asset_linker import AssetLinker
 from ...buildings.building_shape import permute_shapes
-from ...core.generator.module import Module
+from ...core.generator.generator_module import GeneratorModule
 
 
 # Loads all nbt assets from the assets folder
 
 
-class AssetLoader(Module):
-    def __init__(self, parent: Module):
+class AssetLoader(GeneratorModule):
+    def __init__(self, parent: GeneratorModule):
         super().__init__(parent)
 
-    @Module.main
+    @GeneratorModule.main
     def load_assets(self, root_directory):
         self.log.info("Loading Types")
         load_types()
@@ -74,7 +74,7 @@ class AssetLoader(Module):
 def load_assets(
     root_directory,
     logging_settings: LoggerSettings | None = None,
-    parent_module: Module | None = None,
+    parent_module: GeneratorModule | None = None,
 ) -> None:
     loader = AssetLoader(parent_module)
     if logging_settings is not None:

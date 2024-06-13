@@ -19,6 +19,7 @@ from grimoire.buildings.walls.build_walls import build_walls
 from grimoire.buildings.walls.wall import Wall
 from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.buildings.build_floor import build_floor
+import grimoire.core.structures.legacy_directions as legacy_directions
 
 SEED = 0x624AAB
 

@@ -14,7 +14,7 @@ from ..utils.strings import camel_to_snake_case
 
 
 class ModuleLogger(Logger):
-    def __init__(self, settings: LoggerSettings, module: "Module") -> None:
+    def __init__(self, settings: LoggerSettings, module: "GeneratorModule") -> None:
         super().__init__(settings)
         self.module = module
 
@@ -37,13 +37,13 @@ T = TypeVar("T")
 _modules: dict[str, type] = dict()
 
 
-class Module:
+class GeneratorModule:
     name: str = None
     _main: Callable = None
     _logger: Logger = None
     rng: RNG
 
-    def __init__(self, parent: "Module"):
+    def __init__(self, parent: "GeneratorModule"):
         self.parent = parent
 
     def __init_subclass__(cls, **kwargs):
@@ -80,7 +80,7 @@ class Module:
             self.func = func
 
         # When main is bound to the owner, this allows for us to find the owners class
-        def __set_name__(self, owner: "Module", name):
+        def __set_name__(self, owner: "GeneratorModule", name):
             # Owner is actually a type which inherits from Module, but this type annotation will do
             func = self.func
 
@@ -104,7 +104,7 @@ class Module:
 
     @staticmethod
     def main(func: T) -> T:
-        return Module.MainClass(func)
+        return GeneratorModule.MainClass(func)
 
     @classmethod
     def get_name(cls) -> str:
@@ -115,7 +115,7 @@ class Module:
         raise RuntimeError(description)
 
 
-_callstack: list[Module] = []
+_callstack: list[GeneratorModule] = []
 
 
 def find_module(name: str) -> type | None:
@@ -135,7 +135,7 @@ def run_module(name: str, *args, **kwargs):
     return True
 
 
-def top_module() -> Module | None:
+def top_module() -> GeneratorModule | None:
     return _callstack[-1] if len(_callstack) > 0 else None
 
 

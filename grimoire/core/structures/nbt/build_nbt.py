@@ -7,6 +7,7 @@ from gdpc.vector_tools import ivec3
 
 from grimoire.core.styling.legacy_palette import LegacyPalette, palette_swap
 from .convert_nbt import convert_nbt
+from .convert_schem import convert_schem
 from .nbt_asset import NBTAsset
 from ..transformation import Transformation
 from ...maps import Map
@@ -17,7 +18,7 @@ from ...styling.palette import Palette, swap
 def build_nbt(
     editor: Editor,
     asset: NBTAsset,
-    palette: Palette,
+    palette: Palette | None,
     transformation: Transformation = None,
     place_air: bool = False,
     allow_non_solid_replacement: bool = False,
@@ -27,7 +28,7 @@ def build_nbt(
     """Constructs an NBTAsset given an editor and transformation
     If given a palette, will palette swap using the structure's own palette and the given palette
     """
-    structure = convert_nbt(asset.filepath)
+    structure = convert_schem(asset.filepath) if asset.filepath.endswith(".schem") else convert_nbt(asset.filepath)
     transformation = transformation or Transformation()  # construct default value
 
     transformed_palette = transformation.apply_to_palette(structure.palette)

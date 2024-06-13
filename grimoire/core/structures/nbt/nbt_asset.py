@@ -2,7 +2,7 @@ from gdpc.vector_tools import ivec3
 
 from ...assets.asset import Asset, asset_defaults
 from grimoire.core.styling.legacy_palette import LegacyPalette
-from ...generator.module import ModuleCall
+from ...generator.generator_module import ModuleCall
 from ...styling.palette import Palette
 
 

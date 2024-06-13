@@ -7,16 +7,16 @@ from colored import Style
 from glm import ivec2, ivec3
 
 from .asset import Asset, AssetMeta
-from ..generator.module import Module, find_module, ModuleCall
+from ..generator.generator_module import GeneratorModule, find_module, ModuleCall
 from ..logger import LoggingLevel
 
 
-class AssetLinker(Module):
+class AssetLinker(GeneratorModule):
 
-    def __init__(self, parent: Module):
+    def __init__(self, parent: GeneratorModule):
         super().__init__(parent)
 
-    @Module.main
+    @GeneratorModule.main
     def link_assets(self):
         for asset_type in (
             asset_type_loading_bar := self.log.progress(Asset.types, "")

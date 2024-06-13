@@ -25,7 +25,6 @@ from grimoire.buildings.rooms.room import Room
 
 
 from grimoire.core.assets.asset_loader import load_assets
-from grimoire.core.structures.legacy_directions import cardinal
 
 from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.buildings.roofs.roof import Roof
