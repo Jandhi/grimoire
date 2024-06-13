@@ -1,387 +1,498 @@
 # Actual file
-import numpy as np
 from gdpc.editor import Editor, Block
+from grimoire.core.structures.grid import Grid
+from grimoire.core.styling.palette import Palette
+from grimoire.buildings.walls.wall import Wall
+from grimoire.core.structures import legacy_directions
+from grimoire.core.structures.transformation import Transformation
+from grimoire.buildings.rooms.furniture import Furniture
+from grimoire.core.structures.nbt.nbt_asset import NBTAsset
+from grimoire.core.structures.nbt.build_nbt import build_nbt
+from grimoire.core.assets.asset_loader import load_assets
+from gdpc.vector_tools import CARDINALS, NORTH, EAST, SOUTH, WEST, UP, rotate3D
 from gdpc.vector_tools import ivec3
+from grimoire.core.noise.rng import RNG
 
-from ..legacycell import LegacyCell
-from ...core.noise.rng import RNG
-from .room import Room
-from ...core.structures.grid import Grid
-from ...core.structures.legacy_directions import (
-    CARDINAL,
-    vector as get_ivec3,
-    RIGHT,
-    UP,
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST,
-)
-from ...core.styling.palette import Palette
+def get_neighbours(coords: ivec3, editor: Editor):
+    nbrs = []
+    for dir in CARDINALS:
+        next = coords + dir
+        if editor.getBlock(next + UP).id == 'minecraft:air':
+            nbrs.append(next)
+    return nbrs
 
-ROOM_LIST = [
-    "kitchen_no_window_small",
-    "kitchen_corner_1",
-    "bedroom1",
-    "bedroom_centered",
-    "bedroom_corner",
-    "hallway_1",
-    "hallway_aquarium",
-    "small_kitchen_with_table",
-    "potion_room",
-    "storage_room",
-    "study",
-]
+def build_interior_walls(cells: list, floor: int, palette: Palette, editor: Editor, grid: Grid, rng: RNG) -> None:
+    interior_wall: Wall = Wall.find('interior_wall')
 
-CONNECTION_LIST = ["wall", "open"]
-
-LOWER_STAIRCASE_LIST = ["staircase_corner_lower"]
-
-# NOTE: Unused variable
-UPPER_STAIRCASE_LIST = ["staircase_corner_upper"]
-
-ONEBYONE_UPPER_LIST = ["1x1_twostorey_upper_1", "1x1_twostorey_upper_2"]
-
-ONEBYONE_LOWER_LIST = ["1x1_twostorey_lower_1", "1x1_twostorey_lower_2"]
-
-ONEBYONE_LIST = ["1x1_room_1", "1x1_room_2", "1x1_room_3"]
-
-
-def rotate(a: list, n=1) -> list:
-    if not a:
-        return a
-    n = -n % len(a)  # flip rotation direction
-    return np.concatenate((a[n:], a[:n]))
-
-
-def is_corner(cell_to_check: ivec3, cells_to_fill: list) -> tuple:
-    corner_combinations = [
-        ["wall", "wall", "open", "open"],
-        ["open", "wall", "wall", "open"],
-        ["open", "open", "wall", "wall"],
-        ["wall", "open", "open", "wall"],
-    ]
-
-    test = []
-    for direction in CARDINAL:
-        neighbor = cell_to_check + get_ivec3(direction)
-        if neighbor in cells_to_fill:
-            test.append("open")
+    cells_on_floor = [ivec3(x, y, z) for (x, y, z) in cells if y == floor]
+    if len(cells_on_floor) == 1: # no interior walls if there is only 1 cell
+        return
+    
+    elif len(cells_on_floor) == 2: #if there is exactly two cells then let's give it a 50/50 chance for there to be an interior wall
+        p = rng.randint(100)
+        if p < 50:
+            return
         else:
-            test.append("wall")
-
-    return test in corner_combinations, test
-
-
-def build_start(
-    cells_with_rooms: list,
-    cells_to_fill: list,
-    rng: RNG,
-    grid: Grid,
-    editor: Editor,
-    palette: Palette,
-    cells: dict[ivec3, LegacyCell],
-) -> list:
-    start_connections = []
-    start = rng.choose(cells_to_fill)
-    for direction in CARDINAL:
-        neighbor = start + get_ivec3(direction)
-        if neighbor in cells_to_fill or direction in cells[ivec3(*start)].doors:
-            start_connections.append("open")
-        else:
-            start_connections.append("wall")
-
-    # find a room in that fits in that spot
-    potential_rooms = []
-    for room_name in ROOM_LIST:
-        room: Room = Room.find(room_name)
-        to_face = room.facing
-        for i in range(4):
-            if list(rotate(room.connections, i)) == start_connections:
-                potential_rooms.append((room, to_face, rotate(room.connections, i)))
-
-            if i > 0:
-                to_face = RIGHT[to_face]
-
-    room_to_build, room_facing, connections = rng.choose(potential_rooms)
-    cells_with_rooms.append((start, connections))
-
-    grid.build(editor, room_to_build, palette, start, facing=room_facing)
-
-    return cells_with_rooms
-
-
-def build_staircase(
-    level: int,
-    cells_with_rooms: list,
-    cells_to_fill: list,
-    rng: RNG,
-    grid: Grid,
-    editor: Editor,
-    palette: Palette,
-    cells: dict[ivec3, LegacyCell],
-) -> list:
-    possible_starts = [
-        potential_start
-        for potential_start in cells_to_fill
-        if (
-            is_corner(potential_start, cells_to_fill)[0]
-            and potential_start + get_ivec3(UP) in cells_to_fill
-            and potential_start not in cells_with_rooms
-            and list(potential_start)[1] == level
-        )
-    ]
-
-
-def build_staircase(
-    level: int,
-    cells_with_rooms: list,
-    cells_to_fill: list,
-    rng: RNG,
-    grid: Grid,
-    editor: Editor,
-    palette: Palette,
-    cells: dict[ivec3, LegacyCell],
-) -> list:
-    possible_starts = [
-        potential_start
-        for potential_start in cells_to_fill
-        if (
-            is_corner(potential_start, cells_to_fill)[0]
-            and potential_start + get_ivec3(UP) in cells_to_fill
-            and potential_start not in cells_with_rooms
-            and list(potential_start)[1] == level
-        )
-    ]
-    start = rng.choose(possible_starts)
-    start_connections = is_corner(start, cells_to_fill)[1]
-
-    potential_rooms = []
-    for room_name in LOWER_STAIRCASE_LIST:
-        room: Room = Room.find(room_name)
-        to_face = room.facing
-        for i in range(4):
-            if list(rotate(room.connections, i)) == start_connections:
-                potential_rooms.append((room, to_face, rotate(room.connections, i)))
-
-            if i > 0:
-                to_face = RIGHT[to_face]
-
-    room_to_build, room_facing, connections = rng.choose(potential_rooms)
-
-    cells_with_rooms.append((start, connections))
-    cells_with_rooms.append((start + get_ivec3(UP), connections))
-
-    # clear floor for stair
-    top_stair_origin = grid.grid_to_world(start + get_ivec3(UP))
-    for x in range(1, grid.width - 1):
-        for z in range(1, grid.depth - 1):
-            editor.placeBlock(top_stair_origin + ivec3(x, 0, z), Block("air"))
-
-    grid.build(editor, room_to_build, palette, start, facing=room_facing)
-    room_to_build: Room = Room.find("staircase_corner_upper")
-    grid.build(
-        editor, room_to_build, palette, start + get_ivec3(UP), facing=room_facing
-    )
-
-    return cells_with_rooms
-
-
-def get_neighbors(rooms: list, inside_cells: list) -> set:
-    neighbors = set()
-    for room in rooms:
-        for direction in CARDINAL:
-            new_cell = room + get_ivec3(direction)
-            if new_cell not in rooms and new_cell in inside_cells:
-                neighbors.add(new_cell)
-    return neighbors
-
-
-# FIXME: Refactor
-def populate_floor(
-    level: int,
-    cells_with_rooms: list,
-    cells_to_fill: list,
-    rng: RNG,
-    grid: Grid,
-    editor: Editor,
-    palette: Palette,
-    cells: dict[ivec3, LegacyCell],
-) -> list:
-    rooms_on_floor = [
-        ((x, y, z), con) for (x, y, z), con in cells_with_rooms if y == level
-    ]
-    cells_on_floor = [(x, y, z) for x, y, z in cells_to_fill if y == level]
-
-    while len(rooms_on_floor) != len(cells_on_floor):
-        candidates = []
-        # get the connections for the new rooms
-        for neighbor in get_neighbors([x for x, y in rooms_on_floor], cells_on_floor):
-            north_con, east_con, south_con, west_con = None, None, None, None
-            for c, conns in rooms_on_floor:
-                for direction in CARDINAL:
-                    if neighbor + get_ivec3(direction) == c:
-                        if direction == NORTH:
-                            north_con = conns[2]
-                        elif direction == EAST:
-                            east_con = conns[3]
-                        elif direction == SOUTH:
-                            south_con = conns[0]
-                        elif direction == WEST:
-                            west_con = conns[1]
-
-            for direction in CARDINAL:
-                if (neighbor + get_ivec3(direction)) not in cells_on_floor:
-                    if direction == NORTH:
-                        north_con = "wall"
-                    elif direction == EAST:
-                        east_con = "wall"
-                    elif direction == SOUTH:
-                        south_con = "wall"
-                    elif direction == WEST:
-                        west_con = "wall"
-
-            # DOOR CHECK
-            if NORTH in cells[ivec3(*neighbor)].doors:
-                north_con = "open"
-            if SOUTH in cells[ivec3(*neighbor)].doors:
-                south_con = "open"
-            if EAST in cells[ivec3(*neighbor)].doors:
-                east_con = "open"
-            if WEST in cells[ivec3(*neighbor)].doors:
-                west_con = "open"
-
-            new_conns = [north_con, east_con, south_con, west_con]
-
-            # i have definitely found the worst way to do this but I just need it to work for now
-
-            potential_rooms = []
-
-            none_idx = [idx for idx, val in enumerate(new_conns) if val is None]
-            for i0 in CONNECTION_LIST:
-                for i1 in CONNECTION_LIST:
-                    for i2 in CONNECTION_LIST:
-                        for i3 in CONNECTION_LIST:
-                            temp = new_conns
-                            for ni in none_idx:
-                                if ni == 0:
-                                    temp[0] = i0
-                                elif ni == 1:
-                                    temp[1] = i1
-                                elif ni == 2:
-                                    temp[2] = i2
-                                elif ni == 3:
-                                    temp[3] = i3
-
-                            for room_name in ROOM_LIST:
-                                room: Room = Room.find(room_name)
-                                to_face = room.facing
-                                for i in range(4):
-                                    if (
-                                        list(rotate(room.connections, i)) == temp
-                                        and (
-                                            room,
-                                            to_face,
-                                            list(rotate(room.connections, i)),
-                                        )
-                                        not in potential_rooms
-                                    ):
-                                        potential_rooms.append(
-                                            (
-                                                room,
-                                                to_face,
-                                                tuple(rotate(room.connections, i)),
-                                            )
-                                        )
-
-                                    if i > 0:
-                                        to_face = RIGHT[to_face]
-
-            candidates.append((neighbor, len(potential_rooms), potential_rooms))
-
-        min_entropy = min(y for x, y, z in candidates)
-        candidates_with_min_entropy = [
-            (x, y, z) for x, y, z in candidates if y == min_entropy
-        ]
-
-        cell_to_build, _, room_to_build = candidates_with_min_entropy[
-            rng.randint(len(candidates_with_min_entropy))
-        ]
-        room_to_build, room_facing, connections = rng.choose(room_to_build)
-
-        rooms_on_floor.append((cell_to_build, connections))
-        cells_with_rooms.append((cell_to_build, connections))
-        grid.build(editor, room_to_build, palette, cell_to_build, facing=room_facing)
-
-    return cells_with_rooms
-
-
-def build_one_by_one(
-    num_levels: int,
-    cells_to_fill: list,
-    rng: RNG,
-    grid: Grid,
-    editor: Editor,
-    palette: Palette,
-    cells: dict[ivec3, LegacyCell],
-) -> None:
-    if num_levels == 1:
-        cell = cells_to_fill[0]
-        pick = rng.choose(ONEBYONE_LIST)
-        room_to_build: Room = Room.find(pick)
-        grid.build(editor, room_to_build, palette, cell)
+            for cell in cells_on_floor:
+                for direction in CARDINALS:
+                    next = cell + direction
+                    if next in cells_on_floor:
+                        grid.build(editor, interior_wall, palette, cell, direction)
+                        return
     else:
-        cell = [(x, y, z) for x, y, z in cells_to_fill if y == 0][0]
-        lower_pick = rng.choose(ONEBYONE_LOWER_LIST)
-        upper_pick = rng.choose(ONEBYONE_UPPER_LIST)
+        #start with a random cell and a random direction
+        starting_cell = rng.choose(cells_on_floor)
+        possible_directions = []
+        for d in CARDINALS:
+            next = starting_cell + d
+            next = ivec3(next[0], next[1], next[2])
+            if next in cells_on_floor:
+                possible_directions.append(d)
 
-        lower_room: Room = Room.find(lower_pick)
-        upper_room: Room = Room.find(upper_pick)
+        if not possible_directions:
+            return
 
-        grid.build(editor, lower_room, palette, cell)
-        grid.build(editor, upper_room, palette, cell + get_ivec3(UP))
+        starting_direction = rng.choose(possible_directions)
+        grid.build(editor, interior_wall, palette, starting_cell, starting_direction)
 
+        #should we connect this wall parallel or perpendicular?
+        p = rng.randint(50)
+        if p < 50: #parallel
+            left = rotate3D(starting_direction, 3)
+            next = starting_cell + left
+            while ivec3(next[0], next[1], next[2]) in cells_on_floor:
+                grid.build(editor, interior_wall, palette, next, starting_direction)
+                next = next + left
+            right = rotate3D(starting_direction, 1)
+            next = starting_cell + right
+            while ivec3(next[0], next[1], next[2]) in cells_on_floor:
+                grid.build(editor, interior_wall, palette, next, starting_direction)
+                next = next + right
+            return
 
-def furnish(
-    cells_to_fill: list[ivec3],
-    rng: RNG,
-    grid: Grid,
-    editor: Editor,
-    palette: Palette,
-    cells: dict[ivec3, LegacyCell],
-) -> None:
-    number_of_floors = max(y for (x, y, z) in cells_to_fill) + 1
-    cells_with_rooms = []
+        else: #perpendicular
+            possible_perp_dir = []
+            for d in [rotate3D(starting_direction, 3), rotate3D(starting_direction, 1)]:
+                next = starting_cell + d
+                next = ivec3(next[0], next[1], next[2])
+                if next in cells_on_floor:
+                    possible_perp_dir.append(d)
+            
+            perp_dir = rng.choose(possible_perp_dir)
 
-    if len(cells_to_fill) == 1 or len(cells_to_fill) == 2 and number_of_floors == 2:
-        build_one_by_one(
-            number_of_floors, cells_to_fill, rng, grid, editor, palette, cells
-        )
+            next = starting_cell + starting_direction
+            while ivec3(next[0], next[1], next[2]) in cells_on_floor:
+                grid.build(editor, interior_wall, palette, next, perp_dir)
+                next = next + starting_direction                    
+
+            opp = rotate3D(starting_direction, 2)
+            next = starting_cell + opp
+            while ivec3(next[0], next[1], next[2]) in cells_on_floor:
+                grid.build(editor, interior_wall, palette, next, perp_dir)
+                next = next + opp
+    
+def pathfind(start: ivec3, end: ivec3, editor: Editor) -> set:
+    queue = [(start, 0)]
+    visited = set(start)
+    parent = {}
+
+    while queue:
+        current, dist = queue.pop(0)
+
+        if current == end:
+            path = []
+            used = set()
+            while current != start:
+                path.append(current)
+                used.add(current)
+                used.add(start)
+                current = parent[current]
+            path.reverse()
+
+            for b in path:
+                for nbr in get_neighbours(b, editor):
+                    used.add(nbr)
+
+            for nbr in get_neighbours(start, editor):
+                used.add(nbr)
+            return used
+        
+        for nbr in get_neighbours(current, editor):
+            if nbr not in visited:
+                visited.add(nbr)
+                queue.append((nbr, dist + 1))
+                parent[nbr] = current
+
+    return set()
+
+def get_corner_type(coords: ivec3, editor: Editor) -> str:
+    corners = {
+        (False, False, True, True): 'southwest',
+        (True, False, False, True): 'northwest',
+        (True, True, False, False): 'northeast',
+        (False, True, True, False): 'southeast'
+    }
+
+    dir_bool = [False, False, False, False]
+    for i, dir in enumerate(CARDINALS):
+        next = coords + dir
+        if editor.getBlock(next + UP).id != 'minecraft:air':
+            dir_bool[i] = True
+
+    if tuple(dir_bool) in corners:
+        return corners[tuple(dir_bool)]
     else:
-        for level in range(number_of_floors):
-            if number_of_floors == 1:
-                cells_with_rooms = build_start(
-                    cells_with_rooms, cells_to_fill, rng, grid, editor, palette, cells
-                )
-            elif level != number_of_floors - 1:
-                cells_with_rooms = build_staircase(
-                    level,
-                    cells_with_rooms,
-                    cells_to_fill,
-                    rng,
-                    grid,
-                    editor,
-                    palette,
-                    cells,
-                )
+        return 'northwest'
 
-            cells_with_rooms = populate_floor(
-                level,
-                cells_with_rooms,
-                cells_to_fill,
-                rng,
-                grid,
+
+
+def shift_end_for_stairs(end: ivec3, editor: Editor) -> ivec3:
+    corner_type = get_corner_type(end, editor)
+    match corner_type:
+        case 'southwest':
+            end = end + ivec3(4, 0, 0)
+        case 'northwest': 
+            end = end + ivec3(0, 0, 4)
+        case 'northeast':
+            end = end + ivec3(4, 0, 0)
+        case 'southeast':
+            end = end + ivec3(0, 0, -4)
+        case _:
+            return 'Something is wrong with the corner type'
+        
+    return end
+
+def find_end(start: ivec3, stairs: bool, editor: Editor) -> tuple: 
+    #find the farthest point
+    visited = set(start)
+    queue = [(start[0], start[1], start[2], 0)]
+    last_visited = None
+    while queue:
+        headx, heady, headz, steps = queue.pop(0)
+
+        head = (headx, heady, headz)
+        last_visited = (head, steps)
+
+        for nbr in get_neighbours(ivec3(head), editor):
+            if nbr not in visited:
+                visited.add(nbr)
+                queue.append((nbr[0], nbr[1], nbr[2], steps + 1))
+    farthest = last_visited[0]
+    end = ivec3(farthest[0], farthest[1], farthest[2])
+    end_corner_type = get_corner_type(end, editor)
+
+    if stairs:
+        end = shift_end_for_stairs(end, editor)
+
+    return end, end_corner_type, visited
+
+def build_stairs(end: ivec3, corner_type: str, floor_height: int, palette: Palette, editor: Editor) -> set:
+    stairs = set((ivec3(end[0], end[1], end[2])))
+    stairs_nbt: NBTAsset = NBTAsset.find('interior_stairs')
+    free_for_stairs = set((ivec3(end[0], end[1], end[2])))
+    current = end
+    match corner_type:
+        case 'southwest':
+            for i in range(4):
+                current = current + WEST
+                stairs.add(current)
+                editor.placeBlock(current + UP * floor_height, Block(id = 'minecraft:air'))
+
+            build_nbt(
                 editor,
+                stairs_nbt,
                 palette,
-                cells,
+                Transformation( 
+                    offset= end + WEST + ivec3(0, 1, 0),
+                    rotations = 1
+                ),
+                material_params_func=None,
+                build_map=None,
             )
+
+            current = end
+            for i in range(2): #this is messy i am sorry
+                current = current + NORTH
+                free_for_stairs.add(current)
+        case 'northwest': 
+            for i in range(4):
+                current = current + NORTH
+                stairs.add(current)
+                editor.placeBlock(current + UP * floor_height, Block(id = 'minecraft:air'))
+
+            build_nbt(
+                editor,
+                stairs_nbt,
+                palette,
+                Transformation( 
+                    offset= end + NORTH + ivec3(0, 1, 0),
+                    rotations = 2
+                ),
+                material_params_func=None,
+                build_map=None,
+            )
+            current = end    
+            for i in range(2): #this is messy i am sorry
+                current = current + EAST
+                free_for_stairs.add(current)
+        case 'northeast':
+            for i in range(4):
+                current = current + EAST
+                stairs.add(current)
+                editor.placeBlock(current + UP * floor_height, Block(id = 'minecraft:air'))
+
+            build_nbt(
+                editor,
+                stairs_nbt,
+                palette,
+                Transformation( 
+                    offset= end + EAST + ivec3(0, 1, 0),
+                    rotations = 3
+                ),
+                material_params_func=None,
+                build_map=None,
+            )
+
+            current = end    
+            for i in range(2): #this is messy i am sorry
+                current = current + SOUTH
+                free_for_stairs.add(current)
+        case 'southeast':
+            for i in range(4):
+                current = current + SOUTH
+                stairs.add(current)
+                editor.placeBlock(current + UP * floor_height, Block(id = 'minecraft:air'))
+
+            build_nbt(
+                editor,
+                stairs_nbt,
+                palette,
+                Transformation( 
+                    offset= end + SOUTH + ivec3(0, 1, 0),
+                ),
+                material_params_func=None,
+                build_map=None,
+            )
+
+            current = end    
+            for i in range(2): #this is messy i am sorry
+                current = current + WEST
+                free_for_stairs.add(current)
+        case _:
+            return 'Something is wrong with the corner type'
+        
+    return stairs, free_for_stairs
+
+def get_blocks_along_wall(unfilled_blocks: set, stairs_blocks: set, dir: ivec3, editor: Editor) -> set:
+    along_wall = set()
+    for block in unfilled_blocks:
+        next = block + dir
+        if next in stairs_blocks or (editor.getBlock(next + UP).id != 'minecraft:air' and editor.getBlock(block + UP * 4).id == 'minecraft:air'):
+            along_wall.add(block)
+
+    #probably a terrible solution idk but I need some way to group up these coordinates
+    def dfs(start, visited):
+        stack = [start]
+        group = []
+        while stack:
+            coord = stack.pop()
+            if coord not in visited:
+                visited.add(coord)
+                group.append(coord)
+                for neighbour in get_neighbours(coord, editor):
+                    if neighbour in along_wall:
+                        stack.append(neighbour)
+    
+        return group
+        
+    visited = set()
+    groups = []
+    for coord in along_wall:
+        if coord not in visited:
+            group = dfs(coord, visited)
+            groups.append(group)
+
+    return groups
+
+def get_leftmost_block(blocks: set, dir: ivec3) -> ivec3:
+    if dir == NORTH:
+        return min(blocks, key = lambda x: x[0])
+    elif dir == EAST:
+        return min(blocks, key = lambda x: x[2])
+    elif dir == SOUTH:
+        return max(blocks, key = lambda x: x[0])
+    elif dir == WEST:
+        return max(blocks, key = lambda x: x[2])
+
+
+def furnish(unfilled_blocks: set, stairs_blocks: set, path_blocks: set, palette: Palette, editor: Editor, grid: Grid, rng: RNG) -> None:
+
+    furniture_sizes = [1, 2, 3, 4, 5]
+    scores = {5: 5, 4: 4, 3: 3, 2: 2, 1: 1}
+    def get_weight(size: int, exact_fit: bool) -> int:
+        if exact_fit:
+            return scores[size] + 5
+        return scores[size]
+    
+    def plan_furniture(length: int) -> list:
+        if length == 0:
+            return []
+        
+        best_plan = None
+        weights = {}
+
+        for size in furniture_sizes:
+            if size <= length:
+                exact_fit = size == length
+                weight = get_weight(size, exact_fit)
+                weights[size] = weight
+
+        selected_size = rng.choose_weighted(weights)
+        remaining_length = length - selected_size
+        remaining_plan = plan_furniture(remaining_length)
+        best_plan = [selected_size] + remaining_plan
+
+        return best_plan
+    
+    #from all of the unfilled blocks to be furnished, we want to start by filling in the largest space first
+    def furnish_along_wall(unfilled_blocks: set, stairs_blocks: set, editor: Editor) -> set:
+        longest = 0
+        longest_dir = None
+        for dir in CARDINALS:
+            blocks_along_dir_wall = get_blocks_along_wall(unfilled_blocks, stairs_blocks, dir, editor)
+            for group in blocks_along_dir_wall:
+                if len(group) >= longest:
+                    longest = len(group)
+                    longest_dir = dir
+
+        if longest_dir is None:
+            return
+
+        along_wall_groups = get_blocks_along_wall(unfilled_blocks, stairs_blocks, longest_dir, editor)
+        if not blocks_along_dir_wall:
+            return None
+        
+        blocks_along_dir_wall = max(along_wall_groups, key = len)
+
+        #how do we split up the furniture along the wall
+        plan =  plan_furniture(len(blocks_along_dir_wall))
+        
+        #testing for now but I furniture placement NBT goes here
+        leftmost_block_along_wall = get_leftmost_block(blocks_along_dir_wall, longest_dir)
+
+        current = leftmost_block_along_wall
+
+        for subdivision in plan:
+            furniture = rng.choose(list(furniture for furniture in Furniture.all() if furniture.length == subdivision))
+            
+            if legacy_directions.VECTORS[furniture.facing] == longest_dir:
+                build_nbt(
+                    editor,
+                    furniture,
+                    palette,
+                    Transformation(
+                        offset=current + ivec3(0, 1, 0),
+                    ),
+                    material_params_func=None,
+                    build_map=None,
+                )
+
+            if rotate3D(legacy_directions.VECTORS[furniture.facing], 1) == longest_dir:
+                build_nbt(
+                    editor,
+                    furniture,
+                    palette,
+                    Transformation(
+                        offset=current + ivec3(0, 1, 0),
+                        rotations = 1
+                    ),
+                    material_params_func=None,
+                    build_map=None,
+                )
+
+            if rotate3D(legacy_directions.VECTORS[furniture.facing], 3) == longest_dir:
+                build_nbt(
+                    editor,
+                    furniture,
+                    palette,
+                    Transformation(
+                        rotations = 3,
+                        offset=current + ivec3(0, 1,0),
+                    ),
+                    material_params_func=None,
+                    build_map=None,
+                )
+
+            if rotate3D(legacy_directions.VECTORS[furniture.facing], 2) == longest_dir:
+                build_nbt(
+                    editor,
+                    furniture,
+                    palette,
+                    Transformation(
+                        rotations = 2,
+                        offset=current + ivec3(0, 1, 0),
+                    ),
+                    material_params_func=None,
+                    build_map=None,
+                )
+            current = current + subdivision * rotate3D(longest_dir, 1) 
+
+        for block in blocks_along_dir_wall:
+            unfilled_blocks.discard(block)
+            block_infront = block + rotate3D(longest_dir, 2)
+            if block_infront in unfilled_blocks:
+                unfilled_blocks.discard(block_infront)
+
+        return unfilled_blocks
+    
+    while unfilled_blocks is not None:
+        unfilled_blocks = furnish_along_wall(unfilled_blocks, stairs_blocks, editor)
+
+    return
+    
+def furnish_building(cells: list, door_coords: ivec3, palette: Palette, editor: Editor, grid: Grid, rng: RNG):
+    num_floors = max(cells, key = lambda x: x[1]).y + 1
+    floor_height = (grid.origin + grid.grid_to_local(ivec3(0, 1, 0))).y
+    stairs_blocks = set()
+    end_corner_type = None
+
+    for floor in range(num_floors):
+        if floor == 0:
+            start = door_coords
+            filled = set(start)
+        else:
+            stairs_blocks = {item for item in stairs_blocks if not isinstance(item, int)}
+            if end_corner_type == 'northeast':
+                start = max(stairs_blocks, key = lambda x: x[0]) + SOUTH + ivec3(0, floor_height, 0)
+            elif end_corner_type == 'southeast':
+                start = max(stairs_blocks, key = lambda x: x[2]) + WEST + ivec3(0, floor_height, 0)
+            elif end_corner_type == 'southwest':
+                start = min(stairs_blocks, key = lambda x: x[0]) + NORTH + ivec3(0, floor_height, 0)
+            elif end_corner_type == 'northwest':
+                start = min(stairs_blocks, key = lambda x: x[2]) + EAST + ivec3(0, floor_height, 0)
+
+            filled = {ivec3(x, y + floor_height, z) for (x, y, z) in stairs_blocks}
+            filled.add(start)
+            
+        build_interior_walls(cells, floor, palette, editor, grid, rng)
+        if floor == num_floors - 1:
+            has_stairs = False
+            end, end_corner_type, floor_space = find_end(start, has_stairs, editor)
+            path = set(end)
+            filled = filled.union(path)
+        else:
+            has_stairs = True
+            end, end_corner_type, floor_space = find_end(start, has_stairs, editor)
+            path = set(end)
+            stairs_blocks, free_for_stairs = build_stairs(end, end_corner_type, floor_height, palette, editor)
+            filled = filled.union(path)
+            filled = filled.union(stairs_blocks)
+            filled = filled.union(free_for_stairs)
+            filled.add(end)
+
+        to_fill = floor_space.difference(filled)    
+        to_fill = {item for item in to_fill if not isinstance(item, int)}
+        if start in to_fill:
+            to_fill.remove(start)
+
+        furnish(to_fill, stairs_blocks, path, palette, editor, grid, rng)

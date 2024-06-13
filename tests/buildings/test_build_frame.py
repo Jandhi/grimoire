@@ -1,14 +1,15 @@
 # Allows code to be run in root directory
 import sys
 
+
+sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
+
+
 from grimoire.buildings.roofs.build_roof import build_roof
 from grimoire.buildings.roofs.roof_component import RoofComponent
 from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.palette import Palette
 from tests.buildings.random_shape import random_shape
-
-sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
-
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
@@ -17,9 +18,11 @@ from grimoire.core.assets.asset_loader import load_assets
 from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.buildings.walls.build_walls import build_walls
 from grimoire.buildings.walls.wall import Wall
+import grimoire.core.structures.legacy_directions as legacy_directions
 from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.buildings.build_floor import build_floor
-import grimoire.core.structures.legacy_directions as legacy_directions
+from grimoire.buildings.rooms.furnish import furnish_building
+from gdpc.vector_tools import ivec3
 
 SEED = 0x624AAB
 
@@ -61,4 +64,18 @@ build_roof(
     editor,
     [roof for roof in RoofComponent.all() if "japanese" in roof.tags],
     SEED,
+)
+
+far_cell = max(shape, key=lambda vec : vec.x + vec.z * 10)
+grid.plan.cell_map[far_cell].doors.append(legacy_directions.Z_PLUS)
+door_coords = grid.get_door_coords(ivec3(0, 0, 1)) + grid.grid_to_world(far_cell)
+
+
+furnish_building(
+    plan.shape,
+    door_coords,
+    palette, 
+    editor,
+    grid,
+    rng = RNG(SEED, 'furnish')
 )

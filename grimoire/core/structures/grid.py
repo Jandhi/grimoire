@@ -141,3 +141,15 @@ class Grid:
         for x in range(self.dimensions.x):
             for z in range(self.dimensions.z):
                 yield ivec2(x, z) + ivec2(dx, dz)
+
+    def get_door_coords(self, dir: ivec3) -> ivec3:
+        if dir == NORTH:
+            return ivec3(self.dimensions.x // 2, 0, 0)
+        elif dir == SOUTH:
+            return ivec3(0, 0, self.dimensions.z // 2)
+        elif dir == EAST:
+            return ivec3(self.dimensions.x // 2, 0, self.dimensions.z)
+        elif dir == WEST:
+            return ivec3(self.dimensions.x, 0, self.dimensions.z // 2)
+
+

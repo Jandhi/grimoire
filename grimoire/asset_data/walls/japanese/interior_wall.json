@@ -1,0 +1,11 @@
+{
+    "name" : "interior_wall",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/japanese/interior_wall.nbt",
+    "origin" : [0, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "japanese_dark_blackstone",
+    "positions" : ["lower"],
+    "tags" : ["not_roof", "japanese"],
+    "has_door" : true
+}

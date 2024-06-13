@@ -1,0 +1,8 @@
+{
+    "name" : "2x1_test",
+    "filepath" : "grimoire/asset_data/rooms/furniture/2x1_test.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "facing" : "x_plus",
+    "length" : 2
+}
