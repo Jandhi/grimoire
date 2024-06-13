@@ -3,7 +3,7 @@ from typing import Sequence
 from gdpc.block import Block
 from gdpc.editor import Editor
 from gdpc.lookup import POLISHED_BLACKSTONE_BRICKS
-from gdpc.vector_tools import neighbors2D
+from gdpc.vector_tools import DOWN_3D, neighbors2D
 from glm import ivec2, ivec3
 
 from grimoire.core.maps import DevelopmentType, Map
@@ -11,6 +11,7 @@ from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.shapes import Shape2D
 
 POLISHED_BLACKSTONE_BRICKS_BLOCKS = [Block(b) for b in POLISHED_BLACKSTONE_BRICKS]
+DEFAULT_FILL = Block("minecraft:gold_block")  # POLISHED_BLACKSTONE_BRICKS_BLOCKS
 
 
 def _pave_area(
@@ -34,7 +35,7 @@ def _pave_area(
         None
     """
     for position in area:
-        position3D: ivec3 = city_map.make_3d(position)
+        position3D: ivec3 = city_map.make_3d(position) + DOWN_3D
         editor.placeBlock(position3D, fill_blocks)
     return
 
@@ -71,7 +72,7 @@ def grass_patch_area(
         None
     """
 
-    SOIL: list[Block] = [Block(b) for b in {"minecraft:grass"}]
+    SOIL: list[Block] = [Block(b) for b in {"minecraft:green_wool"}]
 
     _pave_area(editor, area, edges, city_map, _rng, SOIL)
     # TODO: bonemeal(position3D)

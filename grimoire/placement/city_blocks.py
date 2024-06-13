@@ -1,4 +1,5 @@
 import itertools
+from enum import Enum, auto
 from logging import error
 from typing import Any, Generator, Iterable
 
@@ -14,6 +15,7 @@ from gdpc.vector_tools import (
 )
 
 from grimoire.core.styling.palette import BuildStyle
+from grimoire.core.utils.misc import to_list_or_none
 from grimoire.placement.nooks import (
     ExposureType,
     Nook,
@@ -80,7 +82,8 @@ def bubble_out(
     bubbles: list[ivec2], build_map: Map
 ) -> tuple[list[set[ivec2]], list[list[int | None]], dict[int, dict[int, int]]]:
     block_index_map: list[list[int | None]] = [
-        [None for _ in range(len(build_map.super_districts[0]))] for _ in range(len(build_map.super_districts))
+        [None for _ in range(len(build_map.super_districts[0]))]
+        for _ in range(len(build_map.super_districts))
     ]
     blocks: list[set[ivec2]] = [set() for _ in bubbles]
     num_blocks = len(blocks)
@@ -262,11 +265,12 @@ def add_city_blocks(
         inners.append(inner)
         outers.append(outer)
 
-
-
     # Has to be done after all inners are found
     for block, inner, outer in zip(blocks, inners, outers):
+        print("New city block...")
+        print("\tPlacing buildings...")
         place_buildings(editor, inner, city_map, block_rng, style, is_debug)
+        print("\tDecorating...")
         decorate_city_block(editor, city_map, block, inner, outer, block_rng, style)
 
     return (blocks, inners, outers)
@@ -300,8 +304,10 @@ def decorate_city_block(
     for scan_position in scan_grid:
         # if an empty space is found
         if city_map.buildings[scan_position.x][scan_position.y] is None:
+            print(f"\t\tFound Nook candidate at {scan_position}...")
             nook_edge, nook_shape = discover_nook(scan_position, outer_shape, city_map)
             if nook_shape.begin == nook_shape.end:
+                print(f"\t\t...but it could not be expanded (consists only of edge).")
                 continue
             surrounding_developments: dict[ivec2, set[DevelopmentType]] = (
                 map_developments_at_edge(nook_edge, city_map, bounds)
@@ -322,10 +328,18 @@ def decorate_city_block(
                 )
             )
             nook.manifest(editor, nook_shape, nook_edge, city_map, block_rng)
+            print(
+                f"\t\tIt became a Nook ({nook.name}) with the following properties:\n"
+                f"\t\t\t- District Type: {[t.name for t in to_list_or_none(nook.district_types)] if nook.district_types else 'Any'} ({DistrictType.URBAN.name})\n"
+                f"\t\t\t- Exposure Type: {[t.name for t in to_list_or_none(nook.exposure_types)] if nook.exposure_types else 'Any'} ({exposure.name})\n"
+                f"\t\t\t- Style: {[t.name for t in to_list_or_none(nook.styles)] if nook.styles else 'Any'} ({style.name})\n"
+                f"\t\t\t- Area {nook.min_area}-{nook.max_area} ({len(nook_shape)})"
+            )
 
 
 def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
     """Find the extent of a potential Nook in a city block, starting at a free space."""
+
     development_map: list[list[DevelopmentType | None]] = city_map.buildings
 
     if development_map[start.x][start.y] is not None:
@@ -333,57 +347,41 @@ def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
             f"Start ({start}) must be unoccupied in the city map (is {development_map[start.x][start.y]})"
         )
 
-    edge: set[ivec2] = set()
-    shape = Shape2D()
+    nook_edge: set[ivec2] = set()
+    nook_area = Shape2D()
 
-    # move east, populating map and shape with Nook until something else is reached
+    stack: list[ivec2] = [start]
+    visited: set[ivec2] = set()
 
-    for _ in range(LOOP_LIMIT):
-        if len(development_map) <= start.x + 1 or development_map[start.x + 1][start.y]:
-            break  # next step would be out-of-bounds
-        start += EAST_2D
-    else:
-        raise RuntimeError(f"Ran over edge sequence limit of {LOOP_LIMIT}!")
+    # trace the nook, returning its edge and non-edge area
+    while stack:
+        position = stack.pop()
 
-    next_position = current_position = start
+        if position in visited:
+            continue
 
-    # trace the edge
-    for _ in range(LOOP_LIMIT):
-        # check all neighbors
+        visited.add(position)
+
+        if development_map[position.x][position.y]:
+            continue
+
         for neighbor in neighbors2D(
-            current_position, city_block_shape.to_boundry_rect(), diagonal=True
+            position, city_block_shape.to_boundry_rect(), diagonal=True
         ):
-            neighbor_development: DevelopmentType | None = development_map[neighbor.x][
-                neighbor.y
-            ]
 
-            # is adjacent to something else, and not yet documented
-            if neighbor_development:
-                edge.add(current_position)
-                continue
+            # has a developed neighbour
+            if development_map[neighbor.x][neighbor.y]:
+                visited.add(neighbor)
+                nook_edge.add(position)
 
-            # pick the next position to check, if it's free and undocumented
-            if next_position == current_position and neighbor not in edge | shape:
-                next_position = neighbor
+            if neighbor not in visited:
+                stack.append(neighbor)
 
-        # could not find a candidate for next
-        if next_position == current_position:
-            raise NotImplementedError(
-                f"Ah, I need a smarter way of dealing with dead ends! Or maybe we've finished? (Crashed at {current_position})"
-            )
+        # did not have a developed neighbour
+        if position not in nook_edge:
+            nook_area.add(position)
 
-        # this has no developed neighbours
-        if current_position not in edge:
-            shape.add(current_position)
-
-        # looped around to the start
-        if current_position == start:
-            break
-
-    else:
-        raise RuntimeError(f"Ran over edge sequence limit of {LOOP_LIMIT}!")
-
-    return edge, shape
+    return nook_edge, nook_area
 
 
 def map_developments_at_edge(
@@ -404,7 +402,7 @@ def edge_to_pattern(
     start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
 ) -> list[tuple[set[DevelopmentType], int]]:
 
-    if edge == dict():
+    if not edge:
         return []
 
     pattern: list[tuple[set[DevelopmentType], int]] = []
@@ -414,7 +412,13 @@ def edge_to_pattern(
             break
         start += EAST_2D
 
-    for current in determine_edge_sequence(start, bounds, edge, limit=len(edge)):
+    for current in determine_edge_sequence(start, bounds, edge):
+
+        if current not in edge:
+            error(
+                f"Current position {current} is not a valid edge value! It is being skipped."
+            )
+            continue
 
         if not pattern or edge[current] != pattern[-1][0]:  # new pattern segment
             pattern.append((edge[current], 1))
@@ -425,33 +429,20 @@ def edge_to_pattern(
 
 
 def determine_edge_sequence(
-    start: ivec2, bounds: Rect, edge: Iterable[ivec2], limit: int = LOOP_LIMIT
+    start: ivec2, bounds: Rect, edge: Iterable[ivec2]
 ) -> Generator[ivec2, Any, None]:
-
-    if limit == 0:
-        return
-
-    current: ivec2 = start
+    current_position: ivec2 = start
     visited: set[ivec2] = set()
 
-    for _ in range(limit):
-        # find next point
-        for neighbor in neighbors2D(current, bounds, diagonal=True):
+    stack = [start]
+
+    while stack:
+        current_position = stack.pop()
+        yield current_position
+        visited.add(current_position)
+
+        for neighbor in neighbors2D(current_position, bounds):
             if neighbor in edge and neighbor not in visited:
-                current = neighbor
-                visited.add(current)
-                break
-        else:
-            error(f"Edge has a dead end at {current}!")
+                stack.append(neighbor)
 
-            # FIXME
-            # raise NotImplementedError(f"Edge has a dead end at {current}!")
-
-        yield current
-
-        # looped around to the start
-        if current == start:
-            break
-
-    else:
-        raise RuntimeError(f"Ran over edge sequence limit of {limit}!")
+    return

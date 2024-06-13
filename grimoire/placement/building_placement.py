@@ -1,9 +1,5 @@
 import contextlib
 
-from ..buildings.stilts import build_stilt_frame
-from ..core.structures.legacy_directions import (
-    LegacyDirection,
-)
 from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
 
@@ -17,6 +13,7 @@ from ..buildings.clear_interiors import clear_interiors
 from ..buildings.roofs.build_roof import build_roof
 from ..buildings.roofs.roof_component import RoofComponent
 from ..buildings.rooms.furnish import furnish
+from ..buildings.stilts import build_stilt_frame
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
 from ..core.maps import DevelopmentType, Map
@@ -31,12 +28,6 @@ from ..core.structures.legacy_directions import (
     LegacyDirection,
     get_ivec2,
 )
-
-from gdpc import Block, Editor
-from gdpc.vector_tools import ivec2, ivec3, vec2
-from grimoire.core.styling.legacy_palette import fix_block_name
-
-from ..core.maps import Map
 from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.material import MaterialParameters
 from ..core.styling.palette import MaterialRole, Palette
@@ -201,7 +192,7 @@ def can_place_shape(
         # urban check
         if urban_only and (
             not build_map.districts[point.x][point.y]
-            or not build_map.districts[point.x][point.y].type == DistrictType.URBAN
+            or build_map.districts[point.x][point.y].type != DistrictType.URBAN
         ):
             return False
 
@@ -266,7 +257,7 @@ def place(
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
     for point in shape.get_points_2d(grid):
-        build_map.buildings[point.x][point.y] = plan
+        build_map.buildings[point.x][point.y] = DevelopmentType.BUILDING
 
     # Basement and foundation
     if stilts:
@@ -324,14 +315,20 @@ def place(
     build_roof(
         plan,
         editor,
-        [component for component in RoofComponent.all() if style.name.lower() in component.tags],
+        [
+            component
+            for component in RoofComponent.all()
+            if style.name.lower() in component.tags
+        ],
         rng.next(),
     )
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = list(filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy()))
+    walls = list(
+        filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy())
+    )
 
     build_walls(plan, editor, walls, rng)
 

@@ -86,10 +86,10 @@ def get_best_merge_candidate(
             best = option
             best_score = score
 
-    output: str = f"\tConsidering options for {district}: "
-    for candidate, score in candidate_scores.items():
-        output += f"({candidate}: {score}) "
-    print(output)
+    # output: str = f"\tConsidering options for {district}: "
+    # for candidate, score in candidate_scores.items():
+    #     output += f"({candidate}: {score}) "
+    # print(output)
 
     return best
 
@@ -103,7 +103,7 @@ def merge(
     districts: list[District],
     identities: dict[District, District],
 ) -> None:
-    print(f"\tMerging {child} into {parent}")
+    # print(f"\tMerging {child} into {parent}")
 
     if isinstance(child, SuperDistrict):
         for district in child.districts:

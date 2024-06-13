@@ -2,24 +2,25 @@
 import sys
 import time
 
-from gdpc.vector_tools import rotate3D, addY, dropY
+from gdpc.vector_tools import addY, dropY, rotate3D
 
 from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.legacy_directions import VECTORS
-from grimoire.core.styling.palette import Palette, BuildStyle
+from grimoire.core.styling.palette import BuildStyle, Palette
 from grimoire.paths.build_highway import build_highway
 from grimoire.paths.route_highway import fill_out_highway, route_highway
 from grimoire.paths.signposts import build_signpost
 
-sys.path[0] = sys.path[0].removesuffix("\\tests\\placement")
+sys.path[0] = sys.path[0].removesuffix("/tests/placement")
+print(f"PATH: {sys.path[0]}")
 
 # Actual file
-from gdpc import Box, Editor, Block
+from gdpc import Block, Box, Editor
 from gdpc.lookup import GRANULARS
 from glm import ivec2
 
 from grimoire.core.assets.asset_loader import load_assets
-from grimoire.core.maps import Map, get_build_map, DevelopmentType
+from grimoire.core.maps import DevelopmentType, Map, get_build_map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
 from grimoire.districts.district import District, DistrictType, SuperDistrict
@@ -49,12 +50,14 @@ from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
 
 SEED = 0x4473
-DO_TERRAFORMING = True  # Set this to true for the final iteration
+DO_TERRAFORMING = False  # Set this to true for the final iteration
 LOG_TREES = True
+DO_WALL = False
+DO_RURAL = False
 
 SLEEP_DELAY = 1
 
-editor = Editor(buffering=True, caching=True)
+editor = Editor(buffering=False, caching=True)
 load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
@@ -194,7 +197,9 @@ urban_road: PaintPalette = (
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-(blocks, inners, outers) = add_city_blocks(editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False)
+(blocks, inners, outers) = add_city_blocks(
+    editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False
+)
 
 city_roads = set()
 
@@ -205,47 +210,48 @@ for outer in outers:
 
 # uncomment one of these to story one of the three wall types
 
-for wall_points in wall_points_list:
-    gates = build_wall_standard_with_inner(
-        wall_points,
-        wall_dict,
-        inner_points,
-        editor,
-        world_slice,
-        main_map.water,
-        rng,
-        palette,
-    )
+if DO_WALL:
+    wall_points, wall_dict = get_wall_points(inner_points, world_slice)
+    wall_points_list = order_wall_points(wall_points, wall_dict)
 
-    for gate in gates:
-        path_origin = gate.location + rotate3D(VECTORS[gate.direction] * -3, 1)
+    for wall_points in wall_points_list:
+        gates = build_wall_standard_with_inner(
+            wall_points,
+            wall_dict,
+            inner_points,
+            editor,
+            world_slice,
+            main_map.water,
+            rng,
+            palette,
+        )
 
-        size = main_map.world.rect.size
+        for gate in gates:
+            path_origin = gate.location + rotate3D(VECTORS[gate.direction] * -3, 1)
 
-        path_end : ivec2 = None
-        if gate.direction == legacy_directions.SOUTH:
-            path_end = ivec2(gate.location.x, 0)
-        if gate.direction == legacy_directions.NORTH:
-            path_end = ivec2(gate.location.x, size.y - 1)
-        if gate.direction == legacy_directions.WEST:
-            path_end = ivec2(size.x - 1, gate.location.z)
-        if gate.direction == legacy_directions.EAST:
-            path_end = ivec2(0, gate.location.z)
+            size = main_map.world.rect.size
 
-        def round_to_four(vec: ivec2) -> ivec2:
-            return ivec2(
-                vec.x - vec.x % 4,
-                vec.y - vec.y % 4
-            )
+            path_end: ivec2 = None
+            if gate.direction == legacy_directions.SOUTH:
+                path_end = ivec2(gate.location.x, 0)
+            if gate.direction == legacy_directions.NORTH:
+                path_end = ivec2(gate.location.x, size.y - 1)
+            if gate.direction == legacy_directions.WEST:
+                path_end = ivec2(size.x - 1, gate.location.z)
+            if gate.direction == legacy_directions.EAST:
+                path_end = ivec2(0, gate.location.z)
 
-        point_a = addY(round_to_four(dropY(path_origin)), gate.location.y)
-        point_b = main_map.make_3d(round_to_four(path_end))
+            def round_to_four(vec: ivec2) -> ivec2:
+                return ivec2(vec.x - vec.x % 4, vec.y - vec.y % 4)
 
-        highway = route_highway(point_a, point_b, main_map, editor, is_debug=True)
-        if highway:
-            highway = fill_out_highway(highway)
-            build_highway(highway, editor, world_slice, main_map)
-            build_signpost(editor, highway, main_map, rng)
+            point_a = addY(round_to_four(dropY(path_origin)), gate.location.y)
+            point_b = main_map.make_3d(round_to_four(path_end))
+
+            highway = route_highway(point_a, point_b, main_map, editor, is_debug=True)
+            if highway:
+                highway = fill_out_highway(highway)
+                build_highway(highway, editor, world_slice, main_map)
+                build_signpost(editor, highway, main_map, rng)
 
 
 replace_ground_smooth(
@@ -261,75 +267,78 @@ replace_ground_smooth(
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 
-ignore_blocks = GRANULARS | {
-    "minecraft:stone",
-    "minecraft:copper_ore",
-}
+if DO_RURAL:
+    ignore_blocks = GRANULARS | {
+        "minecraft:stone",
+        "minecraft:copper_ore",
+    }
 
-farmland: PaintPalette = PaintPalette.find("farmland")
-forests = Forest.all()
-crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
-rural_road: PaintPalette = PaintPalette.find("rural_road")
+    farmland: PaintPalette = PaintPalette.find("farmland")
+    forests = Forest.all()
+    crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
+    rural_road: PaintPalette = PaintPalette.find("rural_road")
 
-options = forests + crops
+    options = forests + crops
 
-for super_district in super_districts:
-    if super_district == DistrictType.RURAL:
-        if mountainous and not is_snowy or is_desert:
-            choice_list = rng.choose([[None], [None], [None], [None]])
-        elif is_snowy and not mountainous:
-            choice_list = rng.choose([forests, [None], [None], [None]])
-        else:
-            choice_list = rng.choose([crops, forests, [None], [None]])
-        choice = rng.choose(choice_list)
+    for super_district in super_districts:
+        if super_district == DistrictType.RURAL:
+            if mountainous and not is_snowy or is_desert:
+                choice_list = rng.choose([[None], [None], [None], [None]])
+            elif is_snowy and not mountainous:
+                choice_list = rng.choose([forests, [None], [None], [None]])
+            else:
+                choice_list = rng.choose([crops, forests, [None], [None]])
+            choice = rng.choose(choice_list)
 
-        outer_district_points, inner_district_points = find_outer_and_inner_points(
-            super_district.points_2d, 4
-        )
-        if isinstance(choice, Forest):  # forest
-            plant_forest(
-                list(inner_district_points),
-                choice,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-                ignore_blocks,
+            outer_district_points, inner_district_points = find_outer_and_inner_points(
+                super_district.points_2d, 4
             )
-        elif isinstance(choice, PaintPalette):  # crops
-            replace_ground(
-                list(inner_district_points),
-                farmland.palette,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-                0,
-                ignore_blocks,
-            )
-            replace_ground(
-                list(inner_district_points),
-                choice.palette,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-                1,
-                ignore_blocks,
-            )
-            replace_ground(
-                list(outer_district_points),
-                rural_road.palette,
-                rng,
-                main_map.water,
-                build_map,
-                editor,
-                world_slice,
-            )
-        else:
-            continue
+            if isinstance(choice, Forest):  # forest
+                plant_forest(
+                    list(inner_district_points),
+                    choice,
+                    rng,
+                    main_map.water,
+                    build_map,
+                    editor,
+                    world_slice,
+                    ignore_blocks,
+                )
+            elif isinstance(choice, PaintPalette):  # crops
+                replace_ground(
+                    list(inner_district_points),
+                    farmland.palette,
+                    rng,
+                    main_map.water,
+                    build_map,
+                    editor,
+                    world_slice,
+                    0,
+                    ignore_blocks,
+                )
+                replace_ground(
+                    list(inner_district_points),
+                    choice.palette,
+                    rng,
+                    main_map.water,
+                    build_map,
+                    editor,
+                    world_slice,
+                    1,
+                    ignore_blocks,
+                )
+                replace_ground(
+                    list(outer_district_points),
+                    rural_road.palette,
+                    rng,
+                    main_map.water,
+                    build_map,
+                    editor,
+                    world_slice,
+                )
+            else:
+                continue
 
-        time.sleep(5)  # to try to reduce http traffic, we'll do a little sleepy time
+            time.sleep(
+                5
+            )  # to try to reduce http traffic, we'll do a little sleepy time
