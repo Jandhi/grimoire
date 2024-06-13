@@ -108,9 +108,11 @@ class AssetLinker(Module):
             t1 = field_type.__args__[0]
             return self._get_linked_field(parent, value, field_name, t1)
 
-        # If the type is an enum, find the right field in that enum
-        if Enum in field_type.__mro__ and isinstance(value, str):
-            return field_type[value.upper()]
+
+        if isinstance(field_type, type):
+            # If the type is an enum, find the right field in that enum
+            if Enum in field_type.__mro__ and isinstance(value, str):
+                return field_type[value.upper()]
 
         # IF the type is an ivec2, construct it
         if self._type_eq(field_type, "ivec2") and isinstance(value, list):

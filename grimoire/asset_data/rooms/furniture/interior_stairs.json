@@ -1,0 +1,7 @@
+{
+    "name" : "interior_stairs",
+    "filepath" : "grimoire/asset_data/rooms/furniture/interior_stairs.nbt",
+    "type" : "nbtasset",
+    "origin" : [0, 0, 0],
+    "facing" : "x_plus"
+}

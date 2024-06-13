@@ -1,8 +1,8 @@
 {
     "name" : "3x1_test",
     "filepath" : "grimoire/asset_data/rooms/furniture/3x1_test.nbt",
-    "type" : "room",
+    "type" : "furniture",
     "origin" : [0, 0, 0],
-    "do_not_place" : "glass",
-    "facing" : "x_plus"
+    "facing" : "x_plus",
+    "length" : 3
 }
