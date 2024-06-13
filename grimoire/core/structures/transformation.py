@@ -1,53 +1,54 @@
-from .block import Block
+from gdpc.block import Block
 from .legacy_directions import (
-    x_plus,
-    x_minus,
-    y_plus,
-    y_minus,
-    z_plus,
-    z_minus,
+    X_PLUS,
+    X_MINUS,
+    Y_PLUS,
+    Y_MINUS,
+    Z_PLUS,
+    Z_MINUS,
     from_text,
     to_text,
-    directions,
+    RIGHT,
+    DIRECTIONS,
 )
 from .structure import Structure
 from .nbt.nbt_asset import NBTAsset
-from gdpc.vector_tools import ivec3
+from gdpc.vector_tools import ivec3, rotate3D
 
 # region Transformation dictionaries
 x_mirror = {
-    x_plus: x_minus,
-    x_minus: x_plus,
-    y_plus: y_plus,
-    y_minus: y_minus,
-    z_plus: z_plus,
-    z_minus: z_minus,
+    X_PLUS: X_MINUS,
+    X_MINUS: X_PLUS,
+    Y_PLUS: Y_PLUS,
+    Y_MINUS: Y_MINUS,
+    Z_PLUS: Z_PLUS,
+    Z_MINUS: Z_MINUS,
 }
 y_mirror = {
-    x_plus: x_plus,
-    x_minus: x_minus,
-    y_plus: y_minus,
-    y_minus: y_plus,
-    z_plus: z_plus,
-    z_minus: z_minus,
+    X_PLUS: X_PLUS,
+    X_MINUS: X_MINUS,
+    Y_PLUS: Y_MINUS,
+    Y_MINUS: Y_PLUS,
+    Z_PLUS: Z_PLUS,
+    Z_MINUS: Z_MINUS,
 }
 z_mirror = {
-    x_plus: x_plus,
-    x_minus: x_minus,
-    y_plus: y_plus,
-    y_minus: y_minus,
-    z_plus: z_minus,
-    z_minus: z_plus,
+    X_PLUS: X_PLUS,
+    X_MINUS: X_MINUS,
+    Y_PLUS: Y_PLUS,
+    Y_MINUS: Y_MINUS,
+    Z_PLUS: Z_MINUS,
+    Z_MINUS: Z_PLUS,
 }
 mirror_dicts = (x_mirror, y_mirror, z_mirror)
 
 diagonal_mirror = {
-    x_plus: z_plus,
-    x_minus: z_minus,
-    y_plus: y_plus,
-    y_minus: y_minus,
-    z_plus: x_plus,
-    z_minus: x_minus,
+    X_PLUS: Z_PLUS,
+    X_MINUS: Z_MINUS,
+    Y_PLUS: Y_PLUS,
+    Y_MINUS: Y_MINUS,
+    Z_PLUS: X_PLUS,
+    Z_MINUS: X_MINUS,
     "x": "z",
     "z": "x",
 }
@@ -60,12 +61,14 @@ class Transformation:
     def __init__(
         self,
         offset: ivec3 = None,
+        rotations: int = 0,
         mirror: tuple[bool, bool, bool] = None,
         diagonal_mirror: bool = False,
     ) -> None:
         self.offset = offset or ivec3(0, 0, 0)
         self.mirror = mirror or (False, False, False)
         self.diagonal_mirror = diagonal_mirror
+        self.rotations = rotations
 
     # Expects text to be in targets
     def apply_to_text(self, text: str) -> str:
@@ -79,61 +82,56 @@ class Transformation:
         if self.diagonal_mirror:
             direction = diagonal_mirror[direction]
 
+        for i in range(self.rotations):
+            direction = RIGHT[direction]
+
         return to_text(direction)
 
     def apply_to_palette(self, palette: list[Block]) -> list[Block]:
         return [self.apply_to_block(block) for block in palette]
 
     def apply_to_block(self, block: Block) -> Block:
-        name = block.name
+        name = block.id
         properties = {}
 
-        for pname, pvalue in block.properties.items():
-            direction_names = [to_text(direction) for direction in directions]
+        for prop_name, prop_value in block.states.items():
+            direction_names = [to_text(direction) for direction in DIRECTIONS]
 
-            if pname in direction_names:
-                properties[self.apply_to_text(pname)] = pvalue
-            elif pvalue in direction_names:
-                properties[pname] = self.apply_to_text(pvalue)
+            if prop_name in direction_names:
+                properties[self.apply_to_text(prop_name)] = prop_value
+            elif prop_value in direction_names:
+                properties[prop_name] = self.apply_to_text(prop_value)
             # For axes
-            elif pvalue in ("x", "z") and self.diagonal_mirror:
-                properties[pname] = {"x": "z", "z": "x"}[pvalue]
+            elif prop_value in ("x", "z") and (
+                self.diagonal_mirror or self.rotations % 2 == 1
+            ):
+                properties[prop_name] = {"x": "z", "z": "x"}[prop_value]
             # For right and left
-            elif pvalue in ("right", "left") and self.mirror[2]:
-                properties[pname] = {"right": "left", "left": "right"}[pvalue]
+            elif prop_value in ("right", "left") and self.mirror[2]:
+                properties[prop_name] = {"right": "left", "left": "right"}[prop_value]
             # Everything else
             else:
-                properties[pname] = pvalue
+                properties[prop_name] = prop_value
 
-        return Block(name, properties)
+        return Block(id=name, states=properties)
 
     def apply_to_point(
         self,
         point: ivec3,
-        structure: Structure,
         asset: NBTAsset,
     ) -> ivec3:
-        point = ivec3(*point)  # copy point
 
-        # mirroring
-        # for now we will not mirror the origin
+        point -= asset.origin
+
         if self.mirror[0]:  # x mirror
-            point.x = -1 * point.x
+            point = ivec3(-1 * point.x, point.y, point.z)
         if self.mirror[2]:  # z mirror
-            point.z = -1 * point.z
+            point = ivec3(point.x, point.y, -1 * point.z)
 
-        # rotation(ish)
         if self.diagonal_mirror:
             point = ivec3(point.z, point.y, point.x)
 
-        # Shift according to origin
-        origin = self.apply_to_origin(asset.origin)
-        point -= origin
-
-        # translation
-        point += self.offset
-
-        return point
+        return rotate3D(point, self.rotations) + self.offset
 
     def apply_to_origin(self, point: ivec3) -> ivec3:
         origin = ivec3(*point)

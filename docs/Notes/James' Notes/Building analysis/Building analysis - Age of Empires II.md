@@ -1,0 +1,96 @@
+- [ ] Civilian
+	- [ ] Economic
+		- [ ] Town Center
+		- [ ] Dock
+		- [ ] Fish trap
+		- [ ] Mill
+		- [ ] Farm
+		- [ ] Market
+		- [ ] Lumber Camp
+		- [ ] Mining camp
+		- [ ] Feitoria
+		- [ ] Folwark
+		- [ ] Caravanserai
+		- [ ] Mule cart
+	- [ ] Research
+		- [ ] Blacksmith
+		- [ ] University
+	- [ ] Religious
+		- [ ] Fortified church
+		- [ ] Monastery
+	- [ ] Misc
+		- [ ] House
+		- [ ] Wonder
+- [ ] Military
+	- [ ] Production
+		- [ ] Barracks
+		- [ ] Archery range
+		- [ ] Stable
+		- [ ] Siege weapon
+		- [ ] Dock
+	- [ ] Fortified
+		- [ ] Castle
+		- [ ] Harbor
+		- [ ] Krepost
+		- [ ] Donjon
+	- [ ] Tower
+		- [ ] Town center
+		- [ ] Fortified Church
+		- [ ] Outpost
+		- [ ] Watch Tower
+		- [ ] Guard Tower
+		- [ ] Keep
+		- [ ] Bombard Tower
+	- [ ] Wall / Gate
+		- [ ] Palisade
+		- [ ] Stone
+		- [ ] Fortified
+- [ ] Scenario
+	- [ ] Bridge
+	- [ ] Cathedral
+	- [ ] Dome of the Rock
+	- [ ] Great Pyramid
+	- [ ] Mosque
+	- [ ] Pavillion
+	- [ ] Pyramid
+	- [ ] The Accursed Tower
+	- [ ] The Tower of Flies
+	- [ ] Trade Workshop
+	- [ ] Yurt
+	- [ ] Monument
+	- [ ] Sea Gate
+	- [ ] Sea Tower
+	- [ ] Sea wall
+	- [ ] Amphitheatre
+	- [ ] Aqueduct
+	- [ ] Arch of Constantine
+	- [ ] City Wall
+	- [ ] Colosseum
+	- [ ] Fire Tower
+	- [ ] Fortified Palisade Wall
+	- [ ] Fortress
+	- [ ] Poenari Castle
+	- [ ] Quimper Cathedral
+	- [ ] Temple of Heaven
+	- [ ] Wooden bridge
+	- [ ] Barricade
+	- [ ] Fence
+	- [ ] Fortified Tower
+	- [ ] Granary
+	- [ ] Hut
+	- [ ] Palace
+	- [ ] Storage
+	- [ ] Tent
+	- [ ] Army Tent
+	- [ ] Gol Gumbaz
+	- [ ] Sanchi Stupa
+	- [ ] Aachen Cathedral
+	- [ ] Chain
+	- [ ] City Gate
+	- [ ] Dormition Cathedral
+	- [ ] Rock church
+	- [ ] Sankore Madrasah
+	- [ ] Shrine
+	- [ ] Tower of London
+	- [ ] Pagan shrine
+	- [ ] Minaret of Jam

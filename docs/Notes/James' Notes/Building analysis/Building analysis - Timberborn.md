@@ -1,0 +1,97 @@
+- [ ] Decoration
+	- [ ] Bench
+	- [ ] Shrub
+	- [ ] Roof
+	- [ ] Scarecrow
+	- [ ] Statue
+	- [ ] Fence
+		- [ ] Log
+		- [ ] Plank
+		- [ ] Metal
+	- [ ] Bell
+- [ ] District management
+	- [ ] ...
+- [ ] Food
+	- [ ] Gatherer flag
+	- [ ] Farmhouse
+		- [ ] Efficient
+		- [ ] Aquatic
+	- [ ] Grill
+	- [ ] Gristmill
+	- [ ] Bakery
+	- [ ] Beehive
+	- [ ] Fermenter
+	- [ ] Oil press
+	- [ ] Hydroponic garden
+	- [ ] Food factory
+	- [ ] Coffee Brewery
+- [ ] Housing
+- [ ] Landscaping
+	- [ ] Dam
+	- [ ] Levee
+	- [ ] Floodgate
+	- [ ] Contamination barrier
+	- [ ] Irrigation barrier
+	- [ ] Explosives factory
+	- [ ] Dirt excavator
+	- [ ] Terrain block
+- [ ] Metal
+	- [ ] Scavenger flag
+	- [ ] Smelter
+	- [ ] Mine
+- [ ] Monuments
+- [ ] Paths and structures
+	- [ ] Path
+	- [ ] District center
+	- [ ] District gate
+	- [ ] Stairs
+	- [ ] Platforms
+	- [ ] Suspension bridges
+- [ ] Power
+	- [ ] Treadmill
+	- [ ] Water wheel
+	- [ ] Windmill
+	- [ ] Engine
+- [ ] Science
+	- [ ] Inventor
+	- [ ] Observatory
+	- [ ] Numbercruncher
+	- [ ] Refinery
+	- [ ] Bot part factory
+	- [ ] Bot assembler
+	- [ ] Charging station
+	- [ ] Control tower
+- [ ] Storage
+	- [ ] Pile
+	- [ ] Underground pile
+	- [ ] Tank
+	- [ ] Warehouse
+- [ ] Water
+	- [ ] Water dump
+	- [ ] Stream gauge
+	- [ ] Badwater pump
+	- [ ] Centrifuge
+	- [ ] Badwater dome
+	- [ ] Badwater discharge
+	- [ ] Badwater rig
+	- [ ] Water pump
+- [ ] Well-Being
+	- [ ] Campfire
+	- [ ] Rooftop terrace
+	- [ ] Teeth Grindstone
+	- [ ] Shower
+	- [ ] Medical Bed
+	- [ ] Shrine
+	- [ ] Lido
+	- [ ] Temple
+	- [ ] Carousel
+	- [ ] Mud bath
+- [ ] Wood
+	- [ ] Lumberjack flag
+	- [ ] Lumber mill
+	- [ ] Forester
+	- [ ] Gear workshop
+	- [ ] Paper mill
+	- [ ] Printing press
+	- [ ] Tapper's shack
+	- [ ] Wood workshop

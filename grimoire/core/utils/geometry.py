@@ -1,13 +1,13 @@
-from gdpc.vector_tools import ivec2
+from gdpc.vector_tools import ivec2, CARDINALS_2D
 from gdpc import WorldSlice
-from ..structures.legacy_directions import cardinal, get_ivec2
+from ..structures.legacy_directions import CARDINAL, get_ivec2
 
 
 # finds the neighbours points of a point in a set
 def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         delta = get_ivec2(direction)
         neighbour = point + delta
 
@@ -21,7 +21,7 @@ def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
 def get_neighbours_not_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         delta = get_ivec2(direction)
         neighbour = point + delta
 
@@ -77,3 +77,21 @@ def is_point_surrounded_dict(point: ivec2, dict):
         if dict.get(neighbour) == None:
             return False
     return True
+
+
+def get_surrounding_points(points: set[ivec2], distance=1) -> set[ivec2]:
+    if distance < 1:
+        return set()
+
+    surrounding = set()
+
+    for point in points:
+        for direction in CARDINALS_2D:
+            neighbour = point + direction
+            if neighbour not in points:
+                surrounding.add(neighbour)
+
+    if distance == 1:
+        return surrounding
+    else:
+        return surrounding | get_surrounding_points(points | surrounding, distance - 1)

@@ -1,0 +1,11 @@
+{
+    "name" : "wet_bottom_wall_traps",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/wet/wet_bottom_wall_traps.nbt",
+    "origin" : [1, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "wet",
+    "positions" : ["lower"],
+    "has_door" : false,
+    "tags" : ["wet"]
+}

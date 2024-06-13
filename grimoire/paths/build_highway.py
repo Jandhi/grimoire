@@ -1,9 +1,9 @@
-from gdpc import Editor, WorldSlice, Block
-from gdpc.vector_tools import ivec3, ivec2
-from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
-from ..core.utils.bounds import is_in_bounds2d
-from ..core.maps import Map
+from gdpc import Block, Editor, WorldSlice
+from gdpc.vector_tools import ivec2, ivec3
 
+from ..core.maps import Map
+from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
+from ..core.utils.bounds import is_in_bounds2d
 
 
 def build_highway(
@@ -20,7 +20,7 @@ def build_highway(
         master_points.add(point_2d)
         final_point_heights[point_2d] = point.y
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point_2d + get_ivec2(direction)
 
             if not is_in_bounds2d(neighbour, world_slice):
@@ -30,9 +30,9 @@ def build_highway(
                 continue
 
             neighbour_points.add(neighbour)
-            final_point_heights[
-                neighbour
-            ] = point.y  # this is an estimate of height to help the next step
+            final_point_heights[neighbour] = (
+                point.y
+            )  # this is an estimate of height to help the next step
 
     for point in final_point_heights:
         blocks[point] = get_block(point, final_point_heights)
@@ -45,6 +45,7 @@ def build_highway(
         if map.districts[x][z] is not None and map.districts[x][z].is_urban:
             continue
 
+        map.highway[x][z] = True
         editor.placeBlock((x, y, z), blocks[point])
 
         if world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] > y:
@@ -53,11 +54,14 @@ def build_highway(
             editor.placeBlock((x, y + 3, z), Block("air"))
 
 
-def get_block(point: ivec2, final_point_heights: dict[ivec2, int]) -> Block:
+def get_block(point: ivec2, final_point_heights: dict[ivec2, int], depth = 0) -> Block:
     y_in_dir = {}
     y = final_point_heights[point]
 
-    for direction in cardinal:
+    if depth > 10:
+        return Block("cobblestone")
+
+    for direction in CARDINAL:
         dv = get_ivec2(direction)
 
         if point + dv not in final_point_heights:
@@ -79,7 +83,7 @@ def get_block(point: ivec2, final_point_heights: dict[ivec2, int]) -> Block:
 
     if all(y_in_dir[direction] < y for direction in y_in_dir):
         final_point_heights[point] -= 1
-        return get_block(point, final_point_heights)
+        return get_block(point, final_point_heights, depth + 1)
 
     if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(
         y_in_dir[direction] < y for direction in y_in_dir

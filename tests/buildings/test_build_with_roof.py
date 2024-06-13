@@ -1,23 +1,32 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.styling.palette import Palette
+
 sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
 
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
 from grimoire.core.structures.grid import Grid
-from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.assets.asset_loader import load_assets
 from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.buildings.walls.build_walls import build_walls
 from grimoire.core.noise.rng import RNG
 from grimoire.buildings.walls.wall import Wall
-from grimoire.palette import Palette
+from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.buildings.build_floor import build_floor
-from grimoire.buildings.roofs.roof_component import RoofComponent
-from grimoire.buildings.roofs.build_roof import build_roof
+from grimoire.buildings.building_plan import BuildingPlan
 from grimoire.buildings.clear_interiors import clear_interiors
+from grimoire.buildings.roofs.build_roof import build_roof
+from grimoire.buildings.roofs.roof_component import RoofComponent
 from grimoire.buildings.rooms.furnish import furnish
+from grimoire.buildings.walls.build_walls import build_walls
+from grimoire.buildings.walls.wall import Wall
+from grimoire.core.assets.asset_loader import load_assets
+from grimoire.core.noise.rng import RNG
+from grimoire.core.structures.grid import Grid
+from grimoire.core.styling.legacy_palette import LegacyPalette
 
 SEED = 654
 
@@ -33,24 +42,24 @@ grid = Grid(
         z=area.size.z // 2,
     )
 )
-load_assets("assets")
+load_assets("grimoire/asset_data")
 
 shape = [ivec3(0, 0, 0)]
 
-palette = Palette.find("japanese_dark_blackstone")
+palette = Palette.find("japanese")
 plan = BuildingPlan(shape, grid, palette)
 
 build_roof(
     plan,
     editor,
-    [roof for roof in RoofComponent.all() if "japanese" in roof.tags],
+    [roof for roof in RoofComponent.all() if BuildStyle.JAPANESE in roof.tags],
     SEED,
 )
 
 clear_interiors(plan, editor)
 build_floor(plan, editor)
 
-walls = [wall for wall in Wall.all() if "japanese" in wall.tags]
+walls = [wall for wall in Wall.all() if BuildStyle.JAPANESE in wall.tags]
 
 build_walls(plan, editor, walls, RNG(SEED, "build_walls"))
 

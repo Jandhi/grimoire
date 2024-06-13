@@ -1,0 +1,11 @@
+{
+    "name" : "wet_top_wall_balcony",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/wet/wet_top_wall_balcony.nbt",
+    "origin" : [2, 0, 0],
+    "facing" : "x_minus",
+    "palette" : "wet",
+    "positions" : ["upper"],
+    "has_door" : false,
+    "tags" : ["wet"]
+}

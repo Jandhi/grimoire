@@ -1,30 +1,33 @@
-from ..districts.district import District
+from ..core.maps import Map
+from ..districts.district import District, SuperDistrict
+from ..districts.district_analyze import district_analyze, get_candidate_score
 
-RURAL_SIZE_RATIO = (
-    3  # we expect rural districts to be this times larger in area than urban ones
-)
+RURAL_SIZE_RATIO = 3  # NOTE: not currently used, we expect rural districts to be this times larger in area than urban ones
 
 
 # Merges districts until we have a target number reached
 def merge_down(
-    districts: list[District], district_map: list[list[District]], target_number: int
-):
-    identities = {
+    districts: list[District],
+    district_map: list[list[District]],
+    target_number: int,
+    main_map: Map,
+) -> None:
+    identities: dict[District, District] = {
         district: district for district in districts
     }  # tracks whether a districts is truly itself
-    district_count = len(districts)
+    district_count: int = len(districts)
 
-    ignore = set()
+    ignore: set[District] = set()
 
     while district_count > target_number:
-        child = find_smallest_adjusted_district(districts, ignore)
+        child: District = find_smallest_adjusted_district(districts, ignore)
 
         if child is None:
             break
 
         neighbours: list[District] = child.get_adjacent_districts()
 
-        parent = get_best_merge_candidate(child, neighbours)
+        parent: District = get_best_merge_candidate(child, neighbours)
 
         if parent is None:
             ignore.add(child)
@@ -37,6 +40,9 @@ def merge_down(
             continue
 
         merge(parent, child, districts, identities)
+        district_analyze(
+            parent, main_map
+        )  # NOTE: could optimize by moving the calcucations in merge and using the district numbers instead of recalculating
         district_count -= 1
 
     fix_map_and_edges(district_map, districts, identities)
@@ -44,71 +50,66 @@ def merge_down(
 
 def find_smallest_adjusted_district(
     districts: list[District], ignore: set[District]
-) -> District:
-    smallest = None
-    area = 10000000
+) -> District | None:
+    smallest: District | None = None
+    area: int | None = None
 
     for district in districts:
         if district in ignore:
             continue
 
-        if get_adjusted_area(district) < area:
+        if area is None or district.area < area:
             smallest = district
             area = district.area
 
     return smallest
 
 
-def get_best_merge_candidate(district: District, options: list[District]) -> District:
-    best = None
-    best_score = -1
+def get_best_merge_candidate(
+    district: District, options: list[District]
+) -> District | None:
+    best: District | None = None
+    best_score: float = (
+        0.33  # NOTE: minimum score to beat else it won't be merged with any neighbour, to test this value
+    )
     candidate_scores = {}
 
     for option in options:
         if (
-            district.is_urban != option.is_urban
+            district.is_border != option.is_border
         ):  # don't merge different types of districts!
             continue
 
-        score = get_candidate_score(district, option)
+        score: float = get_candidate_score(district, option)
         candidate_scores[option] = score
         if score > best_score:
             best = option
             best_score = score
 
-    output = f"\tConsidering options for {district}: "
-    for candidate, score in candidate_scores.items():
-        output += f"({candidate}: {score}) "
-    print(output)
+    # output: str = f"\tConsidering options for {district}: "
+    # for candidate, score in candidate_scores.items():
+    #     output += f"({candidate}: {score}) "
+    # print(output)
 
     return best
-
-
-def get_candidate_score(district: District, candidate: District) -> float:
-    return (
-        1000.0
-        * district.get_adjacency_ratio(candidate)
-        / float(get_adjusted_area(candidate))
-    )
-
-
-def get_adjusted_area(district: District) -> int:
-    if district.is_urban:
-        return district.area
-    else:
-        return district.area // RURAL_SIZE_RATIO
 
 
 # merges child districts into parent
 # NOTE: this will create outdated edges (between parent and child).
 # Edges should be scanned for again after the merging process.
 def merge(
-    parent: District,
+    parent: SuperDistrict,
     child: District,
     districts: list[District],
     identities: dict[District, District],
-):
-    print(f"\tMerging {child} into {parent}")
+) -> None:
+    # print(f"\tMerging {child} into {parent}")
+
+    if isinstance(child, SuperDistrict):
+        for district in child.districts:
+            parent.districts.append(district)
+    else:
+        parent.districts.append(child)
 
     districts.remove(child)
     identities[child] = parent
@@ -152,13 +153,13 @@ def merge(
 
 def fix_map_and_edges(
     district_map: list[list[District]],
-    districts: list[District],
+    districts: list[District],  # FIXME: Unused parameter
     identities: dict[District, District],
-):
+) -> None:
     # Fixes map
     for item in district_map:
         for z in range(len(district_map[0])):
-            district = item[z]
+            district: District = item[z]
 
             if district != None:
                 item[z] = identities[district]

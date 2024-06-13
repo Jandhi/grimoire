@@ -1,21 +1,22 @@
-from gdpc.vector_tools import ivec3, distance
 from gdpc import Editor
+from gdpc.vector_tools import distance, ivec3
 
-from ..core.structures.legacy_directions import all_8, vector
-from ..paths.a_star import a_star, COUNTER_LIMIT_EXCEEDED
-from ..paths.a_star_debug import a_star_debug
-from ..core.utils.bounds import is_in_bounds
+from grimoire.districts.district import District, DistrictType
+
 from ..core.maps import Map
+from ..core.structures.legacy_directions import ALL_8, vector
+from ..core.utils.bounds import is_in_bounds
+from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
 
 HEURISTIC_WEIGHT = 3
 
 
 def fill_out_highway(points: list[ivec3]) -> list[ivec3]:
-    point_a = points.pop()
+    point_a: ivec3 = points.pop()
 
-    full_points = [point_a]
+    full_points: list[ivec3] = [point_a]
     while points:
-        point_b = points.pop()
+        point_b: ivec3 = points.pop()
 
         full_points += find_in_betweeners(point_a, point_b)
         full_points.append(point_a)
@@ -64,9 +65,7 @@ def find_in_betweeners(point_a: ivec3, point_b: ivec3) -> list[ivec3]:
     return points
 
 
-def route_highway(
-    start: ivec3, end: ivec3, map: Map, editor: Editor, is_debug=False
-) -> list[ivec3]:
+def route_highway(start: ivec3, end: ivec3, map: Map, editor: Editor, is_debug=False):
     end = ivec3(*end)  # copy end
 
     if end.x % 4 != start.x % 4:
@@ -77,33 +76,35 @@ def route_highway(
 
     end.y = map.height[end.x][end.z]
 
-    def get_cost(prev_cost: int, path: list[ivec3]):
+    def get_cost(prev_cost: float, path: list[ivec3]) -> float:
         if len(path) == 1:
             return 2 * distance(path[-1], end)
 
-        last = path[-1]
+        last: ivec3 = path[-1]
 
-        prev_heuristic = HEURISTIC_WEIGHT * distance(path[-2], end)
+        prev_heuristic: float = HEURISTIC_WEIGHT * distance(path[-2], end)
 
-        path_cost = prev_cost - prev_heuristic
+        path_cost: float = prev_cost - prev_heuristic
         base_length_cost = 2  # added as length of path increases
+        if map.highway[last.x][last.z]:  # NO LENGTH COST FOR HIGHWAY
+            base_length_cost -= 2
 
-        height_diff = abs(last.y - map.height[last.x][last.z])
-        height_cost = height_diff * 5
+        height_diff: int = abs(last.y - map.height[last.x][last.z])
+        height_cost: int = height_diff * 5
 
         district_cost = 0
-        district_at_last = map.districts[last.x][last.z]
-        if district_at_last is not None and district_at_last.is_urban:
+        district_at_last: District | None = map.districts[last.x][last.z]
+        if district_at_last is not None and district_at_last.type == DistrictType.URBAN:
             district_cost += 50
 
         near_wall_cost = 0
-        if map.near_wall and map.near_wall[last.x][last.z]:
-            near_wall_cost += 10
+        # if map.near_wall and map.near_wall[last.x][last.z]:
+        #    near_wall_cost += 10
 
         if map.water[last.x][last.z]:
             base_length_cost += 30  # WATER COST. Making this big means water gets avoided when possible.
 
-        y_diff_penalty = abs(path[-1].y - path[-2].y) * 2
+        y_diff_penalty: int = abs(path[-1].y - path[-2].y) * 2
 
         return (
             path_cost
@@ -117,14 +118,14 @@ def route_highway(
         )
 
     # prefer 4 out neighbours, but will accept 2 out
-    def get_neighbours(point: ivec3):
-        neighbours = []
+    def get_neighbours(point: ivec3) -> list[ivec3]:
+        neighbours: list[ivec3] = []
 
-        for direction in all_8:
-            direction_vector = vector(direction)
+        for direction in ALL_8:
+            direction_vector: ivec3 = vector(direction)
 
             # First consider 4 out
-            neighbour = point + direction_vector * 4
+            neighbour: ivec3 = point + direction_vector * 4
 
             if is_in_bounds(neighbour, map.world):
                 actual_neighbour_y = map.height[neighbour.x][neighbour.z]
@@ -156,17 +157,23 @@ def route_highway(
 
         return neighbours
 
+    highway: list[ivec3] | None | str = None
+
     if is_debug:
-        highway = a_star_debug(start, end, get_neighbours, get_cost, editor)
+        highway = a_star(start, end, get_neighbours, get_cost, editor)
     else:
         highway = a_star(start, end, get_neighbours, get_cost)
 
     if highway == COUNTER_LIMIT_EXCEEDED:
         print("Pathfinding took too long: Trying to route to the midpoint")
-        midpoint = (start + end) / 2
+        midpoint: ivec3 = (start + end) / 2
 
-        part1 = a_star(start, midpoint, get_neighbours, get_cost)
-        part2 = a_star(midpoint, end, get_neighbours, get_cost)
+        part1: list[ivec3] | None | str = a_star(
+            start, midpoint, get_neighbours, get_cost
+        )
+        part2: list[ivec3] | None | str = a_star(
+            midpoint, end, get_neighbours, get_cost
+        )
 
         if (
             part1 == COUNTER_LIMIT_EXCEEDED
@@ -175,6 +182,9 @@ def route_highway(
             or part2 is None
         ):
             return None
+
+        if type(part1) is not list[ivec3] or type(part2) is not list[ivec3]:
+            raise RuntimeError("Failed pathfinding here too!")
 
         part1.pop()
         return part1 + part2

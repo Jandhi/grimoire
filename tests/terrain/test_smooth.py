@@ -37,6 +37,6 @@ for x in range(build_rect.size.x):
             continue
 
         y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
-        district.add_point(ivec3(x, y, z))
+        district._add_point(ivec3(x, y, z))
 
 smooth(district, district_map, world_slice, editor, water_map)

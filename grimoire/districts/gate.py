@@ -1,12 +1,13 @@
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2, ivec3
 from gdpc import WorldSlice
-from ..core.structures.legacy_directions import north, east, south, vector, ivec3_to_dir
+from ..core.styling.palette import Palette
+from ..core.structures.legacy_directions import NORTH, EAST, SOUTH, vector, ivec3_to_dir
 from ..core.utils.geometry import is_straight_not_diagonal_ivec2
 from ..core.structures.nbt.build_nbt import build_nbt
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
-from ..palette import Palette
+from grimoire.core.styling.legacy_palette import LegacyPalette
 
 
 # Class to track gate assets
@@ -76,10 +77,10 @@ def add_gates(
                         wall_list[i + 2][0], wall_list[i + 2][1], wall_list[i + 2][2]
                     )
                     if point.x == wall_list[i + 6][0]:
-                        dir = east
+                        dir = EAST
                     else:
-                        dir = north
-                    if dir in (north, south):
+                        dir = NORTH
+                    if dir in (NORTH, SOUTH):
                         neighbours = [
                             ivec2(x, z)
                             for x in range(middle_point.x - 2, middle_point.x + 3)
@@ -101,7 +102,7 @@ def add_gates(
                             )
                     # build gate
                     diagonal_mirror = False
-                    if dir in (north, south):
+                    if dir in (NORTH, SOUTH):
                         diagonal_mirror = True
 
                     location = ivec3(
@@ -138,7 +139,7 @@ def add_gates(
                     if is_thin:
                         middle_point = wall_list[i + 3][0]
                         dir = vector(wall_list[i + 3][1][0])
-                        if ivec3_to_dir(dir) in (north, south):
+                        if ivec3_to_dir(dir) in (NORTH, SOUTH):
                             neighbours = [
                                 ivec2(x, z)
                                 for x in range(middle_point.x - 3, middle_point.x + 4)
@@ -160,7 +161,7 @@ def add_gates(
                                 )
                         # build gate
                         diagonal_mirror = False
-                        if ivec3_to_dir(dir) in (north, south):
+                        if ivec3_to_dir(dir) in (NORTH, SOUTH):
                             diagonal_mirror = True
 
                         location = ivec3(
@@ -216,7 +217,7 @@ def add_gates(
 
                                 # build gate
                                 diagonal_mirror = False
-                                if ivec3_to_dir(dir) in (north, south):
+                                if ivec3_to_dir(dir) in (NORTH, SOUTH):
                                     diagonal_mirror = True
 
                                 location = ivec3(

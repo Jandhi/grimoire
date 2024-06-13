@@ -1,36 +1,57 @@
-from ..districts.district import District
-from gdpc import Editor, Block
-from gdpc.vector_tools import ivec2, ivec3, distance2
-from ..core.utils.sets.set_operations import (
-    find_edges,
-    find_outer_direction,
+import itertools
+from enum import Enum, auto
+from logging import error
+from typing import Any, Generator, Iterable
+
+from gdpc import Block, Editor
+from gdpc.vector_tools import (
+    CARDINALS_2D,
+    EAST_2D,
+    Rect,
+    distance2,
+    ivec2,
+    ivec3,
+    neighbors2D,
 )
-from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
+
+from grimoire.core.styling.palette import BuildStyle
+from grimoire.core.utils.misc import to_list_or_none
+from grimoire.placement.nooks import (
+    ExposureType,
+    Nook,
+    find_suitable_nooks,
+    identify_exposure_type_from_edging_pattern,
+)
+
+from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
-from ..core.structures.legacy_directions import cardinal, get_ivec2, to_text
+from ..core.structures.legacy_directions import to_text
 from ..core.utils.bounds import is_in_bounds2d
+from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
+from ..core.utils.sets.set_operations import find_edges, find_outer_direction
+from ..core.utils.shapes import Shape2D
 from ..core.utils.vectors import point_3d, y_ivec3
-from ..core.maps import Map
-from ..core.maps import CITY_WALL, CITY_ROAD
+from ..districts.district import District, DistrictType, SuperDistrict
 from ..placement.building_placement import place_building
 
-
 EDGE_THICKNESS = 1
-DESIRED_BLOCK_SIZE = 120
-MINIMUM_BLOCK_SZE = 100
+DESIRED_BLOCK_SIZE = 500  # 120
+MINIMUM_BLOCK_SZE = 100  # 100
+
+LOOP_LIMIT = 1000  # prevents uncontrolled loops from going on too long
 
 
 def generate_bubbles(
     rng: RNG,
-    districts: list[District],
-    map: Map,
+    super_districts: list[SuperDistrict],
+    build_map: Map,
     desired_block_size=DESIRED_BLOCK_SIZE,
     minimum_point_distance=15,
 ) -> list[ivec2]:
-    points = []
+    points: list[ivec2] = []
 
-    for district in districts:
-        if not district.is_urban:
+    for district in super_districts:
+        if district.type != DistrictType.URBAN:
             continue
 
         desired_point_amount = district.area // desired_block_size
@@ -48,7 +69,7 @@ def generate_bubbles(
             ):
                 continue
 
-            if map.buildings[point.x][point.y] == CITY_WALL:
+            if build_map.buildings[point.x][point.y] == DevelopmentType.CITY_WALL:
                 continue
 
             district_points_generated += 1
@@ -58,10 +79,11 @@ def generate_bubbles(
 
 
 def bubble_out(
-    bubbles: list[ivec2], map: Map
+    bubbles: list[ivec2], build_map: Map
 ) -> tuple[list[set[ivec2]], list[list[int | None]], dict[int, dict[int, int]]]:
     block_index_map: list[list[int | None]] = [
-        [None for _ in range(len(map.districts[0]))] for _ in range(len(map.districts))
+        [None for _ in range(len(build_map.super_districts[0]))]
+        for _ in range(len(build_map.super_districts))
     ]
     blocks: list[set[ivec2]] = [set() for _ in bubbles]
     num_blocks = len(blocks)
@@ -76,31 +98,31 @@ def bubble_out(
     queue = list(bubbles)
 
     def is_eligible(vec: ivec2):
-        district = map.districts[vec.x][vec.y]
+        district = build_map.super_districts[vec.x][vec.y]
 
-        if map.buildings[vec.x][vec.y] == CITY_WALL:
+        if build_map.buildings[vec.x][vec.y] == DevelopmentType.CITY_WALL:
             return False
 
-        if map.water[vec.x][vec.y]:
+        if build_map.water[vec.x][vec.y]:
             return False
 
-        return district is not None and district.is_urban
+        return district is not None and district.type == DistrictType.URBAN
 
     while queue:
         point = queue.pop(0)
         block_index = block_index_map[point.x][point.y]
         block: set[ivec2] = blocks[block_index]
 
-        for direction in cardinal:
-            neighbour = point + get_ivec2(direction)
+        for direction in CARDINALS_2D:
+            neighbour = point + direction
 
-            if not is_in_bounds2d(neighbour, map.world):
+            if not is_in_bounds2d(neighbour, build_map.world):
                 continue
 
-            point_y = map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
+            point_y = build_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
                 point.y
             ]
-            neighbour_y = map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
+            neighbour_y = build_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
                 neighbour.x
             ][neighbour.y]
 
@@ -155,13 +177,26 @@ def merge_small_blocks(
 
 
 def place_buildings(
-    editor: Editor,
-    block: set[ivec2],
-    map: Map,
-    rng: RNG,
-    style="japanese",
+    editor,
+    block,
+    build_map,
+    rng,
+    style=BuildStyle.JAPANESE,
     is_debug=False,
+    stilts=False,
 ):
+    """
+    Places buildings on the map edges based on the provided parameters.
+
+    Args:
+        editor: The Editor object for placing blocks.
+        block: A set of 2D vectors representing the building blocks.
+        build_map: The Map object representing the game map.
+        rng: The RNG object for random number generation.
+        style: The style of the buildings (default is BuildStyle.JAPANESE).
+        is_debug: A boolean indicating whether debug mode is enabled (default is False).
+    """
+
     edges = find_edges(block)
 
     for edge in edges:
@@ -169,38 +204,39 @@ def place_buildings(
 
         if is_debug:
             editor.placeBlock(
-                point_3d(edge, map.world) + y_ivec3(-1),
+                point_3d(edge, build_map.world) + y_ivec3(-1),
                 Block("cobblestone_stairs", {"facing": to_text(build_dir)}),
             )
 
-        place_building(editor, edge, map, build_dir, rng, style)
+        place_building(editor, edge, build_map, build_dir, rng, style, stilts=stilts)
 
 
 def add_city_blocks(
     editor: Editor,
-    districts: list[District],
-    map: Map,
+    super_districts: list[SuperDistrict],
+    city_map: Map,
     seed: int,
-    style="japanese",
+    style=BuildStyle.JAPANESE,
     is_debug=False,
-):
+    stilts=False,
+) -> tuple[list[set[ivec2]], list[set[ivec2]], list[set[ivec2]]]:
     rng = RNG(seed, "add_city_blocks")
 
     urban_area: set[ivec2] = set()
-    for district in districts:
-        if district.is_urban:
+    for district in super_districts:
+        if district.type == DistrictType.URBAN:
             urban_area |= district.points_2d
 
     outer_urban_area, inner_urban_area = find_outer_and_inner_points(urban_area, 3)
 
     for point in outer_urban_area:
-        map.buildings[point.x][point.y] = CITY_WALL
+        city_map.buildings[point.x][point.y] = DevelopmentType.CITY_WALL
 
-    bubbles = generate_bubbles(rng, districts, map)
-    blocks, block_map, block_adjacency = bubble_out(bubbles, map)
-    blocks, block_map = merge_small_blocks(blocks, block_map, block_adjacency)
+    bubbles = generate_bubbles(rng, super_districts, city_map)
+    blocks, block_map = merge_small_blocks(*bubble_out(bubbles, city_map))
 
-    inners = []
+    inners: list[set[ivec2]] = []
+    outers = []
 
     for i, block in enumerate(blocks):
         if len(block) < MINIMUM_BLOCK_SZE:
@@ -209,14 +245,14 @@ def add_city_blocks(
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:
-            map.buildings[point.x][point.y] = CITY_ROAD
+            city_map.buildings[point.x][point.y] = DevelopmentType.CITY_ROAD
 
         if is_debug:
             for point in outer | outer_urban_area:
                 editor.placeBlock(
                     ivec3(
                         point.x,
-                        map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
+                        city_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
                             point.y
                         ]
                         - 1,
@@ -227,10 +263,186 @@ def add_city_blocks(
 
         block_rng = RNG(seed, f"block {i}")
         inners.append(inner)
+        outers.append(outer)
 
     # Has to be done after all inners are found
-    for i, block in enumerate(blocks):
-        if i >= len(inners):
+    for block, inner, outer in zip(blocks, inners, outers):
+        print("New city block...")
+        print("\tPlacing buildings...")
+        place_buildings(editor, inner, city_map, block_rng, style, is_debug)
+        print("\tDecorating...")
+        decorate_city_block(editor, city_map, block, inner, outer, block_rng, style)
+
+    return (blocks, inners, outers)
+
+
+def decorate_city_block(
+    editor: Editor,
+    city_map: Map,
+    block: set[ivec2],
+    inner: set[ivec2],
+    outer: set[ivec2],
+    block_rng: RNG,
+    style: BuildStyle,
+) -> None:
+    SCAN_STEP: int = 4
+
+    inner_shape = Shape2D(inner)
+    outer_shape = Shape2D(outer)
+    bounds = outer_shape.to_boundry_rect()
+
+    # the grid to be scanned for potential Nook locations
+    scan_grid: Generator[ivec2, None, None] = (
+        ivec2(x, y)
+        for x, y in itertools.product(
+            range(inner_shape.begin.x, inner_shape.end.x, SCAN_STEP),
+            range(inner_shape.begin.y, inner_shape.end.y, SCAN_STEP),
+        )
+    )
+
+    # scan the city block to find a nook
+    for scan_position in scan_grid:
+        # if an empty space is found
+        if city_map.buildings[scan_position.x][scan_position.y] is None:
+            print(f"\t\tFound Nook candidate at {scan_position}...")
+            nook_edge, nook_shape = discover_nook(scan_position, outer_shape, city_map)
+            if nook_shape.begin == nook_shape.end:
+                print(f"\t\t...but it could not be expanded (consists only of edge).")
+                continue
+            surrounding_developments: dict[ivec2, set[DevelopmentType]] = (
+                map_developments_at_edge(nook_edge, city_map, bounds)
+            )
+            pattern: list[tuple[set[DevelopmentType], int]] = edge_to_pattern(
+                scan_position, surrounding_developments, bounds
+            )
+            # select an appropriate Nook type and manifest it
+            exposure: ExposureType = identify_exposure_type_from_edging_pattern(pattern)
+            nook: Nook = block_rng.choose(
+                list(
+                    find_suitable_nooks(
+                        district_types=DistrictType.URBAN,
+                        exposure_types=exposure,
+                        styles=style,
+                        area=nook_shape,
+                    )
+                )
+            )
+            nook.manifest(editor, nook_shape, nook_edge, city_map, block_rng)
+            print(
+                f"\t\tIt became a Nook ({nook.name}) with the following properties:\n"
+                f"\t\t\t- District Type: {[t.name for t in to_list_or_none(nook.district_types)] if nook.district_types else 'Any'} ({DistrictType.URBAN.name})\n"
+                f"\t\t\t- Exposure Type: {[t.name for t in to_list_or_none(nook.exposure_types)] if nook.exposure_types else 'Any'} ({exposure.name})\n"
+                f"\t\t\t- Style: {[t.name for t in to_list_or_none(nook.styles)] if nook.styles else 'Any'} ({style.name})\n"
+                f"\t\t\t- Area {nook.min_area}-{nook.max_area} ({len(nook_shape)})"
+            )
+
+
+def discover_nook(start: ivec2, city_block_shape: Shape2D, city_map: Map):
+    """Find the extent of a potential Nook in a city block, starting at a free space."""
+
+    development_map: list[list[DevelopmentType | None]] = city_map.buildings
+
+    if development_map[start.x][start.y] is not None:
+        raise ValueError(
+            f"Start ({start}) must be unoccupied in the city map (is {development_map[start.x][start.y]})"
+        )
+
+    nook_edge: set[ivec2] = set()
+    nook_area = Shape2D()
+
+    stack: list[ivec2] = [start]
+    visited: set[ivec2] = set()
+
+    # trace the nook, returning its edge and non-edge area
+    while stack:
+        position = stack.pop()
+
+        if position in visited:
             continue
 
-        place_buildings(editor, inners[i], map, block_rng, style, is_debug)
+        visited.add(position)
+
+        if development_map[position.x][position.y]:
+            continue
+
+        for neighbor in neighbors2D(
+            position, city_block_shape.to_boundry_rect(), diagonal=True
+        ):
+
+            # has a developed neighbour
+            if development_map[neighbor.x][neighbor.y]:
+                visited.add(neighbor)
+                nook_edge.add(position)
+
+            if neighbor not in visited:
+                stack.append(neighbor)
+
+        # did not have a developed neighbour
+        if position not in nook_edge:
+            nook_area.add(position)
+
+    return nook_edge, nook_area
+
+
+def map_developments_at_edge(
+    edge: set[ivec2], city_map: Map, bounds: Rect
+) -> dict[ivec2, set[DevelopmentType]]:
+    development_set: dict[ivec2, set[DevelopmentType]] = {}
+    for point in edge:
+        for neighbor in neighbors2D(point, bounds):
+            if development := city_map.buildings[neighbor.x][neighbor.y]:
+                if point not in development_set:
+                    development_set[point] = set()
+                development_set[point].add(development)
+
+    return development_set
+
+
+def edge_to_pattern(
+    start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
+) -> list[tuple[set[DevelopmentType], int]]:
+
+    if not edge:
+        return []
+
+    pattern: list[tuple[set[DevelopmentType], int]] = []
+
+    for _ in range(LOOP_LIMIT):
+        if start in edge:
+            break
+        start += EAST_2D
+
+    for current in determine_edge_sequence(start, bounds, edge):
+
+        if current not in edge:
+            error(
+                f"Current position {current} is not a valid edge value! It is being skipped."
+            )
+            continue
+
+        if not pattern or edge[current] != pattern[-1][0]:  # new pattern segment
+            pattern.append((edge[current], 1))
+            continue
+        pattern[-1] = (pattern[-1][0], pattern[-1][1] + 1)  # extend current segment
+
+    return pattern
+
+
+def determine_edge_sequence(
+    start: ivec2, bounds: Rect, edge: Iterable[ivec2]
+) -> Generator[ivec2, Any, None]:
+    current_position: ivec2 = start
+    visited: set[ivec2] = set()
+
+    stack = [start]
+
+    while stack:
+        current_position = stack.pop()
+        yield current_position
+        visited.add(current_position)
+
+        for neighbor in neighbors2D(current_position, bounds):
+            if neighbor in edge and neighbor not in visited:
+                stack.append(neighbor)
+
+    return

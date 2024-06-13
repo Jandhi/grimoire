@@ -1,15 +1,10 @@
 import contextlib
+
+from gdpc import Block, Editor
 from gdpc.vector_tools import ivec2, ivec3, vec2
-from ..core.maps import Map
-from ..core.structures.legacy_directions import (
-    z_minus,
-    z_plus,
-    x_minus,
-    x_plus,
-    cardinal,
-    get_ivec2,
-    LegacyDirection,
-)
+
+from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
+from grimoire.core.styling.palette import BuildStyle
 
 from ..buildings.build_floor import build_floor
 from ..buildings.building_plan import BuildingPlan
@@ -18,38 +13,39 @@ from ..buildings.clear_interiors import clear_interiors
 from ..buildings.roofs.build_roof import build_roof
 from ..buildings.roofs.roof_component import RoofComponent
 from ..buildings.rooms.furnish import furnish
+from ..buildings.stilts import build_stilt_frame
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
-from ..core.maps import CITY_ROAD, CITY_WALL
+from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
 from ..core.structures.grid import Grid
 from ..core.structures.legacy_directions import (
-    cardinal,
+    CARDINAL,
+    X_MINUS,
+    X_PLUS,
+    Z_MINUS,
+    Z_PLUS,
+    LegacyDirection,
     get_ivec2,
-    x_minus,
-    x_plus,
-    z_minus,
-    z_plus,
 )
-from gdpc import Block, Editor
-from gdpc.vector_tools import ivec2, ivec3, vec2
-from ..palette import fix_block_name
-
-from ..core.maps import Map
-from ..palette import Palette
+from ..core.styling.blockform import BlockForm
+from ..core.styling.materials.material import MaterialParameters
+from ..core.styling.palette import MaterialRole, Palette
+from ..core.utils.geometry import get_surrounding_points
+from ..districts.district import DistrictType
 
 offsets = {
-    z_minus: [ivec2(0, 0), ivec2(-1, 0)],
-    x_minus: [ivec2(0, 0), ivec2(0, -1)],
-    x_plus: [ivec2(-1, -1), ivec2(-1, 0)],
-    z_plus: [ivec2(-1, -1), ivec2(0, -1)],
+    Z_MINUS: [ivec2(0, 0), ivec2(-1, 0)],
+    X_MINUS: [ivec2(0, 0), ivec2(0, -1)],
+    X_PLUS: [ivec2(-1, -1), ivec2(-1, 0)],
+    Z_PLUS: [ivec2(-1, -1), ivec2(0, -1)],
 }
 
 door_points = {
-    z_minus: vec2(0.5, 0),
-    z_plus: vec2(0.5, 1),
-    x_plus: vec2(1, 0.5),
-    x_minus: vec2(0, 0.5),
+    Z_MINUS: vec2(0.5, 0),
+    Z_PLUS: vec2(0.5, 1),
+    X_PLUS: vec2(1, 0.5),
+    X_MINUS: vec2(0, 0.5),
 }
 
 WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
@@ -64,8 +60,9 @@ def place_building(
     map: Map,
     outside_direction: str,
     rng: RNG,
-    style: str = "japanese",
+    style: BuildStyle = BuildStyle.JAPANESE,
     urban_only=True,
+    stilts: bool = False,
 ) -> bool:
     # A building can always be placed with the door to the left or right of the original spot
     my_offsets = offsets[outside_direction]
@@ -103,6 +100,8 @@ def place_building(
                 shape,
                 style,
                 urban_only,
+                allow_water=stilts,
+                stilts=stilts,
             )
 
             if success:
@@ -118,13 +117,18 @@ def attempt_building_placement_at_offset(
     offset: ivec2,
     outside_direction: LegacyDirection,
     shape: BuildingShape,
-    style: str,
+    style: BuildStyle,
     urban_only: bool,
+    allow_water: bool = False,
+    stilts: bool = False,
 ) -> bool:
     grid = Grid()
     origin = start_point + ivec2(
         offset.x * grid.dimensions.x, offset.y * grid.dimensions.z
     )
+
+    if stilts:
+        origin += ivec2(3, 3)
 
     # We have to find the proper height for the door to be at ground level
     door_point = ivec2(*door_points[outside_direction])
@@ -147,45 +151,58 @@ def attempt_building_placement_at_offset(
 
     grid.origin = ivec3(origin.x, map.height_at(road_point) - 1, origin.y)
 
-    if not can_place_shape(shape, grid, map, urban_only):
+    if stilts:
+        grid.origin += ivec3(0, 3, 0)
+
+    if not can_place_shape(shape, grid, map, urban_only, allow_water, stilts):
         return False
 
     # build
-    place(editor, shape, grid, rng, map, style)
+    place(editor, shape, grid, rng, map, style, stilts)
     return True
 
 
-def can_place_shape(shape: BuildingShape, grid: Grid, map: Map, urban_only: bool):
-    points = list(shape.get_points_2d(grid))
+def can_place_shape(
+    shape: BuildingShape,
+    grid: Grid,
+    build_map: Map,
+    urban_only: bool,
+    allow_water: bool = False,
+    stilts: bool = False,
+):
+    points = set(shape.get_points_2d(grid))
     water_amt = 0
     total_height_diff = 0
 
+    if stilts:
+        points |= get_surrounding_points(points, 3)
+
     for point in points:
+        if not build_map.is_in_bounds2d(point):
+            return False
+
         # water check
-        if map.water[point.x][point.y]:
+        if build_map.water[point.x][point.y]:
             water_amt += 1
 
         # freeness check
-        if map.buildings[point.x][point.y] is not None:
+        if build_map.buildings[point.x][point.y] is not None:
             return False
 
         # urban check
         if urban_only and (
-            not map.districts[point.x][point.y]
-            or not map.districts[point.x][point.y].is_urban
+            not build_map.districts[point.x][point.y]
+            or build_map.districts[point.x][point.y].type != DistrictType.URBAN
         ):
             return False
 
-        total_height_diff += abs(grid.origin.y - map.height_at(point))
+        total_height_diff += abs(grid.origin.y - build_map.height_at(point))
 
-    if WATER_THRESHOLD <= water_amt / len(points):
+    if (WATER_THRESHOLD <= water_amt / len(points)) and not allow_water:
         return False
 
     avg_height_diff = total_height_diff / len(points)
-    if avg_height_diff >= MAX_AVG_HEIGHT_DIFF:
-        return False
-
-    return True
+    return avg_height_diff < MAX_AVG_HEIGHT_DIFF
 
 
 def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
@@ -203,12 +220,12 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
             return None
 
         if map.is_in_bounds2d(point) and map.buildings[point.x][point.y] in [
-            CITY_ROAD,
-            CITY_WALL,
+            DevelopmentType.CITY_ROAD,
+            DevelopmentType.CITY_WALL,
         ]:
             return point
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point + get_ivec2(direction)
 
             if map.is_in_bounds2d(neighbour) and neighbour not in visited:
@@ -217,10 +234,19 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
     return None
 
 
+PLACE_BASEMENT_CONSTANT = 2.5
+
+
 def place(
-    editor: Editor, shape: BuildingShape, grid: Grid, rng: RNG, map: Map, style: str
+    editor: Editor,
+    shape: BuildingShape,
+    grid: Grid,
+    rng: RNG,
+    build_map: Map,
+    style: BuildStyle,
+    stilts: bool = False,
 ):
-    district = map.districts[grid.origin.x][grid.origin.z]
+    district = build_map.districts[grid.origin.x][grid.origin.z]
     palette: Palette = (
         rng.choose(district.palettes)
         if district
@@ -231,7 +257,56 @@ def place(
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
     for point in shape.get_points_2d(grid):
-        map.buildings[point.x][point.y] = plan
+        build_map.buildings[point.x][point.y] = DevelopmentType.BUILDING
+
+    # Basement and foundation
+    if stilts:
+        build_stilt_frame(editor, rng, palette, plan, build_map)
+    else:
+        for cell in plan.cells:
+            if cell.position.y != 0:
+                continue
+
+            height_sum = 0
+            height_count = 0
+            grid_height = grid.origin.y
+
+            for point in plan.grid.get_points_at_2d(
+                ivec2(cell.position.x, cell.position.y)
+            ):
+                world_height = build_map.height_at(point)
+
+                height_sum += grid_height - world_height
+                height_count += 1
+
+            avg_height = height_sum / height_count
+
+            if avg_height > PLACE_BASEMENT_CONSTANT:
+                plan.add_cell(cell.position - ivec3(0, 1, 0))
+                grid_height = grid.origin.y - grid.height
+
+            for point in plan.grid.get_points_at_2d(
+                ivec2(cell.position.x, cell.position.y)
+            ):
+                world_height = build_map.height_at(point)
+
+                for y_coord in range(world_height, grid_height):
+                    stone = palette.find_block_id(
+                        BlockForm.BLOCK,
+                        MaterialParameters(
+                            position=ivec3(point.x, y_coord, point.y),
+                            age=0,
+                            shade=0.5,
+                            moisture=0,
+                            dithering_pattern=None,
+                        ),
+                        MaterialRole.PRIMARY_STONE,
+                    )
+
+                    editor.placeBlock(
+                        ivec3(point.x, y_coord, point.y),
+                        Block(fix_block_name(stone)),
+                    )
 
     # Clear the area
     for point in shape.get_points(grid):
@@ -240,26 +315,22 @@ def place(
     build_roof(
         plan,
         editor,
-        [component for component in RoofComponent.all() if style in component.tags],
+        [
+            component
+            for component in RoofComponent.all()
+            if style.name.lower() in component.tags
+        ],
         rng.next(),
     )
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
 
-    walls = list(filter(lambda wall: style in wall.tags, Wall.all().copy()))
+    walls = list(
+        filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy())
+    )
 
     build_walls(plan, editor, walls, rng)
-
-    for point in shape.get_points_2d(grid):
-        world_height = map.height_at(point)
-        grid_height = grid.origin.y
-
-        for y_coord in range(world_height, grid_height):
-            editor.placeBlock(
-                ivec3(point.x, y_coord, point.y),
-                Block(fix_block_name(palette.primary_stone)),
-            )
 
     # FIXME: this suppression is a last resort, and should not be used in the future
     with contextlib.suppress(Exception):

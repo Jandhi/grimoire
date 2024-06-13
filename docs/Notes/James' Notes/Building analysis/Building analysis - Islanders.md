@@ -1,0 +1,34 @@
+- [ ] Balloon
+- [ ] Brewery
+- [ ] Brickyard
+- [ ] City Center
+- [ ] Circus
+- [ ] Field
+- [ ] Fisher
+- [ ] Fountain
+- [ ] Hop Field
+- [ ] House
+- [ ] Hut
+- [ ] Jewelry
+- [ ] Lumberjack
+- [ ] Mansion
+- [ ] Market
+- [ ] Masion
+- [ ] Mill
+- [ ] Monument
+- [ ] Park
+- [ ] Plateau
+- [ ] Resort Oasis
+- [ ] Sawmill
+- [ ] Sandpit
+- [ ] Seaweed Farm
+- [ ] Seaweed Field
+- [ ] Shaman
+- [ ] Statue
+- [ ] Tavern
+- [ ] Temple
+- [ ] Tower
+- [ ] Wall
+- [ ] Wall Plateau
+- [ ] Warehouse
+- [ ] Water Plateau
