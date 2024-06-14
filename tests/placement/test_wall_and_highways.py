@@ -130,7 +130,9 @@ style = BuildStyle.JAPANESE
 #     style = BuildStyle.DWARVEN
 
 # set up palettes
-eligible_palettes = list(filter(lambda palette: style.name.lower() in palette.tags, Palette.all()))
+eligible_palettes = list(
+    filter(lambda palette: style.name.lower() in palette.tags, Palette.all())
+)
 rng = RNG(SEED, "palettes")
 
 for district in districts:
@@ -183,7 +185,6 @@ urban_road: PaintPalette = (
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
 
-
 # WALL
 
 # uncomment one of these to story one of the three wall types
@@ -205,7 +206,7 @@ for wall_points in wall_points_list:
 
         size = main_map.world.rect.size
 
-        path_end : ivec2 = None
+        path_end: ivec2 = None
         if gate.direction == legacy_directions.SOUTH:
             path_end = ivec2(gate.location.x, 0)
         if gate.direction == legacy_directions.NORTH:
@@ -216,10 +217,7 @@ for wall_points in wall_points_list:
             path_end = ivec2(0, gate.location.z)
 
         def round_to_four(vec: ivec2) -> ivec2:
-            return ivec2(
-                vec.x - vec.x % 4,
-                vec.y - vec.y % 4
-            )
+            return ivec2(vec.x - vec.x % 4, vec.y - vec.y % 4)
 
         point_a = addY(round_to_four(dropY(path_origin)), gate.location.y)
         point_b = main_map.make_3d(round_to_four(path_end))
@@ -244,4 +242,3 @@ crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all())
 rural_road: PaintPalette = PaintPalette.find("rural_road")
 
 options = forests + crops
-

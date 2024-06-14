@@ -28,7 +28,11 @@ def build_nbt(
     """Constructs an NBTAsset given an editor and transformation
     If given a palette, will palette swap using the structure's own palette and the given palette
     """
-    structure = convert_schem(asset.filepath) if asset.filepath.endswith(".schem") else convert_nbt(asset.filepath)
+    structure = (
+        convert_schem(asset.filepath)
+        if asset.filepath.endswith(".schem")
+        else convert_nbt(asset.filepath)
+    )
     transformation = transformation or Transformation()  # construct default value
 
     transformed_palette = transformation.apply_to_palette(structure.palette)

@@ -1,4 +1,3 @@
-
 from ..building_plan import BuildingPlan
 from ..legacycell import LegacyCell
 from ...core.structures.legacy_directions import CARDINAL, LegacyDirection, UP

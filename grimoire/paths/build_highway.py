@@ -54,7 +54,7 @@ def build_highway(
             editor.placeBlock((x, y + 3, z), Block("air"))
 
 
-def get_block(point: ivec2, final_point_heights: dict[ivec2, int], depth = 0) -> Block:
+def get_block(point: ivec2, final_point_heights: dict[ivec2, int], depth=0) -> Block:
     y_in_dir = {}
     y = final_point_heights[point]
 

@@ -46,11 +46,7 @@ my_schem = NBTAsset()
 my_schem.do_not_place = []
 my_schem.submodules = []
 my_schem.palette = None
-my_schem.filepath = 'grimoire/asset_data/schems/medieval_walls.schem'
+my_schem.filepath = "grimoire/asset_data/schems/medieval_walls.schem"
 my_schem.origin = ivec3(0, 0, 0)
 
-build_nbt(
-    editor,
-    my_schem,
-    palette=None
-)
+build_nbt(editor, my_schem, palette=None)

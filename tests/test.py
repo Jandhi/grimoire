@@ -76,6 +76,4 @@ print("World slice loaded!")
 
 build_map = Map(world_slice)
 
-print(
-editor.getBlock(build_map.make_3d(ivec2(0, 0)) - ivec3(0, 1, 0))
-)
+print(editor.getBlock(build_map.make_3d(ivec2(0, 0)) - ivec3(0, 1, 0)))

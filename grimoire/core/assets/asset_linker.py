@@ -108,7 +108,6 @@ class AssetLinker(GeneratorModule):
             t1 = field_type.__args__[0]
             return self._get_linked_field(parent, value, field_name, t1)
 
-
         if isinstance(field_type, type):
             # If the type is an enum, find the right field in that enum
             if Enum in field_type.__mro__ and isinstance(value, str):

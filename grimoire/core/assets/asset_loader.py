@@ -11,6 +11,7 @@ from ...core.assets.asset_linker import AssetLinker
 from ...core.assets.asset_validation_state import AssetValidationState
 from ...core.assets.load_types import load_types
 from ..logger import LoggerSettings
+
 # Loads all nbt assets from the assets folder
 
 

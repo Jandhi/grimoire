@@ -4,6 +4,7 @@ import time
 from gdpc import Block, Editor, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
 
+from ..core.maps import Map, DevelopmentType
 from ..core.noise.random import choose_weighted, shuffle
 from ..core.noise.rng import RNG
 from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
@@ -41,19 +42,18 @@ def replace_ground_smooth(
     points: list[ivec2],
     block_dict: dict[any, int],
     rng: RNG,
-    water_map: list[list[bool]],
-    build_map: list[list[bool]],
+    build_map: Map,
     editor: Editor,
-    world_slice: WorldSlice,
     height_offset: int = 0,
     ignore_blocks: list = [],
     ignore_water: bool = False,
 ):
     for counter, point in enumerate(points, start=1):
-        if (ignore_water or water_map[point.x][point.y] == False) and build_map[
-            point.x
-        ][point.y] == False:
-            y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
+        if (ignore_water or not build_map.water_at(point)) and (
+            not build_map.buildings[point.x][point.y]
+            or build_map.buildings[point.x][point.y] == DevelopmentType.CITY_ROAD
+        ):
+            y = build_map.height_at(point)
             if editor.getBlock(ivec3(point.x, y - 1, point.y)).id not in ignore_blocks:
                 # decide on slab/stair/block
                 block = None
@@ -65,19 +65,11 @@ def replace_ground_smooth(
                     opposite_neighbour = point - delta
 
                     if neighbour in points:
-                        y_in_dir[direction] = world_slice.heightmaps[
-                            "MOTION_BLOCKING_NO_LEAVES"
-                        ][neighbour.x][neighbour.y]
+                        y_in_dir[direction] = build_map.height_at(neighbour)
 
                     if (
-                        world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
-                            neighbour.x
-                        ][neighbour.y]
-                        == y + 1
-                        and world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
-                            opposite_neighbour.x
-                        ][opposite_neighbour.y]
-                        == y - 1
+                        build_map.height_at(neighbour) == y + 1
+                        and build_map.height_at(opposite_neighbour) == y - 1
                     ):
                         block = (
                             choose_weighted(rng.value(), block_dict["stairs"])

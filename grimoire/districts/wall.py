@@ -449,8 +449,8 @@ def build_wall_standard_with_inner(
 
                     # inner wall
                     for wall_pt in (
-                            point + vector(dir) * 2 + vector(RIGHT[dir]) * 2,
-                            point + vector(dir) + vector(RIGHT[dir]) * 3,
+                        point + vector(dir) * 2 + vector(RIGHT[dir]) * 2,
+                        point + vector(dir) + vector(RIGHT[dir]) * 3,
                         point + vector(dir) * 3 + vector(RIGHT[dir]),
                     ):
                         if (

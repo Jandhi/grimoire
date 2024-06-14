@@ -26,6 +26,8 @@ from ..core.utils.sets.set_operations import find_edges, find_outer_direction
 from ..core.utils.shapes import Shape2D
 from ..core.utils.vectors import point_3d, y_ivec3
 from ..districts.district import DistrictType, SuperDistrict
+from ..districts.district_painter import replace_ground_smooth
+from ..districts.paint_palette import PaintPalette
 from ..placement.building_placement import place_building
 
 EDGE_THICKNESS = 1
@@ -206,7 +208,7 @@ def place_buildings(
 def add_city_blocks(
     editor: Editor,
     super_districts: list[SuperDistrict],
-    city_map: Map,
+    build_map: Map,
     seed: int,
     style=BuildStyle.JAPANESE,
     is_debug=False,
@@ -222,10 +224,10 @@ def add_city_blocks(
     outer_urban_area, inner_urban_area = find_outer_and_inner_points(urban_area, 3)
 
     for point in outer_urban_area:
-        city_map.buildings[point.x][point.y] = DevelopmentType.CITY_WALL
+        build_map.buildings[point.x][point.y] = DevelopmentType.CITY_WALL
 
-    bubbles = generate_bubbles(rng, super_districts, city_map)
-    blocks, block_map = merge_small_blocks(*bubble_out(bubbles, city_map))
+    bubbles = generate_bubbles(rng, super_districts, build_map)
+    blocks, block_map = merge_small_blocks(*bubble_out(bubbles, build_map))
 
     inners: list[set[ivec2]] = []
     outers = []
@@ -237,16 +239,16 @@ def add_city_blocks(
         outer, inner = find_outer_and_inner_points(block, EDGE_THICKNESS)
 
         for point in outer:
-            city_map.buildings[point.x][point.y] = DevelopmentType.CITY_ROAD
+            build_map.buildings[point.x][point.y] = DevelopmentType.CITY_ROAD
 
         if is_debug:
             for point in outer | outer_urban_area:
                 editor.placeBlock(
                     ivec3(
                         point.x,
-                        city_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][
-                            point.y
-                        ]
+                        build_map.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][
+                            point.x
+                        ][point.y]
                         - 1,
                         point.y,
                     ),
@@ -257,13 +259,27 @@ def add_city_blocks(
         inners.append(inner)
         outers.append(outer)
 
+    city_roads = set()
+
+    for outer in outers:
+        city_roads |= outer
+
+    # FIXME: Not guaranteed to find the "urban_road" PaintPalette!
+    urban_road: PaintPalette = (
+        PaintPalette.find("desert_road")
+        if style == BuildStyle.DESERT
+        else PaintPalette.find("urban_road")
+    )
+
+    replace_ground_smooth(list(city_roads), urban_road.palette, rng, build_map, editor)
+
     # Has to be done after all inners are found
     for block, inner, outer in zip(blocks, inners, outers):
         print("New city block...")
         print("\tPlacing buildings...")
-        place_buildings(editor, inner, city_map, block_rng, style, is_debug)
+        place_buildings(editor, inner, build_map, block_rng, style, is_debug)
         print("\tDecorating...")
-        decorate_city_block(editor, city_map, block, inner, outer, block_rng, style)
+        decorate_city_block(editor, build_map, block, inner, outer, block_rng, style)
 
     return (blocks, inners, outers)
 

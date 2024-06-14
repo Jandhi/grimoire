@@ -10,6 +10,7 @@ from grimoire.buildings.roofs.roof_component import RoofComponent
 from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.palette import Palette
 from tests.buildings.random_shape import random_shape
+
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
@@ -66,16 +67,11 @@ build_roof(
     SEED,
 )
 
-far_cell = max(shape, key=lambda vec : vec.x + vec.z * 10)
+far_cell = max(shape, key=lambda vec: vec.x + vec.z * 10)
 grid.plan.cell_map[far_cell].doors.append(legacy_directions.Z_PLUS)
 door_coords = grid.get_door_coords(ivec3(0, 0, 1)) + grid.grid_to_world(far_cell)
 
 
 furnish_building(
-    plan.shape,
-    door_coords,
-    palette, 
-    editor,
-    grid,
-    rng = RNG(SEED, 'furnish')
+    plan.shape, door_coords, palette, editor, grid, rng=RNG(SEED, "furnish")
 )

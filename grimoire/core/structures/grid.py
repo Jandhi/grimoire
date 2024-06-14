@@ -51,7 +51,6 @@ class Grid:
     def world_to_local(self, coordinates: ivec3) -> ivec3:
         return coordinates - self.origin
 
-    # NOTE: Unused method
     def world_to_grid(self, coordinates: ivec3) -> ivec3:
         return self.local_to_grid(self.world_to_local(coordinates))
 
@@ -151,5 +150,3 @@ class Grid:
             return ivec3(self.dimensions.x // 2, 0, self.dimensions.z)
         elif dir == WEST:
             return ivec3(self.dimensions.x, 0, self.dimensions.z // 2)
-
-

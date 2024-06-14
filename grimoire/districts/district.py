@@ -5,6 +5,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from grimoire.core.styling.palette import Palette
 from grimoire.core.utils.sets.find_outer_points import find_edges
 
+
 class DistrictType(Enum):
     URBAN = auto()
     RURAL = auto()

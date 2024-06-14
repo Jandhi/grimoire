@@ -12,7 +12,7 @@ from grimoire.paths.build_highway import build_highway
 from grimoire.paths.route_highway import fill_out_highway, route_highway
 from grimoire.paths.signposts import build_signpost
 
-sys.path[0] = sys.path[0].removesuffix("/tests/placement")
+sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 print(f"PATH: {sys.path[0]}")
 
 # Actual file
@@ -51,15 +51,15 @@ from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
 
 SEED = 0x4473
-DO_TERRAFORMING = False  # Set this to true for the final iteration
+DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
-DO_WALL = False
+DO_WALL = True
 DO_RURAL = True
 
 SLEEP_DELAY = 1
 
 editor = Editor(buffering=True, caching=True)
-load_assets("grimoire/asset_data")
+load_assets("grimoire\\asset_data")
 
 area = editor.getBuildArea()
 
@@ -140,7 +140,7 @@ for district in super_districts:
 
 most_prevalent_biome = max(biomes.items(), key=lambda kp: kp[1])[0]
 
-style = BuildStyle.DESERT
+style = BuildStyle.WET
 
 # FIXME: Incomplete code!
 if most_prevalent_biome in []:
@@ -176,13 +176,6 @@ palette = rng.choose(eligible_palettes)
 
 build_map = get_build_map(world_slice, 20)
 
-# FIXME: Not guaranteed to find the "urban_road" PaintPalette!
-urban_road: PaintPalette = (
-    PaintPalette.find("desert_road")
-    if style == BuildStyle.DESERT
-    else PaintPalette.find("urban_road")
-)
-
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
@@ -197,10 +190,6 @@ blocks, inners, outers = add_city_blocks(
     editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False
 )
 
-city_roads = set()
-
-for outer in outers:
-    city_roads |= outer
 
 # WALL
 
@@ -249,16 +238,6 @@ if DO_WALL:
                 build_highway(highway, editor, world_slice, main_map)
                 build_signpost(editor, highway, main_map, rng)
 
-
-replace_ground_smooth(
-    list(city_roads),
-    urban_road.palette,
-    rng,
-    main_map.water,
-    build_map,
-    editor,
-    world_slice,
-)
 
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
