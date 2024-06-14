@@ -100,7 +100,7 @@ main_map.super_districts = super_district_map
 if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistricts
     print("starting plateauing")
     for district in districts:
-        if not district.is_urban:
+        if not district.type == DistrictType.URBAN:
             continue
 
         plateau(district, district_map, world_slice, editor, main_map.water)
@@ -214,7 +214,7 @@ if DO_WALL:
         )
 
         for gate in gates:
-            path_origin = gate.location + rotate3D(VECTORS[gate.direction], 1)  * 3
+            path_origin = gate.location + VECTORS[gate.direction]
 
             size = main_map.world.rect.size
 

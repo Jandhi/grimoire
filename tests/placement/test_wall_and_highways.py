@@ -202,8 +202,7 @@ for wall_points in wall_points_list:
     )
 
     for gate in gates:
-        path_origin = gate.location + rotate3D(VECTORS[gate.direction] * -3, 1)
-
+        path_origin = gate.location + VECTORS[gate.direction]
         size = main_map.world.rect.size
 
         path_end: ivec2 = None
