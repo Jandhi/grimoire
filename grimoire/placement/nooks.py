@@ -1,15 +1,14 @@
 import itertools
 from enum import Enum, auto
-from logging import warn
-from typing import Any, Callable, Iterable, Sequence, TypeVar
+from logging import error, warn
+from typing import Any, Callable, Generator, Iterable, Sequence, TypeVar
 
 from gdpc.editor import Editor
-from gdpc.vector_tools import Rect
+from gdpc.vector_tools import CARDINALS_2D, Rect, neighbors2D
 from glm import ivec2
 
 from grimoire.core.maps import DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
-from grimoire.core.styling.materials.material import Material
 from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
 from grimoire.core.utils.shapes import Shape2D
@@ -21,6 +20,34 @@ from grimoire.placement.terraformers.texture import (
     roughen_edge,
 )
 from grimoire.placement.terraformers.topology import flatten_area_up
+
+LOOP_LIMIT = 16  # prevents uncontrolled loops from going on too long
+
+
+class TrafficExposureType(Enum):
+    UNSURE = auto()  # an error state
+    ISLAND = auto()  # surrounded by streets
+    PENINSULA = auto()  # mainly surrounded by streets
+    COVE = auto()  # mainly surrounded by buildings
+    CHANNEL = auto()  # connects two streets
+    COURT = auto()  # not surrounded by any streets
+
+
+DEFAULT_TRAFFIC_EXPOSURE = TrafficExposureType.UNSURE
+
+
+class WaterExposureType(Enum):
+    DRY = auto()  # contains no water
+    POND = auto()  # contains a closed body of water within the nook
+    LAKE = auto()  # contains a freshwater body which extends beyond the nook
+    STREAM = auto()  # is divided by a freshwater body
+    WETLAND = auto()  # is in a wetland biome (e.g. swamp)
+    RIVER = auto()  # is in a river biome
+    COAST = auto()  # is in a coastal biome
+    OCEAN = auto()  # is in an ocean biome
+
+
+DEFAULT_WATER_EXPOSURE = WaterExposureType.POND
 
 
 class DevelopmentPattern:
@@ -40,14 +67,6 @@ class DevelopmentPattern:
             if ivec2(x, z) in edge_development_map:
                 # TODO: Check neighbours for similar developments, merge if sensible
                 raise NotImplementedError
-
-
-class ExposureType(Enum):
-    ISLAND = auto()
-    PENINSULA = auto()
-    COVE = auto()
-    CHANNEL = auto()
-    COURT = auto()
 
 
 class Nook:
@@ -76,7 +95,9 @@ class Nook:
         self,
         name: str,
         district_types: DistrictType | Iterable[DistrictType] | None = None,
-        exposure_types: ExposureType | Iterable[ExposureType] | None = None,
+        exposure_types: (
+            TrafficExposureType | Iterable[TrafficExposureType] | None
+        ) = None,
         styles: BuildStyle | Iterable[BuildStyle] | None = None,
         min_area: int | None = None,
         max_area: int | None = None,
@@ -168,7 +189,13 @@ class Nook:
 
 def identify_exposure_type_from_edging_pattern(
     pattern: Sequence[tuple[set[DevelopmentType], int]],
-) -> ExposureType:
+) -> TrafficExposureType:
+    if not pattern:
+        warn(
+            f"Provided pattern was empty. Defaulting to '{DEFAULT_TRAFFIC_EXPOSURE.name}'."
+        )
+        return DEFAULT_TRAFFIC_EXPOSURE
+
     PATHS: frozenset[DevelopmentType] = frozenset(
         {
             DevelopmentType.CITY_ROAD,
@@ -217,14 +244,16 @@ def identify_exposure_type_from_edging_pattern(
             )
 
     if not broad_pattern:
-        warn("Did not generate a broad pattern. Defaulting to 'COURT'")
-        return ExposureType.COURT
+        warn(
+            f"Did not generate a broad pattern. Defaulting to '{DEFAULT_TRAFFIC_EXPOSURE.name}'"
+        )
+        return DEFAULT_TRAFFIC_EXPOSURE
 
     if len(broad_pattern) < 2:  # a single segment
         if broad_pattern[0][0] == PATHS:
-            return ExposureType.ISLAND
+            return TrafficExposureType.ISLAND
         if broad_pattern[0][0] == BUILDINGS:
-            return ExposureType.COURT
+            return TrafficExposureType.COURT
 
     totals: dict[frozenset[DevelopmentType], int] = {
         development_set: 0 for development_set in development_sets
@@ -237,20 +266,26 @@ def identify_exposure_type_from_edging_pattern(
         len(broad_pattern) < 4
     ):  # two segment (one segment may be split between begininng and end)
         if totals[PATHS] > totals[BUILDINGS]:
-            return ExposureType.PENINSULA
-        return ExposureType.COVE
+            return TrafficExposureType.PENINSULA
+        return TrafficExposureType.COVE
 
-    return ExposureType.CHANNEL
+    return TrafficExposureType.CHANNEL
 
 
 # ==== Instances ====
-HIGH_EXPOSURE: list[ExposureType] = [
-    ExposureType.CHANNEL,
-    ExposureType.ISLAND,
-    ExposureType.PENINSULA,
+HIGH_EXPOSURE: list[TrafficExposureType] = [
+    TrafficExposureType.CHANNEL,
+    TrafficExposureType.ISLAND,
+    TrafficExposureType.PENINSULA,
 ]
-MIXED_EXPOSURE: list[ExposureType] = [ExposureType.PENINSULA, ExposureType.COVE]
-LOW_EXPOSURE: list[ExposureType] = [ExposureType.COURT, ExposureType.COVE]
+MIXED_EXPOSURE: list[TrafficExposureType] = [
+    TrafficExposureType.PENINSULA,
+    TrafficExposureType.COVE,
+]
+LOW_EXPOSURE: list[TrafficExposureType] = [
+    TrafficExposureType.COURT,
+    TrafficExposureType.COVE,
+]
 
 PATCHY_PAVED_NOOK = Nook(
     "Patchy Paving",
@@ -275,13 +310,23 @@ PLATEAU_NOOK = Nook(
 
 ALL_NOOKS = {PATCHY_PAVED_NOOK, PATCHY_GRASS_NOOK, GRASSY_YARD_NOOK, PLATEAU_NOOK}
 
+DEFAULT_NOOK = PATCHY_GRASS_NOOK
+
 # ==== Nook Sets ====
 
 
 def _set_from_type_iterable(
-    nook_type_iter: Iterable, nook: Nook, values: Any
+    nook_type_iter: Iterable,
+    nook: Nook,
+    values: Any,
+    nook_type_dict: dict[Any, set[Nook]] | None = None,
 ) -> dict[Any, set[Nook]]:
-    nook_type_dict: dict[Any, set] = {t: set() for t in nook_type_iter}
+    if not nook_type_dict:
+        nook_type_dict = {t: set() for t in nook_type_iter}
+    else:
+        for t in nook_type_iter:
+            if t not in nook_type_dict:
+                nook_type_dict[t] = set()
 
     if values is None:  # add the nook to all sets
         for nook_type_set in nook_type_dict.values():
@@ -296,15 +341,22 @@ def _set_from_type_iterable(
     return nook_type_dict
 
 
+NOOKS_BY_DISTRICT: dict[DistrictType, set[Nook]] = {}
+NOOKS_BY_EXPOSURE: dict[TrafficExposureType, set[Nook]] = {}
+NOOKS_BY_STYLE: dict[str, set[Nook]] = {}
+
 for nook in ALL_NOOKS:
-    NOOKS_BY_DISTRICT: dict[DistrictType, set[Nook]] = _set_from_type_iterable(
-        DistrictType, nook, nook.district_types
+    NOOKS_BY_DISTRICT = _set_from_type_iterable(
+        DistrictType, nook, nook.district_types, NOOKS_BY_DISTRICT
     )
-    NOOKS_BY_EXPOSURE: dict[ExposureType, set[Nook]] = _set_from_type_iterable(
-        ExposureType, nook, nook.exposure_types
+    NOOKS_BY_EXPOSURE = _set_from_type_iterable(
+        TrafficExposureType, nook, nook.exposure_types, NOOKS_BY_EXPOSURE
     )
-    NOOKS_BY_STYLE: dict[str, set[Nook]] = _set_from_type_iterable(
-        BuildStyle, nook, nook.styles
+    NOOKS_BY_STYLE = _set_from_type_iterable(
+        BuildStyle, nook, nook.styles, NOOKS_BY_STYLE
+    )
+    NOOKS_BY_WATER = _set_from_type_iterable(
+        WaterExposureType, nook, nook.styles, NOOKS_BY_STYLE
     )
 
 
@@ -326,7 +378,7 @@ def eliminate_nooks_based_on_largest_rect(nook_set, area: Shape2D) -> set[Nook]:
 
 def find_suitable_nooks(
     district_types: DistrictType | Iterable[DistrictType] | None = None,
-    exposure_types: ExposureType | Iterable[ExposureType] | None = None,
+    exposure_types: TrafficExposureType | Iterable[TrafficExposureType] | None = None,
     styles: BuildStyle | Iterable[BuildStyle] | None = None,
     area: Shape2D | None = None,
 ) -> set[Nook]:
@@ -383,7 +435,7 @@ def find_suitable_nooks(
         return final_set
 
     _district_types: list[DistrictType] | None = to_list_or_none(district_types)
-    _exposure_types: list[ExposureType] | None = to_list_or_none(exposure_types)
+    _exposure_types: list[TrafficExposureType] | None = to_list_or_none(exposure_types)
     _styles: list[BuildStyle] | None = to_list_or_none(styles)
 
     type_sets: list[tuple[list[T] | None, dict[T, set[Nook]]]] = [
@@ -406,11 +458,140 @@ def find_suitable_nooks(
 
     # No candidates were established in the first place. Return an empty set.
     if final_set is None:
-        warn("Could not find suitable Nook. Defaulting to GRASSY_NOOK.")
-        return {PATCHY_GRASS_NOOK}
+        warn(f"Could not find suitable Nook. Defaulting to {DEFAULT_NOOK.name}.")
+        return {DEFAULT_NOOK}
 
     if area is not None:
         final_set = eliminate_nooks_based_on_area(final_set, area)
         # TODO: final_set = eliminate_nooks_based_on_largest_rect(final_set, area)
 
     return final_set
+
+
+# ==== Nook discovery ====
+
+
+def discover_nook(
+    start: ivec2, city_block_shape: Shape2D, city_map: Map
+) -> tuple[set[ivec2], Shape2D]:
+    """Find the extent of a potential Nook in a city block, starting at a free space."""
+
+    development_map: list[list[DevelopmentType | None]] = city_map.buildings
+    valid_rect = city_block_shape.to_rect()
+    bounding_rect = city_block_shape.to_boundry_rect()
+
+    if development_map[start.x][start.y] is not None:
+        raise ValueError(
+            f"Start ({start}) must be unoccupied in the city map (is {development_map[start.x][start.y]})"
+        )
+
+    nook_edge: set[ivec2] = set()
+    nook_area = Shape2D()
+
+    stack: list[ivec2] = [start]
+    visited: set[ivec2] = set()
+
+    # trace the nook, returning its edge and non-edge area
+    while stack:
+        position = stack.pop()
+
+        if position in visited:
+            continue
+
+        visited.add(position)
+
+        if development_map[position.x][position.y]:
+            continue
+
+        for neighbor in neighbors2D(position, bounding_rect, diagonal=True):
+
+            # has a developed neighbour
+            if development_map[neighbor.x][neighbor.y] or not valid_rect.contains(
+                neighbor
+            ):
+                visited.add(neighbor)
+                nook_edge.add(position)
+
+            if neighbor not in visited:
+                stack.append(neighbor)
+
+        # did not have a developed neighbour
+        if position not in nook_edge:
+            nook_area.add(position)
+
+    return nook_edge, nook_area
+
+
+def map_developments_at_edge(
+    edge: set[ivec2], city_map: Map, bounds: Rect
+) -> dict[ivec2, set[DevelopmentType]]:
+    development_set: dict[ivec2, set[DevelopmentType]] = {}
+    for point in edge:
+        for neighbor in neighbors2D(point, bounds):
+            if development := city_map.buildings[neighbor.x][neighbor.y]:
+                if point not in development_set:
+                    development_set[point] = set()
+                development_set[point].add(development)
+
+    return development_set
+
+
+def edge_to_pattern(
+    start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
+) -> list[tuple[set[DevelopmentType], int]]:
+
+    edge_start: ivec2 = ivec2(start)
+
+    if not edge:
+        return []
+
+    pattern: list[tuple[set[DevelopmentType], int]] = []
+
+    for direction in CARDINALS_2D:
+        edge_start = ivec2(start)
+        for _ in range(LOOP_LIMIT):
+            if edge_start in edge:
+                break
+            edge_start += direction
+        else:
+            continue
+        break
+    else:
+        raise RuntimeError(
+            f"Could not find an edge to the Nook originating from {start} (intervened at {edge_start})."
+        )
+
+    for current in determine_edge_sequence(start, bounds, edge):
+
+        if current not in edge:
+            error(
+                f"Current position {current} is not a valid edge value! It is being skipped."
+            )
+            continue
+
+        if not pattern or edge[current] != pattern[-1][0]:  # new pattern segment
+            pattern.append((edge[current], 1))
+            continue
+        pattern[-1] = (pattern[-1][0], pattern[-1][1] + 1)  # extend current segment
+
+    return pattern
+
+
+def determine_edge_sequence(
+    start: ivec2, bounds: Rect, edge: Iterable[ivec2]
+) -> Generator[ivec2, Any, None]:
+    current_position: ivec2 = start
+    visited: set[ivec2] = set()
+
+    stack = [start]
+
+    while stack:
+        current_position = stack.pop()
+        yield current_position
+        visited.add(current_position)
+
+        for neighbor in neighbors2D(current_position, bounds):
+            if neighbor in edge and neighbor not in visited:
+                stack.append(neighbor)
+
+    return

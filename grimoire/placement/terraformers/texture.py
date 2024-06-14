@@ -25,6 +25,7 @@ def _pave_area(
     city_map: Map,
     _rng: RNG,
     fill_blocks: Block | Sequence[Block] = DEFAULT_PAVING_FILL,
+    pave_liquids: bool = False,
 ) -> None:
     """
     Paves the specified area with the given fill blocks.
@@ -39,6 +40,8 @@ def _pave_area(
         None
     """
     for position in area:
+        if not pave_liquids and city_map.water_at(position):  # ignore water
+            continue
         position3D: ivec3 = city_map.make_3d(position) + DOWN_3D
         editor.placeBlock(position3D, fill_blocks)
     return
@@ -91,7 +94,14 @@ def flagstone_edge(
     city_map: Map,
     _rng: RNG,
 ):
-    return _pave_area(editor, Shape2D(set(edges.keys())), edges, city_map, _rng, fill_blocks=Block("minecraft:smooth_stone"))
+    return _pave_area(
+        editor,
+        Shape2D(set(edges.keys())),
+        edges,
+        city_map,
+        _rng,
+        fill_blocks=Block("minecraft:smooth_stone"),
+    )
 
 
 def roughen_edge(

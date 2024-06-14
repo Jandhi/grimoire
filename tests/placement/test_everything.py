@@ -53,7 +53,7 @@ SEED = 0x4473
 DO_TERRAFORMING = False  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = False
-DO_RURAL = False
+DO_RURAL = True
 
 SLEEP_DELAY = 1
 

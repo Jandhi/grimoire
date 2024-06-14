@@ -1,28 +1,20 @@
 import itertools
-from collections import Counter
-from enum import Enum, auto
 from logging import error, warn
-from typing import Any, Generator, Iterable
+from typing import Generator
 
 from gdpc import Block, Editor
-from gdpc.vector_tools import (
-    CARDINALS_2D,
-    DOWN_3D,
-    EAST_2D,
-    Rect,
-    distance2,
-    ivec2,
-    ivec3,
-    neighbors2D,
-)
+from gdpc.vector_tools import CARDINALS_2D, Rect, distance2, ivec2, ivec3, neighbors2D
 
 from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
 from grimoire.placement.nooks import (
-    ExposureType,
     Nook,
+    TrafficExposureType,
+    discover_nook,
+    edge_to_pattern,
     find_suitable_nooks,
     identify_exposure_type_from_edging_pattern,
+    map_developments_at_edge,
 )
 
 from ..core.maps import DevelopmentType, Map
@@ -33,14 +25,12 @@ from ..core.utils.sets.find_outer_points import find_outer_and_inner_points
 from ..core.utils.sets.set_operations import find_edges, find_outer_direction
 from ..core.utils.shapes import Shape2D
 from ..core.utils.vectors import point_3d, y_ivec3
-from ..districts.district import District, DistrictType, SuperDistrict
+from ..districts.district import DistrictType, SuperDistrict
 from ..placement.building_placement import place_building
 
 EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 500  # 120
 MINIMUM_BLOCK_SZE = 100  # 100
-
-LOOP_LIMIT = 16  # prevents uncontrolled loops from going on too long
 
 
 def generate_bubbles(
@@ -318,7 +308,9 @@ def decorate_city_block(
                 scan_position, surrounding_developments, bounds
             )
             # select an appropriate Nook type and manifest it
-            exposure: ExposureType = identify_exposure_type_from_edging_pattern(pattern)
+            exposure: TrafficExposureType = identify_exposure_type_from_edging_pattern(
+                pattern
+            )
             nook: Nook = block_rng.choose(
                 list(
                     find_suitable_nooks(
@@ -339,129 +331,3 @@ def decorate_city_block(
                 f"\t\t\t- Style: {[t.name for t in to_list_or_none(nook.styles)] if nook.styles else 'Any'} ({style.name})\n"
                 f"\t\t\t- Area {nook.min_area}-{nook.max_area} ({len(nook_shape)})"
             )
-
-
-def discover_nook(
-    start: ivec2, city_block_shape: Shape2D, city_map: Map
-) -> tuple[set[ivec2], Shape2D]:
-    """Find the extent of a potential Nook in a city block, starting at a free space."""
-
-    development_map: list[list[DevelopmentType | None]] = city_map.buildings
-    valid_rect = city_block_shape.to_rect()
-    bounding_rect = city_block_shape.to_boundry_rect()
-
-    if development_map[start.x][start.y] is not None:
-        raise ValueError(
-            f"Start ({start}) must be unoccupied in the city map (is {development_map[start.x][start.y]})"
-        )
-
-    nook_edge: set[ivec2] = set()
-    nook_area = Shape2D()
-
-    stack: list[ivec2] = [start]
-    visited: set[ivec2] = set()
-
-    # trace the nook, returning its edge and non-edge area
-    while stack:
-        position = stack.pop()
-
-        if position in visited:
-            continue
-
-        visited.add(position)
-
-        if development_map[position.x][position.y]:
-            continue
-
-        for neighbor in neighbors2D(position, bounding_rect, diagonal=True):
-
-            # has a developed neighbour
-            if development_map[neighbor.x][neighbor.y] or not valid_rect.contains(
-                neighbor
-            ):
-                visited.add(neighbor)
-                nook_edge.add(position)
-
-            if neighbor not in visited:
-                stack.append(neighbor)
-
-        # did not have a developed neighbour
-        if position not in nook_edge:
-            nook_area.add(position)
-
-    return nook_edge, nook_area
-
-
-def map_developments_at_edge(
-    edge: set[ivec2], city_map: Map, bounds: Rect
-) -> dict[ivec2, set[DevelopmentType]]:
-    development_set: dict[ivec2, set[DevelopmentType]] = {}
-    for point in edge:
-        for neighbor in neighbors2D(point, bounds):
-            if development := city_map.buildings[neighbor.x][neighbor.y]:
-                if point not in development_set:
-                    development_set[point] = set()
-                development_set[point].add(development)
-
-    return development_set
-
-
-def edge_to_pattern(
-    start: ivec2, edge: dict[ivec2, set[DevelopmentType]], bounds: Rect
-) -> list[tuple[set[DevelopmentType], int]]:
-
-    edge_start: ivec2 = ivec2(start)
-
-    if not edge:
-        return []
-
-    pattern: list[tuple[set[DevelopmentType], int]] = []
-
-    for direction in CARDINALS_2D:
-        edge_start = ivec2(start)
-        for _ in range(LOOP_LIMIT):
-            if edge_start in edge:
-                break
-            edge_start += direction
-        else:
-            continue
-        break
-    else:
-        raise RuntimeError(
-            f"Could not find an edge to the Nook originating from {start} (intervened at {edge_start})."
-        )
-
-    for current in determine_edge_sequence(start, bounds, edge):
-
-        if current not in edge:
-            error(
-                f"Current position {current} is not a valid edge value! It is being skipped."
-            )
-            continue
-
-        if not pattern or edge[current] != pattern[-1][0]:  # new pattern segment
-            pattern.append((edge[current], 1))
-            continue
-        pattern[-1] = (pattern[-1][0], pattern[-1][1] + 1)  # extend current segment
-
-    return pattern
-
-
-def determine_edge_sequence(
-    start: ivec2, bounds: Rect, edge: Iterable[ivec2]
-) -> Generator[ivec2, Any, None]:
-    current_position: ivec2 = start
-    visited: set[ivec2] = set()
-
-    stack = [start]
-
-    while stack:
-        current_position = stack.pop()
-        yield current_position
-        visited.add(current_position)
-
-        for neighbor in neighbors2D(current_position, bounds):
-            if neighbor in edge and neighbor not in visited:
-                stack.append(neighbor)
-
-    return
