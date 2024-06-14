@@ -2,6 +2,12 @@
 import sys
 import time
 
+
+
+sys.path[0] = sys.path[0].removesuffix("tests\\placement")
+print(f"PATH: {sys.path[0]}")
+
+# Actual file
 from gdpc.vector_tools import addY, dropY, rotate3D
 
 from grimoire.core.structures import legacy_directions
@@ -12,10 +18,6 @@ from grimoire.paths.build_highway import build_highway
 from grimoire.paths.route_highway import fill_out_highway, route_highway
 from grimoire.paths.signposts import build_signpost
 
-sys.path[0] = sys.path[0].removesuffix("tests\\placement")
-print(f"PATH: {sys.path[0]}")
-
-# Actual file
 from gdpc import Block, Box, Editor
 from gdpc.lookup import GRANULARS
 from glm import ivec2
@@ -212,7 +214,7 @@ if DO_WALL:
         )
 
         for gate in gates:
-            path_origin = gate.location + rotate3D(VECTORS[gate.direction] * -3, 1)
+            path_origin = gate.location + rotate3D(VECTORS[gate.direction], 1)  * 3
 
             size = main_map.world.rect.size
 
