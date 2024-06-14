@@ -7,6 +7,7 @@ from gdpc.vector_tools import addY, dropY, rotate3D
 from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.legacy_directions import VECTORS
 from grimoire.core.styling.palette import BuildStyle, Palette
+from grimoire.core.utils.misc import kill_items
 from grimoire.paths.build_highway import build_highway
 from grimoire.paths.route_highway import fill_out_highway, route_highway
 from grimoire.paths.signposts import build_signpost
@@ -192,7 +193,7 @@ urban_road: PaintPalette = (
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-(blocks, inners, outers) = add_city_blocks(
+blocks, inners, outers = add_city_blocks(
     editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False
 )
 
@@ -336,5 +337,9 @@ if DO_RURAL:
                 continue
 
             time.sleep(
-                5
+                SLEEP_DELAY
             )  # to try to reduce http traffic, we'll do a little sleepy time
+
+# ==== CLEANUP ====
+
+kill_items(editor)

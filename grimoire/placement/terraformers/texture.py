@@ -4,16 +4,30 @@ from typing import Sequence
 from gdpc.block import Block
 from gdpc.editor import Editor
 from gdpc.lookup import POLISHED_BLACKSTONE_BRICKS
-from gdpc.vector_tools import DOWN_3D, neighbors2D
+from gdpc.vector_tools import DOWN_3D, Y_3D, neighbors2D
 from glm import ivec2, ivec3
 
 from grimoire.core.maps import DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
+from grimoire.core.utils.misc import growth_spurt
 from grimoire.core.utils.shapes import Shape2D
 
 POLISHED_BLACKSTONE_BRICKS_BLOCKS = [Block(b) for b in POLISHED_BLACKSTONE_BRICKS]
-DEFAULT_PAVING_FILL = POLISHED_BLACKSTONE_BRICKS_BLOCKS
-DEFAULT_SOIL_FILL = Block("minecraft:grass_block")
+DRY_STONE_BRICK_SLABS = [
+    Block(b)
+    for b in {"minecraft:cracked_stone_brick_slab", "minecraft:stone_brick_slab"}
+]
+REGULAR_SANDSTONE_SLABS = [
+    Block(b)
+    for b in {
+        "minecraft:sandstone_slab",
+        "minecraft:sandstone_slab",
+        "minecraft:cut_sandstone_slab",
+    }
+]
+DEFAULT_PAVING = DRY_STONE_BRICK_SLABS
+DEFAULT_PAVING_DESERT = REGULAR_SANDSTONE_SLABS
+DEFAULT_SOIL = Block("minecraft:grass_block")
 
 # ==== AREAS ONLY ====
 
@@ -24,8 +38,9 @@ def _pave_area(
     _edges: dict[ivec2, set[DevelopmentType]],
     city_map: Map,
     _rng: RNG,
-    fill_blocks: Block | Sequence[Block] = DEFAULT_PAVING_FILL,
+    fill_blocks: Block | Sequence[Block] = DEFAULT_PAVING,
     pave_liquids: bool = False,
+    y_offset: int = 0,
 ) -> None:
     """
     Paves the specified area with the given fill blocks.
@@ -42,12 +57,12 @@ def _pave_area(
     for position in area:
         if not pave_liquids and city_map.water_at(position):  # ignore water
             continue
-        position3D: ivec3 = city_map.make_3d(position) + DOWN_3D
+        position3D: ivec3 = city_map.make_3d(position) + DOWN_3D + y_offset * Y_3D
         editor.placeBlock(position3D, fill_blocks)
     return
 
 
-def pave_over_area(
+def paved_area(
     editor: Editor,
     area: Shape2D,
     edges: dict[ivec2, set[DevelopmentType]],
@@ -79,12 +94,46 @@ def grass_patch_area(
         None
     """
 
-    _pave_area(editor, area, edges, city_map, _rng, DEFAULT_SOIL_FILL)
-    # TODO: bonemeal(position3D)
+    _pave_area(editor, area, edges, city_map, _rng, DEFAULT_SOIL)
     return
 
 
+def wild_growth_area(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+):
+    growth: list[Block] = [
+        Block(b)
+        for b in 11 * ["minecraft:air"]
+        + 75 * ["minecraft:grass"]
+        + 7 * ["minecraft:poppy", "minecraft:dandelion"]
+        + ["minecraft:oak_sapling"]
+    ]
+    editor.placeBlock([city_map.make_3d(p) for p in area], growth)
+    growth_spurt(editor)
+
+
 # ==== EDGES ONLY ====
+
+
+def grass_edge(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+):
+    return _pave_area(
+        editor,
+        Shape2D(set(edges.keys())),
+        edges,
+        city_map,
+        _rng,
+        fill_blocks=Block("minecraft:grass_block"),
+    )
 
 
 def flagstone_edge(
@@ -127,7 +176,7 @@ def roughen_edge(
 
     # populate edges with random samples from the surroundings
     for position in edges:
-        position3D = city_map.make_3d(position)
+        position3D = city_map.make_3d(position) + DOWN_3D
 
         # get neighboring Blocks which aren't part of the edge
         neighbour_blocks: list[Block] = [
@@ -146,3 +195,28 @@ def roughen_edge(
 
         editor.placeBlock(position3D, neighbour_blocks)
     return
+
+
+# ==== FULL NOOK ====
+
+
+def fully_paved(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+) -> None:
+    return _pave_area(editor, area | set(edges.keys()), edges, city_map, _rng)
+
+
+def fully_paved_desert(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+) -> None:
+    return _pave_area(
+        editor, area | set(edges.keys()), edges, city_map, _rng, DEFAULT_PAVING_DESERT
+    )

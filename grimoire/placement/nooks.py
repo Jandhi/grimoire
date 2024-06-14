@@ -13,11 +13,16 @@ from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
 from grimoire.core.utils.shapes import Shape2D
 from grimoire.districts.district import DistrictType
+from grimoire.placement.decorators.edging import simple_closed_fencing
 from grimoire.placement.terraformers.texture import (
     flagstone_edge,
+    fully_paved,
+    fully_paved_desert,
+    grass_edge,
     grass_patch_area,
-    pave_over_area,
+    paved_area,
     roughen_edge,
+    wild_growth_area,
 )
 from grimoire.placement.terraformers.topology import flatten_area_up
 
@@ -287,28 +292,52 @@ LOW_EXPOSURE: list[TrafficExposureType] = [
     TrafficExposureType.COVE,
 ]
 
-PATCHY_PAVED_NOOK = Nook(
-    "Patchy Paving",
+# PATCHY_PAVED_NOOK = Nook(
+#     "Patchy Paving",
+#     exposure_types=HIGH_EXPOSURE,
+#     terraformers=[pave_over_area, roughen_edge],
+# )
+NORMAL_SQUARE_NOOK = Nook(
+    "Square",
     exposure_types=HIGH_EXPOSURE,
-    terraformers=[pave_over_area, roughen_edge],
+    styles=BuildStyle.NORMAL,
+    terraformers=[fully_paved, roughen_edge],
+)
+DESERT_PLAZA_NOOK = Nook(
+    "Desert Plaza",
+    exposure_types=HIGH_EXPOSURE,
+    styles=BuildStyle.DESERT,
+    terraformers=[fully_paved_desert, roughen_edge],
 )
 PATCHY_GRASS_NOOK = Nook(
     "Patchy Grass",
-    exposure_types=LOW_EXPOSURE,
-    terraformers=[grass_patch_area, roughen_edge],
+    terraformers=[grass_patch_area, grass_edge, roughen_edge, wild_growth_area],
 )
 GRASSY_YARD_NOOK = Nook(
     "Grassy Yard",
     exposure_types=MIXED_EXPOSURE,
-    terraformers=[grass_patch_area, flagstone_edge],
+    terraformers=[grass_patch_area, flagstone_edge, wild_growth_area],
+    decorators=[simple_closed_fencing],
 )
-PLATEAU_NOOK = Nook(
-    "Plateau",
-    district_types=DistrictType.URBAN,
-    terraformers=[flatten_area_up, pave_over_area],
+FENCED_WILD_GARDEN_NOOK = Nook(
+    "Fenced Wild Garden",
+    exposure_types=MIXED_EXPOSURE,
+    terraformers=[grass_patch_area, grass_edge, roughen_edge, wild_growth_area],
+    decorators=[simple_closed_fencing],
 )
+# PLATEAU_NOOK = Nook(
+#     "Plateau",
+#     district_types=DistrictType.URBAN,
+#     terraformers=[flatten_area_up, pave_over_area],
+# )
 
-ALL_NOOKS = {PATCHY_PAVED_NOOK, PATCHY_GRASS_NOOK, GRASSY_YARD_NOOK, PLATEAU_NOOK}
+ALL_NOOKS: set[Nook] = {
+    # PATCHY_PAVED_NOOK,
+    # PLATEAU_NOOK,
+    PATCHY_GRASS_NOOK,
+    GRASSY_YARD_NOOK,
+    FENCED_WILD_GARDEN_NOOK,
+}
 
 DEFAULT_NOOK = PATCHY_GRASS_NOOK
 
