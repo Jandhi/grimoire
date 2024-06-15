@@ -54,7 +54,7 @@ from grimoire.terrain.tree_cutter import log_trees
 from grimoire.core.utils.geometry import get_surrounding_points
 
 SEED = 0x4473
-DO_TERRAFORMING = False  # Set this to true for the final iteration
+DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
 DO_RURAL = False  # Not worth it
@@ -206,7 +206,6 @@ if DO_URBAN:
         SEED,
         style=style,
         is_debug=False,
-        stilts=False,
     )
 
 

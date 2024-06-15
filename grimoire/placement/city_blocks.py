@@ -98,7 +98,7 @@ def bubble_out(
         if build_map.buildings[vec.x][vec.y] == DevelopmentType.CITY_WALL:
             return False
 
-        if build_map.water[vec.x][vec.y]:
+        if build_map.water_depth_at(vec) > 3:  # allow depth
             return False
 
         return district is not None and district.type == DistrictType.URBAN
@@ -178,7 +178,6 @@ def place_buildings(
     rng,
     style=BuildStyle.JAPANESE,
     is_debug=False,
-    stilts=False,
 ):
     """
     Places buildings on the map edges based on the provided parameters.
@@ -203,9 +202,7 @@ def place_buildings(
                 Block("cobblestone_stairs", {"facing": to_text(build_dir)}),
             )
 
-        attempt_place_building(
-            editor, edge, build_map, build_dir, rng, style, stilts=stilts
-        )
+        attempt_place_building(editor, edge, build_map, build_dir, rng, style)
 
 
 def add_city_blocks(
@@ -215,7 +212,6 @@ def add_city_blocks(
     seed: int,
     style=BuildStyle.JAPANESE,
     is_debug=False,
-    stilts=False,
 ) -> tuple[list[set[ivec2]], list[set[ivec2]], list[set[ivec2]]]:
     rng = RNG(seed, "add_city_blocks")
 

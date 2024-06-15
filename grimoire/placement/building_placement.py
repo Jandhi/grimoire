@@ -66,7 +66,6 @@ def attempt_place_building(
     rng: RNG,
     style: BuildStyle = BuildStyle.JAPANESE,
     urban_only=True,
-    stilts: bool = False,
 ) -> bool:
     # A building can always be placed with the door to the left or right of the original spot
     my_offsets = offsets[outside_direction]
@@ -104,8 +103,8 @@ def attempt_place_building(
                 shape,
                 style,
                 urban_only,
-                allow_water=stilts,
-                stilts=stilts,
+                allow_water=False,
+                stilts=False,
             )
 
             if not success:
@@ -119,8 +118,8 @@ def attempt_place_building(
                     shape,
                     style,
                     urban_only,
-                    allow_water=stilts,
-                    stilts=stilts,
+                    allow_water=True,
+                    stilts=True,
                 )
 
             if success:
