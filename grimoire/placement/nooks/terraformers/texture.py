@@ -1,27 +1,33 @@
 from logging import error
-from typing import Sequence
+from typing import Iterable, Sequence
 
 from gdpc.block import Block
 from gdpc.editor import Editor
-from gdpc.lookup import POLISHED_BLACKSTONE_BRICKS
-from gdpc.vector_tools import DOWN_3D, Y_3D, neighbors2D
-from glm import ivec2, ivec3
+from gdpc.lookup import OVERWORLD_SOILS, POLISHED_BLACKSTONE_BRICKS
+from gdpc.vector_tools import DOWN_3D, Y_3D, ivec2, ivec3, neighbors2D
 
-from grimoire.core.maps import DevelopmentType, Map
+from grimoire.core.maps import PATH_DEVELOPMENTS, DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.misc import growth_spurt
 from grimoire.core.utils.shapes import Shape2D
+from grimoire.placement.nooks.features.flora import place_tree
+from grimoire.placement.nooks.features.manmade import place_statue
+from grimoire.placement.nooks.terraformers.edging import _place_if_development_adjacent
 
 POLISHED_BLACKSTONE_BRICKS_BLOCKS = [Block(b) for b in POLISHED_BLACKSTONE_BRICKS]
 DRY_STONE_BRICK_SLABS = [
     Block(b)
-    for b in {"minecraft:cracked_stone_brick_slab", "minecraft:stone_brick_slab"}
+    for b in {
+        "minecraft:andesite_slab",
+        "minecraft:stone_slab",
+        "minecraft:stone_brick_slab",
+    }
 ]
 REGULAR_SANDSTONE_SLABS = [
     Block(b)
     for b in {
         "minecraft:sandstone_slab",
-        "minecraft:sandstone_slab",
+        "minecraft:smooth_sandstone_slab",
         "minecraft:cut_sandstone_slab",
     }
 ]
@@ -104,16 +110,40 @@ def wild_growth_area(
     edges: dict[ivec2, set[DevelopmentType]],
     city_map: Map,
     _rng: RNG,
-):
+) -> None:
     growth: list[Block] = [
         Block(b)
-        for b in 11 * ["minecraft:air"]
-        + 75 * ["minecraft:grass"]
-        + 7 * ["minecraft:poppy", "minecraft:dandelion"]
-        + ["minecraft:oak_sapling"]
+        for b in 1 * ["minecraft:air"]
+        + 6 * ["minecraft:grass"]
+        + 3 * ["minecraft:poppy", "minecraft:dandelion"]
     ]
     editor.placeBlock([city_map.make_3d(p) for p in area], growth)
-    growth_spurt(editor)
+
+
+def trees_in_area(
+    editor: Editor,
+    area: Shape2D,
+    edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    _rng: RNG,
+    positions: Iterable[ivec2] | Iterable[ivec3] | None = None,
+    density: float = 0.05,
+    tree_type: str | None = None,
+):
+    if not positions:
+        # FIXME: Improve scattering/randomness
+        positions = tuple(area)[: int(density * len(area))]
+    if not positions:
+        return
+
+    if isinstance(positions[0], ivec2):
+        positions = [
+            city_map.make_3d(p)
+            for p in positions
+            if city_map.block_at(p) in [Block(b) for b in OVERWORLD_SOILS]
+        ]
+
+    place_tree(positions, city_map, editor, tree_type=tree_type)
 
 
 # ==== EDGES ONLY ====
@@ -143,14 +173,14 @@ def flagstone_edge(
     city_map: Map,
     _rng: RNG,
 ):
-    return _pave_area(
-        editor,
-        Shape2D(set(edges.keys())),
-        edges,
-        city_map,
-        _rng,
-        fill_blocks=Block("minecraft:smooth_stone"),
-    )
+    for position, adjacent in edges.items():
+        _place_if_development_adjacent(
+            editor,
+            adjacent,
+            PATH_DEVELOPMENTS,
+            city_map.make_3d(position) + DOWN_3D,
+            Block("minecraft:smooth_stone"),
+        )
 
 
 def roughen_edge(
@@ -176,11 +206,12 @@ def roughen_edge(
 
     # populate edges with random samples from the surroundings
     for position in edges:
+
         position3D = city_map.make_3d(position) + DOWN_3D
 
         # get neighboring Blocks which aren't part of the edge
         neighbour_blocks: list[Block] = [
-            editor.getBlock(city_map.make_3d(neighbour))
+            editor.getBlock(city_map.make_3d(neighbour) + DOWN_3D)
             for neighbour in neighbors2D(
                 position, area.to_boundry_rect(), diagonal=diagonals
             )
@@ -220,3 +251,26 @@ def fully_paved_desert(
     return _pave_area(
         editor, area | set(edges.keys()), edges, city_map, _rng, DEFAULT_PAVING_DESERT
     )
+
+
+# ==== FEATURE PLACERS ====
+
+
+def central_statue(
+    editor: Editor,
+    area: Shape2D,
+    _edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    rng: RNG,
+) -> None:
+    return place_statue(editor, city_map.make_3d(area.to_rect().center), rng, city_map)
+
+
+def boulders(
+    editor: Editor,
+    area: Shape2D,
+    _edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    rng: RNG,
+) -> None:
+    place_boulder(editor, city_map.make_3d(rng.choose(list(area))), rng)

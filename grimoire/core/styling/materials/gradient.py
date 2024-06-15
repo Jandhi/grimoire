@@ -3,9 +3,9 @@ import dataclasses
 
 from gdpc.vector_tools import DIRECTIONS_3D
 from glm import ivec3, vec3
-
 from perlin_noise import PerlinNoise
-from grimoire.core.structures.axis import Axis, Axes
+
+from grimoire.core.structures.axis import Axes, Axis
 from grimoire.core.utils.bounds import clamp
 from grimoire.core.utils.misc import average, lerp
 

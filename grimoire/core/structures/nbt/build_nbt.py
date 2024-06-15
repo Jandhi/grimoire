@@ -2,7 +2,7 @@ from typing import Callable
 
 from gdpc import Block
 from gdpc.editor import Editor
-from gdpc.lookup import TRAPDOORS, DOORS, FENCES, WALLS, SLABS, STAIRS
+from gdpc.lookup import TRAPDOORS, DOORS, FENCES, WALLS, SLABS, STAIRS, BUTTONS
 from gdpc.vector_tools import ivec3
 
 from grimoire.core.styling.legacy_palette import LegacyPalette, palette_swap
@@ -79,7 +79,13 @@ def build_nbt(
         # Doesn't allow non-solid blocks to replace blocks
         if (not allow_non_solid_replacement) and any(
             blocktype in block.id
-            for blocktype in STAIRS | SLABS | WALLS | FENCES | DOORS | TRAPDOORS
+            for blocktype in STAIRS
+            | SLABS
+            | WALLS
+            | FENCES
+            | DOORS
+            | TRAPDOORS
+            | BUTTONS
         ):
             curr_block = editor.getBlock(position=(x, y, z))
 

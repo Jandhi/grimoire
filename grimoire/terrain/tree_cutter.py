@@ -76,6 +76,7 @@ def log_trees(editor, points, world_slice):
     for point in points:
         x = point.x
         z = point.y
+
         y1 = world_slice.heightmaps["MOTION_BLOCKING"][x][z] - 1
         check_pos = ivec3(x, y1, z)
         block_name = world_slice.getBlock(check_pos).id

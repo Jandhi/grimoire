@@ -1,0 +1,7 @@
+{
+  "name" : "acacia_log",
+  "type" : "material",
+  "blocks" : {
+    "block" : "acacia_wood"
+  }
+}

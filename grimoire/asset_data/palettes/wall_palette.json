@@ -7,7 +7,8 @@
     "primary_wood" : "oak",
     "secondary_wood" : "spruce",
     "primary_stone" : "bricks1",
-    "secondary_stone" : "bricks2"
+    "secondary_stone" : "bricks2",
+    "foundation" : "cobbled_deepslate"
   },
 
   "primary_color" : "red",
