@@ -3,15 +3,15 @@ from typing import Iterable, Sequence
 
 from gdpc.block import Block
 from gdpc.editor import Editor
-from gdpc.lookup import POLISHED_BLACKSTONE_BRICKS
-from gdpc.vector_tools import DOWN_3D, Y_3D, neighbors2D
-from glm import ivec2, ivec3
+from gdpc.lookup import OVERWORLD_SOILS, POLISHED_BLACKSTONE_BRICKS
+from gdpc.vector_tools import DOWN_3D, Y_3D, ivec2, ivec3, neighbors2D
 
 from grimoire.core.maps import PATH_DEVELOPMENTS, DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.utils.misc import growth_spurt
 from grimoire.core.utils.shapes import Shape2D
 from grimoire.placement.nooks.features.flora import place_tree
+from grimoire.placement.nooks.features.manmade import place_statue
 from grimoire.placement.nooks.terraformers.edging import _place_if_development_adjacent
 
 POLISHED_BLACKSTONE_BRICKS_BLOCKS = [Block(b) for b in POLISHED_BLACKSTONE_BRICKS]
@@ -137,7 +137,11 @@ def trees_in_area(
         return
 
     if isinstance(positions[0], ivec2):
-        positions = [city_map.make_3d(p) for p in positions]
+        positions = [
+            city_map.make_3d(p)
+            for p in positions
+            if city_map.block_at(p) in [Block(b) for b in OVERWORLD_SOILS]
+        ]
 
     place_tree(positions, city_map, editor, tree_type=tree_type)
 
@@ -247,3 +251,26 @@ def fully_paved_desert(
     return _pave_area(
         editor, area | set(edges.keys()), edges, city_map, _rng, DEFAULT_PAVING_DESERT
     )
+
+
+# ==== FEATURE PLACERS ====
+
+
+def central_statue(
+    editor: Editor,
+    area: Shape2D,
+    _edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    rng: RNG,
+) -> None:
+    return place_statue(editor, city_map.make_3d(area.to_rect().center), rng)
+
+
+def boulders(
+    editor: Editor,
+    area: Shape2D,
+    _edges: dict[ivec2, set[DevelopmentType]],
+    city_map: Map,
+    rng: RNG,
+) -> None:
+    place_boulder(editor, city_map.make_3d(rng.choose(list(area))), rng)

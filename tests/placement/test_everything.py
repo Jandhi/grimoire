@@ -12,7 +12,7 @@ from grimoire.paths.gate_paths import add_gate_path
 sys.path[0] = sys.path[0].removesuffix(str(Path("tests/placement")))
 print(f"PATH: {sys.path[0]}")
 
-from gdpc import Block, Box, Editor
+from gdpc import Box, Editor
 from gdpc.lookup import GRANULARS
 
 # Actual file
@@ -20,15 +20,12 @@ from gdpc.vector_tools import ivec3
 from glm import ivec2
 
 from grimoire.core.assets.asset_loader import load_assets
-from grimoire.core.maps import DevelopmentType, Map, get_build_map
+from grimoire.core.maps import Map, get_build_map
 from grimoire.core.noise.rng import RNG
-from grimoire.core.structures import legacy_directions
-from grimoire.core.structures.legacy_directions import VECTORS
-from grimoire.core.styling.palette import BuildStyle, Palette
 from grimoire.core.utils.geometry import get_surrounding_points
 from grimoire.core.utils.misc import growth_spurt, kill_items
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
-from grimoire.districts.district import District, DistrictType, SuperDistrict
+from grimoire.districts.district import DistrictType
 from grimoire.districts.district_analyze import (
     district_analyze,
     district_classification,
@@ -59,7 +56,7 @@ LOG_TREES = True
 DO_WALL = True
 DO_RURAL = False  # Not worth it
 DO_URBAN = True
-RESET_AFTER_TEST = True
+RESET_AFTER_TEST = False  # FIXME: Restoration crashes
 
 BUFFER_LIMIT = 32
 SLEEP_DELAY = 1

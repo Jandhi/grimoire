@@ -3,7 +3,7 @@ from logging import error, warn
 from typing import Generator
 
 from gdpc import Block, Editor
-from gdpc.vector_tools import CARDINALS_2D, Rect, distance2, ivec2, ivec3, neighbors2D
+from gdpc.vector_tools import CARDINALS_2D, distance2, ivec2, ivec3
 
 from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
@@ -339,8 +339,12 @@ def decorate_city_block(
             )
             print(
                 f"\t\tIt became a Nook ({nook.name}) with the following properties:\n"
-                f"\t\t\t- District Type: {[t.name for t in to_list_or_none(nook.district_types)] if nook.district_types else 'Any'} ({DistrictType.URBAN.name})\n"
-                f"\t\t\t- Exposure Type: {[t.name for t in to_list_or_none(nook.traffic_exposure_types)] if nook.traffic_exposure_types else 'Any'} ({traffic_exposure.name})\n"
-                f"\t\t\t- Style: {[t.name for t in to_list_or_none(nook.styles)] if nook.styles else 'Any'} ({style.name})\n"
-                f"\t\t\t- Area {nook.min_area}-{nook.max_area} ({len(nook_shape)})"
+                f"\t\t\t- District Type: "
+                f"{[t.name for t in to_list_or_none(nook.district_types)] if nook.district_types else 'Any'} ({DistrictType.URBAN.name})\n"
+                f"\t\t\t- Exposure Type: "
+                f"{[t.name for t in to_list_or_none(nook.traffic_exposure_types)] if nook.traffic_exposure_types else 'Any'} ({traffic_exposure.name})\n"
+                f"\t\t\t- Style:         "
+                f"{[t.name for t in to_list_or_none(nook.styles)] if nook.styles else 'Any'} ({style.name})\n"
+                f"\t\t\t- Area:          "
+                f"{nook.min_area if nook.min_area else 'Any'}-{nook.max_area if nook.max_area else 'Any'} ({len(nook_shape)})"
             )

@@ -1,10 +1,10 @@
 import itertools
 from enum import Enum, auto
 from logging import error, warn
-from typing import Any, Callable, Generator, Iterable, Sequence, TypeVar
+from typing import Any, Callable, Iterable
 
 from gdpc.editor import Editor
-from gdpc.vector_tools import CARDINALS_2D, Rect
+from gdpc.vector_tools import Rect
 from glm import ivec2
 
 from grimoire.core.maps import DevelopmentType, Map
@@ -13,9 +13,9 @@ from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
 from grimoire.core.utils.shapes import Shape2D
 from grimoire.districts.district import DistrictType
-from grimoire.placement.nooks.features.flora import place_tree
 from grimoire.placement.nooks.terraformers.edging import simple_closed_fencing
 from grimoire.placement.nooks.terraformers.texture import (
+    central_statue,
     flagstone_edge,
     fully_paved,
     fully_paved_desert,
@@ -247,6 +247,14 @@ NORMAL_SQUARE_NOOK = Nook(
     traffic_exposure_types=HIGH_EXPOSURE,
     styles=BuildStyle.NORMAL_MEDIEVAL,
     terraformers=[fully_paved, roughen_edge],
+)
+MONUMENT_NOOK = Nook(
+    "Monument",
+    traffic_exposure_types=TrafficExposureType.ISLAND,
+    styles=[BuildStyle.NORMAL, BuildStyle.NORMAL_MEDIEVAL],
+    min_area=30,
+    min_rect=Rect(size=(5, 5)),
+    terraformers=[fully_paved, roughen_edge, central_statue],
 )
 DESERT_PLAZA_NOOK = Nook(
     "Desert Plaza",

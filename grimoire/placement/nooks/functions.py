@@ -1,7 +1,7 @@
 from logging import error, warn
 from typing import Any, Generator, Iterable, Sequence, TypeVar
 
-from gdpc.vector_tools import CARDINALS_2D, Rect, ivec2, neighbors2D
+from gdpc.vector_tools import CARDINALS_AND_DIAGONALS_2D, Rect, ivec2, neighbors2D
 
 from grimoire.core.maps import (
     BUILDING_DEVELOPMENTS,
@@ -300,7 +300,7 @@ def map_developments_at_edge(
 ) -> dict[ivec2, set[DevelopmentType]]:
     development_set: dict[ivec2, set[DevelopmentType]] = {}
     for point in edge:
-        for neighbor in neighbors2D(point, bounds):
+        for neighbor in neighbors2D(point, bounds, diagonal=True):
             if development := city_map.buildings[neighbor.x][neighbor.y]:
                 if point not in development_set:
                     development_set[point] = set()
@@ -320,7 +320,7 @@ def edge_to_pattern(
 
     pattern: list[tuple[set[DevelopmentType], int]] = []
 
-    for direction in CARDINALS_2D:
+    for direction in CARDINALS_AND_DIAGONALS_2D:
         edge_start = ivec2(start)
         for _ in range(LOOP_LIMIT):
             if edge_start in edge:
