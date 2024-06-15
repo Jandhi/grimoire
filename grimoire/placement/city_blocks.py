@@ -7,15 +7,15 @@ from gdpc.vector_tools import CARDINALS_2D, Rect, distance2, ivec2, ivec3, neigh
 
 from grimoire.core.styling.palette import BuildStyle
 from grimoire.core.utils.misc import to_list_or_none
-from grimoire.placement.nooks import (
-    Nook,
-    TrafficExposureType,
+from grimoire.placement.nooks.functions import (
+    choose_suitable_nook,
     discover_nook,
     edge_to_pattern,
     find_suitable_nooks,
-    identify_exposure_type_from_edging_pattern,
+    identify_traffic_exposure_from_edging_pattern,
     map_developments_at_edge,
 )
+from grimoire.placement.nooks.nook import Nook, TrafficExposureType
 
 from ..core.maps import DevelopmentType, Map
 from ..core.noise.rng import RNG
@@ -263,7 +263,6 @@ def add_city_blocks(
     for outer in outers:
         city_roads |= outer
 
-    # FIXME: Not guaranteed to find the "urban_road" PaintPalette!
     urban_road: PaintPalette = (
         PaintPalette.find("desert_road")
         if style == BuildStyle.DESERT
@@ -325,18 +324,15 @@ def decorate_city_block(
                 scan_position, surrounding_developments, bounds
             )
             # select an appropriate Nook type and manifest it
-            exposure: TrafficExposureType = identify_exposure_type_from_edging_pattern(
-                pattern
+            traffic_exposure: TrafficExposureType = (
+                identify_traffic_exposure_from_edging_pattern(pattern)
             )
-            nook: Nook = block_rng.choose(
-                list(
-                    find_suitable_nooks(
-                        district_types=DistrictType.URBAN,
-                        exposure_types=exposure,
-                        styles=style,
-                        area=nook_shape,
-                    )
-                )
+            nook: Nook = choose_suitable_nook(
+                block_rng,
+                district_types=DistrictType.URBAN,
+                traffic_exposure_types=traffic_exposure,
+                styles=style,
+                area=nook_shape,
             )
             nook.manifest(
                 editor, nook_shape, surrounding_developments, city_map, block_rng
@@ -344,7 +340,7 @@ def decorate_city_block(
             print(
                 f"\t\tIt became a Nook ({nook.name}) with the following properties:\n"
                 f"\t\t\t- District Type: {[t.name for t in to_list_or_none(nook.district_types)] if nook.district_types else 'Any'} ({DistrictType.URBAN.name})\n"
-                f"\t\t\t- Exposure Type: {[t.name for t in to_list_or_none(nook.exposure_types)] if nook.exposure_types else 'Any'} ({exposure.name})\n"
+                f"\t\t\t- Exposure Type: {[t.name for t in to_list_or_none(nook.traffic_exposure_types)] if nook.traffic_exposure_types else 'Any'} ({traffic_exposure.name})\n"
                 f"\t\t\t- Style: {[t.name for t in to_list_or_none(nook.styles)] if nook.styles else 'Any'} ({style.name})\n"
                 f"\t\t\t- Area {nook.min_area}-{nook.max_area} ({len(nook_shape)})"
             )

@@ -1,30 +1,31 @@
 # Allows code to be run in root directory
+import itertools
 import sys
 import time
+from pathlib import Path
+
+from gdpc.world_slice import WorldSlice
 
 from grimoire.paths.gate_paths import add_gate_path
 
-sys.path[0] = sys.path[0].removesuffix("tests\\placement")
+sys.path[0] = sys.path[0].removesuffix(str(Path("tests/placement")))
 print(f"PATH: {sys.path[0]}")
-
-# Actual file
-from gdpc.vector_tools import addY, dropY, rotate3D
-
-from grimoire.core.structures import legacy_directions
-from grimoire.core.structures.legacy_directions import VECTORS
-from grimoire.core.styling.palette import BuildStyle, Palette
-from grimoire.core.utils.misc import kill_items
-from grimoire.paths.build_highway import build_highway
-from grimoire.paths.route_highway import fill_out_highway, route_highway
-from grimoire.paths.signposts import build_signpost
 
 from gdpc import Block, Box, Editor
 from gdpc.lookup import GRANULARS
+
+# Actual file
+from gdpc.vector_tools import ivec3
 from glm import ivec2
 
 from grimoire.core.assets.asset_loader import load_assets
 from grimoire.core.maps import DevelopmentType, Map, get_build_map
 from grimoire.core.noise.rng import RNG
+from grimoire.core.structures import legacy_directions
+from grimoire.core.structures.legacy_directions import VECTORS
+from grimoire.core.styling.palette import BuildStyle, Palette
+from grimoire.core.utils.geometry import get_surrounding_points
+from grimoire.core.utils.misc import growth_spurt, kill_items
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
 from grimoire.districts.district import District, DistrictType, SuperDistrict
 from grimoire.districts.district_analyze import (
@@ -32,11 +33,7 @@ from grimoire.districts.district_analyze import (
     district_classification,
     super_district_classification,
 )
-from grimoire.districts.district_painter import (
-    plant_forest,
-    replace_ground,
-    replace_ground_smooth,
-)
+from grimoire.districts.district_painter import plant_forest, replace_ground
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.districts.paint_palette import PaintPalette
 from grimoire.districts.wall import (
@@ -46,24 +43,32 @@ from grimoire.districts.wall import (
 )
 from grimoire.industries.biomes import desert, forest, rocky, snowy
 from grimoire.industries.industry import get_district_biomes
+from grimoire.paths.build_highway import build_highway
+from grimoire.paths.route_highway import fill_out_highway, route_highway
+from grimoire.paths.signposts import build_signpost
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.forest import Forest
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
-from grimoire.core.utils.geometry import get_surrounding_points
 
 SEED = 0x4473
-DO_TERRAFORMING = True  # Set this to true for the final iteration
+DO_TERRAFORMING = False  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
 DO_RURAL = False  # Not worth it
 DO_URBAN = True
+RESET_AFTER_TEST = True
 
+BUFFER_LIMIT = 32
 SLEEP_DELAY = 1
 
-editor = Editor(buffering=True, caching=True)
-load_assets("grimoire\\asset_data")
+load_assets(str(Path("grimoire/asset_data")))
+
+# ==== EDITOR and WORLD settings ====
+editor = Editor(buffering=True, bufferLimit=BUFFER_LIMIT, caching=True)
+
+editor.runCommand("gamerule doFireTick false")
 
 area = editor.getBuildArea()
 
@@ -79,7 +84,14 @@ editor.transform = (area.begin.x, 0, area.begin.z)
 
 print("Loading world slice...")
 build_rect = area.toRect()
-world_slice = editor.loadWorldSlice(build_rect)
+
+if RESET_AFTER_TEST:
+    editor.caching = True
+    editor.cacheLimit = 0
+    backup_slice: WorldSlice = editor.loadWorldSlice(build_rect, cache=True)
+
+world_slice: WorldSlice = editor.loadWorldSlice(build_rect)
+
 print("World slice loaded!")
 
 main_map = Map(world_slice)
@@ -121,7 +133,7 @@ print("World slice reloaded!")
 if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistricts
     print("starting plateauing")
     for super_district in super_districts:
-        if not super_district.type == DistrictType.URBAN:
+        if super_district.type != DistrictType.URBAN:
             continue
 
         plateau(super_district, super_district_map, world_slice, editor, main_map.water)
@@ -316,3 +328,29 @@ if DO_RURAL:
 # ==== CLEANUP ====
 
 kill_items(editor)
+growth_spurt(editor)
+
+if RESET_AFTER_TEST:
+    input("Press <enter> to reset the map...")
+    editor.buffering = True
+    editor.bufferLimit = 4028
+    dx, dy, dz = (
+        backup_slice.box.size.x,
+        backup_slice.box.size.y,
+        backup_slice.box.size.z,
+    )
+
+    # TODO: Replace with `for v in backup_slice.box`
+    total = backup_slice.box.volume
+    for current, (x, y, z) in enumerate(
+        itertools.product(range(dx), range(dy), range(dz)), start=1
+    ):
+        print(
+            f"{current/total:8.2%}\tResetting {(x, y, z)}... ({current}/{total})",
+            end="\r",
+        )
+
+        if editor.worldSliceDecay[x][y][z]:
+            v = ivec3(x, y, z)
+            editor.placeBlock(v, backup_slice.getBlock(v))
+    print("Done!")
