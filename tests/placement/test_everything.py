@@ -54,7 +54,7 @@ from grimoire.terrain.tree_cutter import log_trees
 from grimoire.core.utils.geometry import get_surrounding_points
 
 SEED = 0x4473
-DO_TERRAFORMING = True  # Set this to true for the final iteration
+DO_TERRAFORMING = False  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
 DO_RURAL = True
@@ -108,7 +108,7 @@ for x in range(build_rect.size.x):
 
 if LOG_TREES:  # TO DO, only log urban
     logged_points = inner_points + list(get_surrounding_points(set(inner_points), 5))
-    log_trees(editor, inner_points, world_slice)
+    log_trees(editor, logged_points, world_slice)
 
 editor.flushBuffer()  # this is needed to reload the world slice properly
 print("Reloading world slice...")

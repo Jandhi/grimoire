@@ -29,7 +29,7 @@ def add_gates(
     palette: Palette,
     palisade: bool = False,
 ) -> list[Gate]:
-    distance_to_next_gate = 30  # minimum
+    distance_to_next_gate = 60  # minimum
     gate_possible = 0  # counter if 0, allow a tower to be built
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
