@@ -27,7 +27,7 @@ REGULAR_SANDSTONE_SLABS = [
     Block(b)
     for b in {
         "minecraft:sandstone_slab",
-        "minecraft:smsandstone_slab",
+        "minecraft:smooth_sandstone_slab",
         "minecraft:cut_sandstone_slab",
     }
 ]

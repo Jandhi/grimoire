@@ -173,6 +173,8 @@ for district in super_districts:
 
 most_prevalent_biome = max(biomes.items(), key=lambda kp: kp[1])[0]
 
+print(f"MOST PREVALENT BIOME IS {most_prevalent_biome}")
+
 style, eligible_palettes = get_style_and_palettes(most_prevalent_biome)
 rng = RNG(SEED, "palettes")
 

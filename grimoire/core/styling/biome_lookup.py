@@ -20,9 +20,13 @@ ARID_BIOMES = [
 WET_BIOMES = [
     "ocean",
     "swamp",
+    "river",
     "frozen_ocean",
     "frozen_river",
     "beach",
+    "warm_ocean",
+    "lukewarm_ocean",
+    "cold_ocean",
     "deep_warm_ocean",
     "deep_lukewarm_ocean",
     "deep_cold_ocean",
@@ -39,6 +43,7 @@ ACACIA_BIOMES = []
 
 
 def get_style_and_palettes(biome: str) -> tuple[BuildStyle, list[Palette]]:
+    biome = biome.removeprefix("minecraft:")
     style = BuildStyle.NORMAL_MEDIEVAL
 
     if biome in ARID_BIOMES:
