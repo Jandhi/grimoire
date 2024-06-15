@@ -178,9 +178,6 @@ for district in districts:
     for _ in range(min(3, len(eligible_palettes))):
         district.palettes.append(rng.pop(palettes))
 
-wall_points, wall_dict = get_wall_points(inner_points, world_slice)
-wall_points_list = order_wall_points(wall_points, wall_dict)
-
 rng = RNG(SEED)
 palette = rng.choose(eligible_palettes)
 
