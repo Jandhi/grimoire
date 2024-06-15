@@ -1,5 +1,5 @@
 import itertools
-from ..districts.district import District
+from ..districts.district import District, DistrictType
 from gdpc import Editor, WorldSlice, Block
 from gdpc.vector_tools import ivec2, ivec3, Rect
 from ..terrain.set_height import set_height
@@ -25,7 +25,9 @@ def smooth_edges(
     points = set()
 
     for district in districts:
-        if not district.is_urban:  # only need to smooth edges for urban areas
+        if (
+            district.type != DistrictType.URBAN
+        ):  # only need to smooth edges for urban areas
             continue
 
         for edge in district.edges:

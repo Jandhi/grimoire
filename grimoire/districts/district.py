@@ -29,7 +29,6 @@ class District:
     adjacency: dict["District", int]
     edges: set[ivec3]
     adjacencies_total: int
-    is_urban: bool
     type: DistrictType
     is_border: bool
     parent_id: int
@@ -54,7 +53,6 @@ class District:
         self.points_2d = set()
         self.edges = set()
         self.adjacencies_total = 0
-        self.is_urban = False
         self.is_border = False
         self.palettes = []
         self.roughness = 0
@@ -124,7 +122,6 @@ class SuperDistrict(District):
         self.points_2d = district.points_2d.copy()
         self.edges = set()
         self.adjacencies_total = 0
-        self.is_urban = district.is_urban
         self.is_border = district.is_border
         self.palettes = district.palettes
         self.roughness = district.roughness

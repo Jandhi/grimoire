@@ -5,7 +5,7 @@ from gdpc.vector_tools import Box, Rect, ivec2, ivec3
 
 from ..core.maps import Map
 from ..core.structures.legacy_directions import CARDINAL, vector
-from ..districts.district import District
+from ..districts.district import District, DistrictType
 
 
 # Tells the districts what neighbours they have and why
@@ -26,11 +26,11 @@ def establish_adjacency(
         y: int = main_map.height_no_tree[x][z]
 
         if x == 0 or z == 0:  # label edge districts as non-urban
-            district.is_urban = False
+            district.type == DistrictType.OFF_LIMITS
 
         for point in (ivec2(x + 1, z), ivec2(x, z + 1)):
             if not rect.contains(point):  # out of bounds
-                district.is_urban = False
+                district.type == DistrictType.OFF_LIMITS
                 continue
 
             point_height: int = main_map.height_no_tree[x][z]

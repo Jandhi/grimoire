@@ -4,6 +4,7 @@ from gdpc.vector_tools import ivec2, ivec3
 from ..core.maps import Map
 from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
 from ..core.utils.bounds import is_in_bounds2d
+from grimoire.districts.district import DistrictType
 
 
 def build_highway(
@@ -42,7 +43,10 @@ def build_highway(
         y = final_point_heights[point] - 1
 
         # don't place in urban area
-        if map.districts[x][z] is not None and map.districts[x][z].is_urban:
+        if (
+            map.districts[x][z] is not None
+            and map.districts[x][z].type == DistrictType.URBAN
+        ):
             continue
 
         map.highway[x][z] = True

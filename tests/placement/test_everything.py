@@ -55,8 +55,8 @@ from grimoire.core.utils.geometry import get_surrounding_points
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
-DO_WALL = True
-DO_RURAL = True
+DO_WALL = False
+DO_RURAL = False
 DO_URBAN = False
 
 SLEEP_DELAY = 1
@@ -80,12 +80,6 @@ print("Loading world slice...")
 build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
-
-editor.flushBuffer()  # this is needed to reload the world slice properly
-print("Reloading world slice...")
-build_rect = area.toRect()
-world_slice = editor.loadWorldSlice(build_rect)
-print("World slice reloaded!")
 
 main_map = Map(world_slice)
 districts, district_map, super_districts, super_district_map = generate_districts(
@@ -112,8 +106,15 @@ for x in range(build_rect.size.x):
             inner_points.append(ivec2(x, z))
 
 if LOG_TREES:  # TO DO, only log urban
-    logged_points = inner_points + get_surrounding_points(inner_points, 5)
+    logged_points = inner_points + list(get_surrounding_points(set(inner_points), 5))
     log_trees(editor, inner_points, world_slice)
+
+editor.flushBuffer()  # this is needed to reload the world slice properly
+print("Reloading world slice...")
+build_rect = area.toRect()
+world_slice = editor.loadWorldSlice(build_rect)
+main_map.world = world_slice
+print("World slice reloaded!")
 
 # plateau stuff
 if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistricts
