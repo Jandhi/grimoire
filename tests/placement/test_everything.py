@@ -39,11 +39,6 @@ from grimoire.districts.wall import (
     get_wall_points,
     order_wall_points,
 )
-from grimoire.industries.biomes import desert, forest, rocky, snowy
-from grimoire.industries.industry import get_district_biomes
-from grimoire.paths.build_highway import build_highway
-from grimoire.paths.route_highway import fill_out_highway, route_highway
-from grimoire.paths.signposts import build_signpost
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.forest import Forest
 from grimoire.terrain.plateau import plateau
@@ -51,7 +46,7 @@ from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
 
 SEED = 0x4473
-DO_TERRAFORMING = False  # Set this to true for the final iteration
+DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
 DO_RURAL = False  # Not worth it

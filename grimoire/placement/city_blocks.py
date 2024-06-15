@@ -98,7 +98,7 @@ def bubble_out(
         if build_map.buildings[vec.x][vec.y] == DevelopmentType.CITY_WALL:
             return False
 
-        if build_map.water_depth_at(vec) > 3:  # allow depth
+        if build_map.water_at(vec):
             return False
 
         return district is not None and district.type == DistrictType.URBAN

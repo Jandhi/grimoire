@@ -263,7 +263,7 @@ def central_statue(
     city_map: Map,
     rng: RNG,
 ) -> None:
-    return place_statue(editor, city_map.make_3d(area.to_rect().center), rng)
+    return place_statue(editor, city_map.make_3d(area.to_rect().center), rng, city_map)
 
 
 def boulders(

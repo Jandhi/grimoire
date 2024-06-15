@@ -35,6 +35,7 @@ WET_BIOMES = [
     "jungle",
     "bamboo_jungle",
     "bamboo_jungle_hills",
+    "cherry_grove",
 ]
 
 SPRUCE_BIOMES = []

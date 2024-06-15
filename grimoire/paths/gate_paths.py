@@ -37,7 +37,7 @@ def add_gate_path(gate: Gate, main_map: Map, editor: Editor, rng: RNG):
     if main_map.water_at(dropY(point_b)):
         return
 
-    highway = route_highway(point_a, point_b, main_map, editor, is_debug=True)
+    highway = route_highway(point_a, point_b, main_map, editor, is_debug=False)
     if highway:
         highway = fill_out_highway(highway)
         build_highway(highway, editor, main_map.world, main_map)
