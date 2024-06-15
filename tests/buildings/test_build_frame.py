@@ -43,9 +43,11 @@ load_assets("grimoire/asset_data")
 
 shape = random_shape(SEED)
 
-palette = Palette.find("japanese")
+palette = Palette.find("medieval")
 plan = BuildingPlan(shape, grid, palette)
+plan.palette = palette
 grid.plan = plan
+
 
 build_floor(plan, editor)
 

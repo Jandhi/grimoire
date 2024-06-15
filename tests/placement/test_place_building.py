@@ -41,5 +41,5 @@ attempt_place_building(
     rng,
     urban_only=False,
     stilts=False,
-    style=BuildStyle.NORMAL_MEDIEVAL,
+    style=BuildStyle.WET,
 )

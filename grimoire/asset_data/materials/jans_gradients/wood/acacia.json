@@ -1,0 +1,12 @@
+{
+  "name" : "acacia",
+  "type" : "material",
+  "blocks" : {
+    "block" : "acacia_planks",
+    "stairs" : "acacia_stairs",
+    "slab" : "acacia_slab",
+    "fence" : "acacia_fence",
+    "trapdoor" : "acacia_trapdoor",
+    "sign" : "acacia_sign"
+  }
+}

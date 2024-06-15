@@ -1,6 +1,7 @@
 from enum import Enum, auto
 
 from gdpc import Block
+from gdpc.lookup import PLANTS
 
 from grimoire.core.assets.asset import Asset
 from grimoire.core.styling.blockform import BlockForm
@@ -157,16 +158,27 @@ def swap(
     output_palette: Palette,
     parameters: MaterialParameters,
 ) -> Block:
+    new_id = block.id
+
     role = input_palette.find_role(block)
 
-    if role is None:
-        return block
+    if role:
+        form = BlockForm.get_form(block)
 
-    form = BlockForm.get_form(block)
+        found_id = output_palette.find_block_id(form, parameters, role)
 
-    new_id = output_palette.find_block_id(form, parameters, role)
+        if found_id:
+            new_id = found_id
 
-    if new_id is None:
-        return block
+    # Don't color-swap plants
+    if new_id not in PLANTS:
+        new_id = new_id.replace(
+            input_palette.primary_color.name.lower(),
+            output_palette.primary_color.name.lower(),
+        )
+        new_id = new_id.replace(
+            input_palette.secondary_color.name.lower(),
+            output_palette.secondary_color.name.lower(),
+        )
 
     return Block(id=new_id, states=block.states, data=block.data)

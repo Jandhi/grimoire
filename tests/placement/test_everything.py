@@ -2,6 +2,7 @@
 import sys
 import time
 
+from grimoire.core.styling.biome_lookup import get_style_and_palettes
 from grimoire.paths.gate_paths import add_gate_path
 
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
@@ -160,17 +161,7 @@ for district in super_districts:
 
 most_prevalent_biome = max(biomes.items(), key=lambda kp: kp[1])[0]
 
-style = BuildStyle.NORMAL_MEDIEVAL
-
-# FIXME: Incomplete code!
-if most_prevalent_biome in []:
-    style = BuildStyle.WET
-
-
-# set up palettes
-eligible_palettes = list(
-    filter(lambda palette: style.name.lower() in palette.tags, Palette.all())
-)
+style, eligible_palettes = get_style_and_palettes(most_prevalent_biome)
 rng = RNG(SEED, "palettes")
 
 for district in super_districts:

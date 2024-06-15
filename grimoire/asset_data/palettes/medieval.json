@@ -1,0 +1,22 @@
+{
+  "name" : "medieval",
+  "type" : "palette",
+
+  "resolution_priority" : "stone",
+  "materials" : {
+    "primary_roof" : "bricks1",
+    "secondary_roof" : "polished1",
+    "primary_wood" : "spruce",
+    "secondary_wood" : "oak",
+    "pillar" : "oak_log",
+    "primary_stone" : "bricks1",
+    "secondary_stone" : "polished1",
+
+    "foundation" : "andesite"
+  },
+
+  "primary_color" : "red",
+  "secondary_color" : "white",
+
+  "tags" : ["normal_medievals"]
+}
