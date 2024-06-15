@@ -260,12 +260,12 @@
         },
         "gdpc": {
             "hashes": [
-                "sha256:13a552bbfa49ab28c3749d2ec591a12b3be486e3b34f471137c5ac653c3f02b9",
-                "sha256:8fa017eb8440c23f0822de97ccb888f47a3c42a85ca923e39d2f82249ecf7a93"
+                "sha256:bfae06790859c48f3b4c2bd809247ad39321522ac864fd637feaf81546b01f13",
+                "sha256:f6cc153f981d8909df15da36dfcf63847c1d8ceeed99ad76279586e23a21e03e"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.7' and python_version < '4'",
-            "version": "==7.2.0"
+            "version": "==7.3.0"
         },
         "idna": {
             "hashes": [

@@ -3,7 +3,6 @@ import sys
 import time
 
 
-
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 print(f"PATH: {sys.path[0]}")
 
@@ -51,12 +50,14 @@ from grimoire.terrain.forest import Forest
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
+from grimoire.core.utils.geometry import get_surrounding_points
 
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
 DO_RURAL = True
+DO_URBAN = False
 
 SLEEP_DELAY = 1
 
@@ -80,9 +81,6 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
-if LOG_TREES:  # TO DO, only log urban
-    log_trees(editor, build_rect, world_slice)
-
 editor.flushBuffer()  # this is needed to reload the world slice properly
 print("Reloading world slice...")
 build_rect = area.toRect()
@@ -96,14 +94,35 @@ districts, district_map, super_districts, super_district_map = generate_district
 main_map.districts = district_map
 main_map.super_districts = super_district_map
 
+for district in super_districts:
+    district_analyze(district, main_map)
+
+district_classification(districts)
+super_district_classification(super_districts)
+
+inner_points = []
+
+for x in range(build_rect.size.x):
+    for z in range(build_rect.size.y):
+        super_district = super_district_map[x][z]
+
+        if super_district is None:
+            continue
+        elif super_district.type == DistrictType.URBAN:
+            inner_points.append(ivec2(x, z))
+
+if LOG_TREES:  # TO DO, only log urban
+    logged_points = inner_points + get_surrounding_points(inner_points, 5)
+    log_trees(editor, inner_points, world_slice)
+
 # plateau stuff
 if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistricts
     print("starting plateauing")
-    for district in districts:
-        if not district.type == DistrictType.URBAN:
+    for super_district in super_districts:
+        if not super_district.type == DistrictType.URBAN:
             continue
 
-        plateau(district, district_map, world_slice, editor, main_map.water)
+        plateau(super_district, super_district_map, world_slice, editor, main_map.water)
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
@@ -111,7 +130,12 @@ if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistric
     main_map.world = world_slice
 
     smooth_edges(
-        build_rect, districts, district_map, world_slice, editor, main_map.water
+        build_rect,
+        super_districts,
+        super_district_map,
+        world_slice,
+        editor,
+        main_map.water,
     )
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
@@ -123,14 +147,6 @@ if DO_TERRAFORMING:  # think about terraforming deal with districts/superdistric
 
 print("sleepy time to reduce http traffic")
 time.sleep(SLEEP_DELAY)  # to try to reduce http traffic, we'll do a little sleepy time
-
-for district in super_districts:
-    district_analyze(district, main_map)
-
-district_classification(districts)
-super_district_classification(super_districts)
-
-inner_points = []
 
 biomes = {}
 for district in super_districts:
@@ -147,15 +163,6 @@ style = BuildStyle.WET
 # FIXME: Incomplete code!
 if most_prevalent_biome in []:
     style = BuildStyle.WET
-
-for x in range(build_rect.size.x):
-    for z in range(build_rect.size.y):
-        super_district = super_district_map[x][z]
-
-        if super_district is None:
-            continue
-        elif super_district.type == DistrictType.URBAN:
-            inner_points.append(ivec2(x, z))
 
 
 # set up palettes
@@ -188,9 +195,17 @@ build_map = get_build_map(world_slice, 20)
 #     y = world_slice.heightmaps['MOTION_BLOCKING_NO_LEAVES'][x][z] + 10
 #     editor.placeBlock((x, y, z), Block('sea_lantern'))
 
-blocks, inners, outers = add_city_blocks(
-    editor, super_districts, main_map, SEED, style=style, is_debug=False, stilts=False
-)
+if DO_URBAN:
+
+    blocks, inners, outers = add_city_blocks(
+        editor,
+        super_districts,
+        main_map,
+        SEED,
+        style=style,
+        is_debug=False,
+        stilts=False,
+    )
 
 
 # WALL
