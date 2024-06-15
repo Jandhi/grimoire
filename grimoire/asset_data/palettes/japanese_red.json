@@ -11,7 +11,9 @@
     "secondary_roof" : "polished3",
     "pillar" : "stripped_mangrove_log",
     "primary_stone" : "bricks3",
-    "secondary_stone" : "bricks3"
+    "secondary_stone" : "bricks3",
+
+    "foundation" : "andesite"
   },
 
   "primary_color" : "red",

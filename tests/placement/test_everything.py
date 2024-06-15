@@ -2,6 +2,7 @@
 import sys
 import time
 
+from grimoire.paths.gate_paths import add_gate_path
 
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 print(f"PATH: {sys.path[0]}")
@@ -55,9 +56,9 @@ from grimoire.core.utils.geometry import get_surrounding_points
 SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
-DO_WALL = False
-DO_RURAL = False
-DO_URBAN = False
+DO_WALL = True
+DO_RURAL = True
+DO_URBAN = True
 
 SLEEP_DELAY = 1
 
@@ -172,7 +173,7 @@ eligible_palettes = list(
 )
 rng = RNG(SEED, "palettes")
 
-for district in districts:
+for district in super_districts:
     palettes = eligible_palettes.copy()
 
     for _ in range(min(3, len(eligible_palettes))):
@@ -230,31 +231,7 @@ if DO_WALL:
         )
 
         for gate in gates:
-            path_origin = gate.location + VECTORS[gate.direction]
-
-            size = main_map.world.rect.size
-
-            path_end: ivec2 = None
-            if gate.direction == legacy_directions.SOUTH:
-                path_end = ivec2(gate.location.x, 0)
-            if gate.direction == legacy_directions.NORTH:
-                path_end = ivec2(gate.location.x, size.y - 1)
-            if gate.direction == legacy_directions.WEST:
-                path_end = ivec2(size.x - 1, gate.location.z)
-            if gate.direction == legacy_directions.EAST:
-                path_end = ivec2(0, gate.location.z)
-
-            def round_to_four(vec: ivec2) -> ivec2:
-                return ivec2(vec.x - vec.x % 4, vec.y - vec.y % 4)
-
-            point_a = addY(round_to_four(dropY(path_origin)), gate.location.y)
-            point_b = main_map.make_3d(round_to_four(path_end))
-
-            highway = route_highway(point_a, point_b, main_map, editor, is_debug=True)
-            if highway:
-                highway = fill_out_highway(highway)
-                build_highway(highway, editor, world_slice, main_map)
-                build_signpost(editor, highway, main_map, rng)
+            add_gate_path(gate, main_map, editor, rng)
 
 
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)

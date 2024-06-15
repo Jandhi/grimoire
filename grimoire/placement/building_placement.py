@@ -30,9 +30,11 @@ from ..core.structures.legacy_directions import (
     get_ivec2,
 )
 from ..core.styling.blockform import BlockForm
+from ..core.styling.materials.gradient import Gradient, GradientAxis
 from ..core.styling.materials.material import MaterialParameters
 from ..core.styling.palette import MaterialRole, Palette
 from ..core.utils.geometry import get_surrounding_points
+from ..core.utils.sets.set_operations import find_outline
 from ..districts.district import DistrictType
 
 offsets = {
@@ -56,7 +58,7 @@ DO_FURNISHING = False
 
 # Attempts to place a building at a point
 # returns True on success
-def place_building(
+def attempt_place_building(
     editor: Editor,
     start_point: ivec2,
     map: Map,
@@ -160,7 +162,7 @@ def attempt_building_placement_at_offset(
         return False
 
     # build
-    place(editor, shape, grid, rng, map, style, stilts)
+    place_building(editor, shape, grid, rng, map, style, stilts)
     return True
 
 
@@ -236,10 +238,10 @@ def nearest_road(start_point: ivec2, map: Map) -> ivec2 | None:
     return None
 
 
-PLACE_BASEMENT_CONSTANT = 2.5
+PLACE_BASEMENT_CONSTANT = 2
 
 
-def place(
+def place_building(
     editor: Editor,
     shape: BuildingShape,
     grid: Grid,
@@ -248,18 +250,22 @@ def place(
     style: BuildStyle,
     stilts: bool = False,
 ):
-    district = build_map.districts[grid.origin.x][grid.origin.z]
+    district = build_map.super_districts[grid.origin.x][grid.origin.z]
     palette: Palette = (
         rng.choose(district.palettes)
         if district and district.palettes
         else Palette.find("japanese_dark_blackstone")
     )
 
-    plan = BuildingPlan(shape.points, grid, palette)
+    plan = BuildingPlan(shape.points.copy(), grid, palette)
     plan.cell_map[ivec3(0, 0, 0)].doors.append(shape.door_direction)
 
-    for point in shape.get_points_2d(grid):
-        build_map.buildings[point.x][point.y] = DevelopmentType.BUILDING
+    points = set(shape.get_points_2d(grid))
+    footprint = points | find_outline(points, diagonals=True)
+
+    for point in footprint:
+        if build_map.buildings[point.x][point.y] != DevelopmentType.CITY_ROAD:
+            build_map.buildings[point.x][point.y] = DevelopmentType.BUILDING
 
     # Basement and foundation
     if stilts:
@@ -285,30 +291,37 @@ def place(
 
             if avg_height > PLACE_BASEMENT_CONSTANT:
                 plan.add_cell(cell.position - ivec3(0, 1, 0))
-                grid_height = grid.origin.y - grid.height
 
-            for point in plan.grid.get_points_at_2d(
-                ivec2(cell.position.x, cell.position.y)
-            ):
-                world_height = build_map.height_at(point)
+        for point in footprint:
+            world_height = build_map.height_at(point)
 
-                for y_coord in range(world_height, grid_height):
-                    stone = palette.find_block_id(
-                        BlockForm.BLOCK,
-                        MaterialParameters(
-                            position=ivec3(point.x, y_coord, point.y),
-                            age=0,
-                            shade=0.5,
-                            moisture=0,
-                            dithering_pattern=None,
-                        ),
-                        MaterialRole.PRIMARY_STONE,
-                    )
+            grid_height = grid.get_floor(point, plan.shape) + 1
 
-                    editor.placeBlock(
-                        ivec3(point.x, y_coord, point.y),
-                        Block(fix_block_name(stone)),
-                    )
+            gradient = Gradient(rng.next()).with_axis(
+                GradientAxis.y(world_height, grid_height)
+            )
+
+            for y_coord in range(world_height, grid_height):
+                pos = ivec3(point.x, y_coord, point.y)
+
+                shade = gradient.calculate_gradient_value(pos)
+
+                stone = palette.find_block_id(
+                    BlockForm.BLOCK,
+                    MaterialParameters(
+                        position=pos,
+                        age=0,
+                        shade=shade,
+                        moisture=0,
+                        dithering_pattern=None,
+                    ),
+                    MaterialRole.FOUNDATION,
+                )
+
+                editor.placeBlock(
+                    pos,
+                    Block(fix_block_name(stone)),
+                )
 
     # Clear the area
     for point in shape.get_points(grid):

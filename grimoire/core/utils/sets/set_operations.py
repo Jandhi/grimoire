@@ -1,3 +1,4 @@
+import gdpc.vector_tools
 from gdpc.vector_tools import distance2, ivec2
 
 # TODO: Replace with gdpc functions
@@ -111,7 +112,7 @@ def find_outer_direction(
     return best_dir
 
 
-def find_outline(points: set[ivec2], thickness: int = 1) -> set[ivec2]:
+def find_outline(points: set[ivec2], thickness: int = 1, diagonals=False) -> set[ivec2]:
     points = points.copy()
     edges = find_edges(points)
     outline_set = set()
@@ -120,8 +121,12 @@ def find_outline(points: set[ivec2], thickness: int = 1) -> set[ivec2]:
         outline = set()
 
         for edge in edges:
-            for dir in CARDINAL:
-                pt = edge + get_ivec2(dir)
+            for direction in (
+                gdpc.vector_tools.CARDINALS_AND_DIAGONALS_2D
+                if diagonals
+                else gdpc.vector_tools.CARDINALS_2D
+            ):
+                pt = edge + direction
 
                 if pt not in points and pt not in outline_set:
                     outline.add(pt)

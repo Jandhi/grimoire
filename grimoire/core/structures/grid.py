@@ -4,7 +4,17 @@ from .transformation import Transformation
 from gdpc.editor import Editor
 from .nbt.nbt_asset import NBTAsset
 from grimoire.core.styling.legacy_palette import LegacyPalette
-from gdpc.vector_tools import ivec3, ivec2, NORTH, WEST, SOUTH, EAST
+from gdpc.vector_tools import (
+    ivec3,
+    ivec2,
+    NORTH,
+    WEST,
+    SOUTH,
+    EAST,
+    addY,
+    CARDINALS_2D,
+    rotate2D,
+)
 from collections.abc import Iterator
 
 from ..maps import Map
@@ -141,12 +151,37 @@ class Grid:
             for z in range(self.dimensions.z):
                 yield ivec2(x, z) + ivec2(dx, dz)
 
-    def get_door_coords(self, dir: ivec3) -> ivec3:
-        if dir == NORTH:
+    def get_door_coords(self, direction: ivec3) -> ivec3:
+        if direction == NORTH:
             return ivec3(self.dimensions.x // 2, 0, 0)
-        elif dir == SOUTH:
+        elif direction == SOUTH:
             return ivec3(0, 0, self.dimensions.z // 2)
-        elif dir == EAST:
+        elif direction == EAST:
             return ivec3(self.dimensions.x // 2, 0, self.dimensions.z)
-        elif dir == WEST:
+        elif direction == WEST:
             return ivec3(self.dimensions.x, 0, self.dimensions.z // 2)
+
+    # find lowest point in grid at point
+    def get_floor(self, point: ivec2, shape: list[ivec3]) -> int:
+
+        xz_cell = self.world_to_grid(addY(point, 0))
+        cells = [cell for cell in shape if cell.x == xz_cell.x and cell.z == xz_cell.z]
+
+        # try to find a cell in the diagonals
+        for direction in CARDINALS_2D:
+            if not cells:
+                xz_cell = self.world_to_grid(
+                    addY(point + 2 * direction + 2 * rotate2D(direction, 1), 0)
+                )
+                cells = [
+                    cell
+                    for cell in shape
+                    if cell.x == xz_cell.x and cell.z == xz_cell.z
+                ]
+
+        if not cells:
+            return self.origin.y
+
+        lowest = min(cells, key=lambda cell: cell.y)
+
+        return self.grid_to_world(lowest).y

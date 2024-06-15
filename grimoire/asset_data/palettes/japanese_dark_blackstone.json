@@ -11,7 +11,9 @@
     "secondary_wood" : "spruce",
     "pillar" : "spruce_log",
     "primary_stone" : "bricks3",
-    "secondary_stone" : "bricks3"
+    "secondary_stone" : "bricks3",
+
+    "foundation" : "andesite"
   },
 
   "primary_color" : "red",

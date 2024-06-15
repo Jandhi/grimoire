@@ -12,7 +12,9 @@
     "pillar" : "oak_log",
 
     "primary_stone" : "bricks2",
-    "secondary_stone" : "bricks2"
+    "secondary_stone" : "bricks2",
+
+    "foundation" : "andesite"
   },
 
   "primary_color" : "red",

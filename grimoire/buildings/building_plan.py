@@ -24,3 +24,4 @@ class BuildingPlan:
         cell = LegacyCell(position=position, plan=self)
         self.cell_map[position] = cell
         self.cells.append(cell)
+        self.shape.append(position)

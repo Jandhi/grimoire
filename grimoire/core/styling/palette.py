@@ -35,6 +35,8 @@ class MaterialRole(Enum):
 
     PILLAR = auto()
 
+    FOUNDATION = auto()
+
 
 class _ResolutionPriority:
     order: tuple[MaterialRole, ...]
@@ -67,6 +69,7 @@ class ResolutionPriority(Enum):
             MaterialRole.SECONDARY_STONE,
             MaterialRole.PRIMARY_WOOD,
             MaterialRole.SECONDARY_WOOD,
+            MaterialRole.FOUNDATION,
         ),
         next_in_line={
             MaterialRole.PRIMARY_WALL: MaterialRole.PRIMARY_STONE,
@@ -78,6 +81,7 @@ class ResolutionPriority(Enum):
             MaterialRole.PRIMARY_WOOD: MaterialRole.PRIMARY_STONE,
             MaterialRole.SECONDARY_WOOD: MaterialRole.SECONDARY_STONE,
             MaterialRole.PILLAR: MaterialRole.PRIMARY_STONE,
+            MaterialRole.FOUNDATION: MaterialRole.PRIMARY_STONE,
         },
     )
 

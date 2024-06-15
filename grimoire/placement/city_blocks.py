@@ -28,7 +28,8 @@ from ..core.utils.vectors import point_3d, y_ivec3
 from ..districts.district import DistrictType, SuperDistrict
 from ..districts.district_painter import replace_ground_smooth
 from ..districts.paint_palette import PaintPalette
-from ..placement.building_placement import place_building
+from ..paths.lantern import place_lanterns
+from ..placement.building_placement import attempt_place_building
 
 EDGE_THICKNESS = 1
 DESIRED_BLOCK_SIZE = 500  # 120
@@ -202,7 +203,9 @@ def place_buildings(
                 Block("cobblestone_stairs", {"facing": to_text(build_dir)}),
             )
 
-        place_building(editor, edge, build_map, build_dir, rng, style, stilts=stilts)
+        attempt_place_building(
+            editor, edge, build_map, build_dir, rng, style, stilts=stilts
+        )
 
 
 def add_city_blocks(
@@ -280,6 +283,8 @@ def add_city_blocks(
         place_buildings(editor, inner, build_map, block_rng, style, is_debug)
         print("\tDecorating...")
         decorate_city_block(editor, build_map, block, inner, outer, block_rng, style)
+
+    place_lanterns(editor, city_roads, build_map, rng)
 
     return (blocks, inners, outers)
 
