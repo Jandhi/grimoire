@@ -747,30 +747,35 @@ WATER_CHECK = 5  # the water the distance the wall will build across
 # water checking
 def check_water(wall_points: list, water_map: dict):
     buildable = False  # bool, if true, set to water_wall, water otherwise
-    long_water = True  # assume water start
+    long_water = (
+        True  # assume water start NOTE: changed hardcoding so wall can spawn in water
+    )
     for i, wall_pt in enumerate(wall_points):
         point = wall_pt[0]
 
         if water_map[point.x][point.z] == True:
-            # more complex attempt at having wall be able to bridge some water, implement better later
-            if long_water:
-                wall_points[i][2] = "water"
-            elif buildable:
-                wall_points[i][2] = "water_wall"
+            wall_points[i][2] = "water_wall"
 
-            else:  # check if can bridge
-                wall_points[i][2] = "water"  # default
-                for a in range(1, WATER_CHECK + 1):
-                    if a + i >= len(wall_points):  # OUT OF BOUNDS
-                        break
-                    pt = wall_points[a + i][0]
-                    if water_map[pt.x][pt.z] == False:  # found land within range
-                        buildable = True
-                        long_water = False
-                        wall_points[i][2] = "water_wall"
-                        break
-                    elif a == WATER_CHECK:
-                        long_water = True
+            # more complex attempt at having wall be able to bridge some water, implement better later
+            # NOTE: Commented out for now, readdress later
+            # if long_water:
+            #     wall_points[i][2] = "water"
+            # elif buildable:
+            #     wall_points[i][2] = "water_wall"
+
+            # else:  # check if can bridge
+            #     wall_points[i][2] = "water"  # default
+            #     for a in range(1, WATER_CHECK + 1):
+            #         if a + i >= len(wall_points):  # OUT OF BOUNDS
+            #             break
+            #         pt = wall_points[a + i][0]
+            #         if water_map[pt.x][pt.z] == False:  # found land within range
+            #             buildable = True
+            #             long_water = False
+            #             wall_points[i][2] = "water_wall"
+            #             break
+            #         elif a == WATER_CHECK:
+            #             long_water = True
         elif water_map[point.x][point.z] == False:
             buildable = False  # reset buildability
             long_water = False
