@@ -16,6 +16,8 @@ class BuildStyle(Enum):
     DESERT = auto()  # Decentish variety I think
     DWARVEN = auto()
 
+    NORMAL_MEDIEVAL = auto()
+
     WET = auto()
     NORMAL = auto()
 

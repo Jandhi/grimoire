@@ -1,0 +1,10 @@
+{
+    "name" : "double_tall",
+    "type" : "building_shape",
+    "points" : [
+        [0, 0, 0],
+        [0, 0, 1],
+        [0, 1, 0],
+        [0, 1, 1]
+    ]
+} 

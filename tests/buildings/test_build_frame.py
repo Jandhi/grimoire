@@ -52,18 +52,14 @@ build_floor(plan, editor)
 build_walls(
     plan,
     editor,
-    [
-        Wall.find("japanese_wall_bottom_plain"),
-        Wall.find("japanese_wall_single_plain"),
-        Wall.find("japanese_wall_upper_traps"),
-    ],
+    [wall for wall in Wall.all() if "normal_medieval" in wall.tags],
     RNG(SEED, "build_walls"),
 )
 
 build_roof(
     plan,
     editor,
-    [roof for roof in RoofComponent.all() if "japanese" in roof.tags],
+    [roof for roof in RoofComponent.all() if "normal_medieval" in roof.tags],
     SEED,
 )
 
@@ -72,6 +68,6 @@ grid.plan.cell_map[far_cell].doors.append(legacy_directions.Z_PLUS)
 door_coords = grid.get_door_coords(ivec3(0, 0, 1)) + grid.grid_to_world(far_cell)
 
 
-furnish_building(
-    plan.shape, door_coords, palette, editor, grid, rng=RNG(SEED, "furnish")
-)
+# furnish_building(
+#     plan.shape, door_coords, palette, editor, grid, rng=RNG(SEED, "furnish")
+# )

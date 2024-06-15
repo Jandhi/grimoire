@@ -57,7 +57,7 @@ SEED = 0x4473
 DO_TERRAFORMING = False  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
-DO_RURAL = True
+DO_RURAL = False  # Not worth it
 DO_URBAN = True
 
 SLEEP_DELAY = 1
@@ -160,7 +160,7 @@ for district in super_districts:
 
 most_prevalent_biome = max(biomes.items(), key=lambda kp: kp[1])[0]
 
-style = BuildStyle.WET
+style = BuildStyle.NORMAL_MEDIEVAL
 
 # FIXME: Incomplete code!
 if most_prevalent_biome in []:
