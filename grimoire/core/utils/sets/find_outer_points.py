@@ -1,5 +1,6 @@
-from gdpc.vector_tools import ivec2
-from ...structures.legacy_directions import CARDINAL, get_ivec2
+from gdpc.vector_tools import ivec2, ivec3
+from ...structures.legacy_directions import CARDINAL, get_ivec2, vector
+
 
 
 def find_edges(points: set[ivec2]) -> set[ivec2]:
@@ -9,6 +10,12 @@ def find_edges(points: set[ivec2]) -> set[ivec2]:
         if any((point + get_ivec2(direction)) not in points for direction in CARDINAL)
     }
 
+def find_edges_3D(points: set[ivec3]) -> set[ivec3]:
+    return {
+        point
+        for point in points
+        if any((point + vector(direction)) not in points for direction in CARDINAL)
+    }
 
 # Returns outer and inner points of a set of points, where the outer points are determined by some given distance to the edge
 def find_outer_and_inner_points(

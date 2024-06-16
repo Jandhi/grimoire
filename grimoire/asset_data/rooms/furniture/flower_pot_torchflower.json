@@ -1,0 +1,8 @@
+{
+    "name" : "flower_pot_torchflower",
+    "filepath" : "grimoire/asset_data/rooms/furniture/flower_pot_torchflower.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 1,
+    "facing" : "x_plus"
+}

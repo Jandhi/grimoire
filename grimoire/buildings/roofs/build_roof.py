@@ -241,37 +241,3 @@ def build_roof(
                 ),
                 material_params_func=material_params_func,
             )
-
-        # northeast
-        build_nbt(
-            editor,
-            corner,
-            cell.plan.palette,
-            Transformation(
-                offset=coords + ivec3(grid.width - 1, 0, 0), mirror=(True, False, False)
-            ),
-            material_params_func=material_params_func,
-        )
-
-        # southwest
-        build_nbt(
-            editor,
-            corner,
-            cell.plan.palette,
-            Transformation(
-                offset=coords + ivec3(0, 0, grid.depth - 1), mirror=(False, False, True)
-            ),
-            material_params_func=material_params_func,
-        )
-
-        # southeast
-        build_nbt(
-            editor,
-            corner,
-            cell.plan.palette,
-            Transformation(
-                offset=coords + ivec3(grid.width - 1, 0, grid.depth - 1),
-                mirror=(True, False, True),
-            ),
-            material_params_func=material_params_func,
-        )

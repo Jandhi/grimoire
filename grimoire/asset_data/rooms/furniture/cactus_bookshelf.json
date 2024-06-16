@@ -1,0 +1,8 @@
+{
+    "name" : "cactus_bookshelf",
+    "filepath" : "grimoire/asset_data/rooms/furniture/cactus_bookshelf.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 2,
+    "facing" : "x_plus"
+}

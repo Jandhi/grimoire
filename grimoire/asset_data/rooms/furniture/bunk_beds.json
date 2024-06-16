@@ -1,0 +1,8 @@
+{
+    "name" : "bunk_beds",
+    "filepath" : "grimoire/asset_data/rooms/furniture/bunk_beds.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 3,
+    "facing" : "x_plus"
+}

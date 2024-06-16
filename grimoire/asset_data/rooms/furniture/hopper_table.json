@@ -1,0 +1,8 @@
+{
+    "name" : "hopper_table",
+    "filepath" : "grimoire/asset_data/rooms/furniture/hopper_table.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 1,
+    "facing" : "x_plus"
+}

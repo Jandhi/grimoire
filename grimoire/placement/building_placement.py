@@ -13,7 +13,7 @@ from ..buildings.building_shape import BuildingShape
 from ..buildings.clear_interiors import clear_interiors
 from ..buildings.roofs.build_roof import build_roof
 from ..buildings.roofs.roof_component import RoofComponent
-from ..buildings.rooms.furnish import furnish, furnish_building
+from ..buildings.rooms.furnish import furnish_building
 from ..buildings.stilts import build_stilt_frame
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
@@ -53,7 +53,7 @@ door_points = {
 
 WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
 MAX_AVG_HEIGHT_DIFF = 4
-DO_FURNISHING = False
+DO_FURNISHING = True
 
 
 # Attempts to place a building at a point
@@ -359,13 +359,13 @@ def place_building(
         filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy())
     )
 
-    build_walls(plan, editor, walls, rng)
-
     door_coords = None
 
     for cell in plan.cells:
         for direction in legacy_directions.CARDINAL:
             if cell.has_door(direction):
+
+                door_dir = legacy_directions.VECTORS[direction]
                 door_coords = grid.get_door_coords(
                     legacy_directions.VECTORS[direction]
                 ) + grid.grid_to_world(cell.position)
@@ -388,4 +388,11 @@ def place_building(
         return
 
     if DO_FURNISHING:
-        furnish_building(plan.shape, door_coords, palette, editor, grid, rng)
+        try:
+            furnish_building(
+                plan.shape, door_coords, door_dir, palette, editor, grid, rng
+            )
+        except:
+            pass
+
+    build_walls(plan, editor, walls, rng)

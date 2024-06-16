@@ -51,7 +51,7 @@ DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
 DO_RURAL = True  # Not worth it
-DO_URBAN = False
+DO_URBAN = True
 RESET_AFTER_TEST = False  # FIXME: Restoration crashes
 
 BUFFER_LIMIT = 32

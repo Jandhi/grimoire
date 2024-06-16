@@ -1,0 +1,8 @@
+{
+    "name" : "chest",
+    "filepath" : "grimoire/asset_data/rooms/furniture/chest.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 1,
+    "facing" : "x_plus"
+}

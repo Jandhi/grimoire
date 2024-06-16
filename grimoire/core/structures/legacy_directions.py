@@ -103,12 +103,16 @@ RIGHT = {
     EAST: SOUTH,
     SOUTH: WEST,
     WEST: NORTH,
+    UP: UP,
+    DOWN: DOWN
 }
 LEFT = {
     NORTH: WEST,
     WEST: SOUTH,
     SOUTH: EAST,
     EAST: NORTH,
+    UP: UP,
+    DOWN: DOWN
 }
 
 BACKWARDS = OPPOSITES

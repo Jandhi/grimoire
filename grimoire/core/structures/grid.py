@@ -154,12 +154,12 @@ class Grid:
     def get_door_coords(self, direction: ivec3) -> ivec3:
         if direction == NORTH:
             return ivec3(self.dimensions.x // 2, 0, 0)
-        elif direction == SOUTH:
-            return ivec3(0, 0, self.dimensions.z // 2)
+        elif direction == SOUTH:        
+            return ivec3(self.dimensions.x // 2, 0, self.dimensions.z - 1)
         elif direction == EAST:
-            return ivec3(self.dimensions.x // 2, 0, self.dimensions.z)
+            return ivec3(0, 0, self.dimensions.z // 2)
         elif direction == WEST:
-            return ivec3(self.dimensions.x, 0, self.dimensions.z // 2)
+            return ivec3(self.dimensions.x - 1, 0, self.dimensions.z // 2)
 
     # find lowest point in grid at point
     def get_floor(self, point: ivec2, shape: list[ivec3]) -> int:
