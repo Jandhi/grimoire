@@ -6,7 +6,7 @@
   "materials" : {
     "primary_wall" : "smooth_sandstone",
     "secondary_wall" : "cut_sandstone",
-    "primary_roof" : "cut_sandstone",
+    "primary_roof" : "cut_red_sandstone",
     "primary_wood" : "birch",
     "secondary_wood" : "oak",
     "pillar" : "cut_sandstone",
