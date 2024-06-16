@@ -98,6 +98,9 @@ def build_nbt(
         if block.id == "minecraft:structure_void":
             continue
 
+        if nbt != None:
+            block.data = nbt
+
         editor.placeBlock(position=(x, y, z), block=block)
 
     for pos, entity in structure.entities.items():
