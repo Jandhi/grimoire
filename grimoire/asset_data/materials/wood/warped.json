@@ -1,0 +1,12 @@
+{
+  "name" : "warped",
+  "type" : "material",
+  "blocks" : {
+    "block" : "warped_planks",
+    "stairs" : "warped_stairs",
+    "slab" : "warped_slab",
+    "fence" : "warped_fence",
+    "trapdoor" : "warped_trapdoor",
+    "sign" : "warped_sign"
+  }
+}

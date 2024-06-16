@@ -1,18 +1,18 @@
 {
-  "name" : "japanese",
+  "name" : "medieval_acacia",
   "type" : "palette",
 
   "resolution_priority" : "stone",
   "materials" : {
-    "primary_wall" : "white_concrete",
+    "primary_wall" : "bricks1",
+    "secondary_wall" : "polished1",
+    "primary_roof" : "acacia",
+    "secondary_roof" : "birch",
     "primary_wood" : "spruce",
     "secondary_wood" : "oak",
-    "primary_roof" : "bricks2",
-    "secondary_roof" : "polished2",
     "pillar" : "oak_log",
-
-    "primary_stone" : "bricks2",
-    "secondary_stone" : "bricks2",
+    "primary_stone" : "bricks1",
+    "secondary_stone" : "polished1",
 
     "foundation" : "andesite"
   },
@@ -20,5 +20,5 @@
   "primary_color" : "red",
   "secondary_color" : "white",
 
-  "tags" : ["japanese"]
+  "tags" : ["normal_medieval"]
 }

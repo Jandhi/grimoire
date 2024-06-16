@@ -1,0 +1,10 @@
+{
+  "name" : "prismarine",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "blocks" : {
+    "block" : "prismarine",
+    "stairs" : "prismarine_stairs",
+    "slab" : "prismarine_slab"
+  }
+}

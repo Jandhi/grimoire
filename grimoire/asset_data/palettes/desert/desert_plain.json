@@ -1,0 +1,22 @@
+{
+  "name" : "desert_plain",
+  "type" : "palette",
+
+  "resolution_priority" : "stone",
+  "materials" : {
+    "primary_wall" : "smooth_sandstone",
+    "secondary_wall" : "cut_sandstone",
+    "primary_roof" : "cut_red_sandstone",
+    "primary_wood" : "birch",
+    "secondary_wood" : "oak",
+    "pillar" : "cut_sandstone",
+    "primary_stone" : "smooth_sandstone",
+    "secondary_stone" : "chiseled_sandstone",
+    "foundation" : "sandstone"
+  },
+
+  "primary_color" : "green",
+  "secondary_color" : "blue",
+
+  "tags" : ["desert"]
+}

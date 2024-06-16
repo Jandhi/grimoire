@@ -1,24 +1,23 @@
 {
-  "name" : "japanese",
+  "name" : "wet_orange",
   "type" : "palette",
 
   "resolution_priority" : "stone",
   "materials" : {
     "primary_wall" : "white_concrete",
-    "primary_wood" : "spruce",
-    "secondary_wood" : "oak",
     "primary_roof" : "bricks2",
     "secondary_roof" : "polished2",
-    "pillar" : "oak_log",
-
+    "primary_wood" : "dark_oak",
+    "secondary_wood" : "spruce",
+    "pillar" : "spruce_log",
     "primary_stone" : "bricks2",
     "secondary_stone" : "bricks2",
 
     "foundation" : "andesite"
   },
 
-  "primary_color" : "red",
+  "primary_color" : "orange",
   "secondary_color" : "white",
 
-  "tags" : ["japanese"]
+  "tags" : ["wet"]
 }

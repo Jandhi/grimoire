@@ -7,7 +7,7 @@ from gdpc.vector_tools import Box, Rect, ivec3
 
 from grimoire.core.maps import Map
 
-DEFAULT_TREE_TYPE = "minecraft:birch"
+DEFAULT_TREE_TYPE = "minecraft:oak"
 
 
 def place_tree(
