@@ -53,6 +53,7 @@ def get_blocks_along_dir_of_cell(cell: ivec3, direction: ivec3, grid: Grid) -> s
 
 def build_interior_walls(cells: list, floor: int, palette: Palette, editor: Editor, grid: Grid, rng: RNG) -> set:
     interior_wall: Wall = Wall.find('interior_wall')
+    interior_wall_cells = set()
 
     cells_on_floor = [ivec3(x, y, z) for (x, y, z) in cells if y == floor]
     if len(cells_on_floor) == 1: # no interior walls if there is only 1 cell
@@ -61,16 +62,16 @@ def build_interior_walls(cells: list, floor: int, palette: Palette, editor: Edit
     elif len(cells_on_floor) == 2: #if there is exactly two cells then let's give it a 50/50 chance for there to be an interior wall
         p = rng.randint(100)
         if p < 50:
-            return set()
+            return None
         else:
             for cell in cells_on_floor:
                 for direction in CARDINALS:
                     next = cell + direction
                     if next in cells_on_floor:
                         grid.build(editor, interior_wall, palette, cell, direction)
-                        return set((cell, direction))
+                        interior_wall_cells.add((cell, direction))
+                        return interior_wall_cells
     else:
-        interior_wall_cells = set()
         #start with a random cell and a random direction
         starting_cell = rng.choose(cells_on_floor)
         possible_directions = []
@@ -264,7 +265,7 @@ def shift_end_for_stairs(end: ivec3, grid: Grid, cells: list, corner_type: str) 
         case 'northwest': 
             end = end + ivec3(0, 0, 4)
         case 'northeast':
-            end = end + ivec3(4, 0, 0)
+            end = end + ivec3(-4, 0, 0)
         case 'southeast':
             end = end + ivec3(0, 0, -4)
         case _:
@@ -401,7 +402,7 @@ def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Ed
                     return end, end_corner_type, inside_map
                 elif cubby_type == 'west':
                     end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
-                    end_corner_type = 'southwest'
+                    end_corner_type = 'southeast'
                     end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                     return end, end_corner_type, inside_map
                 elif cubby_type == 'south':
@@ -722,7 +723,7 @@ def furnish_building(cells: list, door_coords: ivec3, door_dir: ivec3, palette: 
             filled.add(start)
             
         cells_with_int_walls = build_interior_walls(cells, floor, palette, editor, grid, rng)
-        if len(cells_with_int_walls) > 0:
+        if cells_with_int_walls is not None:
             for c, d in cells_with_int_walls:
                 c = c + SOUTH
                 int_wall_blocks = get_blocks_along_dir_of_cell(c, d, grid)
