@@ -342,7 +342,7 @@ def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Ed
                 return end, end_corner_type, inside_map
             elif door_dir == WEST:
                 end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
-                end_corner_type = 'southwest'
+                end_corner_type = 'southeast'
                 end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                 return end, end_corner_type, inside_map
             elif door_dir == SOUTH:
