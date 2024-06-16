@@ -53,7 +53,7 @@ door_points = {
 
 WATER_THRESHOLD = 0.4  # above this threshold a house cannot be built
 MAX_AVG_HEIGHT_DIFF = 4
-DO_FURNISHING = False
+DO_FURNISHING = True
 
 
 # Attempts to place a building at a point
@@ -85,7 +85,7 @@ def attempt_place_building(
 
     # iterate over shapes randomly by weight
     while True:
-        shape: BuildingShape = rng.pop_weighted(weighted_shape_dict)
+        shape: BuildingShape = rng.pop_weighted(weighted_shape_dict)        
 
         if shape is None:
             return False
@@ -352,9 +352,11 @@ def place_building(
     for cell in plan.cells:
         for direction in legacy_directions.CARDINAL:
             if cell.has_door(direction):
+                
+                door_dir = legacy_directions.VECTORS[direction]
                 door_coords = grid.get_door_coords(
-                    legacy_directions.VECTORS[direction]
-                ) + grid.grid_to_world(cell.position)
+                legacy_directions.VECTORS[direction]
+                ) +grid.grid_to_world(cell.position)
                 break
 
         if door_coords:
@@ -364,4 +366,4 @@ def place_building(
         return
 
     if DO_FURNISHING:
-        furnish_building(plan.shape, door_coords, palette, editor, grid, rng)
+        furnish_building(plan.shape, door_coords, door_dir, palette, editor, grid, rng)

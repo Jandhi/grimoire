@@ -13,7 +13,7 @@ from grimoire.core.structures.legacy_directions import Z_PLUS
 from grimoire.core.noise.rng import RNG
 
 
-SEED = 0x44444
+SEED = 92198129812
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
@@ -21,7 +21,6 @@ load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
-
 print("Loading world slice...")
 build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)

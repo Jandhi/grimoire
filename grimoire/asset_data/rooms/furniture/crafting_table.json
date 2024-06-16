@@ -1,0 +1,8 @@
+{
+    "name" : "crafting_table",
+    "filepath" : "grimoire/asset_data/rooms/furniture/crafting_table.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 1,
+    "facing" : "x_plus"
+}

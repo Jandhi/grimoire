@@ -592,7 +592,7 @@ def furnish_building(cells: list, door_coords: ivec3):
         if start in to_fill:
             to_fill.remove(start)
 
-        furnish(to_fill, stairs_blocks, path)
+        furnish(filled, stairs_blocks, path)
 
 
 furnish_building(cells)

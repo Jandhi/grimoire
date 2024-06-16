@@ -1,0 +1,8 @@
+{
+    "name" : "5x1_bamboo",
+    "filepath" : "grimoire/asset_data/rooms/furniture/5x1_bamboo.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 5,
+    "facing" : "x_plus"
+}
