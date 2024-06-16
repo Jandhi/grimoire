@@ -335,7 +335,7 @@ def decorate_city_block(
                 area=nook_shape,
             )
             nook.manifest(
-                editor, nook_shape, surrounding_developments, city_map, block_rng
+                editor, nook_shape, surrounding_developments, style, city_map, block_rng
             )
             print(
                 f"\t\tIt became a Nook ({nook.name}) with the following properties:\n"

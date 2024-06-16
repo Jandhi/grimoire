@@ -1,13 +1,14 @@
-from gdpc import Editor, Block
+from gdpc import Block, Editor, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
-from gdpc import WorldSlice
-from ..core.styling.palette import Palette
-from ..core.structures.legacy_directions import NORTH, EAST, SOUTH, vector, ivec3_to_dir
-from ..core.utils.geometry import is_straight_not_diagonal_ivec2
+
+from grimoire.core.styling.legacy_palette import LegacyPalette
+
+from ..core.structures.legacy_directions import EAST, NORTH, SOUTH, ivec3_to_dir, vector
 from ..core.structures.nbt.build_nbt import build_nbt
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
-from grimoire.core.styling.legacy_palette import LegacyPalette
+from ..core.styling.palette import Palette
+from ..core.utils.geometry import is_straight_not_diagonal_ivec2
 
 
 # Class to track gate assets
@@ -182,7 +183,11 @@ def add_gates(
                             palette=palette,
                         )
                     else:
-                        dir = vector(wall_list[i + 3][1][0])
+                        dir = (
+                            vector(wall_list[i + 3][1][0])
+                            if wall_list[i + 3][1]
+                            else ivec3(0, 0, 0)
+                        )
                         middle_point = wall_list[i + 3][0] + dir * 2
                         # checking inner wall, if it is not where it is expected to be, not a valid gate location
 

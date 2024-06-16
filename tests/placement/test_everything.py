@@ -9,12 +9,8 @@ from gdpc.world_slice import WorldSlice
 sys.path[0] = sys.path[0].removesuffix(str(Path("tests/placement")))
 print(f"PATH: {sys.path[0]}")
 
-from grimoire.core.styling.biome_lookup import get_style_and_palettes
-from grimoire.paths.gate_paths import add_gate_path
-
-
 from gdpc import Box, Editor
-from gdpc.lookup import GRANULARS, DIRTS
+from gdpc.lookup import DIRTS, GRANULARS
 
 # Actual file
 from gdpc.vector_tools import ivec3
@@ -23,6 +19,7 @@ from glm import ivec2
 from grimoire.core.assets.asset_loader import load_assets
 from grimoire.core.maps import Map, get_build_map
 from grimoire.core.noise.rng import RNG
+from grimoire.core.styling.biome_lookup import get_style_and_palettes
 from grimoire.core.utils.geometry import get_surrounding_points
 from grimoire.core.utils.misc import growth_spurt, kill_items
 from grimoire.core.utils.sets.find_outer_points import find_outer_and_inner_points
@@ -40,6 +37,7 @@ from grimoire.districts.wall import (
     get_wall_points,
     order_wall_points,
 )
+from grimoire.paths.gate_paths import add_gate_path
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.forest import Forest
 from grimoire.terrain.plateau import plateau
@@ -351,7 +349,7 @@ if DO_WALL:
 # ==== CLEANUP ====
 
 kill_items(editor)
-
+growth_spurt(editor)
 
 if RESET_AFTER_TEST:
     input("Press <enter> to reset the map...")

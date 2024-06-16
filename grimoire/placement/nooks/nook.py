@@ -16,9 +16,9 @@ from grimoire.districts.district import DistrictType
 from grimoire.placement.nooks.terraformers.edging import simple_closed_fencing
 from grimoire.placement.nooks.terraformers.texture import (
     central_statue,
+    central_well,
     flagstone_edge,
     fully_paved,
-    fully_paved_desert,
     grass_edge,
     grass_patch_area,
     roughen_edge,
@@ -120,21 +120,7 @@ class Nook:
                         Editor,
                         Shape2D,
                         dict[ivec2, set[DevelopmentType]],
-                        Map,
-                        RNG,
-                    ],
-                    Any,
-                ]
-            ]
-            | None
-        ) = None,
-        decorators: (
-            Iterable[
-                Callable[
-                    [
-                        Editor,
-                        Shape2D,
-                        dict[ivec2, set[DevelopmentType]],
+                        BuildStyle,
                         Map,
                         RNG,
                     ],
@@ -179,6 +165,7 @@ class Nook:
         editor: Editor,
         area: Shape2D,
         edges: dict[ivec2, set[DevelopmentType]],
+        style: BuildStyle,
         city_map: Map,
         rng: RNG,
     ) -> None:
@@ -203,7 +190,7 @@ class Nook:
         STAGES: list[tuple[Iterable[Callable] | None, list]] = [
             (
                 self.terraformers,
-                [editor, area, edges, city_map, rng],
+                [editor, area, edges, style, city_map, rng],
             ),
         ]
 
@@ -242,25 +229,25 @@ LOW_EXPOSURE: frozenset[TrafficExposureType] = frozenset(
 #     exposure_types=HIGH_EXPOSURE,
 #     terraformers=[pave_over_area, roughen_edge],
 # )
-NORMAL_SQUARE_NOOK = Nook(
-    "Square",
+WELL_SQUARE_NOOK = Nook(
+    "Well Square",
     traffic_exposure_types=HIGH_EXPOSURE,
     styles=BuildStyle.NORMAL_MEDIEVAL,
-    terraformers=[fully_paved, roughen_edge],
+    terraformers=[fully_paved, roughen_edge, central_well],
 )
 MONUMENT_NOOK = Nook(
     "Monument",
     traffic_exposure_types=TrafficExposureType.ISLAND,
-    styles=[BuildStyle.NORMAL, BuildStyle.NORMAL_MEDIEVAL],
-    min_area=30,
-    min_rect=Rect(size=(5, 5)),
+    styles=[BuildStyle.WET, BuildStyle.NORMAL_MEDIEVAL],
+    min_area=50,
+    min_rect=Rect(size=(7, 7)),
     terraformers=[fully_paved, roughen_edge, central_statue],
 )
 DESERT_PLAZA_NOOK = Nook(
     "Desert Plaza",
-    traffic_exposure_types=HIGH_EXPOSURE,
+    traffic_exposure_types=TrafficExposureType.ISLAND,
     styles=BuildStyle.DESERT,
-    terraformers=[fully_paved_desert, roughen_edge],
+    terraformers=[fully_paved, roughen_edge],
 )
 PATCHY_GRASS_NOOK = Nook(
     "Patchy Grass",
