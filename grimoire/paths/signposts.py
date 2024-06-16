@@ -61,9 +61,15 @@ def build_signpost(editor: Editor, path: list[ivec3], build_map: Map, rng: RNG):
         data = '{back_text:{color:"black",has_glowing_text:0b,messages:[\'{"text":""}\',\'{"text":""}\',\'{"text":""}\',\'{"text":""}\']},front_text:{color:"black",has_glowing_text:0b,messages:[\'{"text":"this way"}\',\'{"text":"to town"}\',\'{"text":"--->"}\',\'{"text":""}\']},is_waxed:0b}'
 
     set_height(sign_point.x, path[0].y, sign_point.y, build_map.world, editor)
-    editor.placeBlock(
-        ivec3(sign_point.x, path[0].y - 1, sign_point.y), Block("cobblestone")
-    )
+
+    if (
+        editor.getBlock(ivec3(sign_point.x, path[0].y - 1, sign_point.y))
+        == "minecraft:sand"
+    ):
+        editor.placeBlock(
+            ivec3(sign_point.x, path[0].y - 1, sign_point.y), Block("sandstone")
+        )
+
     editor.placeBlock(
         ivec3(sign_point.x, path[0].y, sign_point.y),
         Block("oak_sign", states={"rotation": str(angle)}, data=data),

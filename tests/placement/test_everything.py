@@ -49,7 +49,7 @@ SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
-DO_RURAL = False  # Not worth it
+DO_RURAL = True  # Not worth it
 DO_URBAN = True
 RESET_AFTER_TEST = False  # FIXME: Restoration crashes
 
