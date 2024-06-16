@@ -6,8 +6,8 @@
   "materials" : {
     "primary_wall" : "bricks1",
     "secondary_wall" : "polished1",
-    "primary_roof" : "bricks1",
-    "secondary_roof" : "polished1",
+    "primary_roof" : "spruce",
+    "secondary_roof" : "oak",
     "primary_wood" : "spruce",
     "secondary_wood" : "oak",
     "pillar" : "oak_log",

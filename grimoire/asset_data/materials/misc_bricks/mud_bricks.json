@@ -1,0 +1,11 @@
+{
+  "name" : "mud_bricks",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "blocks" : {
+    "block" : "mud_bricks",
+    "stairs" : "mud_brick_stairs",
+    "slab" : "mud_brick_slab",
+    "wall" : "mud_brick_wall"
+  }
+}

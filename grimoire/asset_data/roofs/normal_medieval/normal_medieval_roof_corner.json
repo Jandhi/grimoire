@@ -4,6 +4,6 @@
     "filepath" : "grimoire/asset_data/roofs/normal_medieval/normal_medieval_roof_corner.nbt",
     "origin" : [1, -1, 1],
     "shape" : "corner",
-    "palette" : "japanese_dark_blackstone",
+    "palette" : "spruce_roof",
     "tags" : ["normal_medieval"]
 }

@@ -359,8 +359,6 @@ def place_building(
         filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy())
     )
 
-    build_walls(plan, editor, walls, rng)
-
     door_coords = None
 
     for cell in plan.cells:
@@ -396,3 +394,5 @@ def place_building(
             )
         except:
             pass
+
+    build_walls(plan, editor, walls, rng)
