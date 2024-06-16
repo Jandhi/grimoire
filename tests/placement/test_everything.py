@@ -342,7 +342,7 @@ if DO_WALL:
         )
 
         for gate in gates:
-            add_gate_path(gate, main_map, editor, rng)
+            add_gate_path(gate, main_map, editor, rng, style)
 
 
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
