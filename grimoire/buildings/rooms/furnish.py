@@ -309,7 +309,7 @@ def map_inside_area(grid: Grid, cells: list, floor: int):
 
     return {addY(point, y_val) for point in points}
 
-def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Editor, grid: Grid, rng: RNG, filled: set) -> tuple:
+def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Editor, grid: Grid, rng: RNG, filled: set, door_dir: ivec3) -> tuple:
     max_floor = max(cells, key = lambda x: x[1]).y
     start_cell = grid.world_to_grid(start)
 
@@ -375,8 +375,29 @@ def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Ed
                 end_corner_type = 'northeast'
                 return end, end_corner_type, inside_map
             else:
-                print('Cannot place stairs!')
-                return
+                #we must have a 1x1 house with more than 1 story
+                if door_dir == 'north':
+                    end = min(cell_corners, key = lambda c: (c[0], -c[2]))
+                    end_corner_type = 'southwest'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+                elif door_dir == 'east':
+                    end = min(cell_corners, key = lambda c: (c[0], c[2]))
+                    end_corner_type = 'northwest'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+                elif door_dir == 'west':
+                    end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
+                    end_corner_type = 'southwest'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+                elif door_dir == 'south':
+                    end = min(cell_corners, key = lambda c: (-c[0], c[2]))
+                    end_corner_type = 'northeast'
+                    return end, end_corner_type, inside_map
+                else:
+                    print('cannot place stairs!')
+                    return 
 
         else:
             if cell_corner_type == 'northwest':
@@ -718,13 +739,13 @@ def furnish_building(cells: list, door_coords: ivec3, door_dir: ivec3, palette: 
 
         if floor == num_floors - 1:
             has_stairs = False
-            end, end_corner_type, floor_space = find_end(start, cells, has_stairs, floor, editor, grid, rng, filled)
+            end, end_corner_type, floor_space = find_end(start, cells, has_stairs, floor, editor, grid, rng, filled, door_dir)
             end = end + UP
             path = set()
             path.add(end)
         else:
             has_stairs = True
-            end, end_corner_type, floor_space = find_end(start, cells, has_stairs, floor, editor, grid, rng, filled)
+            end, end_corner_type, floor_space = find_end(start, cells, has_stairs, floor, editor, grid, rng, filled, door_dir)
             end = end + UP
             path = set()
             path.add(end)
