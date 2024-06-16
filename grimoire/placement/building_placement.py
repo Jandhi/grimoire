@@ -1,7 +1,7 @@
 import contextlib
 
 from gdpc import Block, Editor
-from gdpc.vector_tools import ivec2, ivec3, vec2
+from gdpc.vector_tools import ivec2, ivec3, vec2, UP
 
 import grimoire.core.structures.legacy_directions as legacy_directions
 from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
@@ -66,7 +66,6 @@ def attempt_place_building(
     rng: RNG,
     style: BuildStyle = BuildStyle.JAPANESE,
     urban_only=True,
-    stilts: bool = False,
 ) -> bool:
     # A building can always be placed with the door to the left or right of the original spot
     my_offsets = offsets[outside_direction]
@@ -104,9 +103,24 @@ def attempt_place_building(
                 shape,
                 style,
                 urban_only,
-                allow_water=stilts,
-                stilts=stilts,
+                allow_water=False,
+                stilts=False,
             )
+
+            if not success:
+                success = attempt_building_placement_at_offset(
+                    editor,
+                    rng,
+                    map,
+                    start_point,
+                    offset,
+                    outside_direction,
+                    shape,
+                    style,
+                    urban_only,
+                    allow_water=True,
+                    stilts=True,
+                )
 
             if success:
                 return True
@@ -323,10 +337,6 @@ def place_building(
                     Block(fix_block_name(stone)),
                 )
 
-    # Clear the area
-    for point in shape.get_points(grid):
-        editor.placeBlock(point, Block("air"))
-
     build_roof(
         plan,
         editor,
@@ -337,6 +347,10 @@ def place_building(
         ],
         rng.next(),
     )
+
+    # Clear the area
+    for point in shape.get_points(grid):
+        editor.placeBlock(point, Block("air"))
 
     clear_interiors(plan, editor)
     build_floor(plan, editor)
@@ -355,8 +369,18 @@ def place_building(
                 
                 door_dir = legacy_directions.VECTORS[direction]
                 door_coords = grid.get_door_coords(
-                legacy_directions.VECTORS[direction]
-                ) +grid.grid_to_world(cell.position)
+                    legacy_directions.VECTORS[direction]
+                ) + grid.grid_to_world(cell.position)
+
+                editor.placeBlock(
+                    door_coords + legacy_directions.VECTORS[direction] + UP,
+                    Block("air"),
+                )
+                editor.placeBlock(
+                    door_coords + legacy_directions.VECTORS[direction] + 2 * UP,
+                    Block("air"),
+                )
+
                 break
 
         if door_coords:

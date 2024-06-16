@@ -1,0 +1,11 @@
+{
+    "name" : "normal_top_wall_triangle_lanterns",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/normal_medieval/normal_top_wall_triangle_lanterns.nbt",
+    "origin" : [2, 0, 0],
+    "facing" : "x_minus",
+    "palette" : "wet",
+    "positions" : ["upper"],
+    "has_door" : false,
+    "tags" : ["normal_medieval"]
+}

@@ -1,0 +1,23 @@
+{
+  "name" : "wet",
+  "type" : "palette",
+
+  "resolution_priority" : "stone",
+  "materials" : {
+    "primary_wall" : "white_concrete",
+    "primary_roof" : "bricks3",
+    "secondary_roof" : "polished3",
+    "primary_wood" : "dark_oak",
+    "secondary_wood" : "spruce",
+    "pillar" : "spruce_log",
+    "primary_stone" : "bricks3",
+    "secondary_stone" : "bricks3",
+
+    "foundation" : "andesite"
+  },
+
+  "primary_color" : "green",
+  "secondary_color" : "white",
+
+  "tags" : ["wet"]
+}

@@ -1,6 +1,8 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.styling.palette import BuildStyle
+
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
 # Actual file
@@ -31,5 +33,12 @@ rng = RNG(SEED)
 
 editor.placeBlock(ivec3(50, 100, 50), Block("glowstone"))
 attempt_place_building(
-    editor, ivec2(50, 50), map, Z_PLUS, rng, urban_only=False, stilts=False
+    editor,
+    ivec2(50, 50),
+    map,
+    Z_PLUS,
+    rng,
+    urban_only=False,
+    stilts=False,
+    style=BuildStyle.WET,
 )

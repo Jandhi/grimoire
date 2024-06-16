@@ -1,0 +1,11 @@
+{
+    "name" : "normal_bottom_small_window_barrels",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/normal_medieval/normal_bottom_small_window_barrels.nbt",
+    "origin" : [2, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "wet",
+    "positions" : ["lower"],
+    "has_door" : false,
+    "tags" : ["normal_medieval"]
+}

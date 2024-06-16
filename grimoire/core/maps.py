@@ -35,6 +35,23 @@ class DevelopmentType(Enum):
     NOOK = auto()
 
 
+PATH_DEVELOPMENTS: frozenset[DevelopmentType] = frozenset(
+    {
+        DevelopmentType.CITY_ROAD,
+        DevelopmentType.HIGHWAY,
+        DevelopmentType.GATE,
+        DevelopmentType.NOOK,
+    }
+)
+BUILDING_DEVELOPMENTS: frozenset[DevelopmentType] = frozenset(
+    {
+        DevelopmentType.BUILDING,
+        DevelopmentType.CITY_WALL,
+        DevelopmentType.WALL,
+    }
+)
+
+
 def get_biome_map(world_slice: WorldSlice) -> list[list[str]]:
     size: ivec2 = world_slice.rect.size
 
@@ -193,6 +210,9 @@ class Map:
     def ocean_floor_at(self, point: ivec2):
         return self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y]
 
+    def water_depth_at(self, point: ivec2):
+        return self.height_at(point) - self.ocean_floor_at(point)
+
     def height_at_include_leaf(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING"][point.x][point.y]
 
@@ -222,6 +242,7 @@ class Map:
             )
 
     def make_3d(self, point: ivec2) -> ivec3:
+        """Return the block above the surface at this position."""
         return ivec3(point.x, self.height_at(point), point.y)
 
     def is_in_bounds(self, point: ivec3) -> bool:
