@@ -6,12 +6,12 @@
   "materials" : {
     "primary_wall" : "smooth_sandstone",
     "secondary_wall" : "cut_sandstone",
-    "primary_roof" : "dark_prismarine",
+    "primary_roof" : "prismarine",
     "primary_wood" : "birch",
     "secondary_wood" : "oak",
     "pillar" : "cut_sandstone",
     "primary_stone" : "smooth_sandstone",
-    "secondary_stone" : "smooth_sandstone",
+    "secondary_stone" : "chiseled_sandstone",
     "foundation" : "sandstone"
   },
 

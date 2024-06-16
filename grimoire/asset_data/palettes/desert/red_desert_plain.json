@@ -1,12 +1,12 @@
 {
-  "name" : "red_desert",
+  "name" : "red_desert_plain",
   "type" : "palette",
 
   "resolution_priority" : "stone",
   "materials" : {
     "primary_wall" : "smooth_red_sandstone",
     "secondary_wall" : "cut_red_sandstone",
-    "primary_roof" : "dark_prismarine",
+    "primary_roof" : "cut_red_sandstone",
     "primary_wood" : "birch",
     "secondary_wood" : "oak",
     "pillar" : "cut_red_sandstone",
@@ -15,7 +15,7 @@
     "foundation" : "red_sandstone"
   },
 
-  "primary_color" : "red",
+  "primary_color" : "black",
   "secondary_color" : "blue",
 
   "tags" : ["desert"]

@@ -1,12 +1,12 @@
 {
-  "name" : "desert_prismarine",
+  "name" : "desert_plain",
   "type" : "palette",
 
   "resolution_priority" : "stone",
   "materials" : {
     "primary_wall" : "smooth_sandstone",
     "secondary_wall" : "cut_sandstone",
-    "primary_roof" : "prismarine",
+    "primary_roof" : "cut_sandstone",
     "primary_wood" : "birch",
     "secondary_wood" : "oak",
     "pillar" : "cut_sandstone",
@@ -15,7 +15,7 @@
     "foundation" : "sandstone"
   },
 
-  "primary_color" : "cyan",
+  "primary_color" : "green",
   "secondary_color" : "blue",
 
   "tags" : ["desert"]
