@@ -44,8 +44,8 @@ def build_highway(
 
         # don't place in urban area
         if (
-            map.districts[x][z] is not None
-            and map.districts[x][z].type == DistrictType.URBAN
+            map.super_districts[x][z] is not None
+            and map.super_districts[x][z].type == DistrictType.URBAN
         ):
             continue
 

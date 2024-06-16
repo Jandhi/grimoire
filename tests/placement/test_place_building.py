@@ -39,6 +39,5 @@ attempt_place_building(
     Z_PLUS,
     rng,
     urban_only=False,
-    stilts=False,
-    style=BuildStyle.WET,
+    style=BuildStyle.DESERT,
 )

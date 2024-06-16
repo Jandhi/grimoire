@@ -23,6 +23,7 @@ def place_statue(editor, position: ivec3, rng: RNG, city_map: Map):
                     == DevelopmentType.BUILDING
                     or city_map.buildings[x + position.x][z + position.z]
                     == DevelopmentType.CITY_WALL
+                    or city_map.water[x + position.x][z + position.z]
                 ):
                     unbuildable_count += 1
                 else:

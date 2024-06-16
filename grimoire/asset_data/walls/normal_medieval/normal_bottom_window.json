@@ -4,7 +4,7 @@
     "filepath" : "grimoire/asset_data/walls/normal_medieval/normal_bottom_window.nbt",
     "origin" : [2, -1, 0],
     "facing" : "x_minus",
-    "palette" : "wet",
+    "palette" : "medieval_wall",
     "positions" : ["lower"],
     "has_door" : false,
     "tags" : ["normal_medieval"]

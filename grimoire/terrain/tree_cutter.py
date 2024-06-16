@@ -10,6 +10,7 @@ TREE_LOGS = (
     "minecraft:oak_log",
     "minecraft:spruce_log",
     "minecraft:mangrove_log",
+    "minecraft:cherry_log",
 )
 
 MUSHROOM_BLOCKS = (
@@ -40,6 +41,7 @@ LEAF_BLOCKS = (
     "minecraft:azalea_leaves",
     "minecraft:mangrove_leaves",
     "minecraft:flowering_azalea_leaves",
+    "minecraft:cherry_leaves",
 )
 
 TREE_AND_LEAF_BLOCKS = TREE_BLOCKS + LEAF_BLOCKS
@@ -77,7 +79,10 @@ def log_trees(editor, points, world_slice):
         x = point.x
         z = point.y
 
-        y1 = world_slice.heightmaps["MOTION_BLOCKING"][x][z] - 1
+        try:
+            y1 = world_slice.heightmaps["MOTION_BLOCKING"][x][z] - 1
+        except:
+            continue
         check_pos = ivec3(x, y1, z)
         block_name = world_slice.getBlock(check_pos).id
 

@@ -13,7 +13,7 @@ from ..buildings.building_shape import BuildingShape
 from ..buildings.clear_interiors import clear_interiors
 from ..buildings.roofs.build_roof import build_roof
 from ..buildings.roofs.roof_component import RoofComponent
-from ..buildings.rooms.furnish import furnish, furnish_building
+from ..buildings.rooms.furnish import furnish_building
 from ..buildings.stilts import build_stilt_frame
 from ..buildings.walls.build_walls import build_walls
 from ..buildings.walls.wall import Wall
@@ -84,7 +84,7 @@ def attempt_place_building(
 
     # iterate over shapes randomly by weight
     while True:
-        shape: BuildingShape = rng.pop_weighted(weighted_shape_dict)        
+        shape: BuildingShape = rng.pop_weighted(weighted_shape_dict)
 
         if shape is None:
             return False
@@ -359,14 +359,12 @@ def place_building(
         filter(lambda wall: style.name.lower() in wall.tags, Wall.all().copy())
     )
 
-    build_walls(plan, editor, walls, rng)
-
     door_coords = None
 
     for cell in plan.cells:
         for direction in legacy_directions.CARDINAL:
             if cell.has_door(direction):
-                
+
                 door_dir = legacy_directions.VECTORS[direction]
                 door_coords = grid.get_door_coords(
                     legacy_directions.VECTORS[direction]
@@ -390,4 +388,11 @@ def place_building(
         return
 
     if DO_FURNISHING:
-        furnish_building(plan.shape, door_coords, door_dir, palette, editor, grid, rng)
+        try:
+            furnish_building(
+                plan.shape, door_coords, door_dir, palette, editor, grid, rng
+            )
+        except:
+            pass
+
+    build_walls(plan, editor, walls, rng)
