@@ -22,7 +22,7 @@ def replace_ground(
     editor: Editor,
     world_slice: WorldSlice,
     height_offset: int = 0,
-    ignore_blocks: list = [],
+    permit_blocks: list = [],
     ignore_water: bool = False,
 ):
     for counter, point in enumerate(points, start=1):
@@ -30,7 +30,10 @@ def replace_ground(
             point.x
         ][point.y] == False:
             y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
-            if editor.getBlock(ivec3(point.x, y - 1, point.y)).id not in ignore_blocks:
+            if (
+                editor.getBlock(ivec3(point.x, y - 1, point.y)).id in permit_blocks
+                or permit_blocks == []
+            ):
                 block = choose_weighted(rng.value(), block_dict)
                 editor.placeBlock(
                     (point.x, y - 1 + height_offset, point.y), Block(block)
@@ -98,7 +101,7 @@ def plant_forest(
     build_map: list[list[bool]],
     editor: Editor,
     world_slice: WorldSlice,
-    ignore_blocks: list = [],
+    permit_blocks: list = [],
     ignore_water: bool = False,
 ):
     points = shuffle(rng.value(), points)
@@ -107,7 +110,10 @@ def plant_forest(
             point.x
         ][point.y] == False:
             y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
-            if editor.getBlock(ivec3(point.x, y - 1, point.y)).id not in ignore_blocks:
+            if (
+                editor.getBlock(ivec3(point.x, y - 1, point.y)).id in permit_blocks
+                or permit_blocks == []
+            ):
                 tree_type = choose_weighted(rng.value(), forest.tree_dict)
                 generate_tree(
                     tree_type,

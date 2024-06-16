@@ -6,14 +6,15 @@ from pathlib import Path
 
 from gdpc.world_slice import WorldSlice
 
-from grimoire.core.styling.biome_lookup import get_style_and_palettes
-from grimoire.paths.gate_paths import add_gate_path
-
 sys.path[0] = sys.path[0].removesuffix(str(Path("tests/placement")))
 print(f"PATH: {sys.path[0]}")
 
+from grimoire.core.styling.biome_lookup import get_style_and_palettes
+from grimoire.paths.gate_paths import add_gate_path
+
+
 from gdpc import Box, Editor
-from gdpc.lookup import GRANULARS
+from gdpc.lookup import GRANULARS, DIRTS
 
 # Actual file
 from gdpc.vector_tools import ivec3
@@ -49,8 +50,8 @@ SEED = 0x4473
 DO_TERRAFORMING = True  # Set this to true for the final iteration
 LOG_TREES = True
 DO_WALL = True
-DO_RURAL = False  # Not worth it
-DO_URBAN = True
+DO_RURAL = True  # Not worth it
+DO_URBAN = False
 RESET_AFTER_TEST = False  # FIXME: Restoration crashes
 
 BUFFER_LIMIT = 32
@@ -202,6 +203,123 @@ if DO_URBAN:
         is_debug=False,
     )
 
+growth_spurt(editor)
+
+editor.flushBuffer()  # this is needed to reload the world slice properly
+print("Reloading world slice...")
+build_rect = area.toRect()
+world_slice = editor.loadWorldSlice(build_rect)
+main_map.world = world_slice
+print("World slice reloaded!")
+
+editor.runCommand("gamerule randomTickSpeed 0")
+
+if DO_RURAL:
+    permit_blocks = DIRTS
+
+    farmland: PaintPalette = PaintPalette.find("farmland")
+    forests = Forest.all()
+    crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
+    rural_road: PaintPalette = PaintPalette.find("rural_road")
+
+    options = forests + crops
+
+    for super_district in super_districts:
+        if super_district.type == DistrictType.RURAL:
+            # FIXME: Undefined words "mountainous" etc.
+            super_district.roughness > 6 or super_district.gradient > 1.0
+            if super_district.forested_percentage > 0.2:
+                choice_list = rng.choose([forests, [None]])
+            elif (
+                super_district.roughness < 3
+                and super_district.gradient < 0.5
+                and super_district.water_percentage < 0.5
+            ):  # NOTE: Unsure how often this will actually occur and not be urban
+                choice_list = rng.choose([crops])
+            else:
+                choice_list = rng.choose([[None]])
+            choice = rng.choose(choice_list)
+
+            if isinstance(choice, Forest):  # forest
+                outer_district_points, inner_district_points = (
+                    find_outer_and_inner_points(super_district.points_2d, 4)
+                )
+                log_trees(editor, super_district.points_2d, world_slice)
+                plant_forest(
+                    list(inner_district_points),
+                    choice,
+                    rng,
+                    main_map.water,
+                    build_map,
+                    editor,
+                    world_slice,
+                    permit_blocks,
+                )
+            elif isinstance(choice, PaintPalette):  # crops
+                log_trees(editor, super_district.points_2d, world_slice)
+
+                editor.flushBuffer()  # this is needed to reload the world slice properly
+                print("Reloading world slice...")
+                build_rect = area.toRect()
+                world_slice = editor.loadWorldSlice(build_rect)
+                main_map.world = world_slice
+                print("World slice reloaded!")
+
+                plateau(
+                    super_district,
+                    super_district_map,
+                    world_slice,
+                    editor,
+                    main_map.water,
+                )
+
+                editor.flushBuffer()  # this is needed to reload the world slice properly
+                print("Reloading world slice...")
+                build_rect = area.toRect()
+                world_slice = editor.loadWorldSlice(build_rect)
+                main_map.world = world_slice
+                print("World slice reloaded!")
+
+                for district in super_district.districts:
+                    outer_district_points, inner_district_points = (
+                        find_outer_and_inner_points(district.points_2d, 0)
+                    )
+                    replace_ground(
+                        list(inner_district_points),
+                        farmland.palette,
+                        rng,
+                        main_map.water,
+                        build_map,
+                        editor,
+                        world_slice,
+                        0,
+                        permit_blocks,
+                    )
+                    replace_ground(
+                        list(inner_district_points),
+                        choice.palette,
+                        rng,
+                        main_map.water,
+                        build_map,
+                        editor,
+                        world_slice,
+                        1,
+                    )
+                    replace_ground(
+                        list(outer_district_points),
+                        rural_road.palette,
+                        rng,
+                        main_map.water,
+                        build_map,
+                        editor,
+                        world_slice,
+                    )
+            else:
+                continue
+
+            time.sleep(
+                SLEEP_DELAY
+            )  # to try to reduce http traffic, we'll do a little sleepy time
 
 # WALL
 
@@ -230,87 +348,10 @@ if DO_WALL:
 # build_wall_palisade(wall_points, editor, map.world, map.water, rng, palette)
 # build_wall_standard(wall_points, wall_dict, inner_points, editor, map.world, map.water, palette)
 
-if DO_RURAL:
-    ignore_blocks = GRANULARS | {
-        "minecraft:stone",
-        "minecraft:copper_ore",
-    }
-
-    farmland: PaintPalette = PaintPalette.find("farmland")
-    forests = Forest.all()
-    crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
-    rural_road: PaintPalette = PaintPalette.find("rural_road")
-
-    options = forests + crops
-
-    for super_district in super_districts:
-        if super_district == DistrictType.RURAL:
-            # FIXME: Undefined words "mountainous" etc.
-            if mountainous and not is_snowy or is_desert:
-                choice_list = rng.choose([[None], [None], [None], [None]])
-            elif is_snowy and not mountainous:
-                choice_list = rng.choose([forests, [None], [None], [None]])
-            else:
-                choice_list = rng.choose([crops, forests, [None], [None]])
-            choice = rng.choose(choice_list)
-
-            outer_district_points, inner_district_points = find_outer_and_inner_points(
-                super_district.points_2d, 4
-            )
-            if isinstance(choice, Forest):  # forest
-                plant_forest(
-                    list(inner_district_points),
-                    choice,
-                    rng,
-                    main_map.water,
-                    build_map,
-                    editor,
-                    world_slice,
-                    ignore_blocks,
-                )
-            elif isinstance(choice, PaintPalette):  # crops
-                replace_ground(
-                    list(inner_district_points),
-                    farmland.palette,
-                    rng,
-                    main_map.water,
-                    build_map,
-                    editor,
-                    world_slice,
-                    0,
-                    ignore_blocks,
-                )
-                replace_ground(
-                    list(inner_district_points),
-                    choice.palette,
-                    rng,
-                    main_map.water,
-                    build_map,
-                    editor,
-                    world_slice,
-                    1,
-                    ignore_blocks,
-                )
-                replace_ground(
-                    list(outer_district_points),
-                    rural_road.palette,
-                    rng,
-                    main_map.water,
-                    build_map,
-                    editor,
-                    world_slice,
-                )
-            else:
-                continue
-
-            time.sleep(
-                SLEEP_DELAY
-            )  # to try to reduce http traffic, we'll do a little sleepy time
-
 # ==== CLEANUP ====
 
 kill_items(editor)
-growth_spurt(editor)
+
 
 if RESET_AFTER_TEST:
     input("Press <enter> to reset the map...")
