@@ -1,0 +1,11 @@
+{
+  "name" : "red_sandstone",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "blocks" : {
+    "block" : "red_sandstone",
+    "stairs" : "red_sandstone_stairs",
+    "slab" : "red_sandstone_slab",
+    "wall" : "red_sandstone_wall"
+  }
+}

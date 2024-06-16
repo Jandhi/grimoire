@@ -1,0 +1,22 @@
+{
+  "name" : "desert_light_blue",
+  "type" : "palette",
+
+  "resolution_priority" : "stone",
+  "materials" : {
+    "primary_wall" : "smooth_sandstone",
+    "secondary_wall" : "cut_sandstone",
+    "primary_roof" : "dark_prismarine",
+    "primary_wood" : "birch",
+    "secondary_wood" : "oak",
+    "pillar" : "cut_sandstone",
+    "primary_stone" : "smooth_sandstone",
+    "secondary_stone" : "smooth_sandstone",
+    "foundation" : "sandstone"
+  },
+
+  "primary_color" : "light_blue",
+  "secondary_color" : "blue",
+
+  "tags" : ["desert"]
+}

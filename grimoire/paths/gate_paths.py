@@ -13,7 +13,9 @@ from grimoire.paths.route_highway import route_highway, fill_out_highway
 from grimoire.paths.signposts import build_signpost
 
 
-def add_gate_path(gate: Gate, main_map: Map, editor: Editor, rng: RNG, style : BuildStyle):
+def add_gate_path(
+    gate: Gate, main_map: Map, editor: Editor, rng: RNG, style: BuildStyle
+):
     path_origin = gate.location + VECTORS[gate.direction]
 
     size = main_map.world.rect.size
