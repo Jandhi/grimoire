@@ -41,7 +41,7 @@ def build_highway(
             )  # this is an estimate of height to help the next step
 
     for point in final_point_heights:
-        blocks[point] = get_block(point, final_point_heights, style)
+        blocks[point] = get_block(point, final_point_heights, style=style)
 
     for point in final_point_heights:
         x, z = point
@@ -106,7 +106,7 @@ def get_block(
 
     if all(y_in_dir[direction] < y for direction in y_in_dir):
         final_point_heights[point] -= 1
-        return get_block(point, final_point_heights, depth + 1, style)
+        return get_block(point, final_point_heights, depth + 1, style=style)
 
     if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(
         y_in_dir[direction] < y for direction in y_in_dir
