@@ -117,7 +117,9 @@ def wild_growth_area(
         + 6 * ["minecraft:grass"]
         + 3 * ["minecraft:poppy", "minecraft:dandelion"]
     ]
-    editor.placeBlock([city_map.make_3d(p) for p in area], growth)
+    editor.placeBlock(
+        [city_map.make_3d(p) for p in area if not city_map.water_at(p)], growth
+    )
 
 
 def trees_in_area(

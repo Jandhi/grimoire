@@ -1,0 +1,11 @@
+{
+    "name" : "desert_top_window",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/desert/desert_top_window.nbt",
+    "origin" : [2, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "desert",
+    "positions" : ["upper"],
+    "has_door" : false,
+    "tags" : ["desert"]
+}

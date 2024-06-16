@@ -1,0 +1,11 @@
+{
+    "name" : "desert_bottom_cross_window",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/desert/desert_bottom_cross_window.nbt",
+    "origin" : [2, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "desert",
+    "positions" : ["lower"],
+    "has_door" : false,
+    "tags" : ["desert"]
+}

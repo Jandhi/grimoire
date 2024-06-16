@@ -6,6 +6,7 @@ ARID_BIOMES = [
     "desert_hills",
     "savanna",
     "savanna_plateau",
+    "windswept_savanna",
     "badlands",
     "wooded_badlands_plateau",
     "badlands_plateau",

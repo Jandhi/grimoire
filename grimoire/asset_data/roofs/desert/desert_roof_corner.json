@@ -1,0 +1,9 @@
+{
+    "name" : "desert_roof_corner",
+    "type" : "roof_component",
+    "filepath" : "grimoire/asset_data/roofs/desert/desert_roof_corner.nbt",
+    "origin" : [1, -1, 1],
+    "shape" : "corner",
+    "palette" : "desert",
+    "tags" : ["desert"]
+}
