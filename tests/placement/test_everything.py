@@ -4,13 +4,12 @@ import sys
 import time
 from pathlib import Path
 
-from gdpc.world_slice import WorldSlice
-
-from grimoire.core.styling.biome_lookup import get_style_and_palettes
-from grimoire.paths.gate_paths import add_gate_path
-
 sys.path[0] = sys.path[0].removesuffix(str(Path("tests/placement")))
 print(f"PATH: {sys.path[0]}")
+
+from gdpc.world_slice import WorldSlice
+from grimoire.core.styling.biome_lookup import get_style_and_palettes
+from grimoire.paths.gate_paths import add_gate_path
 
 from gdpc import Box, Editor
 from gdpc.lookup import GRANULARS
