@@ -1,0 +1,11 @@
+{
+    "name" : "desert_top_double_window_trap",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/desert/desert_top_double_window_trap.nbt",
+    "origin" : [2, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "desert",
+    "positions" : ["upper"],
+    "has_door" : false,
+    "tags" : ["desert"]
+}

@@ -1,0 +1,11 @@
+{
+    "name" : "desert_bottom_double_door",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/desert/desert_bottom_double_door.nbt",
+    "origin" : [2, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "desert",
+    "positions" : ["lower"],
+    "has_door" : true,
+    "tags" : ["desert"]
+}

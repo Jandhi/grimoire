@@ -1,0 +1,11 @@
+{
+  "name" : "smooth_sandstone",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "blocks" : {
+    "block" : "smooth_sandstone",
+    "stairs" : "smooth_sandstone_stairs",
+    "slab" : "smooth_sandstone_slab",
+    "wall" : "sandstone_wall"
+  }
+}

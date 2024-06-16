@@ -1,11 +1,12 @@
 # Allows code to be run in root directory
 import sys
 
-from grimoire.core.styling.palette import Palette, BuildStyle
 
 sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
 
 # Actual file
+from grimoire.core.structures import legacy_directions
+from grimoire.core.styling.palette import Palette, BuildStyle
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
 from grimoire.core.structures.grid import Grid
@@ -48,6 +49,8 @@ shape = [ivec3(0, 0, 0), ivec3(0, 0, 1), ivec3(1, 0, 1)]
 
 palette = Palette.find("japanese")
 plan = BuildingPlan(shape, grid, palette)
+
+plan.cell_map[ivec3(0, 0, 0)].doors.append(legacy_directions.NORTH)
 
 build_roof(
     plan,
