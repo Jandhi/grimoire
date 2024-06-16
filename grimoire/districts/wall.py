@@ -107,7 +107,7 @@ def order_wall_points(wall_points: list[ivec2], wall_dict: dict) -> list[list[iv
             else:
                 print("failed")
                 reverse_checked = False
-                if (
+                if (  # NOTE, look at this later
                     len(ordered_wall_points) > 20
                 ):  # prevent weird small wall segements, story again to see if its improvement or not
                     list_of_ordered_wall_points.append(ordered_wall_points)

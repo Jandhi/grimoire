@@ -311,95 +311,58 @@ def map_inside_area(grid: Grid, cells: list, floor: int):
 
 def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Editor, grid: Grid, rng: RNG, filled: set, door_dir: ivec3) -> tuple:
     max_floor = max(cells, key = lambda x: x[1]).y
+
     start_cell = grid.world_to_grid(start)
-
     inside_map = map_inside_area(grid, cells, floor)
-    
-    if floor == max_floor and not has_stairs: #if on the top floor
-        cells_on_floor = {ivec3(x, y, z) for (x, y, z) in cells if y == floor}
-        farthest_cell = max(cells_on_floor, key = lambda c: distance(start_cell, c))
-        farthest_block = grid.grid_to_world(farthest_cell)
+
+    cells_on_floor = {ivec3(x, y, z) for (x, y, z) in cells if y == floor}
+    if len(cells_on_floor) == 1:
+        only_cell = cells_on_floor.pop()
+        bottom_left_block = grid.grid_to_world(only_cell)
         cell_corners = [
-            ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1),
-            ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1),
-            ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
-            ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
+            ivec3(bottom_left_block[0] + 1, bottom_left_block[1], bottom_left_block[2] + 1),
+            ivec3(bottom_left_block[0] + 1 + grid.dimensions.x - 3, bottom_left_block[1], bottom_left_block[2] + 1),
+            ivec3(bottom_left_block[0] + 1, bottom_left_block[1], bottom_left_block[2] + 1 + grid.dimensions.z - 3),
+            ivec3(bottom_left_block[0] + 1 + grid.dimensions.x - 3, bottom_left_block[1], bottom_left_block[2] + 1 + grid.dimensions.z - 3),
         ]
-        
-        end = farthest_block
-        cell_corner_type = get_corner_type(farthest_block, grid, cells)
-        if cell_corner_type == 'northwest':
-            end = min(cell_corners, key = lambda c: (c[0], c[2]))
-        elif cell_corner_type == 'northeast':
-            end = min(cell_corners, key = lambda c: (-c[0], c[2]))
-        elif cell_corner_type == 'southeast':
-            end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
-        elif cell_corner_type == 'southwest':
-            end = min(cell_corners, key = lambda c: (c[0], -c[2]))
-
-        end_corner_type = get_corner_type(end, grid, cells)
-        return end, end_corner_type, inside_map
-    else:
-        cell_set = set(cells)
-        overlapping_cells = {ivec3(x, y, z) for (x, y, z) in cell_set if y == floor and ivec3(x, y + 1, z) in cell_set}
-        farthest_cell = max(overlapping_cells, key = lambda c: distance(start_cell, c))
-        farthest_block = grid.grid_to_world(farthest_cell)
-        cell_corners = [
-            ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1),
-            ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1),
-            ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
-            ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
-        ]
-
-        cell_corner_type = get_corner_type(farthest_block, grid, cells)
-
-        if cell_corner_type is None:
-            cubby_type = get_cubby_type(farthest_block, grid, cells)
-            if cubby_type == 'north':
+        if floor == max_floor and not has_stairs:
+            end = max(cell_corners, key = lambda c: distance(start, c))
+            end_corner_type = 'northwest'
+            return end, end_corner_type, inside_map
+        else:
+            if door_dir == NORTH:
                 end = min(cell_corners, key = lambda c: (c[0], -c[2]))
                 end_corner_type = 'southwest'
                 end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                 return end, end_corner_type, inside_map
-            elif cubby_type == 'east':
+            elif door_dir == EAST:
                 end = min(cell_corners, key = lambda c: (c[0], c[2]))
                 end_corner_type = 'northwest'
                 end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                 return end, end_corner_type, inside_map
-            elif cubby_type == 'west':
+            elif door_dir == WEST:
                 end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
                 end_corner_type = 'southwest'
                 end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                 return end, end_corner_type, inside_map
-            elif cubby_type == 'south':
+            elif door_dir == SOUTH:
                 end = min(cell_corners, key = lambda c: (-c[0], c[2]))
                 end_corner_type = 'northeast'
+                end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                 return end, end_corner_type, inside_map
-            else:
-                #we must have a 1x1 house with more than 1 story
-                if door_dir == 'north':
-                    end = min(cell_corners, key = lambda c: (c[0], -c[2]))
-                    end_corner_type = 'southwest'
-                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
-                    return end, end_corner_type, inside_map
-                elif door_dir == 'east':
-                    end = min(cell_corners, key = lambda c: (c[0], c[2]))
-                    end_corner_type = 'northwest'
-                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
-                    return end, end_corner_type, inside_map
-                elif door_dir == 'west':
-                    end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
-                    end_corner_type = 'southwest'
-                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
-                    return end, end_corner_type, inside_map
-                elif door_dir == 'south':
-                    end = min(cell_corners, key = lambda c: (-c[0], c[2]))
-                    end_corner_type = 'northeast'
-                    return end, end_corner_type, inside_map
-                else:
-                    print('cannot place stairs!')
-                    return 
 
-        else:
+    else:
+        if floor == max_floor:
+            farthest_cell = max(cells_on_floor, key = lambda c: distance(start_cell, c))
+            farthest_block = grid.grid_to_world(farthest_cell)
+            cell_corners = [
+                ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1),
+                ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1),
+                ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
+                ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
+            ]
+            end = farthest_block
+            cell_corner_type = get_corner_type(farthest_block, grid, cells)
             if cell_corner_type == 'northwest':
                 end = min(cell_corners, key = lambda c: (c[0], c[2]))
             elif cell_corner_type == 'northeast':
@@ -410,27 +373,55 @@ def find_end(start: ivec3, cells: list, has_stairs: bool, floor: int, editor: Ed
                 end = min(cell_corners, key = lambda c: (c[0], -c[2]))
 
             end_corner_type = get_corner_type(end, grid, cells)
-            end = shift_end_for_stairs(end, grid, cells, end_corner_type)
             return end, end_corner_type, inside_map
+        else: #we need to build stairs
+            cell_set = set(cells)
+            overlapping_cells = {ivec3(x, y, z) for (x, y, z) in cell_set if y == floor and ivec3(x, y + 1, z) in cell_set}
+            farthest_cell = max(overlapping_cells, key = lambda c: distance(start_cell, c))
+            farthest_block = grid.grid_to_world(farthest_cell)
+            cell_corners = [
+                ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1),
+                ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1),
+                ivec3(farthest_block[0] + 1, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
+                ivec3(farthest_block[0] + 1 + grid.dimensions.x - 3, farthest_block[1], farthest_block[2] + 1 + grid.dimensions.z - 3),
+            ]
 
-        possible_places_for_stairs = [corner for corner in cell_corners if get_corner_type(corner, grid, cells) is not None and distance(start, corner) > 2 and corner not in filled and shift_end_for_stairs(corner, grid, cells, get_corner_type(corner, grid, cells)) not in filled]
+            cell_corner_type = get_corner_type(farthest_block, grid, cells)
+            if cell_corner_type is None: #we have a cubby
+                cubby_type = get_cubby_type(farthest_block, grid, cells)
+                if cubby_type == 'north':
+                    end = min(cell_corners, key = lambda c: (c[0], -c[2]))
+                    end_corner_type = 'southwest'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+                elif cubby_type == 'east':
+                    end = min(cell_corners, key = lambda c: (c[0], c[2]))
+                    end_corner_type = 'northwest'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+                elif cubby_type == 'west':
+                    end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
+                    end_corner_type = 'southwest'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+                elif cubby_type == 'south':
+                    end = min(cell_corners, key = lambda c: (-c[0], c[2]))
+                    end_corner_type = 'northeast'
+                    end = shift_end_for_stairs(end, grid, cells, end_corner_type)
+                    return end, end_corner_type, inside_map
+            else: #we are at a corner in the house
+                if cell_corner_type == 'northwest':
+                    end = min(cell_corners, key = lambda c: (c[0], c[2]))
+                elif cell_corner_type == 'northeast':
+                    end = min(cell_corners, key = lambda c: (-c[0], c[2]))
+                elif cell_corner_type == 'southeast':
+                    end = min(cell_corners, key = lambda c: (-c[0], -c[2]))
+                elif cell_corner_type == 'southwest':
+                    end = min(cell_corners, key = lambda c: (c[0], -c[2]))
 
-        if possible_places_for_stairs:
-            end = rng.choose(possible_places_for_stairs)
-            editor.placeBlock(end + UP * 12, Block('minecraft:glowstone'))
-            end_corner_type = get_corner_type(end, grid, cells)
-            end = shift_end_for_stairs(end, grid, cells)
-            editor.placeBlock(end + UP * 12, Block('minecraft:glowstone'))
-            return end, end_corner_type, inside_map
-        else:
-            possible_places_for_stairs_along_wall = [corner for corner in cell_corners if get_wall_type(corner, grid, cells) is not None and distance(start, corner) > 2 and corner not in filled and shift_end_for_stairs(corner, grid, cells) not in filled]
-            if possible_places_for_stairs_along_wall:
-                end = rng.choose(possible_places_for_stairs_along_wall)
-                end_corner_type = get_wall_type(end, grid, cells)
+                end_corner_type = cell_corner_type
                 end = shift_end_for_stairs(end, grid, cells, end_corner_type)
                 return end, end_corner_type, inside_map
-            else:
-                return end, 'northwest', inside_map
         
 
 def build_stairs(end: ivec3, corner_type: str, floor_height: int, palette: Palette, editor: Editor) -> tuple:
@@ -731,10 +722,11 @@ def furnish_building(cells: list, door_coords: ivec3, door_dir: ivec3, palette: 
             filled.add(start)
             
         cells_with_int_walls = build_interior_walls(cells, floor, palette, editor, grid, rng)
-        for c, d in cells_with_int_walls:
-            c = c + SOUTH
-            int_wall_blocks = get_blocks_along_dir_of_cell(c, d, grid)
-            filled.update(int_wall_blocks)
+        if len(cells_with_int_walls) > 0:
+            for c, d in cells_with_int_walls:
+                c = c + SOUTH
+                int_wall_blocks = get_blocks_along_dir_of_cell(c, d, grid)
+                filled.update(int_wall_blocks)
 
 
         if floor == num_floors - 1:
@@ -753,5 +745,4 @@ def furnish_building(cells: list, door_coords: ivec3, door_dir: ivec3, palette: 
             filled.update(path, stairs_blocks, free_for_stairs)
             filled.add(end)
 
-        print(start)
         furnish(floor_space, filled, stairs_blocks, path, palette, editor, grid, rng)
