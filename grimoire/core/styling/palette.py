@@ -170,8 +170,8 @@ def swap(
         if found_id:
             new_id = found_id
 
-    # Don't color-swap plants
-    if new_id not in PLANTS:
+    # Don't color-swap plants or sandstone
+    if new_id not in PLANTS and "sandstone" not in new_id:
         new_id = new_id.replace(
             input_palette.primary_color.name.lower(),
             output_palette.primary_color.name.lower(),
