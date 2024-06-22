@@ -6,6 +6,7 @@ from gdpc import Editor, Block
 
 from grimoire.core.maps import Map
 from grimoire.core.noise.rng import RNG
+from grimoire.core.utils.vectors import normalize_to_length
 from grimoire.terrain.set_height import set_height
 
 
@@ -73,12 +74,4 @@ def build_signpost(editor: Editor, path: list[ivec3], build_map: Map, rng: RNG):
     editor.placeBlock(
         ivec3(sign_point.x, path[0].y, sign_point.y),
         Block("oak_sign", states={"rotation": str(angle)}, data=data),
-    )
-
-
-def normalize_to_length(vec: ivec2, desired_length: int):
-    current_length = (float(vec.x) ** 2 + float(vec.y) ** 2) ** 0.5
-    return ivec2(
-        int(vec.x * desired_length / current_length),
-        int(vec.y * desired_length / current_length),
     )

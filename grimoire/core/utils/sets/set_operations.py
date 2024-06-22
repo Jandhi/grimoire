@@ -1,8 +1,11 @@
 import gdpc.vector_tools
-from gdpc.vector_tools import distance2, ivec2
-
-# TODO: Replace with gdpc functions
-from ...structures.legacy_directions import CARDINAL, get_ivec2, LEFT, RIGHT
+from gdpc.vector_tools import (
+    distance2,
+    ivec2,
+    CARDINALS_2D,
+    CARDINALS_AND_DIAGONALS_2D,
+    rotate2D,
+)
 
 
 def midpoint(points: set[ivec2]) -> ivec2:
@@ -72,12 +75,12 @@ def split(points: set[ivec2]) -> tuple[set[ivec2], set[ivec2]] | None:
     return best_split
 
 
-def find_edges(points: set[ivec2]) -> set[ivec2]:
+def find_edges(points: set[ivec2], diagonal=False) -> set[ivec2]:
     edges = set()
 
     for point in points:
-        for direction in CARDINAL:
-            neighbour = point + get_ivec2(direction)
+        for direction in CARDINALS_AND_DIAGONALS_2D if diagonal else CARDINALS_2D:
+            neighbour = point + direction
 
             if neighbour not in points:
                 edges.add(point)
@@ -92,11 +95,11 @@ def find_outer_direction(
     best_dir = None
     best_dir_score = 0
 
-    for direction in CARDINAL:
+    for direction in CARDINALS_2D:
         score = 0
-        vector = get_ivec2(direction)
-        left_vector = get_ivec2(LEFT[direction])
-        right_vector = get_ivec2(RIGHT[direction])
+        vector = direction
+        left_vector = rotate2D(direction, 3)
+        right_vector = rotate2D(direction, 1)
 
         for base_vec in (ivec2(0, 0), left_vector, right_vector):
             for dist in range(5):
@@ -121,11 +124,7 @@ def find_outline(points: set[ivec2], thickness: int = 1, diagonals=False) -> set
         outline = set()
 
         for edge in edges:
-            for direction in (
-                gdpc.vector_tools.CARDINALS_AND_DIAGONALS_2D
-                if diagonals
-                else gdpc.vector_tools.CARDINALS_2D
-            ):
+            for direction in CARDINALS_AND_DIAGONALS_2D if diagonals else CARDINALS_2D:
                 pt = edge + direction
 
                 if pt not in points and pt not in outline_set:
