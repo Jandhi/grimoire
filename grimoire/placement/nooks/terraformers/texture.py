@@ -1,4 +1,5 @@
 from logging import error
+from math import ceil
 from typing import Iterable, Sequence
 
 from gdpc.block import Block
@@ -161,7 +162,7 @@ def trees_in_area(
     edges: dict[ivec2, set[DevelopmentType]],
     style: BuildStyle,
     city_map: Map,
-    _rng: RNG,
+    rng: RNG,
     positions: Iterable[ivec2] | Iterable[ivec3] | None = None,
     density: float = 0.05,
     tree_type: str | None = None,
@@ -170,17 +171,19 @@ def trees_in_area(
         tree_type = MATERIALS[style]["trees"]
 
     if not positions:
-        # FIXME: Improve scattering/randomness
-        positions = tuple(area)[: int(density * len(area))]
+        positions = [rng.choose(list(area)) for _ in range(ceil(density * len(area)))]
     if not positions:
+        print(f"Decided to place no trees ({density*len(area)})")
         return
 
     if isinstance(positions[0], ivec2):
         positions = [
             city_map.make_3d(p)
             for p in positions
-            if city_map.block_at(p) in [Block(b) for b in OVERWORLD_SOILS]
+            # DEBUG: is broken, as block map isn't updated            if city_map.block_at(p) in [Block(b) for b in OVERWORLD_SOILS]
         ]
+
+    print(f"\t\t\tTree positions: {positions}")
 
     place_tree(positions, city_map, editor, tree_type=tree_type)
 

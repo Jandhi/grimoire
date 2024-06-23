@@ -232,14 +232,15 @@ LOW_EXPOSURE: frozenset[TrafficExposureType] = frozenset(
 WELL_SQUARE_NOOK = Nook(
     "Well Square",
     traffic_exposure_types=HIGH_EXPOSURE,
-    styles=BuildStyle.NORMAL_MEDIEVAL,
+    styles=BuildStyle.DESERT,
+    min_area=25,
     terraformers=[fully_paved, roughen_edge, central_well],
 )
 MONUMENT_NOOK = Nook(
     "Monument",
     traffic_exposure_types=TrafficExposureType.ISLAND,
     styles=[BuildStyle.WET, BuildStyle.NORMAL_MEDIEVAL],
-    min_area=50,
+    min_area=60,
     min_rect=Rect(size=(7, 7)),
     terraformers=[fully_paved, roughen_edge, central_statue],
 )
