@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
+from glm import ivec2
 from grimoire.core.maps import Map
 
 sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
@@ -37,7 +38,7 @@ build_map = Map(editor.loadWorldSlice())
 grid = Grid(
     origin=ivec3(
         x=area.size.x // 2,
-        y=-61,
+        y=build_map.height_at(ivec2(area.size.x // 2, area.size.z // 2)),
         z=area.size.z // 2,
     )
 )
@@ -55,7 +56,7 @@ build_floor(plan, editor)
 build_walls(
     plan,
     editor,
-    [wall for wall in Wall.all() if "normal_medieval" in wall.tags],
+    [wall for wall in Wall.all() if "wet" in wall.tags],
     RNG(SEED, "build_walls"),
     build_map,
 )
@@ -63,7 +64,7 @@ build_walls(
 build_roof(
     plan,
     editor,
-    [roof for roof in RoofComponent.all() if "normal_medieval" in roof.tags],
+    [roof for roof in RoofComponent.all() if "wet" in roof.tags],
     SEED,
     build_map,
 )

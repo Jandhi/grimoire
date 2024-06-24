@@ -40,7 +40,7 @@ class TestBridge(TestModule):
         build_map = Map(world_slice)
 
         start = build_map.make_3d(ivec2(0, 0))
-        end = build_map.make_3d(ivec2(build_map.width - 1, build_map.depth - 1))
+        end = build_map.make_3d(ivec2(build_map.width - 1, (build_map.depth - 1) - 3))
 
         rng = RNG(SEED)
         palette = Palette.find("medieval")
@@ -48,7 +48,7 @@ class TestBridge(TestModule):
         bridge_length = length(end - start)
 
         BridgeBuilder(
-            self, editor, palette, start, end, int(bridge_length / 8), 4
+            self, editor, palette, start, end, int(bridge_length**0.5 / 2), 4
         ).run()
 
         editor.placeBlock(start, Block("red_wool"))
