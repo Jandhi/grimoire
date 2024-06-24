@@ -33,8 +33,9 @@ def to_list_or_none(value: Iterable[T] | T | None) -> list[T] | None:
 
 
 def growth_spurt(editor: Editor):
+    editor.runCommand("time set day")
     editor.runCommand("gamerule randomTickSpeed 5000")
-    sleep(0.1)  # 100 ms = 2 game ticks
+    sleep(0.5)  # 500 ms = 10 game ticks
     editor.runCommand("gamerule randomTickSpeed 3")
 
 
