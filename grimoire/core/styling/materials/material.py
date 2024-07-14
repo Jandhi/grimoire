@@ -50,7 +50,7 @@ class MaterialParameterFunction:
             dithering_pattern=None,
         )
 
-
+@asset_defaults(dithering_pattern=None)
 class Material(Asset):
     dithering_pattern: DitheringPattern
 
