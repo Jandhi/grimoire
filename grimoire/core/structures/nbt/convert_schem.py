@@ -6,6 +6,7 @@ from gdpc.block import Block
 from gdpc.vector_tools import ivec3
 
 
+# Converts a .schem file into a more legible Structure object
 def convert_schem(filename: str) -> Structure:
     file = nbt.load(sys.path[0] + "/" + filename)
     schematic = file["Schematic"]

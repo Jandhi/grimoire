@@ -5,6 +5,7 @@ BITNOISE3 = 0x1859C4E9
 
 # hashes together a seed and a position
 # uses squirrel3 algorithm
+# this is NOT secure, but it's fast and creates a great distribution
 def sq_hash(seed: int, pos: int) -> int:
     noise = pos
     noise *= BITNOISE1
