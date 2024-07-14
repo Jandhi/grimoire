@@ -10,7 +10,7 @@ from ..core.styling.palette import MaterialRole
 
 def build_floor(plan: BuildingPlan, editor: Editor, build_ceiling=True):
     """
-    Builds the flooring for all cells in a buildingPlan
+    Builds the flooring for all cells in a BuildingPlan
     """
     grid: Grid = plan.grid
 
