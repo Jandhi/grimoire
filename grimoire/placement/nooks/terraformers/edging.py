@@ -45,7 +45,7 @@ def simple_closed_fencing(
     style: BuildStyle,
     city_map: Map,
     _rng: RNG,
-    fence_block: Block = None,
+    fence_block: Block | None = None,
 ):
     if not fence_block:
         fence_block = Block(f"{MATERIALS[style]['wood']}_fence")
