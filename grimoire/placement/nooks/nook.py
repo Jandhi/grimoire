@@ -26,8 +26,6 @@ from grimoire.placement.nooks.terraformers.texture import (
     wild_growth_area,
 )
 
-LOOP_LIMIT = 16  # prevents uncontrolled loops from going on too long
-
 
 class TrafficExposureType(Enum):
     UNSURE = auto()  # an error state

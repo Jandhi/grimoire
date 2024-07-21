@@ -24,6 +24,7 @@ def place_tree(
         tree_type = DEFAULT_TREE_TYPE
 
     if isinstance(tree_type, str):
+        # TODO: Replace sapling-placement with fully grown trees
         try:
             editor.placeBlock(positions_3D, Block(f"{tree_type}_sapling"))
         except Exception as e:

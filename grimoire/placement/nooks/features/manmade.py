@@ -1,6 +1,6 @@
 from gdpc.vector_tools import ivec3
 
-from grimoire.core.maps import Map, DevelopmentType
+from grimoire.core.maps import DevelopmentType, Map
 from grimoire.core.noise.rng import RNG
 from grimoire.core.structures.asset_structure import AssetStructure
 from grimoire.core.structures.nbt.build_nbt import build_nbt
@@ -11,6 +11,7 @@ def place_statue(editor, position: ivec3, rng: RNG, city_map: Map):
     statues: list[AssetStructure] = rng.shuffle(
         [s for s in AssetStructure.all() if "statue" in s.name]
     )
+    # TODO: Better statue selection; conscious directionality
 
     for statue in statues:
         buildable = 0

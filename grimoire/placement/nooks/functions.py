@@ -32,6 +32,7 @@ LOOP_LIMIT = 16
 def identify_traffic_exposure_from_edging_pattern(
     pattern: Sequence[tuple[set[DevelopmentType], int]],
 ) -> TrafficExposureType:
+    # TODO: Simplify traffic exposure to be based on % of surrounding developments
     if not pattern:
         warn(
             f"Provided pattern was empty. Defaulting to '{DEFAULT_TRAFFIC_EXPOSURE.name}'."
