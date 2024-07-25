@@ -101,6 +101,7 @@ class BasicMaterial(Material):
     moisture_range: int
 
     # CONNECTIONS
+    # TODO refactor connections into dictionary
     # Shade
     lighter: Material | None
     darker: Material | None

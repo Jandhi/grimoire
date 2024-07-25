@@ -3,7 +3,7 @@ from enum import Enum, auto
 from gdpc.vector_tools import ivec2, ivec3
 
 from grimoire.core.styling.palette import Palette
-from grimoire.core.utils.sets.find_outer_points import find_edges
+from grimoire.core.utils.sets.find_outer_points import find_edges_2D
 
 
 class DistrictType(Enum):

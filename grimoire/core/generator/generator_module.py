@@ -71,8 +71,6 @@ class GeneratorModule:
     """
     Decorator used to determine the main generator function for the module
     Benchmarking will begin when this is called and end when it is finished
-    
-    The main class must
     """
 
     class MainClass:

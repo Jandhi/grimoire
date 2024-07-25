@@ -4,6 +4,7 @@ from nbtlib import nbt, serialize_tag
 from ..structure import Structure
 from gdpc.block import Block
 from gdpc.vector_tools import ivec3
+from itertools import product
 
 
 # Converts a .schem file into a more legible Structure object
@@ -24,12 +25,11 @@ def convert_schem(filename: str) -> Structure:
 
     my_blocks = {}
 
-    for x in range(width):
-        for y in range(height):
-            for z in range(length):
-                my_blocks[ivec3(x, y, z) + offset] = (
-                    data[x + z * width + y * width * length],
-                    "",
-                )
+    for (x, y, z) in product(range(width), range(height), range(length)):
+        my_blocks[ivec3(x, y, z) + offset] = (
+            data[x + z * width + y * width * length],
+            "",
+        )
+                
 
     return Structure(my_blocks, {}, palette, ivec3(width, height, length))

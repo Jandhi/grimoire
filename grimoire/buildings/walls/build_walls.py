@@ -13,9 +13,11 @@ from ...core.styling.materials.material import MaterialParameterFunction
 from ..building_plan import BuildingPlan
 from ..legacycell import LegacyCell
 from .wall import LOWER, UPPER, Wall
+from enum import StrEnum, auto
 
-NOT_ROOF = "not_roof"
-ONLY_ROOF = "only_roof"
+class RoofRestrictionTag(StrEnum):
+    NOT_ROOF = auto()
+    ONLY_ROOF = auto()
 
 
 def build_walls(plan: BuildingPlan, editor: Editor, walls: list[Wall], rng: RNG):
@@ -66,8 +68,8 @@ def build_wall(
         return bool(
             (cell.position.y != 0 or wall.has_position(LOWER))
             and (cell.position.y <= 0 or wall.has_position(UPPER))
-            and (cell.has_neighbour(UP) or NOT_ROOF not in wall.tags)
-            and (not cell.has_neighbour(UP) or ONLY_ROOF not in wall.tags)
+            and (cell.has_neighbour(UP) or RoofRestrictionTag.NOT_ROOF not in wall.tags)
+            and (not cell.has_neighbour(UP) or RoofRestrictionTag.ONLY_ROOF not in wall.tags)
         )
 
     eligible_walls: list[Wall] = list(filter(wall_is_eligible, walls))

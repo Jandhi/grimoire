@@ -1,7 +1,7 @@
 from grimoire.core.styling.palette import Palette, BuildStyle
 
 
-ARID_BIOMES = [
+ARID_BIOMES = {
     "desert",
     "desert_hills",
     "savanna",
@@ -16,9 +16,9 @@ ARID_BIOMES = [
     "eroded_badlands",
     "modified_wooded_badlands_plateau",
     "modified_badlands_plateau",
-]
+}
 
-WET_BIOMES = [
+WET_BIOMES = {
     "ocean",
     "swamp",
     "river",
@@ -37,13 +37,10 @@ WET_BIOMES = [
     "bamboo_jungle",
     "bamboo_jungle_hills",
     "cherry_grove",
-]
-
-SPRUCE_BIOMES = []
-
-ACACIA_BIOMES = []
+}
 
 
+# TODO Have styles define their own biomes
 def get_style_and_palettes(biome: str) -> tuple[BuildStyle, list[Palette]]:
     biome = biome.removeprefix("minecraft:")
     style = BuildStyle.NORMAL_MEDIEVAL

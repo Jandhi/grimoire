@@ -54,31 +54,21 @@ def build_stilt_frame(
     points: set[ivec3] = set()
     house_footprint = {point for point in building_shape if point.y == 0}
 
-    edges = [
-        stilt
-        for stilt in StiltComponent.all()
-        if stilt.component_type == StiltComponentType.EDGE
-    ]
-    stairs = [
-        stilt
-        for stilt in StiltComponent.all()
-        if stilt.component_type == StiltComponentType.STAIRS
-    ]
-    corners = [
-        stilt
-        for stilt in StiltComponent.all()
-        if stilt.component_type == StiltComponentType.CORNER
-    ]
-    inners = [
-        stilt
-        for stilt in StiltComponent.all()
-        if stilt.component_type == StiltComponentType.INNER
-    ]
-    floors = [
-        stilt
-        for stilt in StiltComponent.all()
-        if stilt.component_type == StiltComponentType.FLOOR
-    ]
+    edges = []
+    stairs = []
+    corners = []
+    inners = []
+    floors = []
+
+    groups = {
+        StiltComponentType.EDGE : edges,
+        StiltComponentType.STAIRS : stairs,
+        StiltComponentType.CORNER : corners,
+        StiltComponentType.INNER : inners,
+        StiltComponentType.FLOOR : floors,
+    }
+    for stilt in StiltComponent.all():
+        groups[stilt.component_type].append(stilt)
 
     for point in house_footprint:
         if point not in points:
