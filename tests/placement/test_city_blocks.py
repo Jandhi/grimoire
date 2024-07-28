@@ -5,7 +5,12 @@ sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
 # Actual file
 from gdpc import Editor
+
+from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.maps import Map
+from grimoire.core.noise.rng import RNG
 from grimoire.districts.generate_districts import generate_districts
+from grimoire.palette import Palette
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.core.maps import Map
 from grimoire.core.assets.asset_loader import load_assets
@@ -29,9 +34,11 @@ build_rect = area.toRect()
 world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
-map = Map(world_slice)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, map.water)
-map.districts = district_map
+world_map = Map(world_slice)
+districts, district_map, _, _ = generate_districts(
+    SEED, build_rect, world_slice, world_map
+)
+world_map.districts = district_map
 
 # set up palettes
 eligible_palettes = list(
@@ -56,23 +63,25 @@ if DO_TERRAFORMING:
         if not district.is_urban:
             continue
 
-        plateau(district, district_map, world_slice, editor, map.water)
+        plateau(district, district_map, world_slice, editor, world_map.water)
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    map.world = world_slice
+    world_map.world = world_slice
 
-    smooth_edges(build_rect, districts, district_map, world_slice, editor, map.water)
+    smooth_edges(
+        build_rect, districts, district_map, world_slice, editor, world_map.water
+    )
 
     editor.flushBuffer()  # this is needed to reload the world slice properly
     print("Reloading worldSlice")
     world_slice = editor.loadWorldSlice(build_rect)
-    map.world = world_slice
-    map.correct_district_heights(districts)
+    world_map.world = world_slice
+    world_map.correct_district_heights(districts)
 # done
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
 
 
-add_city_blocks(editor, districts, map, SEED, is_debug=True)
+add_city_blocks(editor, districts, world_map, SEED, is_debug=True)

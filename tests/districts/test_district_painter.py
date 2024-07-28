@@ -29,9 +29,10 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 
-water_map = get_water_map(world_slice)
-build_map = get_build_map(world_slice, 20)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
+world_map = Map(world_slice)
+districts, district_map, _, _ = generate_districts(
+    SEED, build_rect, world_slice, world_map
+)
 
 # draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)
 load_assets("assets")
@@ -96,5 +97,12 @@ forest: Forest = Forest.find("mixed_forest")
 # replace_ground(urban_points, urban_road, rng, water_map, build_map, editor, world_slice)
 # replace_ground_smooth(urban_points, urban, rng, water_map, build_map, editor, world_slice)
 plant_forest(
-    all_points, forest, rng, water_map, build_map, editor, world_slice, ignore_blocks
+    all_points,
+    forest,
+    rng,
+    world_map.water,
+    world_map.buildings,
+    editor,
+    world_slice,
+    ignore_blocks,
 )

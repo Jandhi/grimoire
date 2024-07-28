@@ -5,6 +5,7 @@ from ..core.utils.bounds import is_in_bounds2d
 from ..core.maps import Map
 
 
+
 def build_highway(
     points: list[ivec3], editor: Editor, world_slice: WorldSlice, map: Map
 ):
