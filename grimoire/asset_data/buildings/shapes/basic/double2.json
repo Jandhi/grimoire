@@ -1,8 +1,0 @@
-{
-    "name" : "double2",
-    "type" : "building_shape",
-    "points" : [
-        [0, 0, 0],
-        [1, 0, 0]
-    ]
-} 

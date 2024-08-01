@@ -7,8 +7,8 @@ from gdpc import Block, Editor
 from gdpc.lookup import GRANULARS
 from gdpc.vector_tools import ivec2
 
-from grimoire.core.assets.load_assets import load_assets
-from grimoire.core.maps import Map, get_build_map, get_water_map
+from grimoire.core.assets.asset_loader import load_assets
+from grimoire.core.maps import get_build_map, get_water_map
 from grimoire.core.noise.random import choose_weighted
 from grimoire.core.noise.rng import RNG
 from grimoire.districts.district_painter import plant_forest

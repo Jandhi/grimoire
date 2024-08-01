@@ -1,0 +1,12 @@
+{
+  "name" : "birch",
+  "type" : "material",
+  "blocks" : {
+    "block" : "birch_planks",
+    "stairs" : "birch_stairs",
+    "slab" : "birch_slab",
+    "fence" : "birch_fence",
+    "trapdoor" : "birch_trapdoor",
+    "sign" : "birch_sign"
+  }
+}

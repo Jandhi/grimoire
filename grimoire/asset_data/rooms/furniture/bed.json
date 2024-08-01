@@ -1,0 +1,8 @@
+{
+    "name" : "bed",
+    "filepath" : "grimoire/asset_data/rooms/furniture/bed.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 2,
+    "facing" : "x_plus"
+}

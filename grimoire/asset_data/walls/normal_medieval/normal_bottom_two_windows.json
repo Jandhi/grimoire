@@ -1,0 +1,11 @@
+{
+    "name" : "normal_bottom_two_windows",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/normal_medieval/normal_bottom_two_windows.nbt",
+    "origin" : [2, -1, 0],
+    "facing" : "x_minus",
+    "palette" : "medieval_wall",
+    "positions" : ["lower"],
+    "has_door" : false,
+    "tags" : ["normal_medieval"]
+}

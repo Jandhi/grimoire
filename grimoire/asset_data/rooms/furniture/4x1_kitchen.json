@@ -1,0 +1,8 @@
+{
+    "name" : "4x1_kitchen",
+    "filepath" : "grimoire/asset_data/rooms/furniture/4x1_kitchen.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 4,
+    "facing" : "x_plus"
+}

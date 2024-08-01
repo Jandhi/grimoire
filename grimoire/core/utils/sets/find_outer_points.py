@@ -1,12 +1,20 @@
-from gdpc.vector_tools import ivec2
-from ...structures.legacy_directions import cardinal, get_ivec2
+from gdpc.vector_tools import ivec2, ivec3
+from ...structures.legacy_directions import CARDINAL, get_ivec2, vector
 
 
-def find_edges(points: set[ivec2]) -> set[ivec2]:
+def find_edges_2D(points: set[ivec2]) -> set[ivec2]:
     return {
         point
         for point in points
-        if any((point + get_ivec2(direction)) not in points for direction in cardinal)
+        if any((point + get_ivec2(direction)) not in points for direction in CARDINAL)
+    }
+
+
+def find_edges_3D(points: set[ivec3]) -> set[ivec3]:
+    return {
+        point
+        for point in points
+        if any((point + vector(direction)) not in points for direction in CARDINAL)
     }
 
 
@@ -14,9 +22,10 @@ def find_edges(points: set[ivec2]) -> set[ivec2]:
 def find_outer_and_inner_points(
     points: set[ivec2], distance: int
 ) -> tuple[set[ivec2], set[ivec2]]:
-    edges: set(ivec2) = find_edges(points)
+
+    edges: set[ivec2] = find_edges_2D(points)
     queue: list[tuple[ivec2, int]] = [(edge, 0) for edge in edges]
-    visited = edges.copy()
+    visited: set[ivec2] = edges.copy()
 
     while queue:
         point, edge_distance = queue.pop(0)
@@ -24,7 +33,7 @@ def find_outer_and_inner_points(
         if edge_distance >= distance:
             continue
 
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point + get_ivec2(direction)
 
             if neighbour not in points:

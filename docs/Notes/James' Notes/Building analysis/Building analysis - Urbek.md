@@ -1,0 +1,151 @@
+- [ ] Roads
+	- [ ] Road
+		- [ ] Nice road
+			- [ ] Paved road
+				- [ ] Urban road
+					- [ ] Nice road (advanced)
+				- [ ] Commercial road
+			- [ ] Super nice road
+			- [ ] Nice rural road
+		- [ ] Industrial road
+		- [ ] Rural road
+	- [ ] Bridge
+		- [ ] Wooden
+		- [ ] Red
+		- [ ] Grey
+	- [ ] Pedestrian walkway
+	- [ ] Bus stop
+	- [ ] Metro hub
+	- [ ] Subway station
+	- [ ] Airport
+	- [ ] Runway
+	- [ ] River boats
+	- [ ] Sea boats
+	- [ ] Watch tower
+	- [ ] Ferry
+- [ ] Housing
+	- [ ] Housing
+		- [ ] Wooden hut
+		- [ ] Shanty Town
+			- [ ] Rebel house
+			- [ ] Blocks
+		- [ ] Village House
+		- [ ] Wealthy village house
+			- [ ] Religious neighborhood
+		- [ ] Villa
+		- [ ] Mansion
+		- [ ] Poor suburbs
+		- [ ] Fisherman house
+		- [ ] Coal miners' house
+			- [ ] 3-storey
+		- [ ] Iron miners' house
+			- [ ] 3-storey
+		- [ ] ...
+	- [ ] Social building
+		- [ ] Comfortable social building
+- [ ] Farms
+	- [ ] Field
+	- [ ] Farm house
+	- [ ] Tenant farmer
+	- [ ] Landlord's house
+	- [ ] Grain / Modern silo
+	- [ ] Orchard
+	- [ ] Farm shed
+	- [ ] Fruit processor
+	- [ ] Food plant
+	- [ ] (Deep) Well
+	- [ ] Desertic Field
+	- [ ] Greenhouse
+	- [ ] Water pump
+	- [ ] Water tower
+	- [ ] Center pivot irrigation
+	- [ ] Forest plantation
+- [ ] Landmark
+	- [ ] Minimarket
+	- [ ] Local market
+	- [ ] Fish market
+	- [ ] Neighbourhood council
+	- [ ] Repair shop
+	- [ ] Hardware shop
+	- [ ] City council
+	- [ ] Supermarket
+	- [ ] Police station
+	- [ ] Anarchist commune
+	- [ ] Clinic
+	- [ ] Hopsital
+	- [ ] Food research center
+	- [ ] Advanced food research center
+	- [ ] Top research center
+	- [ ] Small bank
+	- [ ] Bank
+	- [ ] Mall
+	- [ ] City hall
+	- [ ] Desert market
+- [ ] Education
+	- [ ] School
+	- [ ] High school
+	- [ ] University
+	- [ ] Faculty of Arts and Letters
+	- [ ] Faculty of Science
+	- [ ] University restaurant
+	- [ ] Faculty of Education
+	- [ ] Faculty of Philosophy
+	- [ ] Faculty of Engineering
+	- [ ] Faculty of Botany
+	- [ ] Faculty of Mathematics
+	- [ ] Campus Park
+	- [ ] University sports centre
+- [ ] Industry
+	- [ ] Lumbercamp
+	- [ ] Lumberjack cabin
+	- [ ] Watermill
+	- [ ] Dock
+	- [ ] Iron mine
+	- [ ] Coal mine
+	- [ ] Coal plant
+	- [ ] Warehouses
+	- [ ] Factory
+	- [ ] Sawmill
+	- [ ] Steel works
+	- [ ] Goods factory
+- [ ] Advanced industry
+	- [ ] ...
+- [ ] Parks
+	- [ ] Park
+	- [ ] Nice park
+	- [ ] Square condominium
+	- [ ] Pond
+	- [ ] Cool square
+	- [ ] Lateral park
+	- [ ] Floral park
+	- [ ] Graveled area
+	- [ ] Paved area
+	- [ ] Main square
+- [ ] Night life
+	- [ ] Village bar
+	- [ ] Urban bar
+	- [ ] Anarchist bar
+	- [ ] cabaret
+	- [ ] Wine bar
+- [ ] Culture
+	- [ ] Bookshop
+	- [ ] Library
+	- [ ] Self-managed bookstore
+	- [ ] Sculpture
+	- [ ] Museum
+- [ ] Sports
+	- [ ] Football pitch
+	- [ ] Tennis court
+	- [ ] Multisport court
+	- [ ] Football stadium
+- [ ] Faith
+	- [ ] Chapel
+	- [ ] Church
+	- [ ] Cemetery
+	- [ ] Cathedral
+- [ ] Tourism
+	- [ ] Beach
+	- [ ] Promenade
+	- [ ] Pier
+	- [ ] Thermal springs
+	- [ ] Marina

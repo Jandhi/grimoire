@@ -1,0 +1,9 @@
+{
+    "name" : "normal_medieval_roof_side",
+    "type" : "roof_component",
+    "filepath" : "grimoire/asset_data/roofs/normal_medieval/normal_medieval_roof_side.nbt",
+    "origin" : [1, -1, 0],
+    "shape" : "side",
+    "palette" : "spruce_roof",
+    "tags" : ["normal_medieval"]
+}

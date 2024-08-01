@@ -10,6 +10,7 @@ TREE_LOGS = (
     "minecraft:oak_log",
     "minecraft:spruce_log",
     "minecraft:mangrove_log",
+    "minecraft:cherry_log",
 )
 
 MUSHROOM_BLOCKS = (
@@ -40,60 +41,67 @@ LEAF_BLOCKS = (
     "minecraft:azalea_leaves",
     "minecraft:mangrove_leaves",
     "minecraft:flowering_azalea_leaves",
+    "minecraft:cherry_leaves",
 )
 
 TREE_AND_LEAF_BLOCKS = TREE_BLOCKS + LEAF_BLOCKS
 
 
-def log_stems(editor, build_rect, world_slice):
-    for x in range(build_rect.size.x):
-        for z in range(build_rect.size.y):
-            y1 = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] - 1
-            check_pos = ivec3(x, y1, z)
+def log_stems(editor, points, world_slice):
+    for point in points:
+        x = point.x
+        z = point.y
+        y1 = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] - 1
+        check_pos = ivec3(x, y1, z)
+        block_name = world_slice.getBlock(check_pos).id
+
+        if block_name not in TREE_BLOCKS:
+            continue
+        editor.placeBlock(check_pos, Block("minecraft:air"))
+        for y in range(40):
+            check_pos = ivec3(x, y1, z) - ivec3(0, y, 0)
             block_name = world_slice.getBlock(check_pos).id
 
-            if block_name not in TREE_BLOCKS:
+            if block_name in TREE_BLOCKS:
+                # print(block_name)
+                editor.placeBlock(check_pos, Block("minecraft:air"))
+            elif block_name == "minecraft:dirt":
+                editor.placeBlock(check_pos, Block("minecraft:grass_block"))
                 continue
-            editor.placeBlock(check_pos, Block("minecraft:air"))
-            for y in range(40):
-                check_pos = ivec3(x, y1, z) - ivec3(0, y, 0)
-                block_name = world_slice.getBlock(check_pos).id
 
-                if block_name in TREE_BLOCKS:
-                    # print(block_name)
-                    editor.placeBlock(check_pos, Block("minecraft:air"))
-                elif block_name == "minecraft:dirt":
-                    editor.placeBlock(check_pos, Block("minecraft:grass_block"))
-                    continue
-
-                # only continue checking down if its still air and hasn't been caught by the above
-                elif block_name != "minecraft:air":
-                    continue
+            # only continue checking down if its still air and hasn't been caught by the above
+            elif block_name != "minecraft:air":
+                continue
 
 
-def log_trees(editor, build_rect, world_slice):
-    for x in range(build_rect.size.x):
-        for z in range(build_rect.size.y):
+def log_trees(editor, points, world_slice):
+    for point in points:
+        x = point.x
+        z = point.y
+
+        try:
             y1 = world_slice.heightmaps["MOTION_BLOCKING"][x][z] - 1
-            check_pos = ivec3(x, y1, z)
+        except:
+            continue
+        check_pos = ivec3(x, y1, z)
+        block_name = world_slice.getBlock(check_pos).id
+
+        if block_name not in TREE_AND_LEAF_BLOCKS:
+            continue
+        editor.placeBlock(check_pos, Block("minecraft:air"))
+        for y in range(40):
+            check_pos = ivec3(x, y1, z) - ivec3(0, y, 0)
             block_name = world_slice.getBlock(check_pos).id
 
-            if block_name not in TREE_AND_LEAF_BLOCKS:
+            if block_name in TREE_AND_LEAF_BLOCKS:
+                # print(block_name)
+                editor.placeBlock(check_pos, Block("minecraft:air"))
+            elif block_name == "minecraft:dirt":
+                editor.placeBlock(check_pos, Block("minecraft:grass_block"))
                 continue
-            editor.placeBlock(check_pos, Block("minecraft:air"))
-            for y in range(40):
-                check_pos = ivec3(x, y1, z) - ivec3(0, y, 0)
-                block_name = world_slice.getBlock(check_pos).id
 
-                if block_name in TREE_AND_LEAF_BLOCKS:
-                    # print(block_name)
-                    editor.placeBlock(check_pos, Block("minecraft:air"))
-                elif block_name == "minecraft:dirt":
-                    editor.placeBlock(check_pos, Block("minecraft:grass_block"))
-                    continue
-
-                elif block_name != "minecraft:air":
-                    continue
+            elif block_name != "minecraft:air":
+                continue
 
 
 # requires player to fly around to allow minecraft to clear all the foliage, and then set gamerule randomtickspeed to something normal. Still much quicker to clear trees

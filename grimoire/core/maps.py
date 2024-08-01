@@ -1,21 +1,92 @@
 import itertools
+from enum import Enum, auto
 
 from gdpc import WorldSlice
 from gdpc.block import Block
 from gdpc.lookup import ICE_BLOCKS, WATER_PLANTS, WATERS
-from gdpc.vector_tools import ivec2, ivec3
+from gdpc.vector_tools import addY, ivec2, ivec3
 
-from ..districts.district import District
+from ..districts.district import District, SuperDistrict
 from ..terrain.tree_cutter import TREE_BLOCKS
 from .utils.bounds import is_in_bounds, is_in_bounds2d
 from .utils.sets.set_operations import find_outline
 
-HIGHWAY = "highway"  # FIXME: Unused variable
-CITY_ROAD = "city_road"
-BUILDING = "building"
-WALL = "Wall"  # FIXME: Unused variable
-CITY_WALL = "city_wall"
-GATE = "gate"
+
+class DevelopmentType(Enum):
+    """
+    An enumeration of development types for different structures in a city.
+
+    Attributes:
+        HIGHWAY: UNUSED
+        WALL: UNUSED
+        CITY_ROAD: Represents a city road (surrounding city blocks).
+        BUILDING: Is occupied by a building.
+        CITY_WALL: Is occupied by a city wall.
+        GATE: Is occupied by a gate in the city wall.
+        NOOK: Has been occupied by a Nook.
+    """
+
+    HIGHWAY = auto()  # FIXME: Unused value
+    WALL = auto()  # FIXME: Unused value
+    CITY_ROAD = auto()
+    BUILDING = auto()
+    CITY_WALL = auto()
+    GATE = auto()
+    NOOK = auto()
+
+
+PATH_DEVELOPMENTS: frozenset[DevelopmentType] = frozenset(
+    {
+        DevelopmentType.CITY_ROAD,
+        DevelopmentType.HIGHWAY,
+        DevelopmentType.GATE,
+        DevelopmentType.NOOK,
+    }
+)
+BUILDING_DEVELOPMENTS: frozenset[DevelopmentType] = frozenset(
+    {
+        DevelopmentType.BUILDING,
+        DevelopmentType.CITY_WALL,
+        DevelopmentType.WALL,
+    }
+)
+
+
+def get_biome_map(world_slice: WorldSlice) -> list[list[str]]:
+    size: ivec2 = world_slice.rect.size
+
+    biome_map: list[list[str]] = [["" for _ in range(size.y)] for _ in range(size.x)]
+
+    for x, z in itertools.product(range(size.x), range(size.y)):
+        y: int = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
+        biome: str = world_slice.getBiome((x, y, z))
+
+        biome_map[x][z] = biome
+
+    return biome_map
+
+
+def get_block_and_water_map(
+    world_slice: WorldSlice,
+) -> tuple[list[list[Block]], list[list[bool]]]:
+    size: ivec2 = world_slice.rect.size
+
+    block_map: list[list[Block]] = [
+        [None for _ in range(size.y)] for _ in range(size.x)
+    ]
+    water_map: list[list[bool]] = [
+        [False for _ in range(size.y)] for _ in range(size.x)
+    ]
+
+    for x, z in itertools.product(range(size.x), range(size.y)):
+        y: int = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z]
+        block: Block = world_slice.getBlock((x, y - 1, z))
+
+        if block.id in (WATERS | WATER_PLANTS | ICE_BLOCKS):
+            water_map[x][z] = True
+        block_map[x][z] = block
+
+    return block_map, water_map
 
 
 def get_biome_map(world_slice: WorldSlice) -> list[list[str]]:
@@ -72,7 +143,7 @@ def get_build_map(world_slice: WorldSlice, buffer: int = 0) -> list[list[bool]]:
     return [[False for _ in range(size.y + buffer)] for _ in range(size.x + buffer)]
 
 
-def get_building_map(world_slice: WorldSlice) -> list[list[str | None]]:
+def get_building_map(world_slice: WorldSlice) -> list[list[DevelopmentType | None]]:
     size: ivec2 = world_slice.rect.size
     return [[None for _ in range(size.y)] for _ in range(size.x)]
 
@@ -87,7 +158,8 @@ def get_water_map(world_slice: WorldSlice) -> list[list[bool]]:
 class Map:
     water: list[list[bool]]
     districts: list[list[District | None]]
-    buildings: list[list[str | None]]
+    super_districts: list[list[SuperDistrict | None]]
+    buildings: list[list[DevelopmentType | None]]
     height: list[list[int]]  # height map based on MOTION_BLOCKING_NO_LEAVES
     height_no_tree: list[
         list[int]
@@ -95,6 +167,7 @@ class Map:
     leaf_height: list[list[int]]  # height map based on MOTION_BLOCKING
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads
+    highway: list[list[bool]]
     biome: list[list[str]]
     block: list[list[Block]]
 
@@ -102,11 +175,13 @@ class Map:
         size = world_slice.rect.size
         self.world = world_slice
         self.districts = self.empty_map()
+        self.super_districts = self.empty_map()
         self.buildings = get_building_map(world_slice)
         self.biome = get_biome_map(world_slice)
         self.block, self.water = get_block_and_water_map(world_slice)
         self._copy_heightmaps(world_slice)
         self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
+        self.highway = [[False for _ in range(size.y)] for _ in range(size.x)]
 
     def correct_district_heights(self, districts: list[District]):
         # FIXME: Doesn't do anything!
@@ -131,6 +206,12 @@ class Map:
 
     def height_at(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
+
+    def ocean_floor_at(self, point: ivec2):
+        return self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y]
+
+    def water_depth_at(self, point: ivec2):
+        return self.height_at(point) - self.ocean_floor_at(point)
 
     def height_at_include_leaf(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING"][point.x][point.y]
@@ -161,6 +242,7 @@ class Map:
             )
 
     def make_3d(self, point: ivec2) -> ivec3:
+        """Return the block above the surface at this position."""
         return ivec3(point.x, self.height_at(point), point.y)
 
     def is_in_bounds(self, point: ivec3) -> bool:

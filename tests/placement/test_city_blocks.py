@@ -1,16 +1,17 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.styling.palette import BuildStyle
+
 sys.path[0] = sys.path[0].removesuffix("tests\\placement")
 
-# Actual file
 from gdpc import Editor
 
-from grimoire.core.assets.load_assets import load_assets
+from grimoire.core.assets.asset_loader import load_assets
 from grimoire.core.maps import Map
 from grimoire.core.noise.rng import RNG
+from grimoire.core.styling.legacy_palette import LegacyPalette
 from grimoire.districts.generate_districts import generate_districts
-from grimoire.palette import Palette
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
@@ -19,7 +20,7 @@ SEED = 0xBABAB00E
 DO_TERRAFORMING = False
 
 editor = Editor(buffering=True, caching=True)
-load_assets("assets")
+load_assets("grimoire/asset_data")
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
@@ -37,18 +38,18 @@ world_map.districts = district_map
 
 # set up palettes
 eligible_palettes = list(
-    filter(lambda palette: "desert" in palette.tags, Palette.all())
+    filter(lambda palette: BuildStyle.DESERT in palette.tags, LegacyPalette.all())
 )
 rng = RNG(SEED, "palettes")
 
 for district in districts:
     palettes = [
-        Palette.find("dwarven"),
-        Palette.find("dwarven"),
-        Palette.find("dwarven"),
+        LegacyPalette.find(BuildStyle.DWARVEN),
+        LegacyPalette.find(BuildStyle.DWARVEN),
+        LegacyPalette.find(BuildStyle.DWARVEN),
     ]
 
-    for i in range(3):
+    for _ in range(3):
         district.palettes.append(rng.pop(palettes))
 
 # plateau stuff

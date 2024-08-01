@@ -3,7 +3,8 @@ from gdpc.vector_tools import Rect, distance, ivec2, ivec3
 
 from ..core.maps import Map
 from ..core.noise.rng import RNG
-from ..core.structures.legacy_directions import cardinal, vector
+from ..core.structures.legacy_directions import CARDINAL, vector
+from ..districts.district import District, DistrictType
 from .adjacency import establish_adjacency
 from .district import District, SuperDistrict
 from .district_analyze import district_analyze
@@ -30,7 +31,7 @@ def generate_districts(
     ]
 
     for district in districts:
-        origin = district.origin
+        origin: ivec3 = district.origin
         district_map[origin.x][origin.z] = district
 
     bubble_out(districts, district_map, main_map)
@@ -75,7 +76,7 @@ def recalculate_center_point(
     world_slice: WorldSlice,
     districts: list[District],
     district_map: list[list[District]],
-):
+) -> None:
     print("finding center point again")
 
     for district in districts:
@@ -139,7 +140,7 @@ def get_neighbours(point: ivec3, main_map: Map, district: District) -> list[ivec
     neighbours: list[list[ivec3]] = []
     height_map: list[list[int]] = main_map.height_no_tree
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         delta: ivec3 = vector(direction)
         neighbour: ivec3 = point + delta
 
@@ -213,19 +214,23 @@ def generate_district_points(rng: RNG, rect: list[Rect], main_map: Map) -> list[
 
 
 def prune_urban_chokepoints(districts: list[District]) -> None:
-    urban_count: int = sum(1 if district.is_urban else 0 for district in districts)
+    urban_count: int = sum(
+        1 if district.type == DistrictType.URBAN else 0 for district in districts
+    )
 
     if urban_count < 4:
         return
 
     for district in districts:
-        if not district.is_urban:
+        if district.type != DistrictType.URBAN:
             continue
 
         urban_adjacency: int = sum(
-            value for other, value in district.adjacency.items() if other.is_urban
+            value
+            for other, value in district.adjacency.items()
+            if other.type == DistrictType.URBAN
         )
         if urban_adjacency < CHOKEPOINT_ADJACENCY_RATIO * district.adjacencies_total:
-            district.is_urban = False
+            district.type = DistrictType.RURAL
             urban_count -= 1
             return prune_urban_chokepoints(districts)

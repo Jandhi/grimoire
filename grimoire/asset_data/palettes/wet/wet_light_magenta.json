@@ -1,0 +1,23 @@
+{
+  "name" : "wet_light_magenta",
+  "type" : "palette",
+
+  "resolution_priority" : "stone",
+  "materials" : {
+    "primary_wall" : "white_concrete",
+    "primary_roof" : "bricks1",
+    "secondary_roof" : "polished1",
+    "primary_wood" : "dark_oak",
+    "secondary_wood" : "spruce",
+    "pillar" : "spruce_log",
+    "primary_stone" : "bricks1",
+    "secondary_stone" : "bricks1",
+
+    "foundation" : "andesite"
+  },
+
+  "primary_color" : "magenta",
+  "secondary_color" : "white",
+
+  "tags" : ["wet"]
+}

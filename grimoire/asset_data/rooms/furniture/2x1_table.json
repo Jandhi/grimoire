@@ -1,0 +1,8 @@
+{
+    "name" : "2x1_table",
+    "filepath" : "grimoire/asset_data/rooms/furniture/2x1_table.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 2,
+    "facing" : "x_plus"
+}

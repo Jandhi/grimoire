@@ -1,11 +1,25 @@
-from .legacy_directions import left, right, opposites
-from .nbt.build_nbt import build_nbt
+from . import legacy_directions
+from .nbt.build_nbt import build_nbt_legacy, build_nbt
 from .transformation import Transformation
 from gdpc.editor import Editor
 from .nbt.nbt_asset import NBTAsset
-from ...palette import Palette
-from gdpc.vector_tools import ivec3, ivec2
+from grimoire.core.styling.legacy_palette import LegacyPalette
+from gdpc.vector_tools import (
+    ivec3,
+    ivec2,
+    NORTH,
+    WEST,
+    SOUTH,
+    EAST,
+    addY,
+    CARDINALS_2D,
+    rotate2D,
+)
 from collections.abc import Iterator
+
+from ..maps import Map
+from ..styling.materials.material import MaterialParameterFunction
+from ..styling.palette import Palette
 
 
 # Class to work with grids for buildings
@@ -47,7 +61,6 @@ class Grid:
     def world_to_local(self, coordinates: ivec3) -> ivec3:
         return coordinates - self.origin
 
-    # NOTE: Unused method
     def world_to_grid(self, coordinates: ivec3) -> ivec3:
         return self.local_to_grid(self.world_to_local(coordinates))
 
@@ -58,9 +71,21 @@ class Grid:
         asset: NBTAsset,
         palette: Palette,
         grid_coordinate: ivec3,
-        facing: str = None,
+        facing: ivec3 | str | None = None,
+        material_params_func: MaterialParameterFunction | None = None,
+        build_map: Map | None = None,
     ):
         coords = self.grid_to_local(grid_coordinate) + self.origin
+
+        if isinstance(facing, ivec3):
+            if facing == NORTH:
+                facing = legacy_directions.NORTH
+            elif facing == EAST:
+                facing = legacy_directions.EAST
+            elif facing == SOUTH:
+                facing = legacy_directions.SOUTH
+            elif facing == WEST:
+                facing = legacy_directions.WEST
 
         if facing is None or not hasattr(asset, "facing") or asset.facing == facing:
             return build_nbt(
@@ -70,40 +95,47 @@ class Grid:
                 Transformation(
                     offset=coords + ivec3(0, 0, 0),
                 ),
+                material_params_func=material_params_func,
+                build_map=build_map,
             )
 
-        if right[asset.facing] == facing:
-            return build_nbt(
-                editor,
-                asset,
-                palette,
-                Transformation(
-                    offset=coords + ivec3(0, 0, 0),
-                    diagonal_mirror=True,
-                ),
-            )
-
-        if left[asset.facing] == facing:
-            return build_nbt(
-                editor,
-                asset,
-                palette,
-                Transformation(
-                    offset=coords + ivec3(0, 0, self.depth - 1),
-                    diagonal_mirror=True,
-                    mirror=(True, False, False),
-                ),
-            )
-
-        if opposites[asset.facing] == facing:
+        if legacy_directions.RIGHT[asset.facing] == facing:
             return build_nbt(
                 editor,
                 asset,
                 palette,
                 Transformation(
                     offset=coords + ivec3(self.width - 1, 0, 0),
-                    mirror=(True, False, False),
+                    rotations=1,
                 ),
+                material_params_func=material_params_func,
+                build_map=build_map,
+            )
+
+        if legacy_directions.LEFT[asset.facing] == facing:
+            return build_nbt(
+                editor,
+                asset,
+                palette,
+                Transformation(
+                    offset=coords + ivec3(0, 0, self.depth - 1),
+                    rotations=3,
+                ),
+                material_params_func=material_params_func,
+                build_map=build_map,
+            )
+
+        if legacy_directions.OPPOSITES[asset.facing] == facing:
+            return build_nbt(
+                editor,
+                asset,
+                palette,
+                Transformation(
+                    offset=coords + ivec3(self.width - 1, 0, self.depth - 1),
+                    rotations=2,
+                ),
+                material_params_func=material_params_func,
+                build_map=build_map,
             )
 
     def get_points_at(self, point: ivec3) -> Iterator[ivec3]:
@@ -118,3 +150,38 @@ class Grid:
         for x in range(self.dimensions.x):
             for z in range(self.dimensions.z):
                 yield ivec2(x, z) + ivec2(dx, dz)
+
+    def get_door_coords(self, direction: ivec3) -> ivec3:
+        if direction == NORTH:
+            return ivec3(self.dimensions.x // 2, 0, 0)
+        elif direction == SOUTH:        
+            return ivec3(self.dimensions.x // 2, 0, self.dimensions.z - 1)
+        elif direction == EAST:
+            return ivec3(0, 0, self.dimensions.z // 2)
+        elif direction == WEST:
+            return ivec3(self.dimensions.x - 1, 0, self.dimensions.z // 2)
+
+    # find lowest point in grid at point
+    def get_floor(self, point: ivec2, shape: list[ivec3]) -> int:
+
+        xz_cell = self.world_to_grid(addY(point, 0))
+        cells = [cell for cell in shape if cell.x == xz_cell.x and cell.z == xz_cell.z]
+
+        # try to find a cell in the diagonals
+        for direction in CARDINALS_2D:
+            if not cells:
+                xz_cell = self.world_to_grid(
+                    addY(point + 2 * direction + 2 * rotate2D(direction, 1), 0)
+                )
+                cells = [
+                    cell
+                    for cell in shape
+                    if cell.x == xz_cell.x and cell.z == xz_cell.z
+                ]
+
+        if not cells:
+            return self.origin.y
+
+        lowest = min(cells, key=lambda cell: cell.y)
+
+        return self.grid_to_world(lowest).y

@@ -1,0 +1,24 @@
+{
+  "name" : "medieval_crimson",
+  "type" : "palette",
+
+  "resolution_priority" : "stone",
+  "materials" : {
+    "primary_wall" : "bricks1",
+    "secondary_wall" : "polished1",
+    "primary_roof" : "crimson",
+    "secondary_roof" : "spruce",
+    "primary_wood" : "spruce",
+    "secondary_wood" : "oak",
+    "pillar" : "oak_log",
+    "primary_stone" : "bricks1",
+    "secondary_stone" : "polished1",
+
+    "foundation" : "andesite"
+  },
+
+  "primary_color" : "red",
+  "secondary_color" : "white",
+
+  "tags" : ["normal_medieval"]
+}

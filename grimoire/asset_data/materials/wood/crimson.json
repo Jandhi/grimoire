@@ -1,0 +1,12 @@
+{
+  "name" : "crimson",
+  "type" : "material",
+  "blocks" : {
+    "block" : "crimson_planks",
+    "stairs" : "crimson_stairs",
+    "slab" : "crimson_slab",
+    "fence" : "crimson_fence",
+    "trapdoor" : "crimson_trapdoor",
+    "sign" : "crimson_sign"
+  }
+}

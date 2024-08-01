@@ -1,7 +1,7 @@
 from gdpc import Block, Editor
 
 from grimoire.core.maps import Map
-from grimoire.districts.district import District
+from grimoire.districts.district import District, DistrictType
 
 
 def place_relative_to_ground(
@@ -44,7 +44,7 @@ def get_color_differentiated(
 
     if is_water:
         suffix = "_stained_glass"
-    elif district.is_urban:
+    elif district.type == DistrictType.URBAN:
         suffix = "_wool"
 
     return blocks[districts.index(district) % len(blocks)] + suffix

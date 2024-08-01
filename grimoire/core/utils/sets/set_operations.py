@@ -1,6 +1,8 @@
-from gdpc.vector_tools import ivec2, distance2
+import gdpc.vector_tools
+from gdpc.vector_tools import distance2, ivec2
 
-from ...structures.legacy_directions import cardinal, get_ivec2, left, right
+# TODO: Replace with gdpc functions
+from ...structures.legacy_directions import CARDINAL, get_ivec2, LEFT, RIGHT
 
 
 def midpoint(points: set[ivec2]) -> ivec2:
@@ -32,7 +34,7 @@ def voronoi_split(
     return set_a, set_b
 
 
-def split(points: set[ivec2]) -> tuple[set[ivec2], set[ivec2]]:
+def split(points: set[ivec2]) -> tuple[set[ivec2], set[ivec2]] | None:
     mid = midpoint(points)
 
     best_split = None
@@ -74,7 +76,7 @@ def find_edges(points: set[ivec2]) -> set[ivec2]:
     edges = set()
 
     for point in points:
-        for direction in cardinal:
+        for direction in CARDINAL:
             neighbour = point + get_ivec2(direction)
 
             if neighbour not in points:
@@ -84,15 +86,17 @@ def find_edges(points: set[ivec2]) -> set[ivec2]:
     return edges
 
 
-def find_outer_direction(point: ivec2, points: set[ivec2], first_wins_ties=True) -> str:
+def find_outer_direction(
+    point: ivec2, points: set[ivec2], first_wins_ties=True
+) -> ivec2:
     best_dir = None
     best_dir_score = 0
 
-    for direction in cardinal:
+    for direction in CARDINAL:
         score = 0
         vector = get_ivec2(direction)
-        left_vector = get_ivec2(left[direction])
-        right_vector = get_ivec2(right[direction])
+        left_vector = get_ivec2(LEFT[direction])
+        right_vector = get_ivec2(RIGHT[direction])
 
         for base_vec in (ivec2(0, 0), left_vector, right_vector):
             for dist in range(5):
@@ -108,7 +112,7 @@ def find_outer_direction(point: ivec2, points: set[ivec2], first_wins_ties=True)
     return best_dir
 
 
-def find_outline(points: set[ivec2], thickness: int = 1) -> set[ivec2]:
+def find_outline(points: set[ivec2], thickness: int = 1, diagonals=False) -> set[ivec2]:
     points = points.copy()
     edges = find_edges(points)
     outline_set = set()
@@ -117,8 +121,12 @@ def find_outline(points: set[ivec2], thickness: int = 1) -> set[ivec2]:
         outline = set()
 
         for edge in edges:
-            for dir in cardinal:
-                pt = edge + get_ivec2(dir)
+            for direction in (
+                gdpc.vector_tools.CARDINALS_AND_DIAGONALS_2D
+                if diagonals
+                else gdpc.vector_tools.CARDINALS_2D
+            ):
+                pt = edge + direction
 
                 if pt not in points and pt not in outline_set:
                     outline.add(pt)

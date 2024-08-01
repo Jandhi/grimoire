@@ -1,0 +1,11 @@
+{
+    "name" : "normal_top_wall_triangle",
+    "type" : "wall",
+    "filepath" : "grimoire/asset_data/walls/normal_medieval/normal_top_wall_triangle.nbt",
+    "origin" : [2, 0, 0],
+    "facing" : "x_minus",
+    "palette" : "medieval_wall",
+    "positions" : ["upper"],
+    "has_door" : false,
+    "tags" : ["normal_medieval"]
+}

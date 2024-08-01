@@ -1,0 +1,8 @@
+{
+    "name" : "1x1_tall_bookshelf",
+    "filepath" : "grimoire/asset_data/rooms/furniture/1x1_tall_bookshelf.nbt",
+    "type" : "furniture",
+    "origin" : [0, 0, 0],
+    "length": 1,
+    "facing" : "x_plus"
+}

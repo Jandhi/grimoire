@@ -1,10 +1,10 @@
 from gdpc import Editor
 from gdpc.vector_tools import distance, ivec3
 
-from grimoire.districts.district import District
+from grimoire.districts.district import District, DistrictType
 
 from ..core.maps import Map
-from ..core.structures.legacy_directions import all_8, vector
+from ..core.structures.legacy_directions import ALL_8, vector
 from ..core.utils.bounds import is_in_bounds
 from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
 
@@ -86,13 +86,15 @@ def route_highway(start: ivec3, end: ivec3, map: Map, editor: Editor, is_debug=F
 
         path_cost: float = prev_cost - prev_heuristic
         base_length_cost = 2  # added as length of path increases
+        if map.highway[last.x][last.z]:  # NO LENGTH COST FOR HIGHWAY
+            base_length_cost -= 2
 
         height_diff: int = abs(last.y - map.height[last.x][last.z])
         height_cost: int = height_diff * 5
 
         district_cost = 0
         district_at_last: District | None = map.districts[last.x][last.z]
-        if district_at_last is not None and district_at_last.is_urban:
+        if district_at_last is not None and district_at_last.type == DistrictType.URBAN:
             district_cost += 50
 
         near_wall_cost = 0
@@ -119,7 +121,7 @@ def route_highway(start: ivec3, end: ivec3, map: Map, editor: Editor, is_debug=F
     def get_neighbours(point: ivec3) -> list[ivec3]:
         neighbours: list[ivec3] = []
 
-        for direction in all_8:
+        for direction in ALL_8:
             direction_vector: ivec3 = vector(direction)
 
             # First consider 4 out

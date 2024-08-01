@@ -1,10 +1,10 @@
 from random import randint, seed
 from gdpc import Editor, Block
 from ..core.structures.legacy_directions import (
-    north,
-    east,
-    west,
-    south,
+    NORTH,
+    EAST,
+    WEST,
+    SOUTH,
     to_text,
     opposite,
 )
@@ -40,14 +40,14 @@ class Well:
 
         # well sides
         for dx, dz, dir in (
-            (-1, 0, west),
-            (0, -1, north),
-            (0, 1, south),
-            (1, 0, east),
-            (1, 1, east),
-            (1, -1, east),
-            (-1, 1, west),
-            (-1, -1, west),
+            (-1, 0, WEST),
+            (0, -1, NORTH),
+            (0, 1, SOUTH),
+            (1, 0, EAST),
+            (1, 1, EAST),
+            (1, -1, EAST),
+            (-1, 1, WEST),
+            (-1, -1, WEST),
         ):
             editor.placeBlock(
                 (dx + cx, y, dz + cz),
@@ -91,7 +91,7 @@ class Well:
 
         editor.placeBlock((cx, y + 4, cz), Block("minecraft:cobblestone_slab"))
 
-        for dx, dz, dir in ((2, 0, east), (0, 2, south), (-2, 0, west), (0, -2, north)):
+        for dx, dz, dir in ((2, 0, EAST), (0, 2, SOUTH), (-2, 0, WEST), (0, -2, NORTH)):
             editor.placeBlock(
                 (dx + cx, y + 3, dz + cz),
                 Block(f"minecraft:cobblestone_stairs[facing={to_text(opposite(dir))}]"),

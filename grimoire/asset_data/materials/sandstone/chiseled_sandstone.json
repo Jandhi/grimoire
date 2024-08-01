@@ -1,0 +1,11 @@
+{
+  "name" : "chiseled_sandstone",
+  "type" : "material",
+  "dithering_pattern" : "random",
+  "blocks" : {
+    "block" : "chiseled_sandstone",
+    "stairs" : "sandstone_stairs",
+    "slab" : "sandstone_slab",
+    "wall" : "sandstone_wall"
+  }
+}
