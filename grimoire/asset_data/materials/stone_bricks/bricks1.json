@@ -3,6 +3,11 @@
   "type" : "material",
   "dithering_pattern" : "random",
   "darker" : "bricks2",
+
+  "connections" : {
+    "shade" : ["bricks2", null]
+  },
+
   "blocks" : {
     "block" : "stone_bricks",
     "stairs" : "stone_brick_stairs",

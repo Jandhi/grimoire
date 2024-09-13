@@ -1,6 +1,7 @@
 {
   "name" : "dark_oak",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "dark_oak_planks",
     "stairs" : "dark_oak_stairs",

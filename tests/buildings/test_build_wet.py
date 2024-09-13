@@ -56,7 +56,7 @@ grid = Grid(
 )
 
 # PALETTE
-palette: Palette = None  # Palette.find("japanese_dark_blackstone")
+palette: Palette = Palette.find("japanese_dark_blackstone")
 
 # WALLS
 lower_walls: list[Wall] = [
@@ -82,7 +82,7 @@ shape = [
     ivec3(2, 0, 0),
     ivec3(-2, 0, 0),
     ivec3(0, 0, 2),
-    ivec3(0, 0, -3),
+    ivec3(0, 0, -2),
 ]
 
 roof_components = [
@@ -91,7 +91,7 @@ roof_components = [
     if "japanese" in roof_component.tags
 ]
 plan = BuildingPlan(shape, grid, palette)
-build_roof(plan, editor, roof_components, SEED)
+build_roof(plan, editor, roof_components, SEED, build_map)
 
 for point in shape:
     for direction in CARDINALS:
@@ -116,5 +116,5 @@ build_stilt_frame(editor, rng, palette, plan, build_map)
 # roof.build(editor, palette, grid, (0, 2, 0))
 
 # ROOM
-room: Room = Room.find("kitchen_no_window_small")
+room: Room = Room.get("kitchen_no_window_small")
 grid.build(editor, room, palette, ivec3(0, 0, 0))

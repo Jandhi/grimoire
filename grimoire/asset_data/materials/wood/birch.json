@@ -1,6 +1,7 @@
 {
   "name" : "birch",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "birch_planks",
     "stairs" : "birch_stairs",

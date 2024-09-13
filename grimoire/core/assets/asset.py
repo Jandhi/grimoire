@@ -148,12 +148,19 @@ class Asset(metaclass=AssetMeta):
     def all(cls):
         return Asset.assets_by_type_name[cls.type_name].copy()
 
-    # Returns asset with specified name
+    # Returns asset with specified name, null if not found
     @classmethod
     def find(cls, name):
         for asset in cls.all():
             if asset.name == name:
                 return asset
+
+    # Returns the asset with specified name, errors out if not found
+    @classmethod
+    def get(cls, name):
+        val = cls.find(name)
+        assert (val is not None, f'The {cls.type_name} "{name}" was not found')
+        return val
 
     # This is used to create an asset without raising an exception on failure
     # IMPORTANT: This can return None when the asset created is invalid. It will NOT throw an error.

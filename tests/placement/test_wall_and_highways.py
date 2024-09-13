@@ -170,9 +170,9 @@ build_map = get_build_map(world_slice, 20)
 
 # FIXME: Not guaranteed to find the "urban_road" PaintPalette!
 urban_road: PaintPalette = (
-    PaintPalette.find("desert_road")
+    PaintPalette.get("desert_road")
     if style == BuildStyle.DESERT
-    else PaintPalette.find("urban_road")
+    else PaintPalette.get("urban_road")
 )
 
 # draw_districts(districts, build_rect, district_map, map.water, world_slice, editor)
@@ -235,9 +235,9 @@ ignore_blocks = GRANULARS | {
     "minecraft:copper_ore",
 }
 
-farmland: PaintPalette = PaintPalette.find("farmland")
+farmland: PaintPalette = PaintPalette.get("farmland")
 forests = Forest.all()
 crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
-rural_road: PaintPalette = PaintPalette.find("rural_road")
+rural_road: PaintPalette = PaintPalette.get("rural_road")
 
 options = forests + crops

@@ -1,6 +1,7 @@
 {
   "name" : "mangrove",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "mangrove_planks",
     "stairs" : "mangrove_stairs",

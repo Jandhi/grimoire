@@ -44,9 +44,9 @@ rng = RNG(SEED, "palettes")
 
 for district in districts:
     palettes = [
-        LegacyPalette.find(BuildStyle.DWARVEN),
-        LegacyPalette.find(BuildStyle.DWARVEN),
-        LegacyPalette.find(BuildStyle.DWARVEN),
+        LegacyPalette.get(BuildStyle.DWARVEN),
+        LegacyPalette.get(BuildStyle.DWARVEN),
+        LegacyPalette.get(BuildStyle.DWARVEN),
     ]
 
     for _ in range(3):

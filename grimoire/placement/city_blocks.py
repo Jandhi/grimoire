@@ -264,9 +264,9 @@ def add_city_blocks(
         city_roads |= outer
 
     urban_road: PaintPalette = (
-        PaintPalette.find("desert_road")
+        PaintPalette.get("desert_road")
         if style == BuildStyle.DESERT
-        else PaintPalette.find("urban_road")
+        else PaintPalette.get("urban_road")
     )
 
     replace_ground_smooth(list(city_roads), urban_road.palette, rng, build_map, editor)

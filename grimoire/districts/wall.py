@@ -2,7 +2,6 @@ from gdpc import Block, Editor, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
 
 from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
-from grimoire.core.styling.materials.dithering import DitheringPattern
 from grimoire.core.styling.materials.gradient import (
     Gradient,
     GradientAxis,
@@ -187,7 +186,6 @@ def build_wall_palisade(
                         age=0,
                         shade=0.5,
                         moisture=0,
-                        dithering_pattern=None,
                     ),
                     MaterialRole.PILLAR,
                 )
@@ -201,7 +199,6 @@ def build_wall_palisade(
                     age=0,
                     shade=0.5,
                     moisture=0,
-                    dithering_pattern=None,
                 ),
                 MaterialRole.SECONDARY_WOOD,
             )
@@ -238,8 +235,7 @@ def build_wall_standard(
     walkway_dict: dict = {}
 
     # temp
-    material: BasicMaterial = Material.find("cobblestone")
-    material.dithering_pattern = DitheringPattern.RANDOM_EASE_CUBIC
+    material: BasicMaterial = Material.get("cobblestone")
 
     rng = RNG(0)
 
@@ -266,7 +262,6 @@ def build_wall_standard(
                         shade=gradient.calculate_value(ivec3(point.x, y, point.z)),
                         age=0,
                         moisture=0,
-                        dithering_pattern=DitheringPattern.RANDOM_EASE_QUINT,
                     ),
                 )
 
@@ -281,7 +276,6 @@ def build_wall_standard(
                     age=0,
                     shade=0.5,
                     moisture=0,
-                    dithering_pattern=None,
                 ),
                 MaterialRole.PRIMARY_STONE,
             )
@@ -378,7 +372,6 @@ def build_wall_standard_with_inner(
                         age=0,
                         shade=0.5,
                         moisture=0,
-                        dithering_pattern=None,
                     ),
                     MaterialRole.PRIMARY_STONE,
                 )
@@ -394,7 +387,6 @@ def build_wall_standard_with_inner(
                     age=0,
                     shade=0.5,
                     moisture=0,
-                    dithering_pattern=None,
                 ),
                 MaterialRole.PRIMARY_STONE,
             )
@@ -433,7 +425,6 @@ def build_wall_standard_with_inner(
                                         age=0,
                                         shade=0.5,
                                         moisture=0,
-                                        dithering_pattern=None,
                                     ),
                                     MaterialRole.PRIMARY_STONE,
                                 )
@@ -487,7 +478,6 @@ def build_wall_standard_with_inner(
                                     age=0,
                                     shade=0.5,
                                     moisture=0,
-                                    dithering_pattern=None,
                                 ),
                                 MaterialRole.PRIMARY_STONE,
                             )
@@ -516,7 +506,6 @@ def build_wall_standard_with_inner(
                         age=0,
                         shade=0.5,
                         moisture=0,
-                        dithering_pattern=None,
                     ),
                     MaterialRole.PRIMARY_STONE,
                 )
@@ -629,7 +618,6 @@ def flatten_walkway(
                     age=0,
                     shade=0.5,
                     moisture=0,
-                    dithering_pattern=None,
                 ),
                 MaterialRole.SECONDARY_WOOD,
             )
@@ -644,7 +632,6 @@ def flatten_walkway(
                     age=0,
                     shade=0.5,
                     moisture=0,
-                    dithering_pattern=None,
                 ),
                 MaterialRole.SECONDARY_WOOD,
             )
@@ -661,7 +648,6 @@ def flatten_walkway(
                     age=0,
                     shade=0.5,
                     moisture=0,
-                    dithering_pattern=None,
                 ),
                 MaterialRole.SECONDARY_WOOD,
             )
@@ -688,7 +674,6 @@ def flatten_walkway(
                             age=0,
                             shade=0.5,
                             moisture=0,
-                            dithering_pattern=None,
                         ),
                         MaterialRole.SECONDARY_WOOD,
                     )
@@ -705,7 +690,6 @@ def flatten_walkway(
                         age=0,
                         shade=0.5,
                         moisture=0,
-                        dithering_pattern=None,
                     ),
                     MaterialRole.SECONDARY_WOOD,
                 )
@@ -806,7 +790,7 @@ def add_towers(
         type="tower",
         filepath="grimoire/asset_data/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
-        palette=Palette.find("wall_palette"),
+        palette=Palette.get("wall_palette"),
     )
 
     for point in walkway_list:
@@ -834,7 +818,6 @@ def add_towers(
                                     age=0,
                                     shade=0.5,
                                     moisture=0,
-                                    dithering_pattern=None,
                                 ),
                                 MaterialRole.PRIMARY_STONE,
                             )

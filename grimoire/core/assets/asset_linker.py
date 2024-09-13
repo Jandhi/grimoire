@@ -52,10 +52,17 @@ class AssetLinker(GeneratorModule):
             setattr(
                 asset,
                 field_name,
-                self._get_linked_field(asset.name, value, field_name, field_type),
+                self._get_linked_field(
+                    asset.name, type(asset), value, field_name, field_type
+                ),
             )
 
-    def _get_linked_field(self, parent: str, value, field_name: str, field_type: type):
+    def _get_linked_field(
+        self, parent: str, parent_type: type, value, field_name: str, field_type: type
+    ):
+        if self._type_eq(field_type, typing.Self):
+            field_type = parent_type
+
         # If the type is an asset, link it
         if (
             hasattr(field_type, "__mro__")
@@ -63,6 +70,19 @@ class AssetLinker(GeneratorModule):
             and isinstance(value, str)
         ):
             return field_type.find(value)
+
+        # IF the type is a tuple, link its members
+        if self._type_eq(field_type, "tuple") and hasattr(field_type, "__args__"):
+            return tuple(
+                self._get_linked_field(
+                    parent,
+                    parent_type,
+                    value[i],
+                    f"{field_name}[{i}]",
+                    field_type.__args__[i],
+                )
+                for i in range(len(field_type.__args__))
+            )
 
         # If the type is a list link the items in that list
         if self._type_eq(field_type, "list") and hasattr(field_type, "__args__"):
@@ -75,7 +95,9 @@ class AssetLinker(GeneratorModule):
                 return value
 
             return [
-                self._get_linked_field(parent, item, f"{field_name}[{i}]", t1)
+                self._get_linked_field(
+                    parent, parent_type, item, f"{field_name}[{i}]", t1
+                )
                 for (i, item) in enumerate(value)
             ]
 
@@ -92,8 +114,10 @@ class AssetLinker(GeneratorModule):
 
             return {
                 self._get_linked_field(
-                    parent, key, f"{field_type}{{key {i}}}", t1
-                ): self._get_linked_field(parent, val, f"{field_type}{{value {i}}}", t2)
+                    parent, parent_type, key, f"{field_type}{{key {i}}}", t1
+                ): self._get_linked_field(
+                    parent, parent_type, val, f"{field_type}{{value {i}}}", t2
+                )
                 for (i, (key, val)) in enumerate(value.items())
             }
 
@@ -106,18 +130,18 @@ class AssetLinker(GeneratorModule):
             or self._type_eq(field_type, "Optional")
         ) and hasattr(field_type, "__args__"):
             t1 = field_type.__args__[0]
-            return self._get_linked_field(parent, value, field_name, t1)
+            return self._get_linked_field(parent, parent_type, value, field_name, t1)
 
         if isinstance(field_type, type):
             # If the type is an enum, find the right field in that enum
             if Enum in field_type.__mro__ and isinstance(value, str):
                 return field_type[value.upper()]
 
-        # IF the type is an ivec2, construct it
+        # If the type is an ivec2, construct it
         if self._type_eq(field_type, "ivec2") and isinstance(value, list):
             return ivec2(*value)
 
-        # IF the type is an ivec3, construct it
+        # If the type is an ivec3, construct it
         if self._type_eq(field_type, "ivec3") and isinstance(value, list):
             return ivec3(*value)
 
@@ -139,7 +163,7 @@ class AssetLinker(GeneratorModule):
 
                 if key in annotations:
                     arguments[key] = self._get_linked_field(
-                        f"{module.name}.main", val, key, annotations[key]
+                        f"{module.name}.main", parent_type, val, key, annotations[key]
                     )
                 else:
                     arguments[key] = val

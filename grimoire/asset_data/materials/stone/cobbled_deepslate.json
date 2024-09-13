@@ -1,9 +1,11 @@
 {
   "name" : "cobbled_deepslate",
   "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter" : "cobblestone",
-  "darker" : "smooth_basalt",
+
+  "connections" : {
+    "shade" : ["smooth_basalt", "cobblestone"]
+  },
+
   "blocks" : {
     "block": "cobbled_deepslate",
     "stairs": "cobbled_deepslate_stairs",

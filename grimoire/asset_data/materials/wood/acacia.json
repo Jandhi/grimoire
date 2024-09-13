@@ -1,6 +1,7 @@
 {
   "name" : "acacia",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "acacia_planks",
     "stairs" : "acacia_stairs",

@@ -30,7 +30,7 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 
-shape: BuildingShape = BuildingShape.find("quad")
+shape: BuildingShape = BuildingShape.get("quad")
 
 grid = Grid(origin=ivec3(0, 0, 0))
 

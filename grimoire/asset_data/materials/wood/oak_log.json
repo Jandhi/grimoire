@@ -1,7 +1,9 @@
 {
   "name" : "oak_log",
   "type" : "material",
-  "darker" : "spruce_log",
+  "connections" : {
+    "shade" : ["spruce_log", null]
+  },
   "blocks" : {
     "block" : "oak_wood"
   }

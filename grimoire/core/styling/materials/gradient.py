@@ -1,10 +1,12 @@
 import abc
 import dataclasses
+from typing import Callable
 
-from gdpc.vector_tools import DIRECTIONS_3D
+from gdpc.vector_tools import DIRECTIONS_3D, Rect
 from glm import ivec3, vec3
 from perlin_noise import PerlinNoise
 
+from grimoire.core.maps import Map
 from grimoire.core.structures.axis import Axes, Axis
 from grimoire.core.utils.bounds import clamp
 from grimoire.core.utils.misc import average, lerp
@@ -52,9 +54,11 @@ class Gradient:
     def __init__(
         self,
         seed,
+        map: Map,
         perlin_settings: PerlinSettings = None,
     ):
         self.axes = []
+        self.map = map
 
         if perlin_settings is None:
             perlin_settings = Gradient.default_perlin_settings
@@ -90,9 +94,9 @@ class Gradient:
     # Make a vec appear between 0 and 1
     def normalize_vec(self, vec: ivec3) -> vec3:
         return vec3(
-            float(vec.x) / 256.0,
-            float(vec.y) / 256.0,
-            float(vec.z) / 256.0,
+            float(vec.x) / self.map.world.rect.size.x,
+            float(vec.y) / self.map.world.ySize,
+            float(vec.z) / self.map.world.rect.size.y,
         )
 
     def calculate_point_value(self, pos: ivec3, grad_val: float = None):
@@ -111,3 +115,9 @@ class Gradient:
             0.0,
             1.0,
         )
+
+    def to_func(self) -> Callable[[ivec3], float]:
+        def func(pos: ivec3):
+            return self.calculate_point_value(pos)
+
+        return func

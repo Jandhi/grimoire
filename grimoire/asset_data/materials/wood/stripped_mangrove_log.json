@@ -1,6 +1,7 @@
 {
   "name" : "stripped_mangrove_log",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "stripped_mangrove_wood"
   }

@@ -6,8 +6,8 @@ from gdpc.lookup import PLANTS
 from grimoire.core.assets.asset import Asset
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.colors import MinecraftColor
-from grimoire.core.styling.materials.dithering import DitheringPattern
-from grimoire.core.styling.materials.material import Material, MaterialParameters
+from grimoire.core.styling.materials import traversal
+from grimoire.core.styling.materials.material import Material, MaterialFeature
 
 
 class BuildStyle(Enum):
@@ -118,8 +118,11 @@ class Palette(Asset):
     def find_block_id(
         self,
         form: BlockForm,
-        parameters: MaterialParameters,
         role: MaterialRole,
+        parameters: dict[MaterialFeature, float] | None = None,
+        traversal_strategies: (
+            dict[MaterialFeature, traversal.MaterialTraversalStrategy] | None
+        ) = None,
     ) -> str | None:
         checked_roles = set()
 
@@ -129,7 +132,7 @@ class Palette(Asset):
 
             material = self.materials[role]
 
-            block_id = material.get_id(form, parameters)
+            block_id = material.get_id(form, parameters, traversal_strategies)
 
             if block_id is not None:
                 return block_id
@@ -156,7 +159,10 @@ def swap(
     block: Block,
     input_palette: Palette,
     output_palette: Palette,
-    parameters: MaterialParameters,
+    parameters: dict[MaterialFeature, float] | None = None,
+    traversal_strategies: (
+        dict[MaterialFeature, traversal.MaterialTraversalStrategy] | None
+    ) = None,
 ) -> Block:
     new_id = block.id
 
@@ -165,7 +171,9 @@ def swap(
     if role:
         form = BlockForm.get_form(block)
 
-        found_id = output_palette.find_block_id(form, parameters, role)
+        found_id = output_palette.find_block_id(
+            form, role, parameters, traversal_strategies
+        )
 
         if found_id:
             new_id = found_id

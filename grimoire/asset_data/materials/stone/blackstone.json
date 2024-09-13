@@ -1,8 +1,11 @@
 {
   "name" : "blackstone",
   "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter" : "smooth_basalt",
+
+  "connections" : {
+    "shade" : [null, "smooth_basalt"]
+  },
+
   "blocks" : {
     "block": "blackstone",
     "stairs": "blackstone_stairs",

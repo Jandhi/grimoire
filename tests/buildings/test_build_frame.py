@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.maps import Map
 
 sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
 
@@ -31,6 +32,7 @@ editor = Editor(buffering=True, caching=True)
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
+build_map = Map(editor.loadWorldSlice())
 
 grid = Grid(
     origin=ivec3(
@@ -43,11 +45,10 @@ load_assets("grimoire/asset_data")
 
 shape = random_shape(SEED)
 
-palette = Palette.find("medieval")
+palette = Palette.get("medieval")
 plan = BuildingPlan(shape, grid, palette)
 plan.palette = palette
 grid.plan = plan
-
 
 build_floor(plan, editor)
 
@@ -56,6 +57,7 @@ build_walls(
     editor,
     [wall for wall in Wall.all() if "normal_medieval" in wall.tags],
     RNG(SEED, "build_walls"),
+    build_map,
 )
 
 build_roof(
@@ -63,6 +65,7 @@ build_roof(
     editor,
     [roof for roof in RoofComponent.all() if "normal_medieval" in roof.tags],
     SEED,
+    build_map,
 )
 
 far_cell = max(shape, key=lambda vec: vec.x + vec.z * 10)

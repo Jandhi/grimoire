@@ -89,9 +89,9 @@ test_blocks2 = {
 
 baobab = {"small_baobab": 1}
 
-test: PaintPalette = PaintPalette.find("farmland")
-test2: PaintPalette = PaintPalette.find("carrot")
-forest: Forest = Forest.find("mixed_forest")
+test: PaintPalette = PaintPalette.get("farmland")
+test2: PaintPalette = PaintPalette.get("carrot")
+forest: Forest = Forest.get("mixed_forest")
 # replace_ground(all_points, test_blocks2, rng, water_map, build_map, editor, world_slice)
 # replace_ground(all_points, story.palette, rng, water_map, build_map, editor, world_slice, 0, ignore_blocks)
 # replace_ground(all_points, test2.palette, rng, water_map, build_map, editor, world_slice, 1, ignore_blocks)

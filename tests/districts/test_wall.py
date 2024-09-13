@@ -84,7 +84,7 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = LegacyPalette.find("japanese_dark_blackstone")
+palette = LegacyPalette.get("japanese_dark_blackstone")
 
 # uncomment one of these to story one of the three wall types
 

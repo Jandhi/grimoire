@@ -3,11 +3,12 @@ from abc import ABC
 
 from gdpc import Editor, Rect, WorldSlice
 
-from ...core.generator.module import GeneratorModule
+from ..maps import Map
+from ...core.generator.generator_module import GeneratorModule
 
 
 def run_test(cls):
-    mod: TestModule = cls()
+    mod: TestModule = cls(None)
     mod.run_test()
     return cls
 
@@ -34,6 +35,7 @@ class EditingTestModule(TestModule, ABC):
     editor: Editor
     build_rect: Rect
     world_slice: WorldSlice
+    build_map: Map
 
     def load_world(self):
         self.editor = Editor(buffering=True, caching=True)
@@ -46,3 +48,5 @@ class EditingTestModule(TestModule, ABC):
         self.world_slice = self.editor.loadWorldSlice(self.build_rect)
 
         self.log.info("World slice loaded!")
+
+        self.build_map = Map(self.world_slice)

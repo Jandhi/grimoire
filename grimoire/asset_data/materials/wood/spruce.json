@@ -1,7 +1,7 @@
 {
   "name" : "spruce",
   "type" : "material",
-  "dithering_pattern" : "random",
+  "connections" : {},
   "blocks" : {
     "block" : "spruce_planks",
     "stairs" : "spruce_stairs",

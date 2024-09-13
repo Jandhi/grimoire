@@ -1,6 +1,7 @@
 {
   "name" : "warped",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "warped_planks",
     "stairs" : "warped_stairs",

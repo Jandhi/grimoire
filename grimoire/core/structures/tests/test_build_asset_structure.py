@@ -29,7 +29,7 @@ build_map = get_build_map(world_slice, 20)
 load_assets("assets")
 y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][0][0]
 
-test: AssetStructure = AssetStructure.find("well")
+test: AssetStructure = AssetStructure.get("well")
 """
 build_nbt(
 <<<<<<< HEAD

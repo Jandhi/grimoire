@@ -36,7 +36,7 @@ def place_lanterns(editor: Editor, city_road: set[ivec2], build_map: Map, rng: R
         palette: Palette = (
             rng.choose(district.palettes)
             if district and district.palettes
-            else Palette.find("japanese_dark_blackstone")
+            else Palette.get("japanese_dark_blackstone")
         )
 
         road_direction = None

@@ -1,6 +1,7 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.maps import Map
 
 sys.path[0] = sys.path[0].removesuffix("tests\\buildings")
 
@@ -35,6 +36,7 @@ editor = Editor(buffering=True, caching=True)
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
+build_map = Map(editor.loadWorldSlice())
 
 grid = Grid(
     origin=ivec3(
@@ -47,7 +49,7 @@ load_assets("grimoire/asset_data")
 
 shape = [ivec3(0, 0, 0), ivec3(0, 0, 1), ivec3(1, 0, 1)]
 
-palette = Palette.find("japanese")
+palette = Palette.get("japanese")
 plan = BuildingPlan(shape, grid, palette)
 
 plan.cell_map[ivec3(0, 0, 0)].doors.append(legacy_directions.NORTH)
@@ -61,6 +63,7 @@ build_roof(
         if BuildStyle.NORMAL_MEDIEVAL.name.lower() in roof.tags
     ],
     SEED,
+    build_map,
 )
 
 clear_interiors(plan, editor)
@@ -70,4 +73,4 @@ walls = [
     wall for wall in Wall.all() if BuildStyle.NORMAL_MEDIEVAL.name.lower() in wall.tags
 ]
 
-build_walls(plan, editor, walls, RNG(SEED, "build_walls"))
+build_walls(plan, editor, walls, RNG(SEED, "build_walls"), build_map)

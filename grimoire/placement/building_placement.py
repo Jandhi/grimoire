@@ -268,7 +268,7 @@ def place_building(
     palette: Palette = (
         rng.choose(district.palettes)
         if district and district.palettes
-        else Palette.find("japanese_dark_blackstone")
+        else Palette.get("japanese_dark_blackstone")
     )
 
     plan = BuildingPlan(shape.points.copy(), grid, palette)
@@ -346,6 +346,7 @@ def place_building(
             if style.name.lower() in component.tags
         ],
         rng.next(),
+        build_map,
     )
 
     # Clear the area
@@ -395,4 +396,4 @@ def place_building(
         except:
             pass
 
-    build_walls(plan, editor, walls, rng)
+    build_walls(plan, editor, walls, rng, build_map)

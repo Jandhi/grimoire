@@ -1,8 +1,11 @@
 {
   "name" : "stone",
   "type" : "material",
-  "dithering_pattern" : "random",
-  "darker" : "andesite",
+
+  "connections" : {
+    "shade" : ["andesite", null]
+  },
+
   "blocks" : {
     "block": "stone",
     "stairs": "stone_stairs",

@@ -215,10 +215,10 @@ editor.runCommand("gamerule randomTickSpeed 0")
 if DO_RURAL:
     permit_blocks = DIRTS
 
-    farmland: PaintPalette = PaintPalette.find("farmland")
+    farmland: PaintPalette = PaintPalette.get("farmland")
     forests = Forest.all()
     crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
-    rural_road: PaintPalette = PaintPalette.find("rural_road")
+    rural_road: PaintPalette = PaintPalette.get("rural_road")
 
     options = forests + crops
 
