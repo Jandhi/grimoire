@@ -334,7 +334,7 @@ if DO_WALL:
             inner_points,
             editor,
             world_slice,
-            main_map.water,
+            main_map,
             rng,
             palette,
         )

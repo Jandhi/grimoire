@@ -3,8 +3,9 @@ from abc import ABC
 
 from gdpc import Editor, Rect, WorldSlice
 
-from ..maps import Map
-from ...core.generator.generator_module import GeneratorModule
+
+from grimoire.core.generator.generator_module import GeneratorModule
+from grimoire.core.maps import Map
 
 
 def run_test(cls):
@@ -15,6 +16,9 @@ def run_test(cls):
 
 class TestModule(GeneratorModule):
     catch_errors: bool = True
+
+    def __init__(self):
+        super().__init__(None)
 
     @abc.abstractmethod
     def test(self):

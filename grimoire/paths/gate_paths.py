@@ -7,7 +7,6 @@ from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.legacy_directions import VECTORS
-from grimoire.core.styling.materials.material import MaterialParameters
 from grimoire.core.styling.palette import BuildStyle, MaterialRole, Palette
 from grimoire.districts.gate import Gate
 from grimoire.paths.build_highway import build_highway
@@ -69,7 +68,6 @@ def add_gate_path(
         )
         fence = palette.find_block_id(
             BlockForm.FENCE,
-            MaterialParameters(highway[0], 0, 0, 0, None),
             MaterialRole.PRIMARY_WOOD,
         )
         road = (

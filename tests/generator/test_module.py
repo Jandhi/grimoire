@@ -6,7 +6,7 @@ sys.path[0] = sys.path[0].removesuffix("tests\\generator")
 import time
 
 from grimoire.core.generator.benchmarking import Benchmark
-from grimoire.core.generator.module import GeneratorModule
+from grimoire.core.generator.generator_module import GeneratorModule
 
 
 class TestingModule(GeneratorModule):
@@ -23,6 +23,9 @@ class TestingModule(GeneratorModule):
 
 class TestingModule2(GeneratorModule):
     name: str = "Test2"
+
+    def __init__(self):
+        super().__init__(None)
 
     @GeneratorModule.MainClass
     def test(self):
