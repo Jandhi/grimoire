@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Callable
 
 from gdpc import Block
@@ -16,10 +17,12 @@ from ...styling.materials.traversal import MaterialTraversalStrategy
 from ...styling.palette import Palette, swap
 
 
-class ParameterGenerator:
+class ParameterGenerator(ABC):
+    @abstractmethod
     def get_parameters(self, position: ivec3) -> dict[MaterialFeature, float]:
         pass
 
+    @abstractmethod
     def get_traversal_strategies(
         self,
     ) -> dict[MaterialFeature, MaterialTraversalStrategy]:

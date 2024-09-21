@@ -1,10 +1,11 @@
 {
   "name" : "bricks2",
   "type" : "material",
-  "dithering_pattern" : "random",
 
   "connections" : {
-    "shade" : ["bricks3", "bricks1"]
+    "shade" : ["bricks3", "bricks1"],
+    "moisture" : [null, "moss_stone"],
+    "wear" : [null, "cracked_deepslate_bricks"]
   },
 
   "blocks" : {

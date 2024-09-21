@@ -28,9 +28,7 @@ def build_roof(
     shade_gradient = Gradient(
         rng.next(),
         build_map,
-        perlin_settings=PerlinSettings(
-            base_octaves=27, noise_layers=6, add_ratio=1.7, strength=0.2
-        ),
+        noise_settings=PerlinSettings(base_octaves=27, noise_layers=6, add_ratio=1.7),
     ).with_axis(
         GradientAxis.y(
             plan.grid.origin.y + plan.grid.height - 2,

@@ -2,6 +2,7 @@
 import sys
 
 from grimoire.core.styling.materials.painter import Painter
+from grimoire.core.styling.materials.traversal import MaterialTraversalStrategy
 
 sys.path[0] = sys.path[0].removesuffix("tests\\materials")
 
@@ -40,12 +41,14 @@ class MaterialsTest(EditingTestModule):
         )
         self.load_world()
 
-        material: Material = Material.get("cobblestone")
-        gradient = Gradient(13, self.build_map).with_axis(
-            GradientAxis.x(0, self.build_rect.size.x - 1)
-        )
+        material: Material = Material.get("bricks1")
+        gradient = Gradient(
+            13, self.build_map, 1.0, PerlinSettings(20, 8, 2)
+        ).with_axis(GradientAxis.x(0, self.build_rect.size.x - 1))
         painter = Painter(self.editor, material).with_feature(
-            MaterialFeature.SHADE, gradient.to_func()
+            MaterialFeature.MOISTURE,
+            gradient.to_func(),
+            MaterialTraversalStrategy.SCALED,
         )
 
         for x in self.log.progress(range(self.build_rect.size.x), "Building rows"):

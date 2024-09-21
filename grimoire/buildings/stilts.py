@@ -22,7 +22,7 @@ from grimoire.core.structures.nbt.nbt_asset import NBTAsset
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.materials.gradient import Gradient, GradientAxis
 from grimoire.core.styling.materials.material import MaterialFeature
-from grimoire.core.styling.materials.painter import Painter
+from grimoire.core.styling.materials.painter import PalettePainter
 from grimoire.core.styling.palette import Palette, MaterialRole
 
 
@@ -180,10 +180,10 @@ class StiltPlacer(GeneratorModule):
         gradient = Gradient(self.rng.next(), build_map).with_axis(
             GradientAxis.y(min_y, position.y)
         )
-        painter = Painter(editor, palette.materials[MaterialRole.PILLAR]).with_feature(
+        painter = PalettePainter(editor, palette).with_feature(
             MaterialFeature.SHADE, gradient.to_func()
         )
 
         for y in range(min_y, position.y + 1):
             pos = ivec3(position.x, y, position.z)
-            painter.place_block(pos)
+            painter.place_block(pos, MaterialRole.PILLAR)

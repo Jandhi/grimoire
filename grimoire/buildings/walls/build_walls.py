@@ -30,7 +30,7 @@ def build_walls(
     shade_gradient = Gradient(
         GlobalSeed.get(),
         build_map,
-        perlin_settings=PerlinSettings(
+        noise_settings=PerlinSettings(
             base_octaves=27, noise_layers=6, add_ratio=1.7, strength=0.2
         ),
     ).with_axis(

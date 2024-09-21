@@ -2,13 +2,18 @@ from gdpc import Block, Editor, WorldSlice
 from gdpc.vector_tools import ivec2, ivec3
 
 from grimoire.core.styling.legacy_palette import LegacyPalette
+from ..core.maps import Map
 
 from ..core.structures.legacy_directions import EAST, NORTH, SOUTH, ivec3_to_dir, vector
 from ..core.structures.nbt.build_nbt import build_nbt
 from ..core.structures.nbt.nbt_asset import NBTAsset
 from ..core.structures.transformation import Transformation
+from ..core.styling.materials.gradient import GradientAxis, PerlinSettings, Gradient
+from ..core.styling.materials.material import MaterialFeature
+from ..core.styling.materials.painter import PalettePainter
 from ..core.styling.palette import Palette
 from ..core.utils.geometry import is_straight_not_diagonal_ivec2
+from ..core.utils.remap import remap_threshold_high
 
 
 # Class to track gate assets
@@ -28,6 +33,7 @@ def add_gates(
     is_thin: bool,
     inner_wall_dict: dict,
     palette: Palette,
+    build_map: Map,
     palisade: bool = False,
 ) -> list[Gate]:
     distance_to_next_gate = 60  # minimum
@@ -113,15 +119,61 @@ def add_gates(
                     )
                     gates.append(Gate(location, dir))
 
-                    build_nbt(
-                        editor=editor,
+                    moisture_func = remap_threshold_high(
+                        Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
+                        .with_axis(
+                            GradientAxis.y(
+                                build_map.height_at(ivec2(location.x, location.z)),
+                                point.y,
+                                True,
+                            )
+                        )
+                        .to_func(),
+                        0.3,
+                    )
+
+                    wear_func = remap_threshold_high(
+                        Gradient(17, build_map, 0.8, PerlinSettings(20, 8, 2))
+                        .with_axis(
+                            GradientAxis.y(
+                                build_map.height_at(ivec2(location.x, location.z)),
+                                point.y,
+                                True,
+                            )
+                        )
+                        .to_func(),
+                        0.5,
+                    )
+
+                    painter = (
+                        PalettePainter(editor, palette)
+                        .with_feature(
+                            MaterialFeature.SHADE,
+                            Gradient(
+                                10, build_map, noise_settings=PerlinSettings(20, 8, 2)
+                            )
+                            .with_axis(
+                                GradientAxis.y(
+                                    build_map.height_at(ivec2(location.x, location.z)),
+                                    point.y,
+                                )
+                            )
+                            .to_func(),
+                        )
+                        .with_feature(
+                            MaterialFeature.MOISTURE,
+                            moisture_func,
+                        )
+                        .with_feature(MaterialFeature.WEAR, wear_func)
+                    )
+
+                    painter.place_nbt(
                         asset=basic_palisade_gate,
                         transformation=Transformation(
                             offset=location,
                             mirror=(True, False, False),
                             diagonal_mirror=diagonal_mirror,
                         ),
-                        palette=palette,
                     )
             else:
                 gate_possible -= 1
@@ -172,15 +224,65 @@ def add_gates(
                         )
                         gates.append(Gate(location, ivec3_to_dir(dir)))
 
-                        build_nbt(
-                            editor=editor,
+                        moisture_func = remap_threshold_high(
+                            Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
+                            .with_axis(
+                                GradientAxis.y(
+                                    build_map.height_at(ivec2(location.x, location.z)),
+                                    point.y,
+                                    True,
+                                )
+                            )
+                            .to_func(),
+                            0.3,
+                        )
+
+                        wear_func = remap_threshold_high(
+                            Gradient(17, build_map, 0.8, PerlinSettings(20, 8, 2))
+                            .with_axis(
+                                GradientAxis.y(
+                                    build_map.height_at(ivec2(location.x, location.z)),
+                                    point.y,
+                                    True,
+                                )
+                            )
+                            .to_func(),
+                            0.5,
+                        )
+
+                        painter = (
+                            PalettePainter(editor, palette)
+                            .with_feature(
+                                MaterialFeature.SHADE,
+                                Gradient(
+                                    10,
+                                    build_map,
+                                    noise_settings=PerlinSettings(20, 8, 2),
+                                )
+                                .with_axis(
+                                    GradientAxis.y(
+                                        build_map.height_at(
+                                            ivec2(location.x, location.z)
+                                        ),
+                                        point.y,
+                                    )
+                                )
+                                .to_func(),
+                            )
+                            .with_feature(
+                                MaterialFeature.MOISTURE,
+                                moisture_func,
+                            )
+                            .with_feature(MaterialFeature.WEAR, wear_func)
+                        )
+
+                        painter.place_nbt(
                             asset=basic_thin_gate,
                             transformation=Transformation(
                                 offset=location,
                                 mirror=(True, False, False),
                                 diagonal_mirror=diagonal_mirror,
                             ),
-                            palette=palette,
                         )
                     else:
                         dir = (
@@ -232,15 +334,73 @@ def add_gates(
                                 )
                                 gates.append(Gate(location, ivec3_to_dir(dir)))
 
-                                build_nbt(
-                                    editor=editor,
+                                moisture_func = remap_threshold_high(
+                                    Gradient(
+                                        13, build_map, 0.6, PerlinSettings(20, 8, 2)
+                                    )
+                                    .with_axis(
+                                        GradientAxis.y(
+                                            build_map.height_at(
+                                                ivec2(location.x, location.z)
+                                            ),
+                                            point.y,
+                                            True,
+                                        )
+                                    )
+                                    .to_func(),
+                                    0.3,
+                                )
+
+                                wear_func = remap_threshold_high(
+                                    Gradient(
+                                        17, build_map, 0.8, PerlinSettings(20, 8, 2)
+                                    )
+                                    .with_axis(
+                                        GradientAxis.y(
+                                            build_map.height_at(
+                                                ivec2(location.x, location.z)
+                                            ),
+                                            point.y,
+                                            True,
+                                        )
+                                    )
+                                    .to_func(),
+                                    0.5,
+                                )
+
+                                painter = (
+                                    PalettePainter(editor, palette)
+                                    .with_feature(
+                                        MaterialFeature.SHADE,
+                                        Gradient(
+                                            10,
+                                            build_map,
+                                            noise_settings=PerlinSettings(20, 8, 2),
+                                        )
+                                        .with_axis(
+                                            GradientAxis.y(
+                                                build_map.height_at(
+                                                    ivec2(location.x, location.z)
+                                                ),
+                                                point.y,
+                                            )
+                                        )
+                                        .to_func(),
+                                    )
+                                    .with_feature(
+                                        MaterialFeature.MOISTURE,
+                                        moisture_func,
+                                    )
+                                    .with_feature(MaterialFeature.WEAR, wear_func)
+                                )
+
+                                painter.place_nbt(
                                     asset=basic_wide_gate,
                                     transformation=Transformation(
                                         offset=location,
                                         mirror=(True, False, False),
                                         diagonal_mirror=diagonal_mirror,
                                     ),
-                                    palette=palette,
                                 )
             else:
                 gate_possible -= 1

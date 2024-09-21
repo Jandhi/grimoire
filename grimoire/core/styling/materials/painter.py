@@ -3,6 +3,10 @@ from typing import Callable, Self
 from gdpc import Editor, Block
 from glm import ivec3
 
+from grimoire.core.maps import Map
+from grimoire.core.structures.nbt.build_nbt import build_nbt, ParameterGenerator
+from grimoire.core.structures.nbt.nbt_asset import NBTAsset
+from grimoire.core.structures.transformation import Transformation
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.styling.materials.material import Material, MaterialFeature
 from grimoire.core.styling.materials.placer import Placer
@@ -10,7 +14,7 @@ from grimoire.core.styling.materials.traversal import MaterialTraversalStrategy
 from grimoire.core.styling.palette import Palette, MaterialRole
 
 
-class Painter:
+class Painter(ParameterGenerator):
     placer: Placer
     material: Material
 
@@ -35,6 +39,11 @@ class Painter:
 
         return params
 
+    def get_traversal_strategies(
+        self,
+    ) -> dict[MaterialFeature, MaterialTraversalStrategy]:
+        return self.placer.get_traversal_strategies()
+
     def place_block(
         self,
         position: ivec3,
@@ -55,7 +64,7 @@ class Painter:
 
 
 # Used to place blocks from a palette
-class PalettePainter:
+class PalettePainter(ParameterGenerator):
     placer: Placer
     palette: Palette
 
@@ -67,7 +76,7 @@ class PalettePainter:
         self,
         feature: MaterialFeature,
         func: Callable[[ivec3], float],
-        traversal_strategy: MaterialTraversalStrategy = MaterialTraversalStrategy.LINEAR,
+        traversal_strategy: MaterialTraversalStrategy = MaterialTraversalStrategy.SCALED,
     ) -> Self:
         self.placer.feature_functions[feature] = func
         self.placer.traversal_strategies[feature] = traversal_strategy
@@ -80,6 +89,11 @@ class PalettePainter:
 
         return params
 
+    def get_traversal_strategies(
+        self,
+    ) -> dict[MaterialFeature, MaterialTraversalStrategy]:
+        return self.placer.get_traversal_strategies()
+
     def place_block(
         self,
         position: ivec3,
@@ -88,10 +102,31 @@ class PalettePainter:
         states: dict[str, str] | None = None,
         data: str | None = None,
     ):
+        params = self.placer.get_parameters(position)
+
         block_id = self.palette.find_block_id(
             form,
             role,
-            self.placer.get_parameters(position),
+            params,
             self.placer.get_traversal_strategies(),
         )
-        self.placer.editor.placeBlock(position, Block(block_id, states, data))
+        self.placer.editor.placeBlock(position, Block(block_id, states or {}, data))
+
+    def place_nbt(
+        self,
+        asset: NBTAsset,
+        transformation: Transformation,
+        place_air: bool = False,
+        allow_non_solid_replacement: bool = False,
+        build_map: Map | None = None,  # Required for some submodule calls
+    ):
+        build_nbt(
+            self.placer.editor,
+            asset,
+            self.palette,
+            transformation,
+            place_air,
+            allow_non_solid_replacement,
+            self,
+            build_map,
+        )

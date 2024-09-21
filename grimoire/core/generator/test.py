@@ -9,7 +9,7 @@ from grimoire.core.maps import Map
 
 
 def run_test(cls):
-    mod: TestModule = cls(None)
+    mod: TestModule = cls()
     mod.run_test()
     return cls
 

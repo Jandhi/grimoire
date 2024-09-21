@@ -129,19 +129,19 @@ class MaterialTraversalStrategy(Enum):
             if 0 <= value <= 0.5:
                 return 0
 
-            half_band_width = 1.0 / (1 / 2 + greater_range)
+            half_band_width = 0.5 / (1 + 2 * greater_range)
 
             index = int(((value - 0.5) / half_band_width + 1.0) / 2)
-            return index
+            return min(index, greater_range)
 
         if greater_range == 0:
             if value >= 0.5:
                 return 0
 
-            half_band_width = 1.0 / (1 / 2 + lesser_range)
+            half_band_width = 0.5 / (1 + 2 * lesser_range)
 
-            index = int(((value) / half_band_width + 1.0) / 2)
-            return index
+            index = int(((value - 0.5) / half_band_width - 1.0) / 2)
+            return max(index, -lesser_range)
 
         greater_scaling = 2 / ((4 + (1 / lesser_range)) * greater_range + 1)
         lesser_scaling = greater_scaling * greater_range / lesser_range

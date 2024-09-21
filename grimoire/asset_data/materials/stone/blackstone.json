@@ -3,7 +3,8 @@
   "type" : "material",
 
   "connections" : {
-    "shade" : [null, "smooth_basalt"]
+    "shade" : [null, "smooth_basalt"],
+    "wear" : ["cracked_polished_blackstone_bricks", null]
   },
 
   "blocks" : {

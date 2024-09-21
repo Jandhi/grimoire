@@ -1,15 +1,15 @@
 {
-  "name" : "bricks1",
+  "name" : "cracked_stone_bricks",
   "type" : "material",
 
   "connections" : {
-    "shade" : ["bricks2", null],
+    "shade" : ["cracked_deepslate_bricks", null],
     "moisture" : [null, "mossy_stone_bricks"],
-    "wear" : [null, "cracked_stone_bricks"]
+    "wear" : ["bricks1", "cobblestone"]
   },
 
   "blocks" : {
-    "block" : "stone_bricks",
+    "block" : "cracked_stone_bricks",
     "stairs" : "stone_brick_stairs",
     "slab" : "stone_brick_slab",
     "wall" : "stone_brick_wall"

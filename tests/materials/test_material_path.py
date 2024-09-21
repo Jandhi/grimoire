@@ -72,7 +72,7 @@ class MaterialPathTest(EditingTestModule):
 
         material: Material = Material.get("andesite")
         gradient = (
-            Gradient(1, self.build_map, perlin_settings=PerlinSettings(27, 6, 1.7, 0.1))
+            Gradient(1, self.build_map, 0.1, noise_settings=PerlinSettings(27, 6, 1.7))
             .with_axis(GradientAxis.x(0, self.world_slice.rect.size.x))
             .with_axis(GradientAxis.z(0, self.world_slice.rect.size.y))
         )

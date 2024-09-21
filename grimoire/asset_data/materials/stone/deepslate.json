@@ -1,14 +1,13 @@
 {
-  "name" : "cobbled_deepslate",
+  "name" : "deepslate",
   "type" : "material",
 
   "connections" : {
-    "shade" : ["smooth_basalt", "cobblestone"],
-    "wear" : ["cracked_deepslate_bricks", "deepslate"]
+    "wear" : ["cobbled_deepslate", null]
   },
 
   "blocks" : {
-    "block": "cobbled_deepslate",
+    "block": "deepslate",
     "stairs": "cobbled_deepslate_stairs",
     "slab": "cobbled_deepslate_slab",
     "wall": "cobbled_deepslate_wall"

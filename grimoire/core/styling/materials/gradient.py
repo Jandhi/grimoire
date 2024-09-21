@@ -18,8 +18,6 @@ class PerlinSettings:
     noise_layers: int
     # The ratio of how fast the higher perlin octaves fall off
     add_ratio: float
-    # The amount that the perlin is reflected with in the final result
-    strength: float
 
 
 @dataclasses.dataclass
@@ -27,43 +25,52 @@ class GradientAxis:
     axis: Axis
     min_val: int
     max_val: int
+    is_reversed: bool
 
     def find_gradient_value(self, pos: ivec3) -> float:
+        if self.max_val == self.min_val:
+            return 0.5
+
         base_val = self.axis.get(pos)
         grad_val = (base_val - self.min_val) / (self.max_val - self.min_val)
-        return clamp(grad_val, 0.0, 1.0)
+        if self.is_reversed:
+            return 1.0 - clamp(grad_val, 0.0, 1.0)
+        else:
+            return clamp(grad_val, 0.0, 1.0)
 
     @staticmethod
-    def x(min_val, max_val) -> "GradientAxis":
-        return GradientAxis(Axes.X, min_val, max_val)
+    def x(min_val, max_val, is_reversed=False) -> "GradientAxis":
+        return GradientAxis(Axes.X, min_val, max_val, is_reversed)
 
     @staticmethod
-    def y(min_val, max_val) -> "GradientAxis":
-        return GradientAxis(Axes.Y, min_val, max_val)
+    def y(min_val, max_val, is_reversed=False) -> "GradientAxis":
+        return GradientAxis(Axes.Y, min_val, max_val, is_reversed)
 
     @staticmethod
-    def z(min_val, max_val) -> "GradientAxis":
-        return GradientAxis(Axes.Z, min_val, max_val)
+    def z(min_val, max_val, is_reversed=False) -> "GradientAxis":
+        return GradientAxis(Axes.Z, min_val, max_val, is_reversed)
 
 
 class Gradient:
     default_perlin_settings = PerlinSettings(
-        base_octaves=27, noise_layers=6, add_ratio=1.7, strength=0.3
+        base_octaves=27, noise_layers=6, add_ratio=1.7
     )
 
     def __init__(
         self,
         seed,
-        map: Map,
-        perlin_settings: PerlinSettings = None,
+        build_map: Map,
+        noise_strength: float = 0.3,  # The amount that the perlin is reflected with in the final result
+        noise_settings: PerlinSettings = None,
     ):
         self.axes = []
-        self.map = map
+        self.map = build_map
+        self.noise_strength = noise_strength
 
-        if perlin_settings is None:
-            perlin_settings = Gradient.default_perlin_settings
+        if noise_settings is None:
+            noise_settings = Gradient.default_perlin_settings
 
-        self.perlin_settings = perlin_settings
+        self.perlin_settings = noise_settings
 
         self.noises = [
             PerlinNoise(octaves=self.perlin_settings.base_octaves * 2**i, seed=seed)
@@ -111,7 +118,7 @@ class Gradient:
         )
 
         return clamp(
-            lerp(grad_val, perlin_val, self.perlin_settings.strength),
+            lerp(grad_val, perlin_val, self.noise_strength),
             0.0,
             1.0,
         )

@@ -24,9 +24,9 @@ class MaterialFeature(Enum):
 
 FEATURE_TRAVERSAL_ORDER = [
     MaterialFeature.DECORATION,
+    MaterialFeature.SHADE,
     MaterialFeature.WEAR,
     MaterialFeature.MOISTURE,
-    MaterialFeature.SHADE,
 ]
 
 

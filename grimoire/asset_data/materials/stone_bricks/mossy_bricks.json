@@ -1,0 +1,15 @@
+{
+  "name" : "mossy_stone_bricks",
+  "type" : "material",
+
+  "connections" : {
+    "moisture" : ["bricks1", "moss_stone"]
+  },
+
+  "blocks" : {
+    "block" : "mossy_stone_bricks",
+    "stairs" : "mossy_stone_brick_stairs",
+    "slab" : "mossy_stone_brick_slab",
+    "wall" : "mossy_stone_brick_wall"
+  }
+}
