@@ -1,7 +1,9 @@
 {
   "name" : "sandstone",
   "type" : "material",
-  "dithering_pattern" : "random",
+
+  "connections" : {},
+
   "blocks" : {
     "block" : "sandstone",
     "stairs" : "sandstone_stairs",
