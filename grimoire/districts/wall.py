@@ -230,33 +230,8 @@ def build_wall_standard(
     for i, wall_point in enumerate(wall_points):
         point = wall_point[0]
 
-        moisture_func = remap_threshold_high(
-            Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
-            .with_axis(GradientAxis.y(height_map[point.x, point.z], point.y, True))
-            .to_func(),
-            0.3,
-        )
-
-        wear_func = remap_threshold_high(
-            Gradient(17, build_map, 0.8, PerlinSettings(20, 8, 2))
-            .with_axis(GradientAxis.y(height_map[point.x, point.z], point.y, True))
-            .to_func(),
-            0.5,
-        )
-
-        painter = (
-            PalettePainter(editor, palette)
-            .with_feature(
-                MaterialFeature.SHADE,
-                Gradient(10, build_map, noise_settings=PerlinSettings(20, 8, 2))
-                .with_axis(GradientAxis.y(height_map[point.x, point.z], point.y))
-                .to_func(),
-            )
-            .with_feature(
-                MaterialFeature.MOISTURE,
-                moisture_func,
-            )
-            .with_feature(MaterialFeature.WEAR, wear_func)
+        painter = create_wall_painter(
+            editor, palette, build_map, height_map[point.x, point.z], point.y
         )
 
         if wall_point[2] == "water":
@@ -350,33 +325,8 @@ def build_wall_standard_with_inner(
             continue
         else:
 
-            moisture_func = remap_threshold_high(
-                Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
-                .with_axis(GradientAxis.y(height_map[point.x, point.z], point.y, True))
-                .to_func(),
-                0.3,
-            )
-
-            wear_func = remap_threshold_high(
-                Gradient(17, build_map, 0.8, PerlinSettings(20, 8, 2))
-                .with_axis(GradientAxis.y(height_map[point.x, point.z], point.y, True))
-                .to_func(),
-                0.5,
-            )
-
-            painter = (
-                PalettePainter(editor, palette)
-                .with_feature(
-                    MaterialFeature.SHADE,
-                    Gradient(10, build_map, noise_settings=PerlinSettings(20, 8, 2))
-                    .with_axis(GradientAxis.y(height_map[point.x, point.z], point.y))
-                    .to_func(),
-                )
-                .with_feature(
-                    MaterialFeature.MOISTURE,
-                    moisture_func,
-                )
-                .with_feature(MaterialFeature.WEAR, wear_func)
+            painter = create_wall_painter(
+                editor, palette, build_map, height_map[point.x, point.z], point.y
             )
 
             # check if need to fill in this wall slice
@@ -492,33 +442,8 @@ def build_wall_standard_with_inner(
                             )
 
     for pt in inner_wall_list:
-        moisture_func = remap_threshold_high(
-            Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
-            .with_axis(GradientAxis.y(height_map[pt.x, pt.z], pt.y, True))
-            .to_func(),
-            0.3,
-        )
-
-        wear_func = remap_threshold_high(
-            Gradient(17, build_map, 0.8, PerlinSettings(20, 8, 2))
-            .with_axis(GradientAxis.y(height_map[pt.x, pt.z], pt.y, True))
-            .to_func(),
-            0.5,
-        )
-
-        painter = (
-            PalettePainter(editor, palette)
-            .with_feature(
-                MaterialFeature.SHADE,
-                Gradient(10, build_map, noise_settings=PerlinSettings(20, 8, 2))
-                .with_axis(GradientAxis.y(height_map[pt.x, pt.z], pt.y))
-                .to_func(),
-            )
-            .with_feature(
-                MaterialFeature.MOISTURE,
-                moisture_func,
-            )
-            .with_feature(MaterialFeature.WEAR, wear_func)
+        painter = create_wall_painter(
+            editor, palette, build_map, height_map[pt.x, pt.z], pt.y
         )
 
         if (
@@ -761,6 +686,39 @@ def fill_water(pt: ivec2, editor: Editor, height_map: dict, world_slice: WorldSl
         height = height - 1
 
 
+def create_wall_painter(
+    editor: Editor, palette: Palette, build_map: Map, lowest_y: int, highest_y: int
+) -> PalettePainter:
+    moisture_func = remap_threshold_high(
+        Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
+        .with_axis(GradientAxis.y(lowest_y, highest_y, True))
+        .to_func(),
+        0.3,
+    )
+
+    wear_func = remap_threshold_high(
+        Gradient(17, build_map, 0.8, PerlinSettings(40, 8, 2))
+        .with_axis(GradientAxis.y(lowest_y, highest_y, True))
+        .to_func(),
+        0.3,
+    )
+
+    return (
+        PalettePainter(editor, palette)
+        .with_feature(
+            MaterialFeature.SHADE,
+            Gradient(10, build_map, noise_settings=PerlinSettings(20, 8, 2))
+            .with_axis(GradientAxis.y(lowest_y, highest_y))
+            .to_func(),
+        )
+        .with_feature(
+            MaterialFeature.MOISTURE,
+            moisture_func,
+        )
+        .with_feature(MaterialFeature.WEAR, wear_func)
+    )
+
+
 def add_towers(
     walkway_list: list[ivec2],
     walkway_dict: dict,
@@ -781,8 +739,6 @@ def add_towers(
         palette=Palette.get("wall_palette"),
     )
 
-    painter = PalettePainter(editor, palette)
-
     for point in walkway_list:
         if tower_possible == 0:
             # print("tower possible")
@@ -791,39 +747,8 @@ def add_towers(
 
                 point_height = round(walkway_dict.get(point))
 
-                moisture_func = remap_threshold_high(
-                    Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
-                    .with_axis(
-                        GradientAxis.y(build_map.height_at(point), point_height, True)
-                    )
-                    .to_func(),
-                    0.3,
-                )
-
-                wear_func = remap_threshold_high(
-                    Gradient(17, build_map, 0.8, PerlinSettings(20, 8, 2))
-                    .with_axis(
-                        GradientAxis.y(build_map.height_at(point), point_height, True)
-                    )
-                    .to_func(),
-                    0.5,
-                )
-
-                painter = (
-                    PalettePainter(editor, palette)
-                    .with_feature(
-                        MaterialFeature.SHADE,
-                        Gradient(10, build_map, noise_settings=PerlinSettings(20, 8, 2))
-                        .with_axis(
-                            GradientAxis.y(build_map.height_at(point), point_height)
-                        )
-                        .to_func(),
-                    )
-                    .with_feature(
-                        MaterialFeature.MOISTURE,
-                        moisture_func,
-                    )
-                    .with_feature(MaterialFeature.WEAR, wear_func)
+                painter = create_wall_painter(
+                    editor, palette, build_map, build_map.height_at(point), point_height
                 )
 
                 # prep tower base

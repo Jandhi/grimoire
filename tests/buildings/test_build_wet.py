@@ -19,15 +19,8 @@ SEED = 35425
 from gdpc.editor import Editor
 from grimoire.core.structures.grid import Grid
 from grimoire.buildings.walls.wall import Wall
-
-# from buildings.roofs.roof import Roof
 from grimoire.buildings.rooms.room import Room
-
-
 from grimoire.core.assets.asset_loader import load_assets
-
-from grimoire.core.styling.legacy_palette import LegacyPalette
-from grimoire.buildings.roofs.roof import Roof
 
 editor = Editor(buffering=True, caching=True)
 
