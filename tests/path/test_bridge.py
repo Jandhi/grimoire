@@ -25,7 +25,7 @@ class TestBridge(TestModule):
         load_types()
         load_assets("grimoire/asset_data", parent_module=self)
 
-        SEED = 36322
+        SEED = 0xFAA33
 
         editor = Editor(buffering=True, bufferLimit=5, caching=True)
 
@@ -48,7 +48,7 @@ class TestBridge(TestModule):
         bridge_length = length(end - start)
 
         BridgeBuilder(
-            self, editor, palette, start, end, int(bridge_length**0.5 / 2), 4
+            self, editor, build_map, palette, start, end, int(bridge_length**0.5 / 2), 4
         ).run()
 
         editor.placeBlock(start, Block("red_wool"))

@@ -159,7 +159,10 @@ class Asset(metaclass=AssetMeta):
     @classmethod
     def get(cls, name):
         val = cls.find(name)
-        assert (val is not None, f'The {cls.type_name} "{name}" was not found')
+
+        if val is None:
+            raise AssetError(f'Asset {cls.type_name} "{name}" was not found')
+
         return val
 
     # This is used to create an asset without raising an exception on failure
