@@ -45,11 +45,11 @@ from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.terrain.tree_cutter import log_trees
 
 SEED = 0x4473
-DO_TERRAFORMING = True  # Set this to true for the final iteration
-LOG_TREES = True
+DO_TERRAFORMING = False  # Set this to true for the final iteration
+LOG_TREES = False
 DO_WALL = True
-DO_RURAL = True  # Not worth it
-DO_URBAN = True
+DO_RURAL = False  # Not worth it
+DO_URBAN = False
 RESET_AFTER_TEST = False  # FIXME: Restoration crashes
 
 BUFFER_LIMIT = 32
@@ -215,10 +215,10 @@ editor.runCommand("gamerule randomTickSpeed 0")
 if DO_RURAL:
     permit_blocks = DIRTS
 
-    farmland: PaintPalette = PaintPalette.find("farmland")
+    farmland: PaintPalette = PaintPalette.get("farmland")
     forests = Forest.all()
     crops = list(filter(lambda palette: "crops" in palette.tags, PaintPalette.all()))
-    rural_road: PaintPalette = PaintPalette.find("rural_road")
+    rural_road: PaintPalette = PaintPalette.get("rural_road")
 
     options = forests + crops
 
@@ -334,7 +334,7 @@ if DO_WALL:
             inner_points,
             editor,
             world_slice,
-            main_map.water,
+            main_map,
             rng,
             palette,
         )

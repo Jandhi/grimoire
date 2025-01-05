@@ -1,18 +1,13 @@
 from gdpc import Block, Editor, WorldSlice
-from gdpc.vector_tools import ivec2, ivec3
+from gdpc.vector_tools import ivec2, ivec3, dropY
 
 from grimoire.core.styling.legacy_palette import LegacyPalette, fix_block_name
-from grimoire.core.styling.materials.dithering import DitheringPattern
 from grimoire.core.styling.materials.gradient import (
     Gradient,
     GradientAxis,
     PerlinSettings,
 )
-from grimoire.core.styling.materials.material import (
-    BasicMaterial,
-    Material,
-    MaterialParameters,
-)
+from ..core.maps import Map
 
 from ..core.noise.random import randrange
 from ..core.noise.rng import RNG
@@ -27,6 +22,11 @@ from ..core.structures.legacy_directions import (
     vector,
 )
 from ..core.styling.blockform import BlockForm
+from ..core.styling.materials import placer
+from ..core.styling.materials.material import MaterialFeature, Material
+from ..core.styling.materials.painter import PalettePainter
+from ..core.styling.materials.placer import Placer
+from ..core.styling.materials.traversal import MaterialTraversalStrategy
 from ..core.styling.palette import Palette, MaterialRole
 from ..core.utils.geometry import (
     get_neighbours_in_set,
@@ -46,6 +46,7 @@ from ..core.utils.geometry import (
     is_straight_ivec2,
 )
 from ..core.utils.misc import is_water
+from ..core.utils.remap import remap_threshold_high
 from ..districts.gate import Gate, add_gates
 
 
@@ -151,6 +152,7 @@ def build_wall_palisade(
     water_map: dict,
     rng: RNG,
     palette: Palette,
+    build_map: Map,
 ) -> list[Gate]:
 
     # TODO cleanup the wall_points here to match the format mostly in the other build wall functions, then readress the build gate and can make it cleaner
@@ -182,13 +184,6 @@ def build_wall_palisade(
 
                 wood = palette.find_block_id(
                     BlockForm.BLOCK,
-                    MaterialParameters(
-                        position=ivec3(point[0], y, point[2]),
-                        age=0,
-                        shade=0.5,
-                        moisture=0,
-                        dithering_pattern=None,
-                    ),
                     MaterialRole.PILLAR,
                 )
 
@@ -196,13 +191,6 @@ def build_wall_palisade(
 
             wood = palette.find_block_id(
                 BlockForm.FENCE,
-                MaterialParameters(
-                    position=ivec3(point[0], point[1] + point[3], point[2]),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
                 MaterialRole.SECONDARY_WOOD,
             )
 
@@ -212,7 +200,7 @@ def build_wall_palisade(
             )
 
     return add_gates(
-        unordered_wall_points, editor, world_slice, True, None, True, palette=palette
+        unordered_wall_points, editor, world_slice, True, None, palette, build_map, True
     )
 
 
@@ -222,12 +210,12 @@ def build_wall_standard(
     inner_points: list[ivec2],
     editor: Editor,
     world_slice: WorldSlice,
-    water_map: dict,
+    build_map: Map,
     palette: Palette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
-    wall_points = check_water(wall_points, water_map)
+    wall_points = check_water(wall_points, build_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
     previous_dir = NORTH
@@ -237,18 +225,15 @@ def build_wall_standard(
     )  # idea is to get this list and then get the new inner points of hte wall, how do I get height to those
     walkway_dict: dict = {}
 
-    # temp
-    material: BasicMaterial = Material.find("cobblestone")
-    material.dithering_pattern = DitheringPattern.RANDOM_EASE_CUBIC
-
     rng = RNG(0)
 
     for i, wall_point in enumerate(wall_points):
         point = wall_point[0]
-        gradient = Gradient(
-            0,
-            PerlinSettings(8, 6, 2, 0.3),
-        ).with_axis(GradientAxis.y(height_map[point.x, point.z], point.y))
+
+        painter = create_wall_painter(
+            editor, palette, build_map, height_map[point.x, point.z], point.y
+        )
+
         if wall_point[2] == "water":
             continue
         else:
@@ -256,40 +241,23 @@ def build_wall_standard(
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                material.place_block(
-                    editor,
+                painter.place_block(
+                    ivec3(point.x, y, point.z),
+                    MaterialRole.PRIMARY_STONE,
                     BlockForm.BLOCK,
-                    {},
-                    None,
-                    MaterialParameters(
-                        position=ivec3(point.x, y, point.z),
-                        shade=gradient.calculate_value(ivec3(point.x, y, point.z)),
-                        age=0,
-                        moisture=0,
-                        dithering_pattern=DitheringPattern.RANDOM_EASE_QUINT,
-                    ),
                 )
 
                 # editor.placeBlock((point.x, y, point.z), Block(full_block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
 
-            block = palette.find_block_id(
-                BlockForm.STAIRS,
-                MaterialParameters(
-                    position=ivec3(point.x, point.y + 1, point.z),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
+            painter.place_block(
+                ivec3(point.x, point.y + 1, point.z),
                 MaterialRole.PRIMARY_STONE,
+                BlockForm.STAIRS,
+                states={"facing": to_text(RIGHT[previous_dir])},
             )
 
-            editor.placeBlock(
-                (point.x, point.y + 1, point.z),
-                Block(f"{block}[facing={to_text(RIGHT[previous_dir])}]"),
-            )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
                 if i not in [0, len(wall_points) - 1]:
@@ -322,7 +290,7 @@ def build_wall_standard(
                         )
 
     flatten_walkway(walkway_list, walkway_dict, editor, palette=palette)
-    return add_gates(wall_points, editor, world_slice, True, None, palette=palette)
+    return add_gates(wall_points, editor, world_slice, True, None, palette, build_map)
 
 
 def build_wall_standard_with_inner(
@@ -331,13 +299,13 @@ def build_wall_standard_with_inner(
     inner_points: list[ivec2],
     editor: Editor,
     world_slice: WorldSlice,
-    water_map: list[list[bool]],
+    build_map: Map,
     rng: RNG,
     palette: Palette,
 ) -> list[Gate]:
     wall_points = add_wall_points_height(wall_points, world_slice)
     wall_points = add_wall_points_directionality(wall_points, wall_dict, inner_points)
-    wall_points = check_water(wall_points, water_map)
+    wall_points = check_water(wall_points, build_map)
     height_map = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"]
 
     previous_dir = NORTH
@@ -356,6 +324,11 @@ def build_wall_standard_with_inner(
         if wall_point[2] == "water":
             continue
         else:
+
+            painter = create_wall_painter(
+                editor, palette, build_map, height_map[point.x, point.z], point.y
+            )
+
             # check if need to fill in this wall slice
             if (
                 i == 0
@@ -371,38 +344,21 @@ def build_wall_standard_with_inner(
                 fill_water(ivec2(point.x, point.z), editor, height_map, world_slice)
 
             for y in range(height_map[point.x, point.z], point.y + 1):
-                block = palette.find_block_id(
-                    BlockForm.BLOCK,
-                    MaterialParameters(
-                        position=ivec3(point.x, y, point.z),
-                        age=0,
-                        shade=0.5,
-                        moisture=0,
-                        dithering_pattern=None,
-                    ),
+                painter.place_block(
+                    ivec3(point.x, y, point.z),
                     MaterialRole.PRIMARY_STONE,
+                    BlockForm.BLOCK,
                 )
-
-                editor.placeBlock((point.x, y, point.z), Block(block))
             if len(wall_point[1]) != 0:
                 previous_dir = wall_point[1][0]
 
-            block = palette.find_block_id(
-                BlockForm.STAIRS,
-                MaterialParameters(
-                    position=ivec3(point.x, point.y + 1, point.z),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
+            painter.place_block(
+                ivec3(point.x, point.y + 1, point.z),
                 MaterialRole.PRIMARY_STONE,
+                BlockForm.STAIRS,
+                states={"facing": to_text(RIGHT[previous_dir])},
             )
 
-            editor.placeBlock(
-                (point.x, point.y + 1, point.z),
-                Block(f"{block}[facing={to_text(RIGHT[previous_dir])}]"),
-            )
             for dir in wall_point[1]:
                 height_modifier = 0  # used in one case to alter height of walkway
                 if i not in [0, len(wall_points) - 1]:
@@ -426,20 +382,12 @@ def build_wall_standard_with_inner(
                             )
                         if fill_in:
                             for y in range(height_map[new_pt.x, new_pt.z], point.y):
-                                block = palette.find_block_id(
-                                    BlockForm.BLOCK,
-                                    MaterialParameters(
-                                        position=ivec3(new_pt.x, y, new_pt.z),
-                                        age=0,
-                                        shade=0.5,
-                                        moisture=0,
-                                        dithering_pattern=None,
-                                    ),
+                                painter.place_block(
+                                    ivec3(new_pt.x, y, new_pt.z),
                                     MaterialRole.PRIMARY_STONE,
+                                    BlockForm.BLOCK,
                                 )
-
-                                editor.placeBlock((new_pt.x, y, new_pt.z), Block(block))
-                            if water_map[new_pt.x][new_pt.z] == True:
+                            if build_map.water_at(new_pt.xz):
                                 fill_water(
                                     ivec2(new_pt.x, new_pt.z),
                                     editor,
@@ -480,20 +428,12 @@ def build_wall_standard_with_inner(
                                 )
                     if fill_in:
                         for y in range(height_map[new_pt.x, new_pt.z], point.y):
-                            block = palette.find_block_id(
-                                BlockForm.BLOCK,
-                                MaterialParameters(
-                                    position=ivec3(new_pt.x, y, new_pt.z),
-                                    age=0,
-                                    shade=0.5,
-                                    moisture=0,
-                                    dithering_pattern=None,
-                                ),
+                            painter.place_block(
+                                ivec3(new_pt.x, y, new_pt.z),
                                 MaterialRole.PRIMARY_STONE,
+                                BlockForm.BLOCK,
                             )
-
-                            editor.placeBlock((new_pt.x, y, new_pt.z), Block(block))
-                        if water_map[new_pt.x][new_pt.z] == True:
+                        if build_map.water_at(new_pt.xz):
                             fill_water(
                                 ivec2(new_pt.x, new_pt.z),
                                 editor,
@@ -502,6 +442,10 @@ def build_wall_standard_with_inner(
                             )
 
     for pt in inner_wall_list:
+        painter = create_wall_painter(
+            editor, palette, build_map, height_map[pt.x, pt.z], pt.y
+        )
+
         if (
             walkway_dict.get(ivec2(pt.x, pt.z)) is None
         ):  # check again since walkway was not completed as inner wall was being added
@@ -509,28 +453,24 @@ def build_wall_standard_with_inner(
                 True  # can put something else here if needed
             )
             for y in range(height_map[pt.x, pt.z], pt.y + 1):
-                block = palette.find_block_id(
-                    BlockForm.BLOCK,
-                    MaterialParameters(
-                        position=ivec3(pt.x, y, pt.z),
-                        age=0,
-                        shade=0.5,
-                        moisture=0,
-                        dithering_pattern=None,
-                    ),
-                    MaterialRole.PRIMARY_STONE,
+                painter.place_block(
+                    ivec3(pt.x, y, pt.z), MaterialRole.PRIMARY_STONE, BlockForm.BLOCK
                 )
-
-                editor.placeBlock((pt.x, y, pt.z), Block(block))
-            if (
-                water_map[pt.x][pt.z] == True
+            if build_map.water_at(
+                pt.xz
             ):  # behaviour is to place inner wall into water til floor
                 fill_water(ivec2(pt.x, pt.z), editor, height_map, world_slice)
 
     walkway_dict = flatten_walkway(walkway_list, walkway_dict, editor, palette=palette)
-    add_towers(walkway_list, walkway_dict, editor, rng, palette)
+    add_towers(walkway_list, walkway_dict, editor, rng, palette, build_map)
     return add_gates(
-        wall_points, editor, world_slice, False, inner_wall_dict, palette=palette
+        wall_points,
+        editor,
+        world_slice,
+        False,
+        inner_wall_dict,
+        palette=palette,
+        build_map=build_map,
     )
 
 
@@ -615,6 +555,8 @@ def flatten_walkway(
     for point in walkway_list:
         walkway_dict[point] = average_neighbour_height(point.x, point.y, walkway_dict)
 
+    painter = PalettePainter(editor, palette)
+
     # first pass places slabs and changes dict heights
     for key, height in walkway_dict.items():
         if (
@@ -622,53 +564,27 @@ def flatten_walkway(
             or not 0.25 < height % 1 <= 0.5
             and not 0.5 < height % 1 <= 0.75
         ):
-            slab = palette.find_block_id(
-                BlockForm.SLAB,
-                MaterialParameters(
-                    position=ivec3(key.x, round(height), key.y),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
+            painter.place_block(
+                ivec3(key.x, round(height), key.y),
                 MaterialRole.SECONDARY_WOOD,
+                BlockForm.SLAB,
             )
 
-            editor.placeBlock((key.x, round(height), key.y), Block(slab))
             walkway_dict[key] = round(height)
         elif 0.25 < height % 1 <= 0.5:
-            slab = palette.find_block_id(
-                BlockForm.SLAB,
-                MaterialParameters(
-                    position=ivec3(key.x, round(height), key.y),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
+            painter.place_block(
+                ivec3(key.x, round(height), key.y),
                 MaterialRole.SECONDARY_WOOD,
-            )
-
-            editor.placeBlock(
-                (key.x, round(height), key.y), Block(f"minecraft:{slab}[type=top]")
+                BlockForm.SLAB,
+                states={"type": "top"},
             )
             walkway_dict[key] = round(height) + 0.49
         else:
-            slab = palette.find_block_id(
-                BlockForm.SLAB,
-                MaterialParameters(
-                    position=ivec3(key.x, round(height) - 1, key.y),
-                    age=0,
-                    shade=0.5,
-                    moisture=0,
-                    dithering_pattern=None,
-                ),
+            painter.place_block(
+                ivec3(key.x, round(height) - 1, key.y),
                 MaterialRole.SECONDARY_WOOD,
-            )
-
-            editor.placeBlock(
-                (key.x, round(height) - 1, key.y),
-                Block(f"minecraft:{slab}[type=top]"),
+                BlockForm.SLAB,
+                states={"type": "top"},
             )
             walkway_dict[key] = round(height) - 0.51
     # 2nd pass to add stairs based on first pass changes
@@ -681,38 +597,18 @@ def flatten_walkway(
                 continue
             elif height % 1 == 0:  # bottom slab
                 if walkway_dict.get(neighbour) - height >= 1:
-                    stairs = palette.find_block_id(
-                        BlockForm.STAIRS,
-                        MaterialParameters(
-                            position=ivec3(key.x, round(height), key.y),
-                            age=0,
-                            shade=0.5,
-                            moisture=0,
-                            dithering_pattern=None,
-                        ),
+                    painter.place_block(
+                        ivec3(key.x, round(height), key.y),
                         MaterialRole.SECONDARY_WOOD,
-                    )
-
-                    editor.placeBlock(
-                        (key.x, round(height), key.y),
-                        Block(f"minecraft:{stairs}[facing={to_text(direction)}]"),
+                        BlockForm.STAIRS,
+                        states={"facing": to_text(direction)},
                     )
             elif walkway_dict.get(neighbour) - height <= -1:
-                stairs = palette.find_block_id(
-                    BlockForm.STAIRS,
-                    MaterialParameters(
-                        position=ivec3(key.x, round(height), key.y),
-                        age=0,
-                        shade=0.5,
-                        moisture=0,
-                        dithering_pattern=None,
-                    ),
+                painter.place_block(
+                    ivec3(key.x, round(height), key.y),
                     MaterialRole.SECONDARY_WOOD,
-                )
-
-                editor.placeBlock(
-                    (key.x, round(height), key.y),
-                    Block(f"minecraft:{stairs}[facing={to_text(opposite(direction))}]"),
+                    BlockForm.STAIRS,
+                    states={"facing": to_text(opposite(direction))},
                 )
 
     return walkway_dict
@@ -745,15 +641,15 @@ WATER_CHECK = 5  # the water the distance the wall will build across
 
 
 # water checking
-def check_water(wall_points: list, water_map: dict):
+def check_water(wall_points: list[ivec3], build_map: Map):
     buildable = False  # bool, if true, set to water_wall, water otherwise
     long_water = (
         True  # assume water start NOTE: changed hardcoding so wall can spawn in water
     )
     for i, wall_pt in enumerate(wall_points):
-        point = wall_pt[0]
+        point: ivec3 = wall_pt[0]
 
-        if water_map[point.x][point.z] == True:
+        if build_map.water_at(dropY(point)):
             wall_points[i][2] = "water_wall"
 
             # more complex attempt at having wall be able to bridge some water, implement better later
@@ -762,21 +658,21 @@ def check_water(wall_points: list, water_map: dict):
             #     wall_points[i][2] = "water"
             # elif buildable:
             #     wall_points[i][2] = "water_wall"
-
+            #
             # else:  # check if can bridge
             #     wall_points[i][2] = "water"  # default
             #     for a in range(1, WATER_CHECK + 1):
             #         if a + i >= len(wall_points):  # OUT OF BOUNDS
             #             break
             #         pt = wall_points[a + i][0]
-            #         if water_map[pt.x][pt.z] == False:  # found land within range
+            #         if not build_map.water_at(point.xz):  # found land within range
             #             buildable = True
             #             long_water = False
             #             wall_points[i][2] = "water_wall"
             #             break
             #         elif a == WATER_CHECK:
             #             long_water = True
-        elif water_map[point.x][point.z] == False:
+        else:
             buildable = False  # reset buildability
             long_water = False
 
@@ -790,12 +686,46 @@ def fill_water(pt: ivec2, editor: Editor, height_map: dict, world_slice: WorldSl
         height = height - 1
 
 
+def create_wall_painter(
+    editor: Editor, palette: Palette, build_map: Map, lowest_y: int, highest_y: int
+) -> PalettePainter:
+    moisture_func = remap_threshold_high(
+        Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
+        .with_axis(GradientAxis.y(lowest_y, highest_y, True))
+        .to_func(),
+        0.3,
+    )
+
+    wear_func = remap_threshold_high(
+        Gradient(17, build_map, 0.8, PerlinSettings(40, 8, 2))
+        .with_axis(GradientAxis.y(lowest_y, highest_y, True))
+        .to_func(),
+        0.3,
+    )
+
+    return (
+        PalettePainter(editor, palette)
+        .with_feature(
+            MaterialFeature.SHADE,
+            Gradient(10, build_map, noise_settings=PerlinSettings(20, 8, 2))
+            .with_axis(GradientAxis.y(lowest_y, highest_y))
+            .to_func(),
+        )
+        .with_feature(
+            MaterialFeature.MOISTURE,
+            moisture_func,
+        )
+        .with_feature(MaterialFeature.WEAR, wear_func)
+    )
+
+
 def add_towers(
     walkway_list: list[ivec2],
     walkway_dict: dict,
     editor: Editor,
     rng: RNG,
     palette: Palette,
+    build_map: Map,
 ):
     distance_to_next_tower = 80  # minimum
     tower_possible = randrange(
@@ -806,7 +736,7 @@ def add_towers(
         type="tower",
         filepath="grimoire/asset_data/city_wall/towers/basic_tower.nbt",
         origin=(3, 1, 3),
-        palette=Palette.find("wall_palette"),
+        palette=Palette.get("wall_palette"),
     )
 
     for point in walkway_list:
@@ -814,45 +744,40 @@ def add_towers(
             # print("tower possible")
             if is_point_surrounded_dict(point, walkway_dict):
                 tower_possible = distance_to_next_tower
+
+                point_height = round(walkway_dict.get(point))
+
+                painter = create_wall_painter(
+                    editor, palette, build_map, build_map.height_at(point), point_height
+                )
+
                 # prep tower base
                 neighbours = [
                     ivec2(x, z)
                     for x in range(point.x - 2, point.x + 3)
                     for z in range(point.y - 2, point.y + 3)
                 ]
-                point_height = round(walkway_dict.get(point))
+
                 for neighbour in neighbours:
                     for height in range(point_height - 1, point_height + 6):
                         if (
                             height == point_height + 5
                             or walkway_dict.get(neighbour) is None
                         ):
-                            block = palette.find_block_id(
-                                BlockForm.BLOCK,
-                                MaterialParameters(
-                                    position=ivec3(neighbour.x, height, neighbour.y),
-                                    age=0,
-                                    shade=0.5,
-                                    moisture=0,
-                                    dithering_pattern=None,
-                                ),
+                            painter.place_block(
+                                ivec3(neighbour.x, height, neighbour.y),
                                 MaterialRole.PRIMARY_STONE,
-                            )
-
-                            editor.placeBlock(
-                                (neighbour.x, height, neighbour.y), Block(block)
+                                BlockForm.BLOCK,
                             )
 
                 # build tower
-                build_nbt(
-                    editor=editor,
+                painter.place_nbt(
                     asset=tower,
                     transformation=Transformation(
                         offset=ivec3(point.x, point_height + 6, point.y),
                         mirror=(True, False, False),
                         # diagonal_mirror=True,
                     ),
-                    palette=palette,
                 )
                 # else:
                 #    print("actually it isnt")

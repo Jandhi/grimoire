@@ -31,7 +31,7 @@ from ..core.structures.legacy_directions import (
 )
 from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.gradient import Gradient, GradientAxis
-from ..core.styling.materials.material import MaterialParameters
+from ..core.styling.materials.material import MaterialFeature
 from ..core.styling.palette import MaterialRole, Palette
 from ..core.utils.geometry import get_surrounding_points
 from ..core.utils.sets.set_operations import find_outline
@@ -268,7 +268,7 @@ def place_building(
     palette: Palette = (
         rng.choose(district.palettes)
         if district and district.palettes
-        else Palette.find("japanese_dark_blackstone")
+        else Palette.get("japanese_dark_blackstone")
     )
 
     plan = BuildingPlan(shape.points.copy(), grid, palette)
@@ -311,7 +311,7 @@ def place_building(
 
             grid_height = grid.get_floor(point, plan.shape) + 1
 
-            gradient = Gradient(rng.next()).with_axis(
+            gradient = Gradient(rng.next(), build_map).with_axis(
                 GradientAxis.y(world_height, grid_height)
             )
 
@@ -322,14 +322,8 @@ def place_building(
 
                 stone = palette.find_block_id(
                     BlockForm.BLOCK,
-                    MaterialParameters(
-                        position=pos,
-                        age=0,
-                        shade=shade,
-                        moisture=0,
-                        dithering_pattern=None,
-                    ),
                     MaterialRole.FOUNDATION,
+                    {MaterialFeature.SHADE: shade},
                 )
 
                 editor.placeBlock(
@@ -346,6 +340,7 @@ def place_building(
             if style.name.lower() in component.tags
         ],
         rng.next(),
+        build_map,
     )
 
     # Clear the area
@@ -395,4 +390,4 @@ def place_building(
         except:
             pass
 
-    build_walls(plan, editor, walls, rng)
+    build_walls(plan, editor, walls, rng, build_map)

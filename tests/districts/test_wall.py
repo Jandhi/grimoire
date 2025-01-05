@@ -6,7 +6,7 @@ sys.path[0] = sys.path[0].removesuffix("tests\\districts")
 
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec2
-from grimoire.core.maps import get_water_map
+from grimoire.core.maps import get_water_map, Map
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.core.utils.geometry import get_outer_points
 from grimoire.districts.wall import (
@@ -32,8 +32,8 @@ world_slice = editor.loadWorldSlice(build_rect)
 print("World slice loaded!")
 
 
-water_map = get_water_map(world_slice)
-districts, district_map = generate_districts(SEED, build_rect, world_slice, water_map)
+build_map = Map(world_slice)
+districts, district_map = generate_districts(SEED, build_rect, world_slice, build_map)
 
 # draw_districts(districts, build_rect, district_map, water_map, world_slice, editor)
 
@@ -44,10 +44,10 @@ def place_at_ground(x, z, block_name):
 
 
 def replace_ground(
-    points: list[ivec2], block_dict: dict[any, int], rng: RNG, water_map
+    points: list[ivec2], block_dict: dict[any, int], rng: RNG, build_map: Map
 ):
     for point in points:
-        if water_map[point.x][point.y] == False:
+        if build_map.water_at(point):
             block = rng.choose_weighted(block_dict)
             place_at_ground(point.x, point.y, block)
 
@@ -84,7 +84,7 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = LegacyPalette.find("japanese_dark_blackstone")
+palette = LegacyPalette.get("japanese_dark_blackstone")
 
 # uncomment one of these to story one of the three wall types
 
@@ -101,8 +101,8 @@ for wall_points in wall_points_list:
     # )
     # build_wall_palisade(wall_points, editor, world_slice, water_map, rng, palette)
     build_wall_standard(
-        wall_points, wall_dict, inner_points, editor, world_slice, water_map, palette
+        wall_points, wall_dict, inner_points, editor, world_slice, build_map, palette
     )
 
 # can use either test_blocks for more urban or test_blocks_dirt for dirty ground
-replace_ground(inner_points, test_blocks_dirt, rng, water_map)
+replace_ground(inner_points, test_blocks_dirt, rng, build_map)

@@ -34,7 +34,7 @@ build_map = get_build_map(world_slice, 20)
 load_assets(str(Path("grimoire/asset_data")))
 y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][0][0]
 
-well: AssetStructure = AssetStructure.find("well")
+well: AssetStructure = AssetStructure.get("well")
 
 print(well)
 # well

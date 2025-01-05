@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Callable
 
 from gdpc import Block
@@ -11,8 +12,21 @@ from .convert_schem import convert_schem
 from .nbt_asset import NBTAsset
 from ..transformation import Transformation
 from ...maps import Map
-from ...styling.materials.material import MaterialParameters, MaterialParameterFunction
+from ...styling.materials.material import MaterialFeature
+from ...styling.materials.traversal import MaterialTraversalStrategy
 from ...styling.palette import Palette, swap
+
+
+class ParameterGenerator(ABC):
+    @abstractmethod
+    def get_parameters(self, position: ivec3) -> dict[MaterialFeature, float]:
+        pass
+
+    @abstractmethod
+    def get_traversal_strategies(
+        self,
+    ) -> dict[MaterialFeature, MaterialTraversalStrategy]:
+        pass
 
 
 def build_nbt(
@@ -22,7 +36,7 @@ def build_nbt(
     transformation: Transformation = None,
     place_air: bool = False,
     allow_non_solid_replacement: bool = False,
-    material_params_func: MaterialParameterFunction | None = None,
+    parameter_generator: ParameterGenerator | None = None,
     build_map: Map | None = None,  # Required for some submodule calls
 ):
     """Constructs an NBTAsset given an editor and transformation
@@ -51,18 +65,6 @@ def build_nbt(
             continue
 
         x, y, z = transformation.apply_to_point(point=pos, asset=asset)
-        position = ivec3(x, y, z)
-        material_params = (
-            material_params_func.eval(position)
-            if material_params_func is not None
-            else MaterialParameters(
-                position=position,
-                shade=0.5,
-                age=0,
-                moisture=0,
-                dithering_pattern=None,
-            )
-        )
 
         # don't swap if either are null
         if asset.palette and palette:
@@ -73,7 +75,16 @@ def build_nbt(
                 block,
                 asset.palette,
                 palette,
-                material_params,
+                (
+                    parameter_generator.get_parameters(ivec3(x, y, z))
+                    if parameter_generator is not None
+                    else {}
+                ),
+                (
+                    parameter_generator.get_traversal_strategies()
+                    if parameter_generator is not None
+                    else {}
+                ),
             )
 
         # Doesn't allow non-solid blocks to replace blocks

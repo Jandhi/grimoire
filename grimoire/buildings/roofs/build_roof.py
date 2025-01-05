@@ -1,41 +1,42 @@
 from gdpc import Editor
 from gdpc.vector_tools import ivec3
+
+from ...core.maps import Map
 from ...core.noise.rng import RNG
 from ...core.structures.grid import Grid
 from ...core.structures.legacy_directions import EAST, NORTH, SOUTH, UP, WEST
 from ...core.structures.nbt.build_nbt import build_nbt_legacy, build_nbt
 from ...core.structures.transformation import Transformation
-from ...core.styling.materials.dithering import DitheringPattern
 from ...core.styling.materials.gradient import Gradient, PerlinSettings, GradientAxis
-from ...core.styling.materials.material import MaterialParameterFunction
+from ...core.styling.materials.material import MaterialFeature
+from ...core.styling.materials.placer import Placer
 from ...core.utils.vectors import y_ivec3
 from ..building_plan import BuildingPlan
 from .roof_component import CORNER, INNER, SIDE, RoofComponent
 
 
 def build_roof(
-    plan: BuildingPlan, editor: Editor, roofComponents: list[RoofComponent], seed: int
+    plan: BuildingPlan,
+    editor: Editor,
+    roofComponents: list[RoofComponent],
+    seed: int,
+    build_map: Map,
 ):
     grid: Grid = plan.grid
     rng = RNG(seed, "build_roof")
 
     shade_gradient = Gradient(
-        seed=rng.next(),
-        perlin_settings=PerlinSettings(
-            base_octaves=27, noise_layers=6, add_ratio=1.7, strength=0.2
-        ),
+        rng.next(),
+        build_map,
+        noise_settings=PerlinSettings(base_octaves=27, noise_layers=6, add_ratio=1.7),
     ).with_axis(
         GradientAxis.y(
             plan.grid.origin.y + plan.grid.height - 2,
             plan.grid.origin.y + plan.grid.height * 2,
         )
     )
-
-    material_params_func = MaterialParameterFunction(
-        shade_func=lambda point: shade_gradient.calculate_value(point),
-        age_func=lambda point: 0,
-        moisture_func=lambda point: 0,
-        dithering_pattern=DitheringPattern.RANDOM,
+    placer = Placer(editor).with_feature(
+        MaterialFeature.SHADE, shade_gradient.to_func()
     )
 
     def roof_is_shape(shape: str):
@@ -58,39 +59,32 @@ def build_roof(
 
         # northwest
         if cell.has_neighbour(NORTH) and cell.has_neighbour(WEST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 inner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(0, 0, 0),
                 ),
-                material_params_func=material_params_func,
             )
         elif not cell.has_neighbour(NORTH) and not cell.has_neighbour(WEST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 corner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(0, 0, 0),
                 ),
-                material_params_func=material_params_func,
             )
         elif cell.has_neighbour(NORTH) and not cell.has_neighbour(WEST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(0, 0, grid.depth // 2),
                     mirror=(False, False, True),
                 ),
-                material_params_func=material_params_func,
             )
         else:
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
@@ -98,46 +92,38 @@ def build_roof(
                     mirror=(False, False, True),
                     diagonal_mirror=True,
                 ),
-                material_params_func=material_params_func,
             )
 
         # northeast
         if cell.has_neighbour(NORTH) and cell.has_neighbour(EAST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 inner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(grid.width - 1, 0, 0),
                     mirror=(True, False, False),
                 ),
-                material_params_func=material_params_func,
             )
         elif not cell.has_neighbour(NORTH) and not cell.has_neighbour(EAST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 corner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(grid.width - 1, 0, 0),
                     mirror=(True, False, False),
                 ),
-                material_params_func=material_params_func,
             )
         elif cell.has_neighbour(NORTH) and not cell.has_neighbour(EAST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(grid.width - 1, 0, grid.depth // 2),
                     mirror=(True, False, True),
                 ),
-                material_params_func=material_params_func,
             )
         else:
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
@@ -145,46 +131,38 @@ def build_roof(
                     mirror=(False, False, False),
                     diagonal_mirror=True,
                 ),
-                material_params_func=material_params_func,
             )
 
         # southwest
         if cell.has_neighbour(SOUTH) and cell.has_neighbour(WEST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 inner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(0, 0, grid.depth - 1),
                     mirror=(False, False, True),
                 ),
-                material_params_func=material_params_func,
             )
         elif not cell.has_neighbour(SOUTH) and not cell.has_neighbour(WEST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 corner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(0, 0, grid.depth - 1),
                     mirror=(False, False, True),
                 ),
-                material_params_func=material_params_func,
             )
         elif cell.has_neighbour(SOUTH) and not cell.has_neighbour(WEST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(0, 0, grid.depth // 2),
                     mirror=(False, False, False),
                 ),
-                material_params_func=material_params_func,
             )
         else:
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
@@ -192,46 +170,38 @@ def build_roof(
                     mirror=(True, False, True),
                     diagonal_mirror=True,
                 ),
-                material_params_func=material_params_func,
             )
 
         # southeast
         if cell.has_neighbour(SOUTH) and cell.has_neighbour(EAST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 inner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(grid.width - 1, 0, grid.depth - 1),
                     mirror=(True, False, True),
                 ),
-                material_params_func=material_params_func,
             )
         elif not cell.has_neighbour(SOUTH) and not cell.has_neighbour(EAST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 corner,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(grid.width - 1, 0, grid.depth - 1),
                     mirror=(True, False, True),
                 ),
-                material_params_func=material_params_func,
             )
         elif cell.has_neighbour(SOUTH) and not cell.has_neighbour(EAST):
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
                     offset=coords + ivec3(grid.depth - 1, 0, grid.depth // 2),
                     mirror=(True, False, False),
                 ),
-                material_params_func=material_params_func,
             )
         else:
-            build_nbt(
-                editor,
+            placer.place_nbt(
                 side,
                 cell.plan.palette,
                 Transformation(
@@ -239,5 +209,4 @@ def build_roof(
                     mirror=(True, False, False),
                     diagonal_mirror=True,
                 ),
-                material_params_func=material_params_func,
             )

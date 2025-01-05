@@ -1,6 +1,7 @@
 {
   "name" : "oak",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "oak_planks",
     "stairs" : "oak_stairs",

@@ -1,14 +1,13 @@
 {
-  "name" : "cobblestone",
+  "name" : "gravel",
   "type" : "material",
 
   "connections" : {
-    "shade" : ["cobbled_deepslate", "andesite"],
-    "wear" : ["cracked_stone_bricks", "gravel"]
+    "wear" : ["cobblestone", null]
   },
 
   "blocks" : {
-    "block" : "cobblestone",
+    "block" : "gravel",
     "stairs" : "cobblestone_stairs",
     "slab" : "cobblestone_slab",
     "wall" : "cobblestone_wall"

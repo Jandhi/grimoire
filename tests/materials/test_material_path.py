@@ -4,6 +4,8 @@ import sys
 from gdpc.vector_tools import CARDINALS_2D
 
 from grimoire.core.styling.blockform import BlockForm
+from grimoire.core.styling.materials.painter import Placer
+from grimoire.core.styling.materials.traversal import MaterialTraversalStrategy
 from grimoire.core.utils.bounds import is_in_bounds2d
 
 sys.path[0] = sys.path[0].removesuffix("tests\\materials")
@@ -14,14 +16,16 @@ from glm import ivec3, ivec2
 
 from grimoire.core.generator.test import run_test, EditingTestModule
 from grimoire.core.logger import LoggerSettings, LoggingLevel
-from grimoire.core.styling.materials.dithering import DitheringPattern
-from grimoire.core.styling.materials.gradient import Gradient, PerlinSettings
+from grimoire.core.styling.materials.gradient import (
+    Gradient,
+    PerlinSettings,
+    GradientAxis,
+)
 from grimoire.core.noise.global_seed import GlobalSeed
 
 from grimoire.core.styling.materials.material import (
     Material,
-    BasicMaterial,
-    MaterialParameters,
+    MaterialFeature,
 )
 from grimoire.core.assets.asset_loader import load_assets
 
@@ -39,9 +43,6 @@ class MaterialPathTest(EditingTestModule):
             LoggerSettings(minimum_console_level=LoggingLevel.ERROR),
         )
         self.load_world()
-
-        material: BasicMaterial = Material.find("cobblestone")
-        gradient = Gradient(254, perlin_settings=PerlinSettings(23, 6, 1.6, 0.3))
 
         path = [
             ivec2(i, i)
@@ -69,6 +70,17 @@ class MaterialPathTest(EditingTestModule):
                 queue.append((neighbour, dist + 1))
                 visited.add(neighbour)
 
+        material: Material = Material.get("andesite")
+        gradient = (
+            Gradient(1, self.build_map, 0.1, noise_settings=PerlinSettings(27, 6, 1.7))
+            .with_axis(GradientAxis.x(0, self.world_slice.rect.size.x))
+            .with_axis(GradientAxis.z(0, self.world_slice.rect.size.y))
+        )
+
+        painter = Placer(self.editor).with_feature(
+            MaterialFeature.SHADE, gradient.to_func(), MaterialTraversalStrategy.SCALED
+        )
+
         for point, dist in points:
             if not is_in_bounds2d(point, self.world_slice):
                 continue
@@ -77,21 +89,4 @@ class MaterialPathTest(EditingTestModule):
             y = self.world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x, z] - 1
             pos = ivec3(x, y, z)
 
-            shade_val = gradient.calculate_value(pos, 1 - dist / max_dist)
-
-            if shade_val < 0.5:
-                continue
-
-            material.place_block(
-                self.editor,
-                BlockForm.BLOCK,
-                {},
-                None,
-                MaterialParameters(
-                    position=pos,
-                    age=0,
-                    shade=shade_val,
-                    moisture=0,
-                    dithering_pattern=DitheringPattern.RANDOM_EASE_CUBIC,
-                ),
-            )
+            painter.place_block(material, BlockForm.BLOCK, pos)

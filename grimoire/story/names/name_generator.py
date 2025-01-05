@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 
-from ..core.assets.asset import Asset
-from ..core.generator.module import Module
+from grimoire.core.assets.asset import Asset
+from grimoire.core.generator.generator_module import GeneratorModule
 
 
 class NamingSchema(Asset):
     rules: dict[str, str | list[str] | dict[str, int]]
 
 
-class NameGenerator(Module):
+class NameGenerator(GeneratorModule):
     @dataclass
     class Context:
         schema: NamingSchema
@@ -33,11 +33,12 @@ class NameGenerator(Module):
         return self.__context_stack.pop(-1)
 
     def __init__(self):
+        super().__init__(None)
         self.init_rng_from_world_seed()
         # We use a stack for the contexts so the name generator can call multiple schemas recursively
         self.__context_stack: list[NameGenerator.Context] = []
 
-    @Module.main
+    @GeneratorModule.main
     def generate_name(
         self, rule_name: str, schema: NamingSchema, args: dict[str, any] = None
     ) -> tuple[str, dict]:

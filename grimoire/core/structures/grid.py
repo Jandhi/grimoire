@@ -1,5 +1,7 @@
+from typing import Callable
+
 from . import legacy_directions
-from .nbt.build_nbt import build_nbt_legacy, build_nbt
+from .nbt.build_nbt import build_nbt_legacy, build_nbt, ParameterGenerator
 from .transformation import Transformation
 from gdpc.editor import Editor
 from .nbt.nbt_asset import NBTAsset
@@ -18,7 +20,7 @@ from gdpc.vector_tools import (
 from collections.abc import Iterator
 
 from ..maps import Map
-from ..styling.materials.material import MaterialParameterFunction
+from ..styling.materials.material import MaterialFeature
 from ..styling.palette import Palette
 
 
@@ -72,7 +74,7 @@ class Grid:
         palette: Palette,
         grid_coordinate: ivec3,
         facing: ivec3 | str | None = None,
-        material_params_func: MaterialParameterFunction | None = None,
+        parameter_generator: ParameterGenerator | None = None,
         build_map: Map | None = None,
     ):
         coords = self.grid_to_local(grid_coordinate) + self.origin
@@ -95,7 +97,7 @@ class Grid:
                 Transformation(
                     offset=coords + ivec3(0, 0, 0),
                 ),
-                material_params_func=material_params_func,
+                parameter_generator=parameter_generator,
                 build_map=build_map,
             )
 
@@ -108,7 +110,7 @@ class Grid:
                     offset=coords + ivec3(self.width - 1, 0, 0),
                     rotations=1,
                 ),
-                material_params_func=material_params_func,
+                parameter_generator=parameter_generator,
                 build_map=build_map,
             )
 
@@ -121,7 +123,7 @@ class Grid:
                     offset=coords + ivec3(0, 0, self.depth - 1),
                     rotations=3,
                 ),
-                material_params_func=material_params_func,
+                parameter_generator=parameter_generator,
                 build_map=build_map,
             )
 
@@ -134,7 +136,7 @@ class Grid:
                     offset=coords + ivec3(self.width - 1, 0, self.depth - 1),
                     rotations=2,
                 ),
-                material_params_func=material_params_func,
+                parameter_generator=parameter_generator,
                 build_map=build_map,
             )
 
@@ -154,7 +156,7 @@ class Grid:
     def get_door_coords(self, direction: ivec3) -> ivec3:
         if direction == NORTH:
             return ivec3(self.dimensions.x // 2, 0, 0)
-        elif direction == SOUTH:        
+        elif direction == SOUTH:
             return ivec3(self.dimensions.x // 2, 0, self.dimensions.z - 1)
         elif direction == EAST:
             return ivec3(0, 0, self.dimensions.z // 2)

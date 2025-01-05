@@ -1,9 +1,9 @@
 {
   "name" : "polished2",
   "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter": "polished1",
-  "darker" : "polished3",
+  "connections" : {
+    "shade" : ["polished3", "polished1"]
+  },
   "blocks" : {
     "block" : "polished_deepslate",
     "stairs" : "polished_deepslate_stairs",

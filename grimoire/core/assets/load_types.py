@@ -31,11 +31,9 @@ def load_types():
     # Material
     from grimoire.core.styling.materials.material import (
         Material,
-        BasicMaterial,
-        CompositeMaterial,
     )
 
-    _ = (Material, BasicMaterial, CompositeMaterial)
+    _ = Material
 
     _ = BuildingShape
 

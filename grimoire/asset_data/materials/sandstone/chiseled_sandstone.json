@@ -1,7 +1,7 @@
 {
   "name" : "chiseled_sandstone",
   "type" : "material",
-  "dithering_pattern" : "random",
+  "connections" : {},
   "blocks" : {
     "block" : "chiseled_sandstone",
     "stairs" : "sandstone_stairs",

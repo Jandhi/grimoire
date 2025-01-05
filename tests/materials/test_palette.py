@@ -12,13 +12,11 @@ from glm import ivec3
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.generator.test import run_test, EditingTestModule
 from grimoire.core.logger import LoggerSettings, LoggingLevel
-from grimoire.core.styling.materials.material import DitheringPattern
 from grimoire.core.styling.materials.gradient import Gradient, GradientAxis
 from grimoire.core.noise.global_seed import GlobalSeed
 
 from grimoire.core.styling.materials.material import (
     Material,
-    BasicMaterial,
     MaterialParameters,
 )
 from grimoire.core.assets.asset_loader import load_assets
@@ -38,6 +36,6 @@ class PaletteTest(EditingTestModule):
         )
         self.load_world()
 
-        asset = NBTAsset.find("test_tower")
+        asset = NBTAsset.get("test_tower")
 
         print(asset)

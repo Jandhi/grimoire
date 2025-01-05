@@ -1,0 +1,17 @@
+{
+  "name" : "cracked_polished_blackstone_bricks",
+  "type" : "material",
+
+  "connections" : {
+    "shade" : [null, "cracked_deepslate_bricks"],
+    "moisture" : [null, "moss_stone"],
+    "wear" : ["bricks3", "blackstone"]
+  },
+
+  "blocks" : {
+    "block" : "cracked_polished_blackstone_bricks",
+    "stairs" : "polished_blackstone_stairs",
+    "slab" : "polished_blackstone_slab",
+    "wall" : "polished_blackstone_wall"
+  }
+}

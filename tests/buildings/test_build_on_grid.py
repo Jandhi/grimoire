@@ -56,12 +56,12 @@ styles = {
 style = styles[BuildStyle.VIKING]
 
 # PALETTE
-palette: Palette = Palette.find("japanese_dark_blackstone")
+palette: Palette = Palette.get("japanese_dark_blackstone")
 
 # WALLS
-lower_wall: Wall = Wall.find(style["lower"])
-upper_wall: Wall = Wall.find(style["upper"])
-interior_wall: Wall = Wall.find("interior_wall")
+lower_wall: Wall = Wall.get(style["lower"])
+upper_wall: Wall = Wall.get(style["upper"])
+interior_wall: Wall = Wall.get("interior_wall")
 
 x_size = 2
 y_size = 3
@@ -257,7 +257,7 @@ def find_end(start, stairs=True) -> tuple:
 
 def build_stairs(end: ivec3, corner_type: str, floor_height: int) -> set:
     stairs = set((ivec3(end[0], end[1], end[2])))
-    stairs_nbt: NBTAsset = NBTAsset.find("interior_stairs")
+    stairs_nbt: NBTAsset = NBTAsset.get("interior_stairs")
     free_for_stairs = set((ivec3(end[0], end[1], end[2])))
     current = end
     match corner_type:

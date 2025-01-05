@@ -1,6 +1,7 @@
 {
   "name" : "crimson",
   "type" : "material",
+  "connections" : {},
   "blocks" : {
     "block" : "crimson_planks",
     "stairs" : "crimson_stairs",

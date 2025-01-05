@@ -1,7 +1,7 @@
 {
   "name" : "red_sandstone",
   "type" : "material",
-  "dithering_pattern" : "random",
+  "connections" : {},
   "blocks" : {
     "block" : "red_sandstone",
     "stairs" : "red_sandstone_stairs",

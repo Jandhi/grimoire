@@ -1,9 +1,13 @@
 {
   "name" : "bricks2",
   "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter": "bricks1",
-  "darker" : "bricks3",
+
+  "connections" : {
+    "shade" : ["bricks3", "bricks1"],
+    "moisture" : [null, "moss_stone"],
+    "wear" : [null, "cracked_deepslate_bricks"]
+  },
+
   "blocks" : {
     "block" : "deepslate_bricks",
     "stairs" : "deepslate_brick_stairs",

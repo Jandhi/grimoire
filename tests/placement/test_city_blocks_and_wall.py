@@ -144,7 +144,7 @@ wall_points, wall_dict = get_outer_points(inner_points, world_slice)
 wall_points_list: list[list[ivec2]] = order_wall_points(wall_points, wall_dict)
 
 rng = RNG(SEED)
-palette = Palette.find("japanese")
+palette = Palette.get("japanese")
 
 # can use either test_blocks for more urban or test_blocks_dirt for dirty ground
 # replace_ground(inner_points, test_blocks, rng, map.water)

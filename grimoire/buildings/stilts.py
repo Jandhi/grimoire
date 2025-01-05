@@ -20,9 +20,9 @@ from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.grid import Grid
 from grimoire.core.structures.nbt.nbt_asset import NBTAsset
 from grimoire.core.styling.blockform import BlockForm
-from grimoire.core.styling.materials.dithering import DitheringPattern
 from grimoire.core.styling.materials.gradient import Gradient, GradientAxis
-from grimoire.core.styling.materials.material import MaterialParameters
+from grimoire.core.styling.materials.material import MaterialFeature
+from grimoire.core.styling.materials.painter import PalettePainter
 from grimoire.core.styling.palette import Palette, MaterialRole
 
 
@@ -61,11 +61,11 @@ def build_stilt_frame(
     floors = []
 
     groups = {
-        StiltComponentType.EDGE : edges,
-        StiltComponentType.STAIRS : stairs,
-        StiltComponentType.CORNER : corners,
-        StiltComponentType.INNER : inners,
-        StiltComponentType.FLOOR : floors,
+        StiltComponentType.EDGE: edges,
+        StiltComponentType.STAIRS: stairs,
+        StiltComponentType.CORNER: corners,
+        StiltComponentType.INNER: inners,
+        StiltComponentType.FLOOR: floors,
     }
     for stilt in StiltComponent.all():
         groups[stilt.component_type].append(stilt)
@@ -177,27 +177,13 @@ class StiltPlacer(GeneratorModule):
     def place(self, editor: Editor, build_map: Map, position: ivec3, palette: Palette):
         min_y = build_map.ocean_floor_at(dropY(position)) - 3
 
-        gradient = Gradient(self.rng.next()).with_axis(
+        gradient = Gradient(self.rng.next(), build_map).with_axis(
             GradientAxis.y(min_y, position.y)
+        )
+        painter = PalettePainter(editor, palette).with_feature(
+            MaterialFeature.SHADE, gradient.to_func()
         )
 
         for y in range(min_y, position.y + 1):
             pos = ivec3(position.x, y, position.z)
-
-            id = (
-                palette.find_block_id(
-                    BlockForm.BLOCK,
-                    MaterialParameters(
-                        position=pos,
-                        age=0,
-                        moisture=0,  # TODO make it fit the water level
-                        shade=gradient.calculate_gradient_value(pos),
-                        dithering_pattern=DitheringPattern.RANDOM_EASE_CUBIC,
-                    ),
-                    MaterialRole.PILLAR,
-                )
-                if palette is not None
-                else None or "oak_log"
-            )
-
-            editor.placeBlock(pos, Block(id))
+            painter.place_block(pos, MaterialRole.PILLAR)

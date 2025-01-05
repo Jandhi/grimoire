@@ -1,8 +1,13 @@
 {
   "name" : "bricks3",
   "type" : "material",
-  "dithering_pattern" : "random",
-  "lighter" : "bricks2",
+
+  "connections" : {
+    "shade" : [null, "bricks2"],
+    "moisture" : [null, "moss_stone"],
+    "wear" : [null, "cracked_polished_blackstone_bricks"]
+  },
+
   "blocks" : {
     "block" : "polished_blackstone_bricks",
     "stairs" : "polished_blackstone_brick_stairs",

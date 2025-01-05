@@ -1,5 +1,5 @@
 import inspect
-from typing import TypeVar, Callable
+from typing import TypeVar, Callable, Self
 
 from colored import Fore, Style
 from glm import ivec3, ivec2
@@ -43,7 +43,7 @@ class GeneratorModule:
     _logger: Logger = None
     rng: RNG
 
-    def __init__(self, parent: "GeneratorModule"):
+    def __init__(self, parent: Self | None):
         self.parent = parent
 
     def __init_subclass__(cls, **kwargs):

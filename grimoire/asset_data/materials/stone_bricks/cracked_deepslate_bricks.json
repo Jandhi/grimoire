@@ -1,0 +1,17 @@
+{
+  "name" : "cracked_deepslate_bricks",
+  "type" : "material",
+
+  "connections" : {
+    "shade" : ["cracked_polished_blackstone_bricks", "cracked_stone_bricks"],
+    "moisture" : [null, "moss_stone"],
+    "wear" : ["bricks2", "cobbled_deepslate"]
+  },
+
+  "blocks" : {
+    "block" : "cracked_deepslate_bricks",
+    "stairs" : "deepslate_stairs",
+    "slab" : "deepslate_slab",
+    "wall" : "deepslate_wall"
+  }
+}

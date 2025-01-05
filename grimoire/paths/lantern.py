@@ -5,7 +5,6 @@ from glm import ivec2
 from grimoire.core.maps import Map, DevelopmentType
 from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.blockform import BlockForm
-from grimoire.core.styling.materials.material import MaterialParameters
 from grimoire.core.styling.palette import Palette, MaterialRole
 from grimoire.core.utils.sets.set_operations import find_outline
 
@@ -36,7 +35,7 @@ def place_lanterns(editor: Editor, city_road: set[ivec2], build_map: Map, rng: R
         palette: Palette = (
             rng.choose(district.palettes)
             if district and district.palettes
-            else Palette.find("japanese_dark_blackstone")
+            else Palette.get("japanese_dark_blackstone")
         )
 
         road_direction = None
@@ -56,13 +55,11 @@ def place_lanterns(editor: Editor, city_road: set[ivec2], build_map: Map, rng: R
 
         wall = palette.find_block_id(
             BlockForm.WALL,
-            MaterialParameters(root, 0, 0, 0, None),
             MaterialRole.PRIMARY_STONE,
         )
 
         fence = palette.find_block_id(
             BlockForm.FENCE,
-            MaterialParameters(root, 0, 0, 0, None),
             MaterialRole.PRIMARY_WOOD,
         )
 

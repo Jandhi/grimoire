@@ -7,7 +7,6 @@ from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.blockform import BlockForm
 from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.legacy_directions import VECTORS
-from grimoire.core.styling.materials.material import MaterialParameters
 from grimoire.core.styling.palette import BuildStyle, MaterialRole, Palette
 from grimoire.districts.gate import Gate
 from grimoire.paths.build_highway import build_highway
@@ -65,23 +64,34 @@ def add_gate_path(
         palette: Palette = (
             rng.choose(district.palettes)
             if district and district.palettes
-            else Palette.find("japanese_dark_blackstone")
+            else Palette.get("japanese_dark_blackstone")
         )
         fence = palette.find_block_id(
             BlockForm.FENCE,
-            MaterialParameters(highway[0], 0, 0, 0, None),
             MaterialRole.PRIMARY_WOOD,
         )
-        road = Block("sandstone") if style == BuildStyle.DESERT else Block("cobblestone")
+        road = (
+            Block("sandstone") if style == BuildStyle.DESERT else Block("cobblestone")
+        )
 
         for point in highway:
             nearby_lampposts = False
             for lamppost in lampposts:
-                if not nearby_lampposts and (abs(point.x - lamppost[0].x)**2 + abs(point.z - lamppost[0].z)**2) < radius**2:
+                if (
+                    not nearby_lampposts
+                    and (
+                        abs(point.x - lamppost[0].x) ** 2
+                        + abs(point.z - lamppost[0].z) ** 2
+                    )
+                    < radius**2
+                ):
                     nearby_lampposts = True
             if not nearby_lampposts:
                 for offset in perpendicular_directions:
-                    if editor.getBlock(point + offset * 2 + DOWN) != road and editor.getBlock(point + offset * 2).id != "oak_sign":
+                    if (
+                        editor.getBlock(point + offset * 2 + DOWN) != road
+                        and editor.getBlock(point + offset * 2).id != "oak_sign"
+                    ):
                         lampposts.append([point, offset])
                         break
 
@@ -94,4 +104,7 @@ def add_gate_path(
             editor.placeBlock(path_origin + offset * 2 + UP * 3, Block(id=fence))
             editor.placeBlock(path_origin + offset * 2 + UP * 4, Block(id=fence))
             editor.placeBlock(path_origin + offset + UP * 4, Block(id=fence))
-            editor.placeBlock(path_origin + offset + UP * 3, Block(id="lantern", states={"hanging": "true"}))
+            editor.placeBlock(
+                path_origin + offset + UP * 3,
+                Block(id="lantern", states={"hanging": "true"}),
+            )

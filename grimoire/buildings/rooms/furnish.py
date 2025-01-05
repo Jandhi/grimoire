@@ -56,7 +56,7 @@ def get_blocks_along_dir_of_cell(cell: ivec3, direction: ivec3, grid: Grid) -> s
 def build_interior_walls(
     cells: list, floor: int, palette: Palette, editor: Editor, grid: Grid, rng: RNG
 ) -> set:
-    interior_wall: Wall = Wall.find("interior_wall")
+    interior_wall: Wall = Wall.get("interior_wall")
     interior_wall_cells = set()
 
     cells_on_floor = [ivec3(x, y, z) for (x, y, z) in cells if y == floor]
@@ -506,7 +506,7 @@ def build_stairs(
 ) -> tuple:
     stairs = set()
     stairs.add(end)
-    stairs_nbt: NBTAsset = NBTAsset.find("interior_stairs")
+    stairs_nbt: NBTAsset = NBTAsset.get("interior_stairs")
     free_for_stairs = set()
     free_for_stairs.add(end)
     current = end
