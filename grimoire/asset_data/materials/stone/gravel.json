@@ -3,7 +3,6 @@
   "type" : "material",
 
   "connections" : {
-    "wear" : ["cobblestone", null]
   },
 
   "blocks" : {

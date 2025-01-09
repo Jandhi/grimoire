@@ -100,11 +100,7 @@ class Gradient:
 
     # Make a vec appear between 0 and 1
     def normalize_vec(self, vec: ivec3) -> vec3:
-        return vec3(
-            float(vec.x) / self.map.world.rect.size.x,
-            float(vec.y) / self.map.world.ySize,
-            float(vec.z) / self.map.world.rect.size.y,
-        )
+        return vec3(*vec) / 256
 
     def calculate_point_value(self, pos: ivec3, grad_val: float = None):
         perlin_val = 0.5 + sum(

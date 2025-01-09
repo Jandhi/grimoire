@@ -1,5 +1,6 @@
 from gdpc.vector_tools import ivec3, ivec2
 from gdpc import WorldSlice
+from glm import normalize, vec2
 
 
 def x_ivec3(x: int) -> ivec3:
@@ -20,3 +21,11 @@ def point_3d(point: ivec2, world_slice: WorldSlice) -> ivec3:
         world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y],
         point.y,
     )
+
+
+def normalize_to_length(vec: ivec2, desired_length: int) -> ivec2:
+    normalized_vec = normalize(
+        vec2(vec)
+    )  # Convert to vec2 for floating point precision
+    scaled_vec = normalized_vec * desired_length
+    return ivec2(scaled_vec)  # Convert back to ivec2

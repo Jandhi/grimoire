@@ -21,6 +21,10 @@ class MaterialFeature(Enum):
     MOISTURE = auto()
     DECORATION = auto()
 
+    @staticmethod
+    def default(position: ivec3) -> "MaterialParameters":
+        return MaterialParameters(position, 0.5, 0, 0, DitheringPattern.NONE)
+
 
 FEATURE_TRAVERSAL_ORDER = [
     MaterialFeature.DECORATION,

@@ -170,6 +170,9 @@ class Map:
     highway: list[list[bool]]
     biome: list[list[str]]
     block: list[list[Block]]
+    size: ivec2
+    width: int
+    depth: int
 
     def __init__(self, world_slice: WorldSlice) -> None:
         size = world_slice.rect.size
@@ -182,6 +185,9 @@ class Map:
         self._copy_heightmaps(world_slice)
         self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
         self.highway = [[False for _ in range(size.y)] for _ in range(size.x)]
+        self.size = size
+        self.width = size.x
+        self.depth = size.y
 
     def correct_district_heights(self, districts: list[District]):
         # FIXME: Doesn't do anything!

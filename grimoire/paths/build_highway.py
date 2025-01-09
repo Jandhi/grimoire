@@ -1,11 +1,18 @@
+from typing import Callable
+
 from gdpc import Block, Editor, WorldSlice
-from gdpc.vector_tools import ivec2, ivec3
+from gdpc.vector_tools import ivec2, ivec3, addY
 
 from ..core.maps import Map
 from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
-from ..core.styling.palette import BuildStyle
+from ..core.styling.blockform import BlockForm
+from ..core.styling.materials.gradient import Gradient, GradientAxis, PerlinSettings
+from ..core.styling.materials.material import MaterialFeature
+from ..core.styling.materials.traversal import MaterialTraversalStrategy
+from ..core.styling.palette import BuildStyle, Palette, MaterialRole
 from ..core.utils.bounds import is_in_bounds2d
 from grimoire.districts.district import DistrictType
+from ..core.utils.remap import remap_threshold_high
 
 
 def build_highway(
@@ -13,12 +20,28 @@ def build_highway(
     editor: Editor,
     world_slice: WorldSlice,
     map: Map,
-    style=BuildStyle.NORMAL_MEDIEVAL,
+    palette: Palette,
+    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
 ):
     master_points: set[ivec2] = set()
     neighbour_points: set[ivec2] = set()
     final_point_heights: dict[ivec2, int] = {}
     blocks: dict[ivec2, Block] = {}
+
+    moisture_func = remap_threshold_high(
+        Gradient(13, map, 0.6, PerlinSettings(20, 8, 2)).to_func(),
+        0.3,
+    )
+    wear_func = remap_threshold_high(
+        Gradient(17, map, 0.8, PerlinSettings(40, 8, 2)).to_func(),
+        0.3,
+    )
+
+    def generate_params(position: ivec3) -> dict[MaterialFeature, float]:
+        return {
+            MaterialFeature.WEAR: wear_func(position),
+            MaterialFeature.MOISTURE: moisture_func(position),
+        }
 
     for point in points:
         point_2d = ivec2(point.x, point.z)
@@ -41,7 +64,13 @@ def build_highway(
             )  # this is an estimate of height to help the next step
 
     for point in final_point_heights:
-        blocks[point] = get_block(point, final_point_heights, style=style)
+        blocks[point] = get_block(
+            point,
+            final_point_heights,
+            palette,
+            param_generator=generate_params,
+            material_role=material_role,
+        )
 
     for point in final_point_heights:
         x, z = point
@@ -66,15 +95,25 @@ def build_highway(
 def get_block(
     point: ivec2,
     final_point_heights: dict[ivec2, int],
+    palette: Palette,
+    param_generator: Callable[[ivec3], dict[MaterialFeature, float]],
     depth=0,
-    style=BuildStyle.NORMAL_MEDIEVAL,
+    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
 ) -> Block:
     y_in_dir = {}
     y = final_point_heights[point]
 
     if depth > 10:
-        return (
-            Block("sandstone") if style == BuildStyle.DESERT else Block("cobblestone")
+        return Block(
+            palette.find_block_id(
+                BlockForm.BLOCK,
+                material_role,
+                param_generator(addY(point, y)),
+                {
+                    MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
+                    MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
+                },
+            ),
         )
 
     for direction in CARDINAL:
@@ -96,23 +135,47 @@ def get_block(
             and final_point_heights[point - dv] == y - 1
         ):
             return Block(
-                (
-                    "sandstone_stairs"
-                    if style == BuildStyle.DESERT
-                    else "cobblestone_stairs"
+                palette.find_block_id(
+                    BlockForm.STAIRS,
+                    material_role,
+                    param_generator(addY(point, y)),
+                    {
+                        MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
+                        MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
+                    },
                 ),
                 {"facing": to_text(direction)},
             )
 
     if all(y_in_dir[direction] < y for direction in y_in_dir):
         final_point_heights[point] -= 1
-        return get_block(point, final_point_heights, depth + 1, style=style)
+        return get_block(
+            point, final_point_heights, palette, param_generator, depth + 1
+        )
 
     if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(
         y_in_dir[direction] < y for direction in y_in_dir
     ):
         return Block(
-            "sandstone_slab" if style == BuildStyle.DESERT else "cobblestone_slab"
+            palette.find_block_id(
+                BlockForm.SLAB,
+                material_role,
+                param_generator(addY(point, y)),
+                {
+                    MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
+                    MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
+                },
+            ),
         )
 
-    return Block("sandstone" if style == BuildStyle.DESERT else "cobblestone")
+    return Block(
+        palette.find_block_id(
+            BlockForm.BLOCK,
+            material_role,
+            param_generator(addY(point, y)),
+            {
+                MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
+                MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
+            },
+        ),
+    )
