@@ -116,7 +116,7 @@ def find_outer_direction(
 
 
 def find_outline(points: set[ivec2], thickness: int = 1, diagonals=False) -> set[ivec2]:
-    points = points.copy()
+    points = set(points)
     edges = find_edges(points)
     outline_set = set()
 

@@ -21,6 +21,7 @@ from grimoire.core.maps import Map
 
 
 class TestBridge(TestModule):
+
     def test(self):
         load_types()
         load_assets("grimoire/asset_data", parent_module=self)
@@ -48,7 +49,17 @@ class TestBridge(TestModule):
         bridge_length = length(end - start)
 
         BridgeBuilder(
-            self, editor, build_map, palette, start, end, int(bridge_length**0.5 / 2), 4
+            self,
+            editor,
+            build_map,
+            palette,
+            start,
+            end,
+            int(bridge_length**0.5 / 2),
+            4,
+            3,
+            25,
+            True,
         ).run()
 
         editor.placeBlock(start, Block("red_wool"))
