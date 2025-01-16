@@ -35,4 +35,4 @@ class TestNames(TestModule):
 
 
 if __name__ == "__main__":
-    TestNames().test()
+    TestNames().run()
