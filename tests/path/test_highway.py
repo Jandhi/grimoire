@@ -1,8 +1,11 @@
 # Allows code to be run in root directory
 import sys
 
+from glm import ivec2
+
 from grimoire.core.assets.asset_loader import load_assets
 from grimoire.core.logger import LoggerSettings, LoggingLevel
+from grimoire.core.noise.rng import RNG
 from grimoire.core.styling.palette import Palette, MaterialRole
 
 sys.path[0] = sys.path[0].removesuffix("\\tests\\path")
@@ -20,6 +23,7 @@ editor = Editor(buffering=True, bufferLimit=5, caching=True)
 
 area = editor.getBuildArea()
 editor.transform = (area.begin.x, 0, area.begin.z)
+rng = RNG(SEED)
 
 print("Loading world slice...")
 build_rect = area.toRect()
@@ -33,28 +37,34 @@ load_assets(
 
 build_map = Map(world_slice)
 
-start_x, start_z = 0, 0
-start_y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][start_x][start_z]
-start = ivec3(start_x, start_y, start_z)
+start = build_map.make_3d(ivec2(0, 0))
+end = build_map.make_3d(ivec2(build_map.width - 1, build_map.depth - 1))
 
-end_x, end_z = world_slice.box.size.x - 1, world_slice.box.size.z - 1
-end_x = end_x - end_x % 4
-end_z = end_z - end_z % 4
-end_y = world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][end_x][end_z]
-end = ivec3(end_x, end_y, end_z)
-
-editor.placeBlock(start, Block("minecraft:glowstone"))
-editor.placeBlock(end, Block("minecraft:glowstone"))
 
 palette: Palette = Palette.get("medieval")
 
-highway = route_highway(start, end, build_map, editor, is_debug=True)
-highway = fill_out_highway(highway)
-build_highway(
-    highway,
-    editor,
-    world_slice,
-    build_map,
-    palette,
-    material_role=MaterialRole.PRIMARY_STONE,
-)
+highways = []
+
+
+def make_highway(p1: ivec3, p2: ivec3):
+    editor.placeBlock(p1, Block("minecraft:glowstone"))
+    editor.placeBlock(p2, Block("minecraft:glowstone"))
+
+    highway = fill_out_highway(route_highway(p1, p2, build_map, editor, is_debug=False))
+    build_highway(
+        highway,
+        editor,
+        world_slice,
+        build_map,
+        palette,
+        material_role=MaterialRole.PRIMARY_STONE,
+    )
+
+
+make_highway(start, end)
+
+for _ in range(10):
+    p1 = build_map.make_3d(rng.randpoint_2d(build_map.size))
+    p2 = build_map.make_3d(rng.randpoint_2d(build_map.size))
+
+    make_highway(p1, p2)

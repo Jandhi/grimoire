@@ -1,13 +1,15 @@
 from typing import Callable
 
 from gdpc import Block, Editor, WorldSlice
-from gdpc.vector_tools import ivec2, ivec3, addY
+from gdpc.vector_tools import ivec2, ivec3, addY, dropY, distance
 
+from .bridge import BridgeBuilder
 from ..core.maps import Map
 from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
 from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.gradient import Gradient, GradientAxis, PerlinSettings
 from ..core.styling.materials.material import MaterialFeature
+from ..core.styling.materials.placer import Placer
 from ..core.styling.materials.traversal import MaterialTraversalStrategy
 from ..core.styling.palette import BuildStyle, Palette, MaterialRole
 from ..core.utils.bounds import is_in_bounds2d
@@ -23,26 +25,118 @@ def build_highway(
     palette: Palette,
     material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
 ):
+    land_segments, bridge_segments = get_segments(points, map)
+
+    for land_segment in land_segments:
+        build_land_segment(
+            land_segment,
+            editor,
+            map,
+            world_slice,
+            palette,
+            material_role=material_role,
+        )
+
+    for bridge_segment in bridge_segments:
+        if distance(bridge_segment[0], bridge_segment[-1]) < 10:
+            build_land_segment(
+                bridge_segment,
+                editor,
+                map,
+                world_slice,
+                palette,
+                material_role=material_role,
+            )
+        else:
+            build_bridge_segment(
+                bridge_segment,
+                editor,
+                map,
+                palette,
+                material_role=material_role,
+            )
+
+
+# Returns a list of land segments and bridge segments respectively
+def get_segments(
+    points: list[ivec3],
+    build_map: Map,
+) -> tuple[list[list[ivec3]], list[list[ivec3]]]:
+    land_segments: list[list[ivec3]] = []
+    bridge_segments: list[list[ivec3]] = []
+
+    last_segment = []
+    last_segment_is_bridge = False
+
+    for point in points:
+        if build_map.water_at(dropY(point)):
+            if not last_segment_is_bridge:
+                land_segments.append(last_segment)
+                last_segment = [last_segment[-1]]
+
+            last_segment.append(point)
+            last_segment_is_bridge = True
+        else:
+            if last_segment_is_bridge:
+                last_segment.append(point)
+                bridge_segments.append(last_segment)
+                last_segment = []
+
+            last_segment.append(point)
+            last_segment_is_bridge = False
+
+    if last_segment:
+        if last_segment_is_bridge:
+            bridge_segments.append(last_segment)
+        else:
+            land_segments.append(last_segment)
+
+    return land_segments, bridge_segments
+
+
+def build_bridge_segment(
+    points: list[ivec3],
+    editor: Editor,
+    build_map: Map,
+    palette: Palette,
+    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
+):
+    length = distance(points[0], points[-1])
+    thickness = 1
+
+    if length > 10:
+        thickness = 2
+    if length > 25:
+        thickness = 3
+
+    BridgeBuilder(
+        None,
+        editor,
+        build_map,
+        palette,
+        points[0],
+        points[-1],
+        max(1, length**0.5 / 2),
+        4,
+        thickness,
+        25,
+        True,
+    ).run()
+
+
+def build_land_segment(
+    points: list[ivec3],
+    editor: Editor,
+    build_map: Map,
+    world_slice: WorldSlice,
+    palette: Palette,
+    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
+):
     master_points: set[ivec2] = set()
-    neighbour_points: set[ivec2] = set()
+    counted_points: set[ivec2] = set()
     final_point_heights: dict[ivec2, int] = {}
-    blocks: dict[ivec2, Block] = {}
 
-    moisture_func = remap_threshold_high(
-        Gradient(13, map, 0.6, PerlinSettings(20, 8, 2)).to_func(),
-        0.3,
-    )
-    wear_func = remap_threshold_high(
-        Gradient(17, map, 0.8, PerlinSettings(40, 8, 2)).to_func(),
-        0.3,
-    )
-
-    def generate_params(position: ivec3) -> dict[MaterialFeature, float]:
-        return {
-            MaterialFeature.WEAR: wear_func(position),
-            MaterialFeature.MOISTURE: moisture_func(position),
-        }
-
+    # We fill out the land segment
     for point in points:
         point_2d = ivec2(point.x, point.z)
 
@@ -55,15 +149,42 @@ def build_highway(
             if not is_in_bounds2d(neighbour, world_slice):
                 continue
 
-            if neighbour in neighbour_points or neighbour in master_points:
+            if neighbour in counted_points or neighbour in master_points:
                 continue
 
-            neighbour_points.add(neighbour)
+            counted_points.add(neighbour)
             final_point_heights[neighbour] = (
                 point.y
             )  # this is an estimate of height to help the next step
 
+    blocks: dict[ivec2, Block] = {}
+
+    moisture_func = remap_threshold_high(
+        Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2)).to_func(),
+        0.3,
+    )
+    wear_func = remap_threshold_high(
+        Gradient(17, build_map, 0.8, PerlinSettings(40, 8, 2)).to_func(),
+        0.3,
+    )
+
+    def generate_params(position: ivec3) -> dict[MaterialFeature, float]:
+        return {
+            MaterialFeature.WEAR: wear_func(position),
+            MaterialFeature.MOISTURE: moisture_func(position),
+        }
+
     for point in final_point_heights:
+        x, z = point
+        y = final_point_heights[point] - 1
+
+        # don't place in urban area
+        if (
+            build_map.super_districts[x][z] is not None
+            and build_map.super_districts[x][z].type == DistrictType.URBAN
+        ):
+            continue
+
         blocks[point] = get_block(
             point,
             final_point_heights,
@@ -72,21 +193,10 @@ def build_highway(
             material_role=material_role,
         )
 
-    for point in final_point_heights:
-        x, z = point
-        y = final_point_heights[point] - 1
-
-        # don't place in urban area
-        if (
-            map.super_districts[x][z] is not None
-            and map.super_districts[x][z].type == DistrictType.URBAN
-        ):
-            continue
-
-        map.highway[x][z] = True
+        build_map.paths[x][z].append(y + 1)
         editor.placeBlock((x, y, z), blocks[point])
 
-        if world_slice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][x][z] > y:
+        if build_map.height_at(point) > y:
             editor.placeBlock((x, y + 1, z), Block("air"))
             editor.placeBlock((x, y + 2, z), Block("air"))
             editor.placeBlock((x, y + 3, z), Block("air"))

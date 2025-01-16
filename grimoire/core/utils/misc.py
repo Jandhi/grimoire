@@ -18,6 +18,7 @@ T = TypeVar("T")
 
 
 def average(items: Sequence[Number]) -> float:
+    """Calculates the average of a collection"""
     return math.fsum(items) / len(items)
 
 

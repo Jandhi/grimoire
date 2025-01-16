@@ -29,3 +29,7 @@ def normalize_to_length(vec: ivec2, desired_length: int) -> ivec2:
     )  # Convert to vec2 for floating point precision
     scaled_vec = normalized_vec * desired_length
     return ivec2(scaled_vec)  # Convert back to ivec2
+
+
+def mod_xz(point: ivec3, base: int) -> ivec3:
+    return ivec3(point.x - point.x % base, point.y, point.z - point.z % base)
