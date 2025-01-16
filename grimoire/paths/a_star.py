@@ -19,6 +19,12 @@ def a_star(
     get_cost: Callable[[float, list[ivec3]], float],
     debug_editor: Editor | None = None,
 ) -> list[ivec3] | None | str:
+    print(f"Routing from {start} to {end}")
+
+    if debug_editor:
+        debug_editor.placeBlock(start + y_ivec3(25), Block("red_wool"))
+        debug_editor.placeBlock(end + y_ivec3(25), Block("pink_wool"))
+
     first_path: list[ivec3] = [start]
     paths: list[tuple[float, list[ivec3]]] = [(get_cost(0, first_path), first_path)]
     visited: set[ivec3] = set()
@@ -26,8 +32,8 @@ def a_star(
 
     while paths:
         counter += 1
-        if counter % 10000 == 0:
-            print(f"counter at {counter}")
+        # if counter % 10000 == 0:
+        #     print(f"counter at {counter}")
 
         if counter > COUNTER_LIMIT:
             return COUNTER_LIMIT_EXCEEDED

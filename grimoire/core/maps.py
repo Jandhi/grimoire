@@ -167,7 +167,7 @@ class Map:
     leaf_height: list[list[int]]  # height map based on MOTION_BLOCKING
     world: WorldSlice
     near_wall: list[list[bool]]  # specifically used for routing roads
-    highway: list[list[bool]]
+    paths: list[list[list[int]]]  # list of y points of paths
     biome: list[list[str]]
     block: list[list[Block]]
     size: ivec2
@@ -184,7 +184,7 @@ class Map:
         self.block, self.water = get_block_and_water_map(world_slice)
         self._copy_heightmaps(world_slice)
         self.near_wall = [[False for _ in range(size.y)] for _ in range(size.x)]
-        self.highway = [[False for _ in range(size.y)] for _ in range(size.x)]
+        self.paths = [[[] for _ in range(size.y)] for _ in range(size.x)]
         self.size = size
         self.width = size.x
         self.depth = size.y

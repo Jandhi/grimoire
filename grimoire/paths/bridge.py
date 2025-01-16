@@ -13,6 +13,7 @@ from grimoire.core.styling.materials.gradient import (
 from grimoire.core.styling.materials.material import MaterialFeature
 from grimoire.core.styling.materials.painter import PalettePainter
 from grimoire.core.styling.palette import Palette, MaterialRole
+from grimoire.core.utils.bounds import clamp
 from grimoire.core.utils.remap import remap_threshold_high
 from grimoire.core.utils.sets.set_operations import find_edges, find_outline
 from grimoire.core.utils.vectors import normalize_to_length
@@ -53,6 +54,12 @@ class BridgeBuilder(GeneratorModule):
         self.wood_floor = wood_floor
 
         self.intersection_length = self.find_intersection_length()
+        # This is the value that the end point is as percent of the arc, where 1.0 is the intersection point
+        #   where y == start.y
+        # Note: this is usually greater than 1.0
+        self.end_percent_of_intersection = length(
+            dropY(self.end) - dropY(self.start)
+        ) / (self.intersection_length * length(dropY(self.diff)))
 
     @GeneratorModule.main
     def build_bridge(self):
@@ -326,4 +333,8 @@ class BridgeBuilder(GeneratorModule):
         percent_distance = length(point - dropY(self.start)) / (
             self.intersection_length * length(dropY(self.diff))
         )
+
+        # We do not allow the bridge to curve past the end or start
+        percent_distance = clamp(percent_distance, 0, self.end_percent_of_intersection)
+
         return self.height * 4 * percent_distance * (1 - percent_distance)
