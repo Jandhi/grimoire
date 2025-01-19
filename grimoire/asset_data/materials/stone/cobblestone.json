@@ -4,7 +4,7 @@
 
   "connections" : {
     "shade" : ["cobbled_deepslate", "andesite"],
-    "wear" : ["cracked_stone_bricks", "gravel"]
+    "wear" : ["cracked_stone_bricks", null]
   },
 
   "blocks" : {

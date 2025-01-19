@@ -43,7 +43,7 @@ class MaterialsTest(EditingTestModule):
 
         material: Material = Material.get("bricks1")
         gradient = Gradient(
-            13, self.build_map, 1.0, PerlinSettings(20, 8, 2)
+            13, self.build_map, 1.0, PerlinSettings(10, 8, 2)
         ).with_axis(GradientAxis.x(0, self.build_rect.size.x - 1))
         painter = Painter(self.editor, material).with_feature(
             MaterialFeature.MOISTURE,

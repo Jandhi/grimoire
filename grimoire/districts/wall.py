@@ -690,14 +690,14 @@ def create_wall_painter(
     editor: Editor, palette: Palette, build_map: Map, lowest_y: int, highest_y: int
 ) -> PalettePainter:
     moisture_func = remap_threshold_high(
-        Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2))
+        Gradient(13, build_map, 0.6, PerlinSettings(40, 8, 2))
         .with_axis(GradientAxis.y(lowest_y, highest_y, True))
         .to_func(),
         0.3,
     )
 
     wear_func = remap_threshold_high(
-        Gradient(17, build_map, 0.8, PerlinSettings(40, 8, 2))
+        Gradient(17, build_map, 0.8, PerlinSettings(80, 8, 2))
         .with_axis(GradientAxis.y(lowest_y, highest_y, True))
         .to_func(),
         0.3,

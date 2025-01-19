@@ -3,7 +3,6 @@ from abc import ABC
 
 from gdpc import Editor, Rect, WorldSlice
 
-
 from grimoire.core.generator.generator_module import GeneratorModule
 from grimoire.core.maps import Map
 
@@ -15,7 +14,10 @@ def run_test(cls):
 
 
 class TestModule(GeneratorModule):
-    catch_errors: bool = True
+    catch_errors: bool = False
+
+    def __init__(self, parent: GeneratorModule = None):
+        super().__init__(parent)
 
     def __init__(self):
         super().__init__(None)
