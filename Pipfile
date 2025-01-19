@@ -6,6 +6,8 @@ nbtlib = "*"
 numpy = "*"
 tqdm = "*"
 perlin-noise = "*"
+openai = "*"
+pydantic = "*"
 
 [dev-packages]
 
