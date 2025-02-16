@@ -1,3 +1,11 @@
+## To-do
+See also 
+- [ ] Merge branches
+- [ ] Restructure according to new structure
+	- [ ] Refactor imports
+	- [ ] Delete unused/outdated files
+	- [ ] Run generator to test
+- [ ] Rebuild `test_everything` to eliminate all logic, and have `main.py` reflect that (any modules for e.g. analysis, building etc, should go under /generator/management/controls)
 
 ## Hierarchies
 In principle, there should be two separate ways of dividing the build area: Geographical and sociopolitical areas.
@@ -44,11 +52,11 @@ And, based on the geography:
 ## Generative process
 
 The process generally follows the sequence of
-1. Initialise: Set up generator and its starting parameters.
-2. Analyse: Inspect the geography, creating geographical areas and synthesising information on the build area. A top-down process. In this phase, certain areas of the build region may be ignored for further analysis as a means of optimisation.
-3. Plan: Consolidate the regions into sociopolitical areas, and impose constraints on the next-lower level. A top-down process.
-4. Build: Decide what to build based on the constraints, and propagate the decision to the next-higher level to aid feature coordination. List optional or optimisation tasks to be completed later. A buttom-up process.
-5. Polish: Pick up optional or optimisation tasks based on priority to fill the remaining time. A chaotic process.
+2. Initialise: Set up generator and its starting parameters.
+3. Analyse: Inspect the geography, creating geographical areas and synthesising information on the build area. A top-down process. In this phase, certain areas of the build region may be ignored for further analysis as a means of optimisation.
+4. Plan: Consolidate the regions into sociopolitical areas, and impose constraints on the next-lower level. A top-down process.
+5. Build: Decide what to build based on the constraints, and propagate the decision to the next-higher level to aid feature coordination. List optional or optimisation tasks to be completed later. A buttom-up process.
+6. Polish: Pick up optional or optimisation tasks based on priority to fill the remaining time. A chaotic process.
 
 ```mermaid
 flowchart TD
@@ -133,3 +141,5 @@ feature1(["/feature1 - Example feature which is more complex. Thanks to the init
 supplemental("/supplemental - All code which may be applied either at any time during the process, is optional, or can run indefinitely.")
 
 ```
+
+
