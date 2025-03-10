@@ -1,15 +1,13 @@
 from gdpc.vector_tools import ivec2, CARDINALS_2D
 from gdpc import WorldSlice
-from ..structures.legacy_directions import CARDINAL, get_ivec2
 
 
 # finds the neighbours points of a point in a set
 def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
 
-    for direction in CARDINAL:
-        delta = get_ivec2(direction)
-        neighbour = point + delta
+    for direction in CARDINALS_2D:
+        neighbour = point + direction
 
         if neighbour in set:
             neighbours.append(neighbour)
@@ -21,9 +19,8 @@ def get_neighbours_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
 def get_neighbours_not_in_set(point: ivec2, set: list[ivec2]) -> list[ivec2]:
     neighbours = []
 
-    for direction in CARDINAL:
-        delta = get_ivec2(direction)
-        neighbour = point + delta
+    for direction in CARDINALS_2D:
+        neighbour = point + direction
 
         if neighbour not in set:
             neighbours.append(neighbour)
@@ -36,7 +33,7 @@ def get_outer_points(
     points: list[ivec2], world_slice: WorldSlice
 ):  # -> list[ivec2], dict:
     outer_points: list[ivec2] = []
-    outer_points_dict: dict() = {}
+    outer_points_dict: dict = {}
 
     for point in points:
         if len(get_neighbours_in_set(point, points)) != 4:
