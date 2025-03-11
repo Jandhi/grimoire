@@ -13,11 +13,11 @@ sys.path[0] = sys.path[0].removesuffix("\\tests\\path")
 # Actual file
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
-from grimoire.paths.route_highway import route_highway, fill_out_highway
-from grimoire.paths.build_highway import build_highway
+from grimoire.paths.route_highway import route_highway, fill_out_highway, mark_highway
+from grimoire.paths.build_highway import build_highway, build_highways
 from grimoire.core.maps import Map
 
-SEED = 36322
+SEED = 3632332
 
 editor = Editor(buffering=True, bufferLimit=5, caching=True)
 
@@ -47,10 +47,7 @@ highways = []
 
 
 def make_highway(p1: ivec3, p2: ivec3):
-    editor.placeBlock(p1, Block("minecraft:glowstone"))
-    editor.placeBlock(p2, Block("minecraft:glowstone"))
 
-    highway = fill_out_highway(route_highway(p1, p2, build_map, editor, is_debug=False))
     build_highway(
         highway,
         editor,
@@ -61,10 +58,23 @@ def make_highway(p1: ivec3, p2: ivec3):
     )
 
 
-make_highway(start, end)
+highway = fill_out_highway(route_highway(start, end, build_map, editor, is_debug=True))
+mark_highway(highway, build_map)
 
-for _ in range(10):
+highways = [highway]
+
+for _ in range(3):
     p1 = build_map.make_3d(rng.randpoint_2d(build_map.size))
     p2 = build_map.make_3d(rng.randpoint_2d(build_map.size))
+    highway = fill_out_highway(route_highway(p1, p2, build_map, editor, is_debug=True))
+    mark_highway(highway, build_map)
+    highways.append(highway)
 
-    make_highway(p1, p2)
+build_highways(
+    highways,
+    editor,
+    world_slice,
+    build_map,
+    palette,
+    material_role=MaterialRole.PRIMARY_STONE,
+)

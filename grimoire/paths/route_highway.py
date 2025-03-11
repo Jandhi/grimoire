@@ -165,6 +165,8 @@ def get_cost(prev_cost: float, path: list[ivec3], end: ivec3, build_map: Map) ->
     base_length_cost = 30  # added as length of path increases
     if last.y in build_map.paths[last.x][last.z]:  # NO LENGTH COST FOR HIGHWAY
         base_length_cost -= 25
+    elif any(last.y - diff in build_map.paths[last.x][last.z] for diff in range(-3, 4)):
+        base_length_cost += 100
 
     # The cost of building above or below ground
     height_diff: int = abs(last.y - build_map.height[last.x][last.z])
@@ -208,7 +210,7 @@ def get_cost(prev_cost: float, path: list[ivec3], end: ivec3, build_map: Map) ->
 
 def route_highway(
     start: ivec3, end: ivec3, build_map: Map, editor: Editor, is_debug=False
-):
+) -> list[ivec3] | None:
     new_start = find_best_mod4_point(start, build_map)
     new_end = find_best_mod4_point(end, build_map)
     print(f"start: {start} -> {new_start}")
@@ -292,3 +294,8 @@ def route_highway(
         return start_to_highway + part1[1:] + part2[1:] + highway_to_end[1:]
 
     return start_to_highway + highway[1:] + highway_to_end[1:]
+
+
+def mark_highway(path: list[ivec3], build_map: Map):
+    for point in path:
+        build_map.paths[point.x][point.z].append(point.y)
