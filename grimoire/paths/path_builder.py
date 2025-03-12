@@ -24,6 +24,7 @@ from ..core.styling.palette import BuildStyle, Palette, MaterialRole
 from ..core.utils.bounds import is_in_bounds2d
 from grimoire.districts.district import DistrictType
 from ..core.utils.remap import remap_threshold_high
+from ..core.utils.vectors import y_ivec3
 
 
 def build_highways(
@@ -33,23 +34,27 @@ def build_highways(
     map: Map,
     palette: Palette,
     material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
+    debug: bool = False,
 ):
-    lands_segments = []
-    bridge_segments = []
+    print(highways)
+    land_segments: list[list[ivec3]] = []
+    bridge_segments: list[list[ivec3]] = []
 
     for highway in highways:
-        land_segments, bridge_segments = get_segments(highway, map)
-        lands_segments += land_segments
-        bridge_segments += bridge_segments
+        new_land_segments, new_bridge_segments = get_segments(highway, map)
+        land_segments += new_land_segments
+        bridge_segments += new_bridge_segments
 
     land_segments_sum = []
-    for land_segment in lands_segments:
+    for land_segment in land_segments:
         land_segments_sum += land_segment
 
     build_all_land_segments(land_segments_sum, editor, map, palette, material_role)
+    bridges = []
 
+    # Build land segments first
     for bridge_segment in bridge_segments:
-        if distance(bridge_segment[0], bridge_segment[-1]) < 10:
+        if distance(bridge_segment[0], bridge_segment[-1]) < 8:
             build_land_segment(
                 bridge_segment,
                 editor,
@@ -59,13 +64,23 @@ def build_highways(
                 material_role=material_role,
             )
         else:
-            build_bridge_segment(
-                bridge_segment,
-                editor,
-                map,
-                palette,
-                material_role=material_role,
-            )
+            bridges.append(bridge_segment)
+
+    for bridge_segment in bridges:
+        build_bridge_segment(
+            bridge_segment,
+            editor,
+            map,
+            palette,
+            material_role=material_role,
+        )
+
+    if debug:
+        for point in land_segments_sum:
+            editor.placeBlock(point + y_ivec3(30), Block("minecraft:gray_wool"))
+        for segment in bridge_segments:
+            for point in segment:
+                editor.placeBlock(point + y_ivec3(30), Block("minecraft:cyan_wool"))
 
 
 def build_highway(
@@ -125,7 +140,7 @@ def get_segments(
 
     for point in points:
         if build_map.water_at(dropY(point)):
-            if not last_segment_is_bridge:
+            if not last_segment_is_bridge and last_segment:
                 land_segments.append(last_segment)
                 last_segment = [last_segment[-1]]
 
@@ -156,6 +171,8 @@ def build_bridge_segment(
     palette: Palette,
     material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
 ):
+    print("Building bridge from {} to {}".format(points[0], points[-1]))
+
     length = distance(points[0], points[-1])
     thickness = 1
 

@@ -1,3 +1,5 @@
+import dataclasses
+from enum import Enum
 from typing import Callable
 
 from gdpc import Editor
@@ -7,6 +9,7 @@ from grimoire.districts.district import District, DistrictType
 
 from ..core.maps import Map
 from ..core.structures.legacy_directions import ALL_8, vector
+from ..core.styling.materials.material import Material
 from ..core.utils.bounds import is_in_bounds
 from ..core.utils.vectors import mod_xz
 from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
@@ -14,7 +17,21 @@ from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
 HEURISTIC_WEIGHT = 8
 
 
-def fill_out_highway(points: list[ivec3]) -> list[ivec3]:
+class PathPriority(Enum):
+    Low = 1
+    Medium = 2
+    High = 3
+
+
+@dataclasses.dataclass
+class Path:
+    points: list[ivec3]
+    width: int  # 1, 3, or 5
+    material: Material
+    priority: PathPriority
+
+
+def fill_out_path(points: list[ivec3]) -> list[ivec3]:
     point_a: ivec3 = points.pop()
 
     full_points: list[ivec3] = [point_a]
@@ -208,7 +225,7 @@ def get_cost(prev_cost: float, path: list[ivec3], end: ivec3, build_map: Map) ->
     )
 
 
-def route_highway(
+def route_path(
     start: ivec3, end: ivec3, build_map: Map, editor: Editor, is_debug=False
 ) -> list[ivec3] | None:
     new_start = find_best_mod4_point(start, build_map)
@@ -296,6 +313,31 @@ def route_highway(
     return start_to_highway + highway[1:] + highway_to_end[1:]
 
 
-def mark_highway(path: list[ivec3], build_map: Map):
+def mark_path(path: list[ivec3], build_map: Map):
     for point in path:
         build_map.paths[point.x][point.z].append(point.y)
+
+
+def get_path(
+    start: ivec3,
+    end: ivec3,
+    build_map: Map,
+    editor: Editor,
+    material: Material,
+    width: int = 3,
+    priority: PathPriority = PathPriority.Medium,
+    is_debug=False,
+) -> Path | None:
+    path = route_path(start, end, build_map, editor, is_debug)
+    if path is None:
+        return None
+
+    full_path = fill_out_path(path)
+    mark_path(full_path, build_map)
+
+    return Path(
+        points=full_path,
+        width=width,
+        material=material,
+        priority=priority,
+    )

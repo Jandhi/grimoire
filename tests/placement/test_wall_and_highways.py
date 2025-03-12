@@ -8,7 +8,7 @@ from grimoire.core.structures import legacy_directions
 from grimoire.core.structures.legacy_directions import VECTORS
 from grimoire.core.styling.palette import Palette, BuildStyle
 from grimoire.paths.build_highway import build_highway
-from grimoire.paths.route_highway import route_highway, fill_out_highway
+from grimoire.paths.route_highway import route_path, fill_out_highway
 from grimoire.paths.signposts import build_signpost
 
 sys.path[0] = sys.path[0].removesuffix("\\tests\\placement")
@@ -221,7 +221,7 @@ for wall_points in wall_points_list:
         point_a = addY(round_to_four(dropY(path_origin)), gate.location.y)
         point_b = main_map.make_3d(round_to_four(path_end))
 
-        highway = route_highway(point_a, point_b, main_map, editor, is_debug=True)
+        highway = route_path(point_a, point_b, main_map, editor, is_debug=True)
         if highway:
             highway = fill_out_highway(highway)
             build_highway(highway, editor, world_slice, main_map)

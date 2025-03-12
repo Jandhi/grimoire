@@ -10,7 +10,7 @@ from grimoire.core.structures.legacy_directions import VECTORS
 from grimoire.core.styling.palette import BuildStyle, MaterialRole, Palette
 from grimoire.districts.gate import Gate
 from grimoire.paths.build_highway import build_highway
-from grimoire.paths.route_highway import route_highway, fill_out_highway
+from grimoire.paths.route_highway import route_path, fill_out_highway
 from grimoire.paths.signposts import build_signpost
 
 
@@ -51,7 +51,7 @@ def add_gate_path(
     if main_map.water_at(dropY(point_b)):
         return
 
-    highway = route_highway(point_a, point_b, main_map, editor, is_debug=False)
+    highway = route_path(point_a, point_b, main_map, editor, is_debug=False)
     if highway:
         highway = fill_out_highway(highway)
         build_highway(highway, editor, main_map.world, main_map, style)

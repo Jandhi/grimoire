@@ -8,7 +8,7 @@ sys.path[0] = sys.path[0].removesuffix("\\tests\\path")
 # Actual file
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
-from grimoire.paths.route_highway import route_highway, fill_out_highway
+from grimoire.paths.route_highway import route_path, fill_out_highway
 from grimoire.paths.build_highway import build_highway
 from grimoire.core.maps import Map
 
@@ -45,7 +45,7 @@ editor.placeBlock(top_right, Block("minecraft:glowstone"))
 
 
 def route(start, end):
-    highway = route_highway(start, end, map, editor, is_debug=True)
+    highway = route_path(start, end, map, editor, is_debug=True)
     highway = fill_out_highway(highway)
     build_highway(highway, editor, world_slice, map)
 

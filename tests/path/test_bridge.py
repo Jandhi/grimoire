@@ -15,7 +15,7 @@ from grimoire.story.load_story_types import load_types
 # Actual file
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3, length
-from grimoire.paths.route_highway import route_highway, fill_out_highway
+from grimoire.paths.route_highway import route_path, fill_out_highway
 from grimoire.paths.build_highway import build_highway
 from grimoire.core.maps import Map
 

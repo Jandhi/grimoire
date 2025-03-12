@@ -29,7 +29,7 @@ from grimoire.core.utils.vectors import y_ivec3
 from grimoire.districts.generate_districts import generate_districts
 from grimoire.districts.wall import build_wall_standard_with_inner, order_wall_points
 from grimoire.paths.build_highway import build_highway
-from grimoire.paths.route_highway import fill_out_highway, route_highway
+from grimoire.paths.route_highway import fill_out_highway, route_path
 from grimoire.placement.city_blocks import add_city_blocks
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
@@ -196,7 +196,7 @@ for gate in gates:
         for point in line3D(d_mid + y_ivec3(30), route_start + y_ivec3(30)):
             editor.placeBlock(point, Block("red_wool"))
 
-        route = route_highway(route_start, d_mid, world_map, editor, is_debug=False)
+        route = route_path(route_start, d_mid, world_map, editor, is_debug=False)
 
         if route is None:
             continue
@@ -205,7 +205,7 @@ for gate in gates:
         build_highway(route, editor, world_map.world, world_map)
 
         # final connection
-        route = route_highway(
+        route = route_path(
             gate.location, route_start, world_map, editor, is_debug=False
         )
         route = fill_out_highway(route)
