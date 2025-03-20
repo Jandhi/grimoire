@@ -9,62 +9,84 @@ from gdpc.vector_tools import (
     distance,
     CARDINALS,
     CARDINALS_2D,
+    CARDINALS_AND_DIAGONALS,
+    CARDINALS_AND_DIAGONALS_2D,
 )
 
 from .bridge import BridgeBuilder
+from .routing import Path
 from ..core.maps import Map
 from ..core.structures.legacy_directions import CARDINAL, get_ivec2, to_text
 from ..core.styling.blockform import BlockForm
 from ..core.styling.materials.gradient import Gradient, GradientAxis, PerlinSettings
 from ..core.styling.materials.material import MaterialFeature
-from ..core.styling.materials.painter import PalettePainter
+from ..core.styling.materials.painter import PalettePainter, Painter
 from ..core.styling.materials.placer import Placer
 from ..core.styling.materials.traversal import MaterialTraversalStrategy
 from ..core.styling.palette import BuildStyle, Palette, MaterialRole
 from ..core.utils.bounds import is_in_bounds2d
 from grimoire.districts.district import DistrictType
+from ..core.utils.geometry import get_surrounding_points
 from ..core.utils.remap import remap_threshold_high
 from ..core.utils.vectors import y_ivec3
 
+colors: list[str] = [
+    "white",
+    "orange",
+    "magenta",
+    "light_blue",
+    "yellow",
+    "lime",
+    "pink",
+    "gray",
+    "light_gray",
+    "cyan",
+    "purple",
+    "blue",
+    "brown",
+    "green",
+    "red",
+    "black",
+]
 
-def build_highways(
-    highways: list[list[ivec3]],
+
+def build_paths(
+    paths: list[Path],
     editor: Editor,
-    world_slice: WorldSlice,
     map: Map,
     palette: Palette,
     material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
     debug: bool = False,
 ):
-    print(highways)
+
     land_segments: list[list[ivec3]] = []
     bridge_segments: list[list[ivec3]] = []
+    paths_by_point: dict[ivec2, list[Path]] = {}
 
-    for highway in highways:
-        new_land_segments, new_bridge_segments = get_segments(highway, map)
+    for path in paths:
+        for point in path.points:
+            if dropY(point) not in paths_by_point:
+                paths_by_point[dropY(point)] = []
+
+            paths_by_point[dropY(point)].append(path)
+
+        new_land_segments, new_bridge_segments = get_segments(path.points, map)
         land_segments += new_land_segments
         bridge_segments += new_bridge_segments
 
     land_segments_sum = []
+    bridges = []
     for land_segment in land_segments:
         land_segments_sum += land_segment
 
-    build_all_land_segments(land_segments_sum, editor, map, palette, material_role)
-    bridges = []
-
-    # Build land segments first
+        # Build land segments first
     for bridge_segment in bridge_segments:
         if distance(bridge_segment[0], bridge_segment[-1]) < 8:
-            build_land_segment(
-                bridge_segment,
-                editor,
-                map,
-                world_slice,
-                palette,
-                material_role=material_role,
-            )
+            land_segments_sum += bridge_segment
         else:
             bridges.append(bridge_segment)
+
+    build_all_land_segments(land_segments_sum, paths_by_point, editor, map)
 
     for bridge_segment in bridges:
         build_bridge_segment(
@@ -77,54 +99,15 @@ def build_highways(
 
     if debug:
         for point in land_segments_sum:
-            editor.placeBlock(point + y_ivec3(30), Block("minecraft:gray_wool"))
+            path = get_highest_priority_path(paths_by_point[dropY(point)])
+
+            editor.placeBlock(
+                point + y_ivec3(30),
+                Block("minecraft:{}_wool".format(colors[path.priority % len(colors)])),
+            )
         for segment in bridge_segments:
             for point in segment:
                 editor.placeBlock(point + y_ivec3(30), Block("minecraft:cyan_wool"))
-
-
-def build_highway(
-    points: list[ivec3],
-    editor: Editor,
-    world_slice: WorldSlice,
-    map: Map,
-    palette: Palette,
-    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
-):
-    land_segments, bridge_segments = get_segments(points, map)
-
-    land_segment_sum = []
-
-    for land_segment in land_segments:
-        land_segment_sum += land_segment
-
-    build_land_segment(
-        land_segment_sum,
-        editor,
-        map,
-        world_slice,
-        palette,
-        material_role=material_role,
-    )
-
-    for bridge_segment in bridge_segments:
-        if distance(bridge_segment[0], bridge_segment[-1]) < 10:
-            build_land_segment(
-                bridge_segment,
-                editor,
-                map,
-                world_slice,
-                palette,
-                material_role=material_role,
-            )
-        else:
-            build_bridge_segment(
-                bridge_segment,
-                editor,
-                map,
-                palette,
-                material_role=material_role,
-            )
 
 
 # Returns a list of land segments and bridge segments respectively
@@ -198,10 +181,9 @@ def build_bridge_segment(
 
 def build_all_land_segments(
     points: list[ivec3],
+    paths_by_point: dict[ivec2, list[Path]],
     editor: Editor,
     build_map: Map,
-    palette: Palette,
-    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
 ):
     points_2d = [dropY(point) for point in points]
     point_heights = {dropY(point): point.y for point in points}
@@ -210,17 +192,25 @@ def build_all_land_segments(
         points_2d.append(dropY(point))
         point_heights[dropY(point)] = point.y
 
-        for direction in CARDINALS_2D:
-            neighbour = dropY(point) + direction
+        path = get_highest_priority_path(paths_by_point[dropY(point)])
 
+        for neighbour in get_surrounding_points({dropY(point)}, (path.width // 2)):
             if not build_map.is_in_bounds2d(neighbour):
                 continue
 
             if neighbour in point_heights:
+                paths_by_point[neighbour].append(path)
                 continue
 
+            if neighbour not in paths_by_point:
+                paths_by_point[neighbour] = []
+
+            paths_by_point[neighbour].append(path)
+
             points_2d.append(neighbour)
-            point_heights[neighbour] = point.y
+            point_heights[neighbour] = (
+                point.y
+            )  # TODO: This should probably be calculated better by the closest road points
 
     # first smooth pass
     for point in points_2d:
@@ -272,7 +262,6 @@ def build_all_land_segments(
     # raise slabs where needed
     for point in points_2d:
         y = point_heights[point]
-        x, z = point
 
         higher_count = 0
         lower_count = 0
@@ -352,6 +341,8 @@ def build_all_land_segments(
         ):
             point_heights[point] = y - 0.5
 
+    edges: dict[ivec2, int] = {}
+
     # building
     for point in points_2d:
         y = point_heights[point]
@@ -363,185 +354,89 @@ def build_all_land_segments(
             form = BlockForm.SLAB
             y += 0.5
 
-        palette_painter = (
-            PalettePainter(editor, palette)
-            .with_feature(MaterialFeature.WEAR, wear_func)
-            .with_feature(MaterialFeature.MOISTURE, moisture_func)
+        path = get_highest_priority_path(paths_by_point[point])
+
+        for direction in CARDINALS_AND_DIAGONALS_2D:
+            neighbour: ivec2 = point + direction
+
+            if not build_map.is_in_bounds2d(neighbour):
+                continue
+
+            if neighbour in points_2d:
+                continue
+
+            if neighbour in edges and edges[neighbour] > y:
+                continue
+
+            edges[neighbour] = y
+
+            if neighbour not in paths_by_point:
+                paths_by_point[neighbour] = []
+            paths_by_point[neighbour].append(path)
+
+        painter = (
+            Painter(editor, path.material)
+            .with_feature(
+                MaterialFeature.WEAR, wear_func, MaterialTraversalStrategy.SCALED
+            )
+            .with_feature(
+                MaterialFeature.MOISTURE,
+                moisture_func,
+                MaterialTraversalStrategy.SCALED,
+            )
         )
-        palette_painter.place_block(addY(point, y - 1), material_role, form, states={})
+        painter.place_block(addY(point, y - 1), form, states={})
 
         if build_map.height_at(point) > y - 1:
-            editor.placeBlock((x, y, z), Block("air"))
-            editor.placeBlock((x, y + 1, z), Block("air"))
-            editor.placeBlock((x, y + 2, z), Block("air"))
+            for dy in range(4):
+                editor.placeBlock((x, y + dy, z), Block("air"))
         elif build_map.height_at(point) < y - 1:
+            if int(y - 1) - build_map.height_at(point) > 5:
+                for i in range(int(y - 4), int(y - 1)):
+                    editor.placeBlock((x, i, z), Block("minecraft:stone"))
+
             for i in range(build_map.height_at(point), int(y - 1)):
                 # foundation
+                # TODO: Change for the biome
                 editor.placeBlock((x, i, z), Block("minecraft:stone"))
 
+    valid_edges: dict[ivec2, int] = {}
 
-def build_land_segment(
-    points: list[ivec3],
-    editor: Editor,
-    build_map: Map,
-    world_slice: WorldSlice,
-    palette: Palette,
-    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
-):
-    master_points: set[ivec2] = set()
-    counted_points: set[ivec2] = set()
-    final_point_heights: dict[ivec2, int] = {}
+    for edge in edges:
+        y = edges[edge]
 
-    # We fill out the land segment
-    for point in points:
-        point_2d = ivec2(point.x, point.z)
-
-        master_points.add(point_2d)
-        final_point_heights[point_2d] = point.y
-
-        for direction in CARDINALS_2D:
-            neighbour = point_2d + direction
-
-            if not is_in_bounds2d(neighbour, world_slice):
-                continue
-
-            if neighbour in counted_points or neighbour in master_points:
-                continue
-
-            counted_points.add(neighbour)
-            final_point_heights[neighbour] = (
-                point.y
-            )  # this is an estimate of height to help the next step
-
-    blocks: dict[ivec2, Block] = {}
-
-    moisture_func = remap_threshold_high(
-        Gradient(13, build_map, 0.6, PerlinSettings(20, 8, 2)).to_func(),
-        0.3,
-    )
-    wear_func = remap_threshold_high(
-        Gradient(17, build_map, 0.8, PerlinSettings(40, 8, 2)).to_func(),
-        0.3,
-    )
-
-    def generate_params(position: ivec3) -> dict[MaterialFeature, float]:
-        return {
-            MaterialFeature.WEAR: wear_func(position),
-            MaterialFeature.MOISTURE: moisture_func(position),
-        }
-
-    for point in final_point_heights:
-        x, z = point
-        y = final_point_heights[point] - 1
-
-        # don't place in urban area
-        if (
-            build_map.super_districts[x][z] is not None
-            and build_map.super_districts[x][z].type == DistrictType.URBAN
-        ):
+        if build_map.height_at(edge) > y:
             continue
 
-        blocks[point] = get_block(
-            point,
-            final_point_heights,
-            palette,
-            param_generator=generate_params,
-            material_role=material_role,
-        )
+        path = get_highest_priority_path(paths_by_point[edge])
 
-        build_map.paths[x][z].append(y + 1)
-        editor.placeBlock((x, y, z), blocks[point])
-
-        if build_map.height_at(point) > y:
-            editor.placeBlock((x, y + 1, z), Block("air"))
-            editor.placeBlock((x, y + 2, z), Block("air"))
-            editor.placeBlock((x, y + 3, z), Block("air"))
-
-
-def get_block(
-    point: ivec2,
-    final_point_heights: dict[ivec2, int],
-    palette: Palette,
-    param_generator: Callable[[ivec3], dict[MaterialFeature, float]],
-    depth=0,
-    material_role: MaterialRole = MaterialRole.SECONDARY_STONE,
-) -> Block:
-    y_in_dir = {}
-    y = final_point_heights[point]
-
-    if depth > 10:
-        return Block(
-            palette.find_block_id(
-                BlockForm.BLOCK,
-                material_role,
-                param_generator(addY(point, y)),
-                {
-                    MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
-                    MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
-                },
-            ),
-        )
-
-    for direction in CARDINAL:
-        dv = get_ivec2(direction)
-
-        if point + dv not in final_point_heights:
+        if not path.fence:
             continue
 
-        if abs(final_point_heights[point + dv] - y) >= 2:
-            continue
+        if build_map.height_at(edge) == y:
+            valid_edges[edge] = y
 
-        y_in_dir[direction] = final_point_heights[point + dv]
+    # We only want multi-fence areas
+    valid_edges = {
+        edge: y
+        for edge, y in valid_edges.items()
+        if any(direction + edge in valid_edges for direction in CARDINALS_2D)
+    }
 
-        if point - dv not in final_point_heights:
-            continue
+    for edge in valid_edges:
+        y = edges[edge]
+        path = get_highest_priority_path(paths_by_point[edge])
+        painter = Painter(editor, path.fence)
+        painter.place_block(addY(edge, y), BlockForm.FENCE, states={})
 
-        if (
-            final_point_heights[point + dv] == y + 1
-            and final_point_heights[point - dv] == y - 1
-        ):
-            return Block(
-                palette.find_block_id(
-                    BlockForm.STAIRS,
-                    material_role,
-                    param_generator(addY(point, y)),
-                    {
-                        MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
-                        MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
-                    },
-                ),
-                {"facing": to_text(direction)},
-            )
 
-    if all(y_in_dir[direction] < y for direction in y_in_dir):
-        final_point_heights[point] -= 1
-        return get_block(
-            point, final_point_heights, palette, param_generator, depth + 1
-        )
+def get_highest_priority_path(paths: list[Path]) -> Path:
+    highest_priority = None
+    highest_priority_path = None
 
-    if all(y_in_dir[direction] <= y for direction in y_in_dir) and any(
-        y_in_dir[direction] < y for direction in y_in_dir
-    ):
-        return Block(
-            palette.find_block_id(
-                BlockForm.SLAB,
-                material_role,
-                param_generator(addY(point, y)),
-                {
-                    MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
-                    MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
-                },
-            ),
-        )
+    for path in paths:
+        if not highest_priority_path or path.priority > highest_priority:
+            highest_priority = path.priority
+            highest_priority_path = path
 
-    return Block(
-        palette.find_block_id(
-            BlockForm.BLOCK,
-            material_role,
-            param_generator(addY(point, y)),
-            {
-                MaterialFeature.WEAR: MaterialTraversalStrategy.SCALED,
-                MaterialFeature.MOISTURE: MaterialTraversalStrategy.SCALED,
-            },
-        ),
-    )
+    return highest_priority_path

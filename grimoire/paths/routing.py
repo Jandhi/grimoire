@@ -1,5 +1,5 @@
 import dataclasses
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import Callable
 
 from gdpc import Editor
@@ -17,7 +17,7 @@ from ..paths.a_star import COUNTER_LIMIT_EXCEEDED, a_star
 HEURISTIC_WEIGHT = 8
 
 
-class PathPriority(Enum):
+class PathPriority(IntEnum):
     Low = 1
     Medium = 2
     High = 3
@@ -29,6 +29,7 @@ class Path:
     width: int  # 1, 3, or 5
     material: Material
     priority: PathPriority
+    fence: Material | None
 
 
 def fill_out_path(points: list[ivec3]) -> list[ivec3]:
@@ -324,6 +325,7 @@ def get_path(
     build_map: Map,
     editor: Editor,
     material: Material,
+    fence: Material | None = None,
     width: int = 3,
     priority: PathPriority = PathPriority.Medium,
     is_debug=False,
@@ -336,8 +338,5 @@ def get_path(
     mark_path(full_path, build_map)
 
     return Path(
-        points=full_path,
-        width=width,
-        material=material,
-        priority=priority,
+        points=full_path, width=width, material=material, priority=priority, fence=fence
     )

@@ -6,6 +6,7 @@ from glm import ivec2
 from grimoire.core.assets.asset_loader import load_assets
 from grimoire.core.logger import LoggerSettings, LoggingLevel
 from grimoire.core.noise.rng import RNG
+from grimoire.core.styling.materials.material import Material
 from grimoire.core.styling.palette import Palette, MaterialRole
 from grimoire.core.utils.vectors import y_ivec3
 
@@ -14,8 +15,8 @@ sys.path[0] = sys.path[0].removesuffix("\\tests\\path")
 # Actual file
 from gdpc import Editor, Block
 from gdpc.vector_tools import ivec3
-from grimoire.paths.route_highway import route_path, fill_out_highway, mark_highway
-from grimoire.paths.build_highway import build_highway, build_highways
+from grimoire.paths.routing import get_path, PathPriority
+from grimoire.paths.path_builder import build_paths
 from grimoire.core.maps import Map
 
 SEED = 324278789
@@ -44,29 +45,46 @@ end = build_map.make_3d(ivec2(build_map.width - 1, build_map.depth - 1))
 
 palette: Palette = Palette.get("medieval")
 
-highway = fill_out_highway(route_path(start, end, build_map, editor, is_debug=True))
-mark_highway(highway, build_map)
+IS_DEBUG = False
+
+highway = get_path(
+    start,
+    end,
+    build_map,
+    editor,
+    is_debug=IS_DEBUG,
+    material=Material.get("bricks1"),
+    fence=Material.get("spruce"),
+    width=5,
+    priority=PathPriority.High,
+)
 
 highways = [highway]
 
-for _ in range(3):
+for _ in range(10):
     p1 = build_map.make_3d(rng.randpoint_2d(build_map.size))
     p2 = build_map.make_3d(rng.randpoint_2d(build_map.size))
-    new_highway = fill_out_highway(route_path(p1, p2, build_map, editor, is_debug=True))
+    new_highway = get_path(
+        p1,
+        p2,
+        build_map,
+        editor,
+        is_debug=IS_DEBUG,
+        material=Material.get("cobblestone"),
+        fence=Material.get("oak"),
+        width=3,
+    )
 
     if not new_highway:
         continue
 
-    mark_highway(new_highway, build_map)
     highways.append(new_highway)
 
 
-build_highways(
+build_paths(
     highways,
     editor,
-    world_slice,
     build_map,
     palette,
-    material_role=MaterialRole.PRIMARY_STONE,
-    debug=True,
+    debug=IS_DEBUG,
 )
