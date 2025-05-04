@@ -64,6 +64,9 @@ def build_paths(
     paths_by_point: dict[ivec2, list[Path]] = {}
 
     for path in paths:
+        if path is None:
+            continue
+
         for point in path.points:
             if dropY(point) not in paths_by_point:
                 paths_by_point[dropY(point)] = []
@@ -400,6 +403,8 @@ def build_all_land_segments(
                 # TODO: Change for the biome
                 editor.placeBlock((x, i, z), Block("minecraft:stone"))
 
+        # build_map.set_height_at(point, y - 1)
+
     valid_edges: dict[ivec2, int] = {}
 
     for edge in edges:
@@ -420,7 +425,10 @@ def build_all_land_segments(
     valid_edges = {
         edge: y
         for edge, y in valid_edges.items()
-        if any(direction + edge in valid_edges for direction in CARDINALS_2D)
+        if any(
+            direction + edge in valid_edges and y == edges[direction + edge]
+            for direction in CARDINALS_2D
+        )
     }
 
     for edge in valid_edges:

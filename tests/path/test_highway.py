@@ -72,7 +72,7 @@ for _ in range(10):
         is_debug=IS_DEBUG,
         material=Material.get("cobblestone"),
         fence=Material.get("oak"),
-        width=3,
+        width=1,
     )
 
     if not new_highway:

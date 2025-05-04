@@ -213,6 +213,11 @@ class Map:
     def height_at(self, point: ivec2) -> int:
         return self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y]
 
+    def set_height_at(self, point: ivec2, height: int) -> None:
+        self.world.heightmaps["MOTION_BLOCKING_NO_LEAVES"][point.x][point.y] = height
+        self.world.heightmaps["MOTION_BLOCKING"][point.x][point.y] = height
+        self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y] = height
+
     def ocean_floor_at(self, point: ivec2):
         return self.world.heightmaps["OCEAN_FLOOR"][point.x][point.y]
 

@@ -3,7 +3,13 @@ from enum import Enum, IntEnum
 from typing import Callable
 
 from gdpc import Editor
-from gdpc.vector_tools import distance, ivec3, dropY
+from gdpc.vector_tools import (
+    distance,
+    ivec3,
+    dropY,
+    CARDINALS_3D,
+    CARDINALS_AND_DIAGONALS_3D,
+)
 
 from grimoire.districts.district import District, DistrictType
 
@@ -32,68 +38,90 @@ class Path:
     fence: Material | None
 
 
-def fill_out_path(points: list[ivec3]) -> list[ivec3]:
-    point_a: ivec3 = points.pop()
+def fill_out_path(points: list[ivec3], allow_diagonals=True) -> list[ivec3]:
+    curr_point = points.pop(0)
+    full_points: list[ivec3] = [curr_point]
+    next_point = points.pop(0)
 
-    full_points: list[ivec3] = [point_a]
-    while points:
-        point_b: ivec3 = points.pop()
+    x_axis_first = True
+    can_update_y = True
 
-        full_points += find_in_betweeners(point_a, point_b)
-        full_points.append(point_a)
+    while len(points) > 0:
+        if can_update_y:
+            if curr_point.y < next_point.y:
+                curr_point += ivec3(0, 1, 0)
+                can_update_y = not can_update_y
 
-        point_a = point_b
+            if curr_point.y > next_point.y:
+                curr_point += ivec3(0, -1, 0)
+                can_update_y = not can_update_y
+        else:
+            can_update_y = True
+
+        if allow_diagonals:
+            if curr_point.x > next_point.x and curr_point.z > next_point.z:
+                curr_point += ivec3(-1, 0, -1)
+                full_points.append(ivec3(*curr_point))
+                continue
+            if curr_point.x < next_point.x and curr_point.z < next_point.z:
+                curr_point += ivec3(1, 0, 1)
+                full_points.append(ivec3(*curr_point))
+                continue
+            if curr_point.x > next_point.x and curr_point.z < next_point.z:
+                curr_point += ivec3(-1, 0, 1)
+                full_points.append(ivec3(*curr_point))
+                continue
+            if curr_point.x < next_point.x and curr_point.z > next_point.z:
+                curr_point += ivec3(1, 0, -1)
+                full_points.append(ivec3(*curr_point))
+                continue
+
+        # Only do this if x is first
+        if x_axis_first:
+            if curr_point.x < next_point.x:
+                curr_point += ivec3(1, 0, 0)
+                full_points.append(ivec3(*curr_point))
+                x_axis_first = not x_axis_first
+                continue
+            if curr_point.x > next_point.x:
+                curr_point += ivec3(-1, 0, 0)
+                full_points.append(ivec3(*curr_point))
+                x_axis_first = not x_axis_first
+                continue
+        if curr_point.z < next_point.z:
+            curr_point += ivec3(0, 0, 1)
+            full_points.append(ivec3(*curr_point))
+            x_axis_first = not x_axis_first
+            continue
+        if curr_point.z > next_point.z:
+            curr_point += ivec3(0, 0, -1)
+            full_points.append(ivec3(*curr_point))
+            x_axis_first = not x_axis_first
+            continue
+        if curr_point.x < next_point.x:
+            curr_point += ivec3(1, 0, 0)
+            full_points.append(ivec3(*curr_point))
+            x_axis_first = not x_axis_first
+            continue
+        if curr_point.x > next_point.x:
+            curr_point += ivec3(-1, 0, 0)
+            full_points.append(ivec3(*curr_point))
+            x_axis_first = not x_axis_first
+            continue
+
+        # curr point must be equal to next point
+        full_points.append(curr_point)
+        next_point = points.pop(0)
 
     return full_points
 
 
-def find_in_betweeners(point_a: ivec3, point_b: ivec3) -> list[ivec3]:
-    diff_vec = ivec3(0, 0, 0)
-    magnitude = 2
-    points = []
-
-    if point_a.x + 2 == point_b.x:
-        diff_vec += ivec3(1, 0, 0)
-    elif point_a.x + 4 == point_b.x:
-        diff_vec += ivec3(1, 0, 0)
-        magnitude = 4
-
-    if point_a.z + 2 == point_b.z:
-        diff_vec += ivec3(0, 0, 1)
-    elif point_a.z + 4 == point_b.z:
-        diff_vec += ivec3(0, 0, 1)
-        magnitude = 4
-
-    if point_a.x - 2 == point_b.x:
-        diff_vec += ivec3(-1, 0, 0)
-    elif point_a.x - 4 == point_b.x:
-        diff_vec += ivec3(-1, 0, 0)
-        magnitude = 4
-
-    if point_a.z - 2 == point_b.z:
-        diff_vec += ivec3(0, 0, -1)
-    elif point_a.z - 4 == point_b.z:
-        diff_vec += ivec3(0, 0, -1)
-        magnitude = 4
-
-    for i in range(1, magnitude):
-        pt = point_a + i * diff_vec
-
-        pt.y = (point_a.y * (magnitude - i) + point_b.y * i) // magnitude
-
-        points.append(pt)
-
-    return points
-
-
 # every point neighbours
-def get_neighbours(point: ivec3, build_map) -> list[ivec3]:
+def get_neighbours(point: ivec3, build_map: Map, allow_diagonals: bool) -> list[ivec3]:
     neighbours: list[ivec3] = []
 
-    for direction in ALL_8:
-        direction_vector: ivec3 = vector(direction)
-
-        neighbour: ivec3 = point + direction_vector
+    for direction in CARDINALS_AND_DIAGONALS_3D if allow_diagonals else CARDINALS_3D:
+        neighbour: ivec3 = point + direction
 
         if is_in_bounds(neighbour, build_map.world):
             neighbour.y = build_map.height[neighbour.x][neighbour.z]
@@ -107,7 +135,7 @@ def get_neighbours(point: ivec3, build_map) -> list[ivec3]:
 
 
 # prefer 4 out neighbours, but will accept 2 out
-def get_neighbours_4_out_or_2(point: ivec3, build_map) -> list[ivec3]:
+def get_neighbours_4_out_or_2(point: ivec3, build_map: Map) -> list[ivec3]:
     neighbours: list[ivec3] = []
 
     for direction in ALL_8:
@@ -131,7 +159,7 @@ def get_neighbours_4_out_or_2(point: ivec3, build_map) -> list[ivec3]:
                 continue
 
         # Don't consider compounds for short jumps
-        if sum(direction_vector) >= 2:
+        if direction_vector.x != 0 and direction_vector.z != 0:
             continue
 
         # Then consider 2 out
@@ -227,7 +255,12 @@ def get_cost(prev_cost: float, path: list[ivec3], end: ivec3, build_map: Map) ->
 
 
 def route_path(
-    start: ivec3, end: ivec3, build_map: Map, editor: Editor, is_debug=False
+    start: ivec3,
+    end: ivec3,
+    build_map: Map,
+    editor: Editor,
+    is_debug=False,
+    allow_diagonals=True,
 ) -> list[ivec3] | None:
     new_start = find_best_mod4_point(start, build_map)
     new_end = find_best_mod4_point(end, build_map)
@@ -235,7 +268,7 @@ def route_path(
     print(f"end: {end} -> {new_end}")
 
     def get_neighbours_direct(point: ivec3) -> list[ivec3]:
-        return get_neighbours(point, build_map)
+        return get_neighbours(point, build_map, allow_diagonals)
 
     def get_neighbours_4(point: ivec3) -> list[ivec3]:
         return get_neighbours_4_out_or_2(point, build_map)
@@ -330,11 +363,14 @@ def get_path(
     priority: PathPriority = PathPriority.Medium,
     is_debug=False,
 ) -> Path | None:
-    path = route_path(start, end, build_map, editor, is_debug)
+    path = route_path(
+        start, end, build_map, editor, is_debug, allow_diagonals=width != 1
+    )
     if path is None:
         return None
 
-    full_path = fill_out_path(path)
+    # TODO Check difference in y for filling out path
+    full_path = fill_out_path(path, allow_diagonals=width != 1)
     mark_path(full_path, build_map)
 
     return Path(

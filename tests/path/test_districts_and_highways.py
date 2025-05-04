@@ -1,14 +1,16 @@
 # Allows code to be run in root directory
 import sys
 
+from grimoire.core.styling.palette import Palette
+
 sys.path[0] = sys.path[0].removesuffix("\\tests\\path")
 
 # Actual file
 from gdpc import Editor
 from gdpc.vector_tools import ivec2, ivec3
 from grimoire.districts.generate_districts import generate_districts
-from grimoire.paths.route_highway import route_path, fill_out_highway
-from grimoire.paths.build_highway import build_highway
+from grimoire.paths.routing import get_path
+from grimoire.paths.path_builder import build_paths
 from grimoire.terrain.plateau import plateau
 from grimoire.terrain.smooth_edges import smooth_edges
 from grimoire.core.maps import Map
@@ -77,8 +79,7 @@ for district in districts:
             point_b.z
         ]
 
-        highway = route_path(point_a, point_b, map, editor, is_debug=True)
-        highway = fill_out_highway(highway)
-        build_highway(highway, editor, world_slice, map)
+        path = get_path(point_a, point_b, map, editor, is_debug=True)
+        build_paths([path], editor, map, Palette.get("medieval"))
 
         world_slice = editor.loadWorldSlice(build_rect)
